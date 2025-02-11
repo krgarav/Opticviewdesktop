@@ -128,6 +128,7 @@ const EditDesignTemplate = () => {
           .layoutParameters
       : {}
   );
+  console.log(data)
   // const emptyExcelJsonFile = data.excelJsonFile.map((row) => {
   //   return Object.keys(row).reduce((acc, key) => {
   //     acc[key] = ""; // Set each value to an empty string
@@ -436,6 +437,12 @@ const EditDesignTemplate = () => {
   //     fetchData()
 
   // }, []);
+console.log(dataCtx.allTemplates)
+  useEffect(()=>{
+    if(data){
+      // dataCtx.addToAllTemplate(data)
+    }
+  },[])
   useEffect(() => {
     console.log("called rdf");
     const fetchDetails = async () => {
@@ -565,7 +572,7 @@ const EditDesignTemplate = () => {
 
     setDragStart({ row, col });
   };
-
+console.log(dataCtx.allTemplates)
   const handleMouseMove = (e) => {
     if (!e.buttons || !dragStart) return;
     const boundingRect = imageRef.current.getBoundingClientRect();
@@ -890,7 +897,7 @@ const EditDesignTemplate = () => {
     setModalShow(false);
     if (!modalUpdate) {
       console.log("Save called")
-      dataCtx.modifyAllTemplate(data.templateIndex, newData, selectedFieldType);
+      dataCtx.modifyAllTemplate(0, newData, selectedFieldType);
       const newSelected = {
         ...selection,
         name: selectedFieldType !== "idField" ? name : "Id Field",

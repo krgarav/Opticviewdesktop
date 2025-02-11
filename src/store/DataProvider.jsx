@@ -4,7 +4,7 @@ import { isEqual } from "lodash";
 import convertToCamelCase from "services/lowerLetter";
 
 const initialData = {
-  allTemplates: JSON.parse(localStorage.getItem("Template")),
+  allTemplates: JSON.parse(sessionStorage.getItem("Template")),
   backendIP: "localhost",
 }; // Initial data if localStorage is empty
 
@@ -39,7 +39,7 @@ const DataProvider = (props) => {
     setDataState((item) => {
       const copiedData = [...item.allTemplates];
       const currentTemplate = copiedData[index];
-
+console.log(currentTemplate)
       switch (fieldType) {
         case "skewMarkField":
           currentTemplate[0].skewMarksWindowParameters = currentTemplate[0]
