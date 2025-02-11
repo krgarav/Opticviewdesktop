@@ -355,8 +355,7 @@ const SimplexTemplateModal = (props) => {
         return;
       }
     }
-    console.log(face);
-    // return
+
     if (
       !name ||
       !numberOfLines ||
@@ -455,8 +454,6 @@ const SimplexTemplateModal = (props) => {
       return;
     }
 
-    // console.log("called");
-    // return
     const key = uuidv4();
     try {
       const emptyExcelJsonFile = excelJsonFile.map((row) => {
@@ -529,6 +526,7 @@ const SimplexTemplateModal = (props) => {
       localStorage.setItem("Template", JSON.stringify(templateData));
 
       const index = dataCtx.setAllTemplates(templateData);
+
       setModalShow(false);
       navigate("/admin/template/booklet/design-template");
     } catch (error) {

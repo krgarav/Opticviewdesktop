@@ -124,7 +124,8 @@ const EditDesignTemplate = () => {
 
   const [data, setData] = useState(
     sessionStorage.getItem("Template")
-      ? convertToCamelCase( JSON.parse(sessionStorage.getItem("Template")))[0].layoutParameters
+      ? convertToCamelCase(JSON.parse(sessionStorage.getItem("Template")))[0]
+          .layoutParameters
       : {}
   );
   // const emptyExcelJsonFile = data.excelJsonFile.map((row) => {
@@ -271,7 +272,7 @@ const EditDesignTemplate = () => {
       setIdSelectionCount(1);
     }
   }, [selectedCoordinates]);
-
+  console.log(data);
   // useEffect(() => {
   //   if (location.state) {
   //     sessionStorage.setItem("totalColumns", state.totalColumns);
@@ -888,6 +889,7 @@ const EditDesignTemplate = () => {
     // setSelection(null);
     setModalShow(false);
     if (!modalUpdate) {
+      console.log("Save called")
       dataCtx.modifyAllTemplate(data.templateIndex, newData, selectedFieldType);
       const newSelected = {
         ...selection,
@@ -1079,7 +1081,7 @@ const EditDesignTemplate = () => {
       setNoOfStepInCol(data?.columnStep);
     }
   };
- 
+
   const handleCrossClick = (selectedField, index) => {
     const response = window.confirm(
       "Are you sure you want to delete the selected field ?"
@@ -1472,8 +1474,8 @@ const EditDesignTemplate = () => {
       console.log(err);
     }
   };
- 
-console.log(data)
+
+  console.log(data);
   return (
     <>
       <div style={{ position: "sticky", top: 0, zIndex: 99 }}>
@@ -1748,6 +1750,7 @@ console.log(data)
                   >
                     {Array.from({ length: numRows }).map((_, rowIndex) => {
                       const result = [...data.excelJsonFile.map(Object.values)];
+                      console.log(data);
                       const numberedJson = [
                         ...data.numberedExcelJsonFile.map(Object.values),
                       ];
@@ -2783,12 +2786,13 @@ console.log(data)
           </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ height: "60vh" }}>
-          {data.images&&
-          <EditImagesCropper
-            handleImage={handleImage}
-            images={data.images}
-            selectedCoordinateData={selectedCoordinates}
-          />}
+          {data.images && (
+            <EditImagesCropper
+              handleImage={handleImage}
+              images={data.images}
+              selectedCoordinateData={selectedCoordinates}
+            />
+          )}
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -2843,4 +2847,4 @@ console.log(data)
   );
 };
 
-export default EditDesignTemplate;  
+export default EditDesignTemplate;

@@ -502,24 +502,6 @@ const DesignBookletTemplate = () => {
     }
   }, [options, selectedCol]);
 
-  // useEffect(() => {
-  //   const handleKeyPress = (event) => {
-  //     if (modalShow) return; // Ignore keyboard events when modal is shown
-  //     if (event.altKey && event.shiftKey) {
-  //       // Toggle z-index when Alt + Enter is pressed
-  //       const imgDiv = document.getElementById("imagecontainer");
-  //       imgDiv.style.zIndex = imgDiv.style.zIndex === "999" ? "-1" : "999";
-  //     }
-  //   };
-
-  //   window.addEventListener("keydown", handleKeyPress);
-
-  //   // Cleanup event listener on component unmount
-  //   return () => {
-  //     window.removeEventListener("keydown", handleKeyPress);
-  //   };
-  // }, [modalShow]);
-
   const handleMouseDown = (e) => {
     const boundingRect = imageRef.current.getBoundingClientRect();
     const col = Math.floor(
@@ -658,7 +640,6 @@ const DesignBookletTemplate = () => {
     return true;
   };
 
-  console.log(dataCtx.allTemplates);
   const handleSave = () => {
     if (
       selectedFieldType === "formField" ||
@@ -1229,6 +1210,10 @@ const DesignBookletTemplate = () => {
     //   dataCtx.addImageCoordinate(templateIndex, images)
     // }
   };
+
+  if (!dataCtx.allTemplates) {
+    return <div>Loading</div>;
+  }
   return (
     <>
       <div style={{ position: "sticky", top: 0, zIndex: 99 }}>
@@ -1390,15 +1375,19 @@ const DesignBookletTemplate = () => {
                     {Array.from({ length: numRows }).map((_, rowIndex) => {
                       const result = [...excelJsonFile.map(Object.values)];
 
-                      const template = dataCtx.allTemplates;
-                      const numberedJson = template
+                      const templates = dataCtx.allTemplates[0];
+
+                      const template = Array.isArray(templates)
+                        ? { ...templates[0] }
+                        : templates[0];
+                      const numberedJson = Array.isArray(template)
                         ? [
                             ...template[0]?.layoutParameters?.numberedExcelJsonFile.map(
                               Object.values
                             ),
                           ]
                         : [];
-
+                      console.log(numberedJson);
                       return (
                         <div key={rowIndex} className="row">
                           <div
@@ -1454,11 +1443,13 @@ const DesignBookletTemplate = () => {
                                   //     backgroundColor:
                                   //         result[rowIndex][colIndex] != 0 ? "black" : "",
                                   // }}
-                                  className={`${bubbleType} ${
-                                    selected[`${rowIndex},${colIndex}`]
-                                      ? "selected"
-                                      : ""
-                                  }`}
+                                  className={`${bubbleType}
+                                   ${
+                                     selected[`${rowIndex},${colIndex}`]
+                                       ? "selected"
+                                       : ""
+                                   }
+                                  `}
                                 >
                                   {numberedJson.length > 0 &&
                                     numberedJson[rowIndex][colIndex]}

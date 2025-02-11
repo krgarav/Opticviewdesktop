@@ -1355,10 +1355,11 @@ const DesignTemplate = () => {
   };
   const handleImage = (images) => {
     setImagesSelectedCount(images.length);
-    // if (images.length > 0) {
-    //   dataCtx.addImageCoordinate(templateIndex, images)
-    // }
   };
+
+  if (localData || dataCtx.allTemplates.length === 0) {
+    return <div>Loading</div>;
+  }
   return (
     <>
       <div style={{ position: "sticky", top: 0, zIndex: 99 }}>
@@ -1495,12 +1496,12 @@ const DesignTemplate = () => {
                   >
                     {Array.from({ length: numRows }).map((_, rowIndex) => {
                       const result = [...excelJsonFile.map(Object.values)];
-
                       const template = dataCtx.allTemplates.find((item) => {
                         return (
                           item[0].layoutParameters?.key ?? "" === templateIndex
                         );
                       });
+                      console.log(template)
                       const numberedJson = template
                         ? [
                             ...template[0]?.layoutParameters?.numberedExcelJsonFile.map(
@@ -2228,8 +2229,8 @@ const DesignTemplate = () => {
                 </div>
               </Row>
               <Row className="">
-              <label htmlFor="example-select-input" className="col-2 ">
-                 Step In A Row
+                <label htmlFor="example-select-input" className="col-2 ">
+                  Step In A Row
                 </label>
                 <div className="col-4">
                   <input
@@ -2252,7 +2253,6 @@ const DesignTemplate = () => {
                     required
                   />
                 </div>
-              
               </Row>
               <Row className="mb-2">
                 <label
