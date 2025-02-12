@@ -4,7 +4,7 @@ import { isEqual } from "lodash";
 import convertToCamelCase from "services/lowerLetter";
 
 const initialData = {
-  allTemplates: JSON.parse(sessionStorage.getItem("Template")) || [],
+  allTemplates: JSON.parse(sessionStorage.getItem("Template"))?[[JSON.parse(sessionStorage.getItem("Template"))]] : [],
   backendIP: "localhost",
 }; // Initial data if localStorage is empty
 

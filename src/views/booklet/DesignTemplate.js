@@ -467,17 +467,7 @@ const DesignBookletTemplate = () => {
     }
   }, [dataCtx.allTemplates]);
 
-  useEffect(() => {
-    const classMap = {
-      "rounded rectangle": "rounded-rectangle",
-      rectangle: "rectangle",
-      circle: "circle",
-      oval: "oval",
-    };
-
-    // Set the class, defaulting to "circle" if bubbleType is not found
-    setSelectedClass(classMap[bubbleType] || "circle");
-  }, [bubbleType]);
+ 
 
   useEffect(() => {
     // Create an array to hold the options

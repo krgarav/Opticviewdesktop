@@ -128,7 +128,6 @@ const EditDesignTemplate = () => {
           .layoutParameters
       : {}
   );
-
   // const emptyExcelJsonFile = data.excelJsonFile.map((row) => {
   //   return Object.keys(row).reduce((acc, key) => {
   //     acc[key] = ""; // Set each value to an empty string
@@ -191,7 +190,7 @@ const EditDesignTemplate = () => {
   //     };
   //   });
   // };
-  
+
   // **************************PREVENT FROM RELOADING*********************
   useEffect(() => {
     const handleBeforeUnload = (event) => {
@@ -273,7 +272,6 @@ const EditDesignTemplate = () => {
       setIdSelectionCount(1);
     }
   }, [selectedCoordinates]);
-  console.log(data);
 
   useEffect(() => {
     setStartRowInput(selection?.startRow + 1);
@@ -388,8 +386,7 @@ const EditDesignTemplate = () => {
   }, [selectedCoordinates, selection]);
 
   // *************************For Fetching the details and setting the coordinate******************
-  
-  console.log(dataCtx.allTemplates);
+
   useEffect(() => {
     if (data) {
       // dataCtx.addToAllTemplate(data)
@@ -406,10 +403,10 @@ const EditDesignTemplate = () => {
         setLayoutFieldData(response);
         if (response) {
           // Extract data from the response
-          const formFieldData = response?.formFieldWindowParameters ?? [];
-          const questionField = response?.questionsWindowParameters ?? [];
-          const skewField = response?.skewMarksWindowParameters ?? [];
-          const idField = response?.layoutParameters ?? {};
+          const formFieldData = response[0]?.formFieldWindowParameters ?? [];
+          const questionField = response[0]?.questionsWindowParameters ?? [];
+          const skewField = response[0]?.skewMarksWindowParameters ?? [];
+          const idField = response[0]?.layoutParameters ?? {};
 
           // Map and restructure data for coordinates
           const coordinateOfFormData = formFieldData.map((item) => ({
@@ -418,7 +415,7 @@ const EditDesignTemplate = () => {
           }));
 
           const coordinateOfQuestionField = questionField.map((item) => ({
-            ...item.coordinate,
+            ...item.questionWindowCoordinates,
             name: item.windowName,
           }));
 
@@ -426,10 +423,11 @@ const EditDesignTemplate = () => {
             ...item.coordinate,
             name: item.windowName,
           }));
-          const coordinateOfIdField = Object.keys(idField.layoutCoordinates).length > 0 
-          ? idField.layoutCoordinates 
-          : [];
-      
+          const coordinateOfIdField =
+            Object.keys(idField.layoutCoordinates).length > 0
+              ? idField.layoutCoordinates
+              : [];
+
           // Combine all coordinates into a single array, conditionally including the ID field's coordinates
           const allCoordinates = [
             ...coordinateOfFormData,
@@ -441,15 +439,15 @@ const EditDesignTemplate = () => {
           // Format the coordinates for the state update
           const newSelectedFields = allCoordinates.map((item) => {
             const {
-              "start": originalStartRow,
+              start: originalStartRow,
               left: startCol,
               end: originalEndRow,
               right: endCol,
               name,
               fieldType,
             } = item;
-            const startRow = originalStartRow-1 ;
-            const endRow = originalEndRow-1;
+            const startRow = originalStartRow - 1;
+            const endRow = originalEndRow - 1;
             return { startRow, startCol, endRow, endCol, name, fieldType };
           });
           console.log(newSelectedFields);
@@ -923,7 +921,6 @@ const EditDesignTemplate = () => {
     setSelectionIndex(index);
     // console.log(data.templateIndex);
     const template = dataCtx.allTemplates[0];
-    // console.log(template);
     if (selectedField?.fieldType === "idField") {
       const data = template[0].layoutParameters;
       setSelectedFieldType("idField");
@@ -947,13 +944,8 @@ const EditDesignTemplate = () => {
       //     return isEqual(item.Coordinate, formattedSelectedFile);
       // })[0];
       const parameters = template[0].questionsWindowParameters;
-      // Find the index of the matched object
-      const index = parameters.findIndex((item) =>
-        isEqual(item.Coordinate, formattedSelectedFile)
-      );
-      console.log(index);
-      // Get the matched object
-      const data = index !== -1 ? parameters[index] : null;
+
+      const data = parameters[0];
       setCoordinateIndex(index);
       setModalUpdate(true);
       setModalShow(true);
@@ -981,13 +973,13 @@ const EditDesignTemplate = () => {
       setCustomValue(data?.customFieldValue);
     } else if (selectedField?.fieldType === "formField") {
       const parameters = template[0].formFieldWindowParameters;
-
-      const index = parameters.findIndex((item) =>
-        isEqual(item?.Coordinate, formattedSelectedFile)
-      );
-      const data = index !== -1 ? parameters[index] : null;
+      console.log(parameters);
+      // const index = parameters.findIndex((item) =>
+      //   isEqual(item?.Coordinate, formattedSelectedFile)
+      // );
+      const data = parameters[0];
       // Get the matched object
-      setCoordinateIndex(index);
+      // setCoordinateIndex(index);
       setModalUpdate(true);
       setModalShow(true);
       setSelectedFieldType("formField");
@@ -1015,12 +1007,7 @@ const EditDesignTemplate = () => {
       setCustomValue(data?.customFieldValue);
     } else if (selectedField?.fieldType === "skewMarkField") {
       const parameters = template[0].skewMarksWindowParameters;
-      const index = parameters.findIndex((item) =>
-        isEqual(item?.Coordinate, formattedSelectedFile)
-      );
-      // Get the matched object
-      const data = index !== -1 ? parameters[index] : null;
-      console.log(data);
+      const data = parameters[0];
       setName(data?.windowName);
       setMinimumMark(data?.iMaximumMarks);
       setNoOfStepInRow(data?.rowStep);
@@ -1486,47 +1473,6 @@ const EditDesignTemplate = () => {
           </div>
         </div>
       )}
-      {/* <div
-        style={{
-          position: "absolute",
-          top: "30px", // Adjust the top value as needed
-          left: "50%",
-          transform: "translateX(-50%)",
-          zIndex: "999",
-        }}
-      >
-        <Button
-          variant="primary"
-          onClick={() => {
-            setImageModalShow(true);
-          }}
-          // style={{ position: "relative" }}
-        >
-          Image Area
-          <Badge
-            pill
-            variant="light"
-            style={{
-              position: "absolute",
-              top: "-5px", // Adjust this value to position the badge correctly
-              right: "-5px", // Adjust this value to position the badge correctly
-              transform: "translate(50%, -50%)",
-              zIndex: "1000",
-            }}
-          >
-            {imagesSelectedCount} 
-          </Badge>
-        </Button>
-
-        <Button
-          variant="secondary"
-          onClick={() => {
-            setDetailPage(true);
-          }}
-        >
-          Layout details
-        </Button>
-      </div> */}
 
       <div
         style={{
@@ -1541,11 +1487,8 @@ const EditDesignTemplate = () => {
           aria-label="breadcrumb"
         >
           <ol className="breadcrumb" style={{ fontSize: "0.8rem" }}>
-            <li className="breadcrumb-item">
-              <Link to="/admin/template">All Templates</Link>
-            </li>
-            <li className="breadcrumb-item active" aria-current="page">
-              {dataCtx.allTemplates[0].layoutParameters.layoutName}
+            <li className="breadcrumb-item text-blue" aria-current="page">
+              {dataCtx.allTemplates[0][0]?.layoutParameters?.layoutName}
             </li>
           </ol>
         </nav>
@@ -1647,7 +1590,7 @@ const EditDesignTemplate = () => {
               color: "white", // Optional: Set the text color
               border: "none", // Optional: Remove border if desired
               cursor: "pointer", // Optional: Change cursor to pointer on hover
-          
+              display: "none",
             }}
           >
             {!loading ? "Update" : "Updating"}
