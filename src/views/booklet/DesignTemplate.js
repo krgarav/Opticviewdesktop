@@ -1,24 +1,13 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Modal, Button, Col, Badge, Spinner } from "react-bootstrap";
+import { Modal, Button, Col, Badge } from "react-bootstrap";
 import { Row } from "reactstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import classes from "./DesignTemplate.module.css";
-import { Rnd } from "react-rnd";
 import DataContext from "store/DataContext";
 import { MultiSelect } from "react-multi-select-component";
-import { createTemplate } from "helper/TemplateHelper";
-import { getLayoutDataById } from "helper/TemplateHelper";
-import Papa from "papaparse";
 import SmallHeader from "components/Headers/SmallHeader";
 import { toast } from "react-toastify";
 import isEqual from "lodash/isEqual";
-import { sendFile } from "helper/TemplateHelper";
-import ImageCropper from "modals/ImageCropper";
-import base64ToFile from "services/Base64toFile";
-import RegionSelector from "ui/RangeSelector";
-import ImageRegionSelector from "ui/RangeSelector";
-import Cropper from "ui/RangeSelector";
-import EditTemplateModal from "ui/EditTemplateModal";
 import LayoutDetailModal from "ui/LayoutDetailModal";
 import TextLoader from "loaders/TextLoader";
 import processDirection from "data/processDirection";
@@ -141,9 +130,11 @@ const DesignBookletTemplate = () => {
   const isWideScreen = width >= 994;
   useEffect(() => {
     setTimeout(() => {
-      sendHandler();
+      if (dataCtx.allTemplates.length > 0) {
+        sendHandler();
+      }
     }, 500);
-  },[dataCtx.allTemplates]);
+  }, [dataCtx.allTemplates]);
   const handleDragStop = (e, d) => {
     setPosition((prev) => ({ ...prev, x: d.x, y: d.y }));
   };
@@ -176,6 +167,7 @@ const DesignBookletTemplate = () => {
     };
     fetchData();
   }, []);
+
   useEffect(() => {
     setTimeout(() => {
       setLocalData(JSON.parse(localStorage.getItem("Template")));
@@ -274,6 +266,7 @@ const DesignBookletTemplate = () => {
 
   useEffect(() => {
     const template = dataCtx.allTemplates[0];
+    console.log(selectedCoordinates);
     selectedCoordinates.forEach((item) => {
       const isQuestionField = item?.fieldType === "questionField";
       const isFormField = item?.fieldType === "formField";
@@ -323,7 +316,7 @@ const DesignBookletTemplate = () => {
             // Process the data with the determined direction
             const stepInRow = data2.rowStep;
             const stepInCol = data2.columnStep;
-
+            console.log(data2);
             const data = processDirection(
               readingDirection,
               item.startRow,
@@ -335,11 +328,14 @@ const DesignBookletTemplate = () => {
               stepInRow,
               stepInCol
             );
+            console.log(".....>", data);
             const copiedObject = deepcopy(localData[0]);
+            delete copiedObject.layoutParameters.numberedExcelJsonFile;
             copiedObject.layoutParameters = {
               ...copiedObject.layoutParameters,
               numberedExcelJsonFile: data,
             };
+            console.log([copiedObject]);
             // dataCtx.replaceTemplate([copiedObject])
             localStorage.setItem("Template", JSON.stringify([copiedObject]));
           }
@@ -1030,7 +1026,7 @@ const DesignBookletTemplate = () => {
     console.log("clicked");
     // const template = dataCtx.allTemplates[templateIndex];
     console.log(template);
-  
+
     // Extract layout parameters and its coordinates
     const layoutParameters = template[0].layoutParameters;
 
@@ -1043,7 +1039,7 @@ const DesignBookletTemplate = () => {
       layoutParameters.rowStart = 1;
       layoutParameters.rowStep = 1;
     }
-  
+
     const Coordinate = layoutParameters.Coordinate;
     let layoutCoordinates = {};
     // Transform layout coordinates into the required format
@@ -1148,66 +1144,6 @@ const DesignBookletTemplate = () => {
     };
 
     localStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
-    // console.log(fullRequestData);
-    // // return;
-    // const csv = Papa.unparse(excelJsonFile);
-    // // Create a Blob from the CSV string
-    // const blob = new Blob([csv], { type: "text/csv" });
-
-    // // Create a File object from the Blob
-    // const csvfile = new File([blob], "data.csv", { type: "text/csv" });
-    // // const imageFile = base64ToFile(templateImagePath, "front.png");
-
-    // // Send the request and handle the response
-
-    // try {
-    //   setLoading(true);
-    //   const res = await createTemplate(fullRequestData);
-    //   if (res === undefined) {
-    //     toast.error("Something went wrong, template not created!");
-    //     return;
-    //   }
-    //   const ConvertedImageFile = images;
-    //   if (res?.success === true) {
-    //     const layoutId = res?.layoutId;
-    //     const formdata = new FormData();
-    //     for (const item of ConvertedImageFile) {
-    //       // Fetch and convert front and back images to File objects
-    //       const frontImageFile = await fetchImageAsFile(
-    //         item.frontImagePath,
-    //         baseUrl
-    //       );
-    //       const backImageFile = await fetchImageAsFile(
-    //         item.backImagePath,
-    //         baseUrl
-    //       );
-
-    //       // Append the files to FormData
-    //       formdata.append("FrontImageFile", frontImageFile);
-    //       formdata.append("BackImageFile", backImageFile);
-    //     }
-    //     formdata.append("LayoutId", layoutId);
-
-    //     formdata.append("ExcelFile", csvfile);
-
-    //     const res2 = await sendFile(formdata);
-
-    //     setLoading(false);
-
-    //     if (res2?.success) {
-    //       toast.success(
-    //         `Response : ${JSON.stringify(res2?.message)},Layout Saved`
-    //       );
-    //       navigate("/admin/template", { replace: true });
-    //     }
-    //   }
-    // } catch (error) {
-    //   alert(`Error creating template`);
-    //   console.error("Error sending POST request:", error);
-    //   setLoading(false);
-    // } finally {
-    //   setLoading(false);
-    // }
   };
   const handleImage = (images) => {
     setImagesSelectedCount(images.length);
@@ -1381,18 +1317,17 @@ const DesignBookletTemplate = () => {
                       const result = [...excelJsonFile.map(Object.values)];
 
                       const templates = dataCtx.allTemplates[0];
-
-                      const template = Array.isArray(templates)
-                        ? { ...templates[0] }
-                        : templates[0];
-                      const numberedJson = Array.isArray(template)
+                      // const template = Array.isArray(templates)
+                      //   ? { ...templates[0] }
+                      //   : templates[0];
+                      const numberedJson = templates
                         ? [
-                            ...template[0]?.layoutParameters?.numberedExcelJsonFile.map(
+                            ...templates[0]?.layoutParameters?.numberedExcelJsonFile.map(
                               Object.values
                             ),
                           ]
                         : [];
-                      
+
                       return (
                         <div key={rowIndex} className="row">
                           <div

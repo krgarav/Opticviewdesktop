@@ -124,7 +124,7 @@ const EditDesignTemplate = () => {
 
   const [data, setData] = useState(
     sessionStorage.getItem("Template")
-      ? convertToCamelCase(JSON.parse(sessionStorage.getItem("Template")))[0]
+      ? convertToCamelCase(JSON.parse(sessionStorage.getItem("Template")))
           .layoutParameters
       : {}
   );
@@ -274,38 +274,7 @@ const EditDesignTemplate = () => {
     }
   }, [selectedCoordinates]);
   console.log(data);
-  // useEffect(() => {
-  //   if (location.state) {
-  //     sessionStorage.setItem("totalColumns", state.totalColumns);
-  //     sessionStorage.setItem("timingMarks", JSON.stringify(state.timingMarks));
-  //     sessionStorage.setItem(
-  //       "templateImagePath",
-  //       JSON.stringify(state.templateImagePath)
-  //     );
-  //     sessionStorage.setItem(
-  //       "templateBackImagePath",
-  //       JSON.stringify(state.templateBackImagePath)
-  //     );
-  //     sessionStorage.setItem("bubbleType", JSON.stringify(state.bubbleType));
-  //     sessionStorage.setItem("templateIndex", state.templateIndex);
-  //     sessionStorage.setItem("templateId", JSON.stringify(state.templateId));
-  //     sessionStorage.setItem(
-  //       "excelJsonFile",
-  //       JSON.stringify(state.excelJsonFile)
-  //     );
-  //     const emptyExcelJsonFile = state.excelJsonFile.map((row) => {
-  //       return Object.keys(row).reduce((acc, key) => {
-  //         acc[key] = ""; // Set each value to an empty string
-  //         return acc;
-  //       }, {});
-  //     });
-  //     sessionStorage.setItem(
-  //       "numberedExcelJsonFile",
-  //       JSON.stringify(emptyExcelJsonFile)
-  //     );
-  //   }
-  // }, [location.state]);
-  // console.log(dataCtx.allTemplates);
+
   useEffect(() => {
     setStartRowInput(selection?.startRow + 1);
     setEndRowInput(selection?.endRow + 1);
@@ -419,24 +388,7 @@ const EditDesignTemplate = () => {
   }, [selectedCoordinates, selection]);
 
   // *************************For Fetching the details and setting the coordinate******************
-  // useEffect(() => {
-
-  //     const fetchData = async () => {
-  //         const templates = await fetchAllTemplate();
-  //         if (templates === undefined) {
-  //             toast.error('Error fetching templates');
-
-  //         }
-  //         const mpObj = templates?.map((item) => {
-  //             return [{ layoutParameters: item }]
-  //         });
-  //         console.log(mpObj)
-  //         dataCtx.addToAllTemplate(mpObj);
-
-  //     }
-  //     fetchData()
-
-  // }, []);
+  
   console.log(dataCtx.allTemplates);
   useEffect(() => {
     if (data) {
@@ -461,7 +413,7 @@ const EditDesignTemplate = () => {
 
           // Map and restructure data for coordinates
           const coordinateOfFormData = formFieldData.map((item) => ({
-            ...item.coordinate,
+            ...item.formFieldCoordinates,
             name: item.windowName,
           }));
 
@@ -474,9 +426,10 @@ const EditDesignTemplate = () => {
             ...item.coordinate,
             name: item.windowName,
           }));
-
-          const coordinateOfIdField = idField.layoutCoordinates ?? [];
-
+          const coordinateOfIdField = Object.keys(idField.layoutCoordinates).length > 0 
+          ? idField.layoutCoordinates 
+          : [];
+      
           // Combine all coordinates into a single array, conditionally including the ID field's coordinates
           const allCoordinates = [
             ...coordinateOfFormData,
@@ -488,18 +441,18 @@ const EditDesignTemplate = () => {
           // Format the coordinates for the state update
           const newSelectedFields = allCoordinates.map((item) => {
             const {
-              "start Row": originalStartRow,
-              "start Col": startCol,
-              "end Row": originalEndRow,
-              "end Col": endCol,
+              "start": originalStartRow,
+              left: startCol,
+              end: originalEndRow,
+              right: endCol,
               name,
               fieldType,
             } = item;
-            const startRow = originalStartRow - 1;
+            const startRow = originalStartRow-1 ;
             const endRow = originalEndRow-1;
             return { startRow, startCol, endRow, endCol, name, fieldType };
           });
-          console.log(allCoordinates);
+          console.log(newSelectedFields);
           // Update state with the formatted coordinates and image data
           setSelectedCoordinates(newSelectedFields);
           setPosition(idField?.imageCoordinates);
@@ -1678,7 +1631,7 @@ const EditDesignTemplate = () => {
         {!selection && (
           <Button
             onClick={sendHandler}
-            disabled={loading}
+            disabled={true}
             style={{
               position: "fixed",
               bottom: "50px", // Distance from the bottom of the screen
@@ -1694,6 +1647,7 @@ const EditDesignTemplate = () => {
               color: "white", // Optional: Set the text color
               border: "none", // Optional: Remove border if desired
               cursor: "pointer", // Optional: Change cursor to pointer on hover
+          
             }}
           >
             {!loading ? "Update" : "Updating"}

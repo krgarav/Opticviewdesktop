@@ -1,23 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import DataContext from "./DataContext"; // Assuming you have a DataContext
 import { isEqual } from "lodash";
 import convertToCamelCase from "services/lowerLetter";
 
 const initialData = {
-  allTemplates: JSON.parse(sessionStorage.getItem("Template")),
+  allTemplates: JSON.parse(sessionStorage.getItem("Template")) || [],
   backendIP: "localhost",
 }; // Initial data if localStorage is empty
 
 const DataProvider = (props) => {
   // Initialize dataState from localStorage if it exists, otherwise use initialData
   const [dataState, setDataState] = useState(convertToCamelCase(initialData));
-
-  // Save dataState to localStorage whenever it changes
-
-  // useEffect(() => {
-  //   const stringifiedTemdata = JSON.stringify(dataState.allTemplates);
-  //   sessionStorage.setItem("Template", stringifiedTemdata);
-  // }, [dataState]);
 
   const templateHandler = (template) => {
     let newIndex;
