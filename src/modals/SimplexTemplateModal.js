@@ -479,6 +479,7 @@ const SimplexTemplateModal = (props) => {
             ngAction: windowNgOption?.id,
             dataReadDirection: direction?.id,
             idStatus: idPresent.id,
+            isBooklet:false,
             iReject: 0,
             idMarksPattern: "000000000000000000000000",
             excelJsonFile: excelJsonFile,

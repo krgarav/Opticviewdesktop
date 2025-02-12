@@ -443,6 +443,7 @@ const BookletTemplateModal = (props) => {
             dataReadDirection: direction?.id,
             idStatus: idPresent.id,
             iReject: 0,
+            isBooklet:true,
             idMarksPattern: "000000000000000000000000",
             excelJsonFile: excelJsonFile,
             images: images,

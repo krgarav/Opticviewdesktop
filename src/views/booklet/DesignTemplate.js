@@ -131,8 +131,6 @@ const DesignBookletTemplate = () => {
     iFace,
     arr,
     excelJsonFile,
-    templateBackImagePath,
-    numberedExcelJsonFile,
   } = localData[0].layoutParameters;
   const navigate = useNavigate();
   const numRows = timingMarks;
@@ -1045,7 +1043,7 @@ const DesignBookletTemplate = () => {
       layoutParameters.rowStart = 1;
       layoutParameters.rowStep = 1;
     }
-    layoutParameters.isBooklet = true;
+  
     const Coordinate = layoutParameters.Coordinate;
     let layoutCoordinates = {};
     // Transform layout coordinates into the required format
