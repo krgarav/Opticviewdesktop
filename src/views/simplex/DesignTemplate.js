@@ -973,6 +973,9 @@ const DesignTemplate = () => {
       setTrigger(!trigger);
       setSelection(null);
     }
+    setTimeout(() => {
+      sendHandler();
+    }, 500);
   };
   console.log(dataCtx.allTemplates);
   const handleSkewMarkOptionChange = (event) => {
@@ -1275,6 +1278,8 @@ const DesignTemplate = () => {
       formFieldWindowParameters,
       imageCroppingDTO,
     };
+    console.log(fullRequestData)
+    localStorage.setItem("Template", JSON.stringify(fullRequestData));
     // console.log(fullRequestData);
 
     // // Create a Blob from the JSON string
@@ -1501,7 +1506,7 @@ const DesignTemplate = () => {
                           item[0].layoutParameters?.key ?? "" === templateIndex
                         );
                       });
-                      console.log(template)
+                      console.log(template);
                       const numberedJson = template
                         ? [
                             ...template[0]?.layoutParameters?.numberedExcelJsonFile.map(

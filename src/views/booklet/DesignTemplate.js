@@ -141,6 +141,11 @@ const DesignBookletTemplate = () => {
 
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
+  useEffect(() => {
+    setTimeout(() => {
+      sendHandler();
+    }, 500);
+  },[dataCtx.allTemplates]);
   const handleDragStop = (e, d) => {
     setPosition((prev) => ({ ...prev, x: d.x, y: d.y }));
   };
@@ -1027,122 +1032,124 @@ const DesignBookletTemplate = () => {
     console.log("clicked");
     // const template = dataCtx.allTemplates[templateIndex];
     console.log(template);
-    localStorage.setItem("Template", JSON.stringify(template));
+  
     // Extract layout parameters and its coordinates
-    // const layoutParameters = template[0].layoutParameters;
+    const layoutParameters = template[0].layoutParameters;
 
-    // const idpatttern = "000000000000000000000000";
-    // if (layoutParameters.idMarksPattern === idpatttern) {
-    //   layoutParameters.columnNumber = 1;
-    //   layoutParameters.columnStart = 1;
-    //   layoutParameters.columnStep = 1;
-    //   layoutParameters.rowNumber = 1;
-    //   layoutParameters.rowStart = 1;
-    //   layoutParameters.rowStep = 1;
-    // }
-    // layoutParameters.isBooklet = true;
-    // const Coordinate = layoutParameters.Coordinate;
-    // let layoutCoordinates = {};
-    // // Transform layout coordinates into the required format
-    // if (Coordinate) {
-    //   layoutCoordinates = {
-    //     right: Coordinate["End Col"],
-    //     end: Coordinate["End Row"],
-    //     left: Coordinate["Start Col"],
-    //     start: Coordinate["Start Row"],
-    //     name: Coordinate["name"],
-    //     fieldType: Coordinate["fieldType"],
-    //   };
-    // }
+    const idpatttern = "000000000000000000000000";
+    if (layoutParameters.idMarksPattern === idpatttern) {
+      layoutParameters.columnNumber = 1;
+      layoutParameters.columnStart = 1;
+      layoutParameters.columnStep = 1;
+      layoutParameters.rowNumber = 1;
+      layoutParameters.rowStart = 1;
+      layoutParameters.rowStep = 1;
+    }
+    layoutParameters.isBooklet = true;
+    const Coordinate = layoutParameters.Coordinate;
+    let layoutCoordinates = {};
+    // Transform layout coordinates into the required format
+    if (Coordinate) {
+      layoutCoordinates = {
+        right: Coordinate["End Col"],
+        end: Coordinate["End Row"],
+        left: Coordinate["Start Col"],
+        start: Coordinate["Start Row"],
+        name: Coordinate["name"],
+        fieldType: Coordinate["fieldType"],
+      };
+    }
 
-    // // Extract and format image structure data
-    // const imageStructureData = layoutParameters.imageStructureData;
-    // let imageCoordinates = {};
-    // if (imageStructureData) {
-    //   imageCoordinates = {
-    //     height: imageStructureData.height,
-    //     x: imageStructureData.x,
-    //     y: imageStructureData.y,
-    //     width: imageStructureData.width,
-    //   };
-    // }
+    // Extract and format image structure data
+    const imageStructureData = layoutParameters.imageStructureData;
+    let imageCoordinates = {};
+    if (imageStructureData) {
+      imageCoordinates = {
+        height: imageStructureData.height,
+        x: imageStructureData.x,
+        y: imageStructureData.y,
+        width: imageStructureData.width,
+      };
+    }
 
-    // // Update layout parameters, removing original Coordinate and imageStructureData
-    // const updatedLayout = {
-    //   ...layoutParameters,
-    //   layoutCoordinates,
-    //   imageCoordinates,
-    // };
-    // delete updatedLayout.Coordinate;
-    // delete updatedLayout.imageStructureData;
+    // Update layout parameters, removing original Coordinate and imageStructureData
+    const updatedLayout = {
+      ...layoutParameters,
+      layoutCoordinates,
+      imageCoordinates,
+    };
+    delete updatedLayout.Coordinate;
+    delete updatedLayout.imageStructureData;
 
-    // // Extract and format barcode, image, and printing data
-    // const barcodeData = template[0].barcodeData;
-    // const imageData = template[0].imageData;
-    // const printingData = template[0].printingData;
+    // Extract and format barcode, image, and printing data
+    const barcodeData = template[0].barcodeData;
+    const imageData = template[0].imageData;
+    const printingData = template[0].printingData;
 
-    // // Transform question window parameters into the required format
-    // const questionsWindowParameters =
-    //   template[0].questionsWindowParameters?.map((item) => {
-    //     const { Coordinate, ...rest } = item;
-    //     const questionWindowCoordinates = Coordinate
-    //       ? {
-    //           right: Coordinate["End Col"],
-    //           end: Coordinate["End Row"],
-    //           left: Coordinate["Start Col"],
-    //           start: Coordinate["Start Row"],
-    //           name: Coordinate["name"],
-    //           fieldType: Coordinate["fieldType"],
-    //         }
-    //       : {};
-    //     return { ...rest, questionWindowCoordinates };
-    //   });
+    // Transform question window parameters into the required format
+    const questionsWindowParameters =
+      template[0].questionsWindowParameters?.map((item) => {
+        const { Coordinate, ...rest } = item;
+        const questionWindowCoordinates = Coordinate
+          ? {
+              right: Coordinate["End Col"],
+              end: Coordinate["End Row"],
+              left: Coordinate["Start Col"],
+              start: Coordinate["Start Row"],
+              name: Coordinate["name"],
+              fieldType: Coordinate["fieldType"],
+            }
+          : {};
+        return { ...rest, questionWindowCoordinates };
+      });
 
-    // // Transform skew marks window parameters into the required format
-    // const skewMarksWindowParameters =
-    //   template[0].skewMarksWindowParameters?.map((item) => {
-    //     const { Coordinate, ...rest } = item;
-    //     const layoutWindowCoordinates = Coordinate
-    //       ? {
-    //           right: Coordinate["End Col"],
-    //           end: Coordinate["End Row"],
-    //           left: Coordinate["Start Col"],
-    //           start: Coordinate["Start Row"],
-    //           name: Coordinate["name"],
-    //           fieldType: Coordinate["fieldType"],
-    //         }
-    //       : {};
-    //     return { ...rest, layoutWindowCoordinates };
-    //   });
+    // Transform skew marks window parameters into the required format
+    const skewMarksWindowParameters =
+      template[0].skewMarksWindowParameters?.map((item) => {
+        const { Coordinate, ...rest } = item;
+        const layoutWindowCoordinates = Coordinate
+          ? {
+              right: Coordinate["End Col"],
+              end: Coordinate["End Row"],
+              left: Coordinate["Start Col"],
+              start: Coordinate["Start Row"],
+              name: Coordinate["name"],
+              fieldType: Coordinate["fieldType"],
+            }
+          : {};
+        return { ...rest, layoutWindowCoordinates };
+      });
 
-    // // Transform form field window parameters into the required format
-    // const formFieldWindowParameters =
-    //   template[0].formFieldWindowParameters?.map((item) => {
-    //     const { Coordinate, ...rest } = item;
-    //     const formFieldCoordinates = Coordinate
-    //       ? {
-    //           right: Coordinate["End Col"],
-    //           end: Coordinate["End Row"],
-    //           left: Coordinate["Start Col"],
-    //           start: Coordinate["Start Row"],
-    //           name: Coordinate["name"],
-    //           fieldType: Coordinate["fieldType"],
-    //         }
-    //       : {};
-    //     return { ...rest, formFieldCoordinates };
-    //   });
-    // const { imageCroppingDTO } = template[0];
-    // // Assemble the full request data
-    // const fullRequestData = {
-    //   layoutParameters: updatedLayout,
-    //   barcodeData,
-    //   imageData,
-    //   printingData,
-    //   questionsWindowParameters,
-    //   skewMarksWindowParameters,
-    //   formFieldWindowParameters,
-    //   imageCroppingDTO,
-    // };
+    // Transform form field window parameters into the required format
+    const formFieldWindowParameters =
+      template[0].formFieldWindowParameters?.map((item) => {
+        const { Coordinate, ...rest } = item;
+        const formFieldCoordinates = Coordinate
+          ? {
+              right: Coordinate["End Col"],
+              end: Coordinate["End Row"],
+              left: Coordinate["Start Col"],
+              start: Coordinate["Start Row"],
+              name: Coordinate["name"],
+              fieldType: Coordinate["fieldType"],
+            }
+          : {};
+        return { ...rest, formFieldCoordinates };
+      });
+    const { imageCroppingDTO } = template[0];
+    // Assemble the full request data
+    const fullRequestData = {
+      layoutParameters: updatedLayout,
+      barcodeData,
+      imageData,
+      printingData,
+      questionsWindowParameters,
+      skewMarksWindowParameters,
+      formFieldWindowParameters,
+      imageCroppingDTO,
+    };
+
+    localStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
     // console.log(fullRequestData);
     // // return;
     // const csv = Papa.unparse(excelJsonFile);
@@ -1387,7 +1394,7 @@ const DesignBookletTemplate = () => {
                             ),
                           ]
                         : [];
-                      console.log(numberedJson);
+                      
                       return (
                         <div key={rowIndex} className="row">
                           <div

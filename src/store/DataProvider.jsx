@@ -11,7 +11,7 @@ const initialData = {
 const DataProvider = (props) => {
   // Initialize dataState from localStorage if it exists, otherwise use initialData
   const [dataState, setDataState] = useState(convertToCamelCase(initialData));
-  
+
   // Save dataState to localStorage whenever it changes
 
   // useEffect(() => {
@@ -39,7 +39,7 @@ const DataProvider = (props) => {
     setDataState((item) => {
       const copiedData = [...item.allTemplates];
       const currentTemplate = copiedData[index];
-console.log(currentTemplate)
+      console.log(currentTemplate);
       switch (fieldType) {
         case "skewMarkField":
           currentTemplate[0].skewMarksWindowParameters = currentTemplate[0]

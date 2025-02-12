@@ -128,7 +128,7 @@ const EditDesignTemplate = () => {
           .layoutParameters
       : {}
   );
-  console.log(data)
+
   // const emptyExcelJsonFile = data.excelJsonFile.map((row) => {
   //   return Object.keys(row).reduce((acc, key) => {
   //     acc[key] = ""; // Set each value to an empty string
@@ -191,7 +191,7 @@ const EditDesignTemplate = () => {
   //     };
   //   });
   // };
-  console.log(selectedCoordinates);
+  
   // **************************PREVENT FROM RELOADING*********************
   useEffect(() => {
     const handleBeforeUnload = (event) => {
@@ -437,12 +437,12 @@ const EditDesignTemplate = () => {
   //     fetchData()
 
   // }, []);
-console.log(dataCtx.allTemplates)
-  useEffect(()=>{
-    if(data){
+  console.log(dataCtx.allTemplates);
+  useEffect(() => {
+    if (data) {
       // dataCtx.addToAllTemplate(data)
     }
-  },[])
+  }, []);
   useEffect(() => {
     console.log("called rdf");
     const fetchDetails = async () => {
@@ -461,17 +461,17 @@ console.log(dataCtx.allTemplates)
 
           // Map and restructure data for coordinates
           const coordinateOfFormData = formFieldData.map((item) => ({
-            ...item.Coordinate,
+            ...item.coordinate,
             name: item.windowName,
           }));
 
           const coordinateOfQuestionField = questionField.map((item) => ({
-            ...item.Coordinate,
+            ...item.coordinate,
             name: item.windowName,
           }));
 
           const coordinateOfSkewField = skewField.map((item) => ({
-            ...item.Coordinate,
+            ...item.coordinate,
             name: item.windowName,
           }));
 
@@ -488,13 +488,15 @@ console.log(dataCtx.allTemplates)
           // Format the coordinates for the state update
           const newSelectedFields = allCoordinates.map((item) => {
             const {
-              "Start Row": startRow,
-              "Start Col": startCol,
-              "End Row": endRow,
-              "End Col": endCol,
+              "start Row": originalStartRow,
+              "start Col": startCol,
+              "end Row": originalEndRow,
+              "end Col": endCol,
               name,
               fieldType,
             } = item;
+            const startRow = originalStartRow - 1;
+            const endRow = originalEndRow-1;
             return { startRow, startCol, endRow, endCol, name, fieldType };
           });
           console.log(allCoordinates);
@@ -572,7 +574,7 @@ console.log(dataCtx.allTemplates)
 
     setDragStart({ row, col });
   };
-console.log(dataCtx.allTemplates)
+  console.log(dataCtx.allTemplates);
   const handleMouseMove = (e) => {
     if (!e.buttons || !dragStart) return;
     const boundingRect = imageRef.current.getBoundingClientRect();
@@ -896,7 +898,7 @@ console.log(dataCtx.allTemplates)
     // setSelection(null);
     setModalShow(false);
     if (!modalUpdate) {
-      console.log("Save called")
+      console.log("Save called");
       dataCtx.modifyAllTemplate(0, newData, selectedFieldType);
       const newSelected = {
         ...selection,
@@ -1757,7 +1759,7 @@ console.log(dataCtx.allTemplates)
                   >
                     {Array.from({ length: numRows }).map((_, rowIndex) => {
                       const result = [...data.excelJsonFile.map(Object.values)];
-                      console.log(data);
+
                       const numberedJson = [
                         ...data.numberedExcelJsonFile.map(Object.values),
                       ];

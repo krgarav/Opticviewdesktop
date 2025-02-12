@@ -184,8 +184,8 @@ const App = () => {
           <Route path="/operator/*" element={<Operator />} />
           <Route path="/moderator/*" element={<Moderator />} />
           <Route path="/auth/*" element={<AuthLayout />} />
-          <Route path="/" element={<EditDesignTemplate />} />
-          {/* <Route path="/" element={<Template />} /> */}
+          <Route path="/edit" element={<EditDesignTemplate />} />
+          <Route path="/" element={<Template />} />
           {/* <Route path="*" element={<Navigate to="/auth/login" replace />} /> */}
         </Routes>
       </div>
