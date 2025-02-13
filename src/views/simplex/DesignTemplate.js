@@ -165,38 +165,7 @@ const DesignTemplate = () => {
     return () => clearTimeout(timeoutId);
   }, [trigger, dataCtx.allTemplates]);
 
-  const handleDragStop = (e, d) => {
-    setPosition((prev) => ({ ...prev, x: d.x, y: d.y }));
-  };
-
-  const handleResizeStop = (e, direction, ref, delta, position) => {
-    setPosition({
-      x: position.x,
-      y: position.y,
-      width: ref.style.width.replace("px", ""),
-      height: ref.style.height.replace("px", ""),
-    });
-  };
-  const toggleSelection = (row, col) => {
-    const key = `${row},${col}`;
-    setSelected((prev) => {
-      const newState = { ...prev, [key]: !prev[key] };
-
-      return newState;
-    });
-  };
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getUrls();
-        const GetDataURL = response.MAIN_URL;
-        setBaseUrl(GetDataURL);
-      } catch (error) {
-        console.log("Error", error);
-      }
-    };
-    fetchData();
-  }, []);
+ 
   useEffect(() => {
     setTimeout(() => {
       setLocalData(JSON.parse(localStorage.getItem("Template")));

@@ -77,7 +77,6 @@ const EditDesignTemplate = () => {
   const [noOfStepInRow, setNoOfStepInRow] = useState();
   const [noInCol, setNoInCol] = useState();
   const [noOfStepInCol, setNoOfStepInCol] = useState();
-  const [option, setOption] = useState("");
   const [type, setType] = useState("");
   const [selectedFieldType, setSelectedFieldType] = useState("formField");
   const [fieldType, setFieldType] = useState();
@@ -105,7 +104,7 @@ const EditDesignTemplate = () => {
   const [idType, setIdType] = useState("");
   const [customValue, setCustomValue] = useState("");
   const [modalUpdate, setModalUpdate] = useState(false);
-  const [coordinateIndex, setCoordinateIndex] = useState(-1);
+  const [coordinateIndex, setCoordinateIndex] = useState(0);
   const [selectionIndex, setSelectionIndex] = useState();
   const [idSelectionCount, setIdSelectionCount] = useState(0);
   const [detailPage, setDetailPage] = useState(false);
@@ -125,9 +124,10 @@ const EditDesignTemplate = () => {
   const [data, setData] = useState(
     sessionStorage.getItem("Template")
       ? convertToCamelCase(JSON.parse(sessionStorage.getItem("Template")))
-          .layoutParameters
+          .layoutParameters 
       : {}
   );
+ console.log(data)
   // const emptyExcelJsonFile = data.excelJsonFile.map((row) => {
   //   return Object.keys(row).reduce((acc, key) => {
   //     acc[key] = ""; // Set each value to an empty string
@@ -190,7 +190,13 @@ const EditDesignTemplate = () => {
   //     };
   //   });
   // };
-
+  useEffect(() => {
+    setTimeout(() => {
+      if (dataCtx.allTemplates.length > 0) {
+        sendHandler();
+      }
+    }, 500);
+  }, [dataCtx.allTemplates]);
   // **************************PREVENT FROM RELOADING*********************
   useEffect(() => {
     const handleBeforeUnload = (event) => {
@@ -284,89 +290,85 @@ const EditDesignTemplate = () => {
     const greyValue = Math.floor(255 - a * (255 / 18));
     return `rgb(${greyValue}, ${greyValue}, ${greyValue})`;
   });
-  // useEffect(() => {
-  //   selectedCoordinates.forEach((item) => {
-  //     const isQuestionField = item?.fieldType === "questionField";
-  //     const isFormField = item?.fieldType === "formField";
-  //     const template = dataCtx.allTemplates[0];
-  //     const layoutDetails = template.layoutParameters;
-  //     setSensitivity(layoutDetails.iSensitivity);
-  //     if (isQuestionField || isFormField) {
-  //       const template = dataCtx.allTemplates[0];
-  //       const parameters = isQuestionField
-  //         ? template[0].questionsWindowParameters
-  //         : template[0].formFieldWindowParameters;
-  //       const formattedSelectedFile = {
-  //         "End Col": item.endCol,
-  //         "End Row": item.endRow + 1,
-  //         "Start Col": item.startCol,
-  //         "Start Row": item.startRow + 1,
-  //         fieldType: item.fieldType,
-  //         name: item.name,
-  //       };
 
-  //       // Find the index of the matched object
-  //       const index = parameters.findIndex((param) =>
-  //         isEqual(param.Coordinate, formattedSelectedFile)
-  //       );
+  useEffect(() => {
+    selectedCoordinates.forEach((item) => {
+      const isQuestionField = item?.fieldType === "questionField";
+      const isFormField = item?.fieldType === "formField";
+      const template = dataCtx.allTemplates[0];
+      const layoutDetails = template[0].layoutParameters;
 
-  //       // Get the matched object
-  //       const data2 = index !== -1 ? parameters[index] : null;
 
-  //       if (data2) {
-  //         // Determine the reading direction
-  //         let readingDirection = "rightToLeft";
-  //         const directionMapping = {
-  //           0: "topToBottom",
-  //           1: "topToBottom",
-  //           2: "bottomToTop",
-  //           3: "bottomToTop",
-  //           4: "leftToRight",
-  //           5: "rightToLeft",
-  //           6: "leftToRight",
-  //           7: "rightToLeft",
-  //         };
-  //         readingDirection =
-  //           directionMapping[data2.iDirection] || "rightToLeft";
-  //         // if (layoutDetails.dataReadDirection === "Top To Bottom") {
-  //         //   if (isQuestionField) {
-  //         //     readingDirection = "leftToRight";
-  //         //   } else {
-  //         //     readingDirection = "topToBottom";
-  //         //   }
-  //         // } else {
-  //         //   if (isQuestionField) {
-  //         //     readingDirection = "rightToLeft";
-  //         //   } else {
-  //         //     readingDirection = "bottomToTop";
-  //         //   }
-  //         // }
-  //         const type = data2.numericOrAlphabets;
-  //         // Process the data with the determined direction
+      setSensitivity(layoutDetails.iSensitivity);
 
-  //         const stepInRow = data2.rowStep;
-  //         const stepInCol = data2.columnStep;
-  //         processDirection(
-  //           readingDirection,
-  //           item.startRow,
-  //           item.endRow,
-  //           item.startCol,
-  //           item.endCol,
-  //           data.numberedExcelJsonFile,
-  //           type,
-  //           stepInRow,
-  //           stepInCol
-  //         );
-  //       }
-  //     }
-  //   });
-  // }, [
-  //   data.numberedExcelJsonFile,
-  //   selectedCoordinates,
-  //   dataCtx.allTemplates,
-  //   data.templateIndex,
-  //   modalUpdate,
-  // ]);
+
+      if (isQuestionField || isFormField) {
+       
+        const parameters = isQuestionField
+          ? template[0].questionsWindowParameters
+          : template[0].formFieldWindowParameters;
+        const layoutDetails = template[0].layoutParameters;
+        // Format the selected file for comparison
+        const formattedSelectedFile = {
+          "End Col": item.endCol,
+          "End Row": item.endRow + 1,
+          "Start Col": item.startCol,
+          "Start Row": item.startRow + 1,
+          fieldType: item.fieldType,
+          name: item.name,
+        };
+
+        // Find the index of the matched object
+        const index = parameters.findIndex((param) =>
+          isEqual(param.Coordinate, formattedSelectedFile)
+        );
+
+        // Get the matched object
+        const data2 = index !== -1 ? parameters[index] : null;
+console.log(data2)
+        if (data2) {
+          // Determine the reading direction
+          let readingDirection = "rightToLeft";
+          const directionMapping = {
+            0: "topToBottom",
+            1: "topToBottom",
+            2: "bottomToTop",
+            3: "bottomToTop",
+            4: "leftToRight",
+            5: "rightToLeft",
+            6: "leftToRight",
+            7: "rightToLeft",
+          };
+          readingDirection =
+            directionMapping[data2.iDirection] || "rightToLeft";
+
+          const type = data2.numericOrAlphabets;
+          // Process the data with the determined direction
+
+          const stepInRow = data2.rowStep;
+          const stepInCol = data2.columnStep;
+          processDirection(
+            readingDirection,
+            item.startRow,
+            item.endRow,
+            item.startCol,
+            item.endCol,
+            data.numberedExcelJsonFile,
+            type,
+            stepInRow,
+            stepInCol
+          );
+        }
+      }
+    });
+  }, [
+    data.numberedExcelJsonFile,
+    selectedCoordinates,
+    dataCtx.allTemplates,
+    data.templateIndex,
+    modalUpdate,
+  ]);
+
   useEffect(() => {
     const checkSizes = () => {
       const newSizes = {};
@@ -393,14 +395,11 @@ const EditDesignTemplate = () => {
     }
   }, []);
   useEffect(() => {
-    console.log("called rdf");
     const fetchDetails = async () => {
       try {
         // Fetch layout data by template ID
         const response = dataCtx.allTemplates[0];
-        console.log(response);
-
-        setLayoutFieldData(response);
+        setLayoutFieldData(response[0]);
         if (response) {
           // Extract data from the response
           const formFieldData = response[0]?.formFieldWindowParameters ?? [];
@@ -410,24 +409,30 @@ const EditDesignTemplate = () => {
 
           // Map and restructure data for coordinates
           const coordinateOfFormData = formFieldData.map((item) => ({
-            ...item.formFieldCoordinates,
+            ...item.Coordinate,
             name: item.windowName,
           }));
 
           const coordinateOfQuestionField = questionField.map((item) => ({
-            ...item.questionWindowCoordinates,
+            ...item.Coordinate,
             name: item.windowName,
           }));
 
           const coordinateOfSkewField = skewField.map((item) => ({
-            ...item.coordinate,
+            ...item.Coordinate,
             name: item.windowName,
           }));
-          const coordinateOfIdField =
+          let coordinateOfIdField =
             Object.keys(idField.layoutCoordinates).length > 0
               ? idField.layoutCoordinates
               : [];
 
+          if (
+            coordinateOfIdField["Start Row"] === 0 &&
+            coordinateOfIdField["Start Col"] === 0
+          ) {
+            coordinateOfIdField = [];
+          }
           // Combine all coordinates into a single array, conditionally including the ID field's coordinates
           const allCoordinates = [
             ...coordinateOfFormData,
@@ -435,14 +440,13 @@ const EditDesignTemplate = () => {
             ...coordinateOfSkewField,
             ...coordinateOfIdField,
           ];
-          console.log(allCoordinates);
           // Format the coordinates for the state update
           const newSelectedFields = allCoordinates.map((item) => {
             const {
-              start: originalStartRow,
-              left: startCol,
-              end: originalEndRow,
-              right: endCol,
+              "Start Row": originalStartRow,
+              "Start Col": startCol,
+              "End Row": originalEndRow,
+              "End Col": endCol,
               name,
               fieldType,
             } = item;
@@ -450,7 +454,6 @@ const EditDesignTemplate = () => {
             const endRow = originalEndRow - 1;
             return { startRow, startCol, endRow, endCol, name, fieldType };
           });
-          console.log(newSelectedFields);
           // Update state with the formatted coordinates and image data
           setSelectedCoordinates(newSelectedFields);
           setPosition(idField?.imageCoordinates);
@@ -525,7 +528,6 @@ const EditDesignTemplate = () => {
 
     setDragStart({ row, col });
   };
-  console.log(dataCtx.allTemplates);
   const handleMouseMove = (e) => {
     if (!e.buttons || !dragStart) return;
     const boundingRect = imageRef.current.getBoundingClientRect();
@@ -849,7 +851,6 @@ const EditDesignTemplate = () => {
     // setSelection(null);
     setModalShow(false);
     if (!modalUpdate) {
-      console.log("Save called");
       dataCtx.modifyAllTemplate(0, newData, selectedFieldType);
       const newSelected = {
         ...selection,
@@ -883,12 +884,7 @@ const EditDesignTemplate = () => {
 
         return copiedSelectedField;
       });
-      dataCtx.modifyWithRegion(
-        data.templateIndex,
-        newData,
-        selectedFieldType,
-        coordinateIndex
-      );
+      dataCtx.modifyWithRegion(0, newData, selectedFieldType, coordinateIndex);
       setSelection(null);
     }
   };
@@ -1038,6 +1034,7 @@ const EditDesignTemplate = () => {
     if (!response) {
       return;
     }
+
     const formattedSelectedFile = {
       "End Col": selectedField.endCol,
       "End Row": selectedField.endRow + 1,
@@ -1065,13 +1062,12 @@ const EditDesignTemplate = () => {
   };
 
   const sendHandler = async () => {
-    setLoading(true);
     // Retrieve the selected template
-    const template = dataCtx.allTemplates[data.templateIndex];
-
+    const template = dataCtx.allTemplates[0];
     // Extract layout parameters and its coordinates
     const layoutParameters = template[0].layoutParameters;
-    layoutParameters.id = data.templateId;
+    // layoutParameters.id = data.templateId;
+    console.log(template);
     const Coordinate = layoutParameters.Coordinate;
     let layoutCoordinates = {};
     // Transform layout coordinates into the required format
@@ -1175,50 +1171,7 @@ const EditDesignTemplate = () => {
     };
     console.log(fullRequestData);
     // Send the request and handle the response
-    const imageFile = base64ToFile(data.templateImagePath.image, "front.jpg");
-    const backImageFile = base64ToFile(
-      data.templateBackImagePath.image,
-      "back.jpg"
-    );
-    const csv = Papa.unparse(data.excelJsonFile);
-    // Create a Blob from the CSV string
-    const blob = new Blob([csv], { type: "text/csv" });
-
-    // Create a File object from the Blob
-    const csvfile = new File([blob], "data.csv", { type: "text/csv" });
-    try {
-      const response2 = await getUrls();
-      const GetDataURL = response2.DELETE_TEMPLATE;
-      const deleteTemplat = await axios.delete(
-        `${GetDataURL}?Id=${data.templateId}`
-      );
-    } catch (error) {
-      console.log(error);
-    }
-
-    try {
-      const res = await createTemplate(fullRequestData);
-      if (res.success === true) {
-        const layoutId = res?.layoutId;
-        const formdata = new FormData();
-        formdata.append("LayoutId", layoutId);
-        formdata.append("FrontImageFile", imageFile);
-        formdata.append("BackImageFile", backImageFile);
-        formdata.append("ExcelFile", csvfile);
-        const res2 = await sendFile(formdata);
-        setLoading(false);
-        alert(`Response : ${JSON.stringify(res2?.message)}`);
-        if (res2?.success) {
-          // sessionStorage.clear();
-          toast.success("Layout Saved");
-          navigate("/admin/template", { replace: true });
-        }
-      }
-    } catch (error) {
-      alert(`Error creating template`);
-      console.error("Error sending POST request:", error);
-      setLoading(false);
-    }
+    // localStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
   };
   const handleImage = (images) => {
     setImagesSelectedCount(images.length);
@@ -1417,14 +1370,12 @@ const EditDesignTemplate = () => {
       setSelectedCoordinates((prev) => {
         return [...prev, object];
       });
-      console.log(newData);
       setSelection(null);
     } catch (err) {
       console.log(err);
     }
   };
 
-  console.log(data);
   return (
     <>
       <div style={{ position: "sticky", top: 0, zIndex: 99 }}>
@@ -1473,7 +1424,7 @@ const EditDesignTemplate = () => {
           </div>
         </div>
       )}
-
+      {/* section for showing layout name */}
       <div
         style={{
           position: isWideScreen ? "fixed" : "absolute",
@@ -1574,7 +1525,7 @@ const EditDesignTemplate = () => {
         {!selection && (
           <Button
             onClick={sendHandler}
-            disabled={true}
+            // disabled={true}
             style={{
               position: "fixed",
               bottom: "50px", // Distance from the bottom of the screen
@@ -1590,7 +1541,7 @@ const EditDesignTemplate = () => {
               color: "white", // Optional: Set the text color
               border: "none", // Optional: Remove border if desired
               cursor: "pointer", // Optional: Change cursor to pointer on hover
-              display: "none",
+              // display: "none",
             }}
           >
             {!loading ? "Update" : "Updating"}
@@ -2724,7 +2675,7 @@ const EditDesignTemplate = () => {
         <EditTemplateModal
           show={detailPage}
           templateId={data.templateId}
-          layoutData={dataCtx.allTemplates[0]}
+          layoutData={dataCtx.allTemplates[0][0]}
           onHide={() => setDetailPage(false)}
           sensitivityHandler={sensitivityHandler}
         />
