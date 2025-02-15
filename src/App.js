@@ -23,6 +23,7 @@ import Template from "views/Template";
 import EditDesignTemplate from "views/simplex/EditDesignTemplate";
 import DesignTemplate from "views/simplex/DesignTemplate";
 import DesignBookletTemplate from "views/booklet/DesignTemplate";
+import Redirect from "components/Redirect";
 const useTokenRedirect = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -74,9 +75,12 @@ const useTokenRedirect = () => {
 };
 
 const App = () => {
+  
   const [showIpModal, setShowIpModal] = useState(false);
   const [templateLoading, setTemplateLoading] = useState(true); // State to manage loading
   const dataCtx = useContext(DataContext); // Assuming you are using context
+
+ 
   useEffect(() => {
     const handleKeyDown = (event) => {
       // Prevent Ctrl+R or Ctrl+Shift+R
@@ -171,6 +175,8 @@ const App = () => {
   // if (templateLoading) {
   //   return <TextLoader message={"Loading, Please wait..."} />; // Show loader while fetching templates
   // }
+
+  
   return (
     <>
       {/* <IpModal
@@ -184,7 +190,7 @@ const App = () => {
           <Route path="/operator/*" element={<Operator />} />
           <Route path="/moderator/*" element={<Moderator />} />
           <Route path="/auth/*" element={<AuthLayout />} />
-          <Route path="/edit" element={<EditDesignTemplate />} />
+          <Route path="/edit" element={<Redirect />} />
           <Route path="/" element={<Template />} />
           {/* <Route path="*" element={<Navigate to="/auth/login" replace />} /> */}
         </Routes>

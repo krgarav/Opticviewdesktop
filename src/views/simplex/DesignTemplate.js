@@ -1131,8 +1131,7 @@ const DesignTemplate = () => {
     const template = dataCtx.allTemplates.find((item) => {
       return item[0].layoutParameters?.key ?? "" === templateIndex;
     });
-    // const template = dataCtx.allTemplates[templateIndex];
-    console.log(template);
+    
     // Extract layout parameters and its coordinates
     const layoutParameters = template[0].layoutParameters;
     const idpatttern = "000000000000000000000000";

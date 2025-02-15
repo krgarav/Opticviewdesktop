@@ -2753,6 +2753,7 @@ const EditTemplateModal = (props) => {
             );
             // setScanningSide(comparewithId(scanningSideData,imageData))
           }
+          setExcelJsonFile(layout.excelJsonFile);
         }
       }
       // dataCtx.addFieldToTemplate(res, data.templateIndex);
@@ -2764,6 +2765,7 @@ const EditTemplateModal = (props) => {
   //     setSelectedUI("");
   //   }
   // }, [props.onHide]);
+  console.log(props.layoutData);
   const Option = (props) => {
     return (
       <components.Option {...props}>
@@ -2927,8 +2929,7 @@ const EditTemplateModal = (props) => {
         toast.error("Please Select ID Field ");
         return;
       }
-      console.log(idPresent);
-      console.log(idPresent.id === "present");
+    
 
       if (idPresent && idPresent.id === "present") {
         if (Object.values(face).length === 0) {
@@ -3050,13 +3051,15 @@ const EditTemplateModal = (props) => {
           },
         },
       ];
+    
+      const templateData2 = JSON.parse(sessionStorage.getItem("Template"));
+      const templateData3 = { ...templateData2, ...templateData[0] };
+      console.log(templateData3)
+      sessionStorage.setItem("Template", JSON.stringify(templateData3));
 
-      localStorage.setItem("Template", JSON.stringify(templateData));
-
-      const index = dataCtx.setAllTemplates(templateData);
-
-      setModalShow(false);
-      navigate("/admin/template/booklet/design-template");
+      // dataCtx.setNewTemplates([[templateData3]]);
+      props.onHide();
+      // setModalShow(false);
     } catch (error) {
       console.error("Error uploading file: ", error);
     }
@@ -3066,7 +3069,6 @@ const EditTemplateModal = (props) => {
     setScannerLoading(true);
     try {
       const response = await axios.post("http://localhost:5000/GetSampleData");
-      console.log(response);
       const { data, images } = response.data;
       const jsonData = data;
       const correctedJson = jsonData

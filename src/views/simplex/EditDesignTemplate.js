@@ -127,7 +127,7 @@ const EditDesignTemplate = () => {
           .layoutParameters 
       : {}
   );
- console.log(data)
+   console.log(data)
   // const emptyExcelJsonFile = data.excelJsonFile.map((row) => {
   //   return Object.keys(row).reduce((acc, key) => {
   //     acc[key] = ""; // Set each value to an empty string
@@ -388,12 +388,6 @@ console.log(data2)
   }, [selectedCoordinates, selection]);
 
   // *************************For Fetching the details and setting the coordinate******************
-
-  useEffect(() => {
-    if (data) {
-      // dataCtx.addToAllTemplate(data)
-    }
-  }, []);
   useEffect(() => {
     const fetchDetails = async () => {
       try {
@@ -479,7 +473,7 @@ console.log(data2)
   }, []);
 
   // *****************************************************************************************
-
+console.log(dataCtx.allTemplates)
   useEffect(() => {
     const classMap = {
       "rounded rectangle": "rounded-rectangle",
@@ -700,7 +694,6 @@ console.log(data2)
         rowStep: +noOfStepInRow,
         iSensitivity: +layoutData.iSensitivity,
         iDifference: +layoutData.iDifference,
-        // iOption: +option,
         iReject: +layoutData.iReject,
         iDirection: +readingDirectionOption,
         windowName: name,
@@ -732,7 +725,6 @@ console.log(data2)
         iDirection: +readingDirectionOption,
         iSensitivity: +layoutData.iSensitivity ?? 3,
         iDifference: +layoutData.iDifference ?? 5,
-        // iOption: +option,
         iMinimumMarks: +minimumMark,
         iMaximumMarks: +maximumMark,
         iType: type,
@@ -1048,7 +1040,7 @@ console.log(data2)
       copiedState.splice(index, 1); // Remove the item at the specified index
       return copiedState;
     });
-    dataCtx.deleteFieldTemplate(data.templateIndex, formattedSelectedFile);
+    dataCtx.deleteFieldTemplate(0, formattedSelectedFile);
     resetJson(
       data.numberedExcelJsonFile,
       formattedSelectedFile["Start Row"] - 1,
@@ -1169,9 +1161,9 @@ console.log(data2)
       skewMarksWindowParameters,
       formFieldWindowParameters,
     };
-    console.log(fullRequestData);
-    // Send the request and handle the response
-    // localStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
+  
+    sessionStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
+    sessionStorage.setItem("Template", JSON.stringify(fullRequestData));
   };
   const handleImage = (images) => {
     setImagesSelectedCount(images.length);
@@ -1541,7 +1533,7 @@ console.log(data2)
               color: "white", // Optional: Set the text color
               border: "none", // Optional: Remove border if desired
               cursor: "pointer", // Optional: Change cursor to pointer on hover
-              // display: "none",
+              display: "none",
             }}
           >
             {!loading ? "Update" : "Updating"}
@@ -1607,7 +1599,7 @@ console.log(data2)
                   >
                     {Array.from({ length: numRows }).map((_, rowIndex) => {
                       const result = [...data.excelJsonFile.map(Object.values)];
-
+                     
                       const numberedJson = [
                         ...data.numberedExcelJsonFile.map(Object.values),
                       ];
@@ -1638,27 +1630,32 @@ console.log(data2)
                                 undefined
                                   ? numberedJson[rowIndex][colIndex]
                                   : null;
-
                               const value = result[rowIndex][colIndex];
 
                               // Initialize bgColor
-                              let bgColor = "";
-
+                              let bgColor =
+                              result[rowIndex][colIndex] != 0 &&
+                              result[rowIndex][colIndex] !== undefined
+                                ? "black"
+                                : "";
+                                if (num || num === 0) {
+                                  bgColor = "lightgreen";
+                                }
                               // Calculate bgColor based on shades
-                              if (
-                                value !== undefined &&
-                                value >= sensitivity &&
-                                value !== 0
-                              ) {
-                                const maxValue = Math.max(...result.flat()); // Calculate maxValue dynamically
-                                const shadeIndex = Math.min(
-                                  Math.floor((value / maxValue) * 15),
-                                  15
-                                ); // Map value to shades
-                                bgColor = shades[shadeIndex];
-                              } else if (num || num === 0) {
-                                bgColor = "lightgreen"; // Override to lightgreen if num exists
-                              }
+                              // if (
+                              //   value !== undefined &&
+                              //   value >= sensitivity &&
+                              //   value !== 0
+                              // ) {
+                              //   const maxValue = Math.max(...result.flat()); // Calculate maxValue dynamically
+                              //   const shadeIndex = Math.min(
+                              //     Math.floor((value / maxValue) * 15),
+                              //     15
+                              //   ); // Map value to shades
+                              //   bgColor = shades[shadeIndex];
+                              // } else if (num || num === 0) {
+                              //   bgColor = "lightgreen"; // Override to lightgreen if num exists
+                              // }
 
                               // Font color logic
                               let fontColor =

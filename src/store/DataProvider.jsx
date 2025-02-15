@@ -1,26 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DataContext from "./DataContext"; // Assuming you have a DataContext
 import { isEqual } from "lodash";
 import convertToCamelCase from "services/lowerLetter";
 import StructureData from "services/dataSrtucture";
 
 const initialData = {
-  allTemplates: JSON.parse(sessionStorage.getItem("Template"))
-    ? [
-        [
-          StructureData(
-            convertToCamelCase(JSON.parse(sessionStorage.getItem("Template")))
-          ),
-        ],
-      ]
-    : [],
+  allTemplates:[],
   backendIP: "localhost",
 }; // Initial data if localStorage is empty
 
 const DataProvider = (props) => {
   // Initialize dataState from localStorage if it exists, otherwise use initialData
   const [dataState, setDataState] = useState(initialData);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const storedData = sessionStorage.getItem("Template");
+      if (storedData) {
+        setDataState({
+          allTemplates: [
+            [
+              StructureData(
+                convertToCamelCase(JSON.parse(storedData))
+              ),
+            ],
+          ],
+          backendIP: "localhost",
+        });
+      }
+      
+    }, 1000);
 
+    return () => clearTimeout(timer); // Cleanup timeout
+  }, []);
   const templateHandler = (template) => {
     let newIndex;
     setDataState((prevState) => {
@@ -667,7 +678,14 @@ const DataProvider = (props) => {
       };
     });
   };
-
+const setNewTemplatesHandler = (templateData)=>{
+  setDataState((prevState) => {
+    return {
+      ...prevState,
+      allTemplates: templateData,
+    };
+  })
+}
   const dataContext = {
     allTemplates: dataState.allTemplates,
     setAllTemplates: templateHandler,
@@ -687,6 +705,7 @@ const DataProvider = (props) => {
     addImageCoordinateWithIndex: addImageCoordinateWithIndexHandler,
     setBackendIP: setBackendIPHandler,
     replaceTemplate: templateReplaceHandler,
+    setNewTemplates: setNewTemplatesHandler,
   };
 
   return (
