@@ -42,9 +42,10 @@ const Template = () => {
   const navigate = useNavigate();
   const dataCtx = useContext(DataContext);
 
-  // useEffect(() => {
-  //   sessionStorage.clear();
-  // }, []);
+  useEffect(() => {
+    sessionStorage.clear();
+    localStorage.clear();
+  }, []);
   // useEffect(() => {
   //   const fetchData = async () => {
   //     try {

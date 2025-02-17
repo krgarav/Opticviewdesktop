@@ -127,7 +127,6 @@ const EditDesignTemplate = () => {
           .layoutParameters 
       : {}
   );
-   console.log(data)
   // const emptyExcelJsonFile = data.excelJsonFile.map((row) => {
   //   return Object.keys(row).reduce((acc, key) => {
   //     acc[key] = ""; // Set each value to an empty string
@@ -197,6 +196,7 @@ const EditDesignTemplate = () => {
       }
     }, 500);
   }, [dataCtx.allTemplates]);
+
   // **************************PREVENT FROM RELOADING*********************
   useEffect(() => {
     const handleBeforeUnload = (event) => {
@@ -325,7 +325,6 @@ const EditDesignTemplate = () => {
 
         // Get the matched object
         const data2 = index !== -1 ? parameters[index] : null;
-console.log(data2)
         if (data2) {
           // Determine the reading direction
           let readingDirection = "rightToLeft";
@@ -393,6 +392,7 @@ console.log(data2)
       try {
         // Fetch layout data by template ID
         const response = dataCtx.allTemplates[0];
+        console.log(response)
         setLayoutFieldData(response[0]);
         if (response) {
           // Extract data from the response
@@ -420,7 +420,7 @@ console.log(data2)
             Object.keys(idField.layoutCoordinates).length > 0
               ? idField.layoutCoordinates
               : [];
-
+console.log(coordinateOfIdField)
           if (
             coordinateOfIdField["Start Row"] === 0 &&
             coordinateOfIdField["Start Col"] === 0
@@ -1052,14 +1052,14 @@ console.log(dataCtx.allTemplates)
   const handleIconMouseUp = (event) => {
     event.stopPropagation();
   };
-
+console.log(data)
   const sendHandler = async () => {
     // Retrieve the selected template
     const template = dataCtx.allTemplates[0];
     // Extract layout parameters and its coordinates
     const layoutParameters = template[0].layoutParameters;
     // layoutParameters.id = data.templateId;
-    console.log(template);
+    layoutParameters.numberedExcelJsonFile = data.numberedExcelJsonFile;
     const Coordinate = layoutParameters.Coordinate;
     let layoutCoordinates = {};
     // Transform layout coordinates into the required format

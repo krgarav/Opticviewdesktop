@@ -526,7 +526,7 @@ const SimplexTemplateModal = (props) => {
 
       localStorage.setItem("Template", JSON.stringify(templateData));
 
-      const index = dataCtx.setAllTemplates(templateData);
+      dataCtx.setNewTemplates([templateData]);
 
       setModalShow(false);
       navigate("/admin/template/booklet/design-template");

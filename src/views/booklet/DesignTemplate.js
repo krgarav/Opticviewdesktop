@@ -185,17 +185,15 @@ const DesignBookletTemplate = () => {
     }
   }, [selectedCoordinates, selection]);
 
-  // useEffect(() => {
-  //   const templateData = JSON.parse(localStorage.getItem("Template"));
-  //   // Find the current template instead of filtering
-  //   // const currentTemplate = dataCtx.allTemplates.find((item) => {
-  //   //   console.log(item);
-  //   //   return item[0].layoutParameters?.key ?? "" === templateIndex;
-  //   // })?[0];
-  //   // if (!currentTemplate) {
-  //   dataCtx.setAllTemplates(templateData);
-  //   // }
-  // }, []);
+  useEffect(() => {
+    const templateData = JSON.parse(localStorage.getItem("Template"));
+    if (templateData) {
+      if (dataCtx.allTemplates.length === 0) {
+        dataCtx.setNewTemplates([templateData]);
+      }
+    }
+  }, []);
+  console.log(dataCtx.allTemplates);
   useEffect(() => {
     const handleBeforeUnload = (event) => {
       const confirmationMessage =
@@ -266,7 +264,6 @@ const DesignBookletTemplate = () => {
 
   useEffect(() => {
     const template = dataCtx.allTemplates[0];
-    console.log(selectedCoordinates);
     selectedCoordinates.forEach((item) => {
       const isQuestionField = item?.fieldType === "questionField";
       const isFormField = item?.fieldType === "formField";
@@ -275,7 +272,6 @@ const DesignBookletTemplate = () => {
         const template = dataCtx.allTemplates.find((item) => {
           return item[0].layoutParameters?.key ?? "" === templateIndex;
         });
-        console.log(template);
         const parameters = isQuestionField
           ? template[0].questionsWindowParameters
           : template[0].formFieldWindowParameters;
@@ -316,7 +312,6 @@ const DesignBookletTemplate = () => {
             // Process the data with the determined direction
             const stepInRow = data2.rowStep;
             const stepInCol = data2.columnStep;
-            console.log(data2);
             const data = processDirection(
               readingDirection,
               item.startRow,
@@ -328,14 +323,12 @@ const DesignBookletTemplate = () => {
               stepInRow,
               stepInCol
             );
-            console.log(".....>", data);
             const copiedObject = deepcopy(localData[0]);
             delete copiedObject.layoutParameters.numberedExcelJsonFile;
             copiedObject.layoutParameters = {
               ...copiedObject.layoutParameters,
               numberedExcelJsonFile: data,
             };
-            console.log([copiedObject]);
             // dataCtx.replaceTemplate([copiedObject])
             localStorage.setItem("Template", JSON.stringify([copiedObject]));
           }
@@ -466,8 +459,6 @@ const DesignBookletTemplate = () => {
       setLayoutFieldData(template[0]);
     }
   }, [dataCtx.allTemplates]);
-
- 
 
   useEffect(() => {
     // Create an array to hold the options
@@ -1013,9 +1004,8 @@ const DesignBookletTemplate = () => {
     const template = dataCtx.allTemplates.find((item) => {
       return item[0].layoutParameters?.key ?? "" === templateIndex;
     });
-    console.log("clicked");
+
     // const template = dataCtx.allTemplates[templateIndex];
-    console.log(template);
 
     // Extract layout parameters and its coordinates
     const layoutParameters = template[0].layoutParameters;
@@ -1064,7 +1054,9 @@ const DesignBookletTemplate = () => {
     };
     delete updatedLayout.Coordinate;
     delete updatedLayout.imageStructureData;
-
+    if (updatedLayout.idStatus === "not present") {
+      updatedLayout.iDirection = 4;
+    }
     // Extract and format barcode, image, and printing data
     const barcodeData = template[0].barcodeData;
     const imageData = template[0].imageData;
@@ -1133,6 +1125,8 @@ const DesignBookletTemplate = () => {
       imageCroppingDTO,
     };
 
+    // localStorage.setItem("Template", JSON.stringify(dataCtx.allTemplates[0]));
+
     localStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
   };
   const handleImage = (images) => {
@@ -1141,7 +1135,7 @@ const DesignBookletTemplate = () => {
     //   dataCtx.addImageCoordinate(templateIndex, images)
     // }
   };
-
+  console.log(dataCtx.allTemplates);
   if (!dataCtx.allTemplates) {
     return <div>Loading</div>;
   }
