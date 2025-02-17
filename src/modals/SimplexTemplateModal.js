@@ -275,8 +275,6 @@ const SimplexTemplateModal = (props) => {
               return Object.keys(filteredItem).length > 0 ? filteredItem : null;
             })
             .filter((item) => item !== null); // Remove nulls from the resulting array
-
-          console.log(correctedJson);
           const Row = correctedJson.length;
           const Column = Object.keys(json[1]).filter(
             (item) => item !== ""

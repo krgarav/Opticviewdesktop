@@ -30,7 +30,6 @@ import { VirtualScroll } from "@syncfusion/ej2-grids";
 import { getTotalExcellRow } from "helper/Booklet32Page_helper";
 import { getDataByRowRange } from "helper/Booklet32Page_helper";
 import getSocketBaseUrl from "services/getSocketApi";
-import DualJsonData from "data/dualJsonData";
 import splitOddEven from "services/OddEvenSplit";
 function emptyMessageTemplate() {
   return (

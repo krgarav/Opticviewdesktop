@@ -193,7 +193,6 @@ const DesignBookletTemplate = () => {
       }
     }
   }, []);
-  console.log(dataCtx.allTemplates);
   useEffect(() => {
     const handleBeforeUnload = (event) => {
       const confirmationMessage =
