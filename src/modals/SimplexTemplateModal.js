@@ -539,6 +539,7 @@ const SimplexTemplateModal = (props) => {
       const response = await axios.post("http://localhost:5000/GetSampleData");
       console.log(response);
       const { data, images } = response.data;
+      // const updateData = [images[0]["frontImagePath"], images[0]["backImagePath"]];
       const jsonData = data;
       const correctedJson = jsonData
         .map((item) => {
