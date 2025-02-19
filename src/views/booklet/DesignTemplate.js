@@ -1330,11 +1330,11 @@ const DesignBookletTemplate = () => {
                                 undefined
                                   ? numberedJson[rowIndex][colIndex]
                                   : null;
-                              let bgColor =
-                                result[rowIndex][colIndex] != 0 &&
-                                result[rowIndex][colIndex] !== undefined
-                                  ? "black"
-                                  : "";
+                                  let bgColor =
+                                  +result[rowIndex][colIndex] >= +templates[0]?.layoutParameters?.iSensitivity &&
+                                  result[rowIndex][colIndex] !== undefined
+                                    ? "black"
+                                    : "";
 
                               if (num || num === 0) {
                                 bgColor = "lightgreen";
