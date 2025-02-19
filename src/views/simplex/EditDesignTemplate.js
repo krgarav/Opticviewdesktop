@@ -36,6 +36,7 @@ import CopyModal from "modals/CopyModal/CopyModal";
 import FieldDetails from "modals/FieldDetails";
 import EditImagesCropper from "modals/EditImagesCropper";
 import convertToCamelCase from "services/lowerLetter";
+import { calculateTotalRow } from "services/HelperFunctions";
 // Function to get values from sessionStorage or provide default
 const getSessionStorageOrDefault = (key, defaultValue) => {
   const stored = sessionStorage.getItem(key);
@@ -127,6 +128,7 @@ const EditDesignTemplate = () => {
           .layoutParameters 
       : {}
   );
+ 
   // const emptyExcelJsonFile = data.excelJsonFile.map((row) => {
   //   return Object.keys(row).reduce((acc, key) => {
   //     acc[key] = ""; // Set each value to an empty string
@@ -250,6 +252,14 @@ const EditDesignTemplate = () => {
   //     document.removeEventListener("keydown", trapFocus);
   //   };
   // }, []);
+  useEffect(()=>{
+    const template = sessionStorage.getItem("Template");
+    if(template){
+      // setData(JSON.parse(template))
+      // dataCtx.setNewTemplates([[JSON.parse(template)]])
+    }
+  },[data])
+  console.log(dataCtx.allTemplates)
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 576) {
@@ -434,6 +444,7 @@ console.log(coordinateOfIdField)
             ...coordinateOfSkewField,
             ...coordinateOfIdField,
           ];
+          console.log(allCoordinates)
           // Format the coordinates for the state update
           const newSelectedFields = allCoordinates.map((item) => {
             const {
@@ -1633,8 +1644,9 @@ console.log(data)
                               const value = result[rowIndex][colIndex];
 
                               // Initialize bgColor
+                              
                               let bgColor =
-                              result[rowIndex][colIndex] != 0 &&
+                              +result[rowIndex][colIndex] >= +data.iSensitivity &&
                               result[rowIndex][colIndex] !== undefined
                                 ? "black"
                                 : "";
@@ -2290,40 +2302,45 @@ console.log(data)
               <input value={numRows} readOnly className="form-control" />
             </div>
           </Row>
-          <Row className="">
-            <label htmlFor="example-select-input" className="col-2 ">
-              Total No In Row
-            </label>
-            <div className="col-4">
-              <input
-                type="text"
-                className="form-control"
-                value={noInRow}
-                onChange={(e) => {
-                  // Allow only numeric input (including empty input)
-                  const numericValue = e.target.value.replace(/[^0-9]/g, "");
-                  setNoInRow(numericValue);
-                }}
-                required
-              />
-            </div>
-            <label htmlFor="example-select-input" className="col-2 ">
-              Total Step In A Row
-            </label>
-            <div className="col-4">
-              <input
-                type="text"
-                className="form-control"
-                value={noOfStepInRow}
-                onChange={(e) => {
-                  // Allow only numeric input (including empty input)
-                  const numericValue = e.target.value.replace(/[^0-9]/g, "");
-                  setNoOfStepInRow(numericValue);
-                }}
-                required
-              />
-            </div>
-          </Row>
+           <Row className="">
+                          <label htmlFor="example-select-input" className="col-2 ">
+                            Step In A Row
+                          </label>
+                          <div className="col-4">
+                            <input
+                              type="number"
+                              className="form-control"
+                              value={noOfStepInRow}
+                              onChange={(e) => {
+                                // if (e.target.value !== "") {
+                                setNoInRow(
+                                  calculateTotalRow(
+                                    startRowInput,
+                                    endRowInput,
+                                    e.target.value
+                                  )
+                                );
+                                // }
+          
+                                setNoOfStepInRow(e.target.value);
+                              }}
+                              required
+                            />
+                          </div>
+                          <label htmlFor="example-select-input" className="col-2 ">
+                            Total No In Row
+                          </label>
+                          <div className="col-4">
+                            <input
+                              type="number"
+                              className="form-control"
+                              value={noInRow}
+                              onChange={(e) => setNoInRow(e.target.value)}
+                              // required
+                              disabled
+                            />
+                          </div>
+                        </Row>
           <Row className="mb-2">
             <label
               htmlFor="example-select-input"
@@ -2404,40 +2421,42 @@ console.log(data)
               <input value={numCols} readOnly className="form-control" />
             </div>
           </Row>
-          <Row className="mb-2">
-            <label htmlFor="example-select-input" className="col-2 ">
-              Total No In Column
-            </label>
-            <div className="col-4">
-              <input
-                type="text"
-                className="form-control"
-                value={noInCol}
-                onChange={(e) => {
-                  // Allow only numeric input (including empty input)
-                  const numericValue = e.target.value.replace(/[^0-9]/g, "");
-                  setNoInCol(numericValue);
-                }}
-                required
-              />
-            </div>
-            <label htmlFor="example-select-input" className="col-2 ">
-              Total Step In A Column
-            </label>
-            <div className="col-4">
-              <input
-                type="text"
-                className="form-control"
-                value={noOfStepInCol}
-                onChange={(e) => {
-                  // Allow only numeric input (including empty input)
-                  const numericValue = e.target.value.replace(/[^0-9]/g, "");
-                  setNoOfStepInCol(numericValue);
-                }}
-                required
-              />
-            </div>
-          </Row>
+         <Row className="mb-2">
+                        <label htmlFor="example-select-input" className="col-2 ">
+                          Step In A Column
+                        </label>
+                        <div className="col-4">
+                          <input
+                            type="number"
+                            className="form-control"
+                            value={noOfStepInCol}
+                            onChange={(e) => {
+                              setNoInCol(
+                                calculateTotalRow(
+                                  startColInput,
+                                  endColInput,
+                                  e.target.value
+                                )
+                              );
+                              setNoOfStepInCol(e.target.value);
+                            }}
+                            required
+                          />
+                        </div>
+                        <label htmlFor="example-select-input" className="col-2 ">
+                          Total No In Column
+                        </label>
+                        <div className="col-4">
+                          <input
+                            type="number"
+                            className="form-control"
+                            value={noInCol}
+                            onChange={(e) => setNoInCol(e.target.value)}
+                            required
+                            disabled
+                          />
+                        </div>
+                      </Row>
 
           <Row className="mb-2">
             <label htmlFor="example-text-input" className="col-md-2 ">
@@ -2504,7 +2523,7 @@ console.log(data)
                 htmlFor="example-text-input"
                 className="col-md-2 col-form-label "
               >
-                Total Options :
+                Total Fields :
               </label>
               <div className="col-4 ">
                 <input
@@ -2675,6 +2694,7 @@ console.log(data)
           layoutData={dataCtx.allTemplates[0][0]}
           onHide={() => setDetailPage(false)}
           sensitivityHandler={sensitivityHandler}
+          setData={setData}
         />
       )}
 

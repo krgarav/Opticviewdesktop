@@ -2879,6 +2879,7 @@ const EditTemplateModal = (props) => {
   };
 
   const createTemplateHandler = async () => {
+
     if (printEnable.id !== "0") {
       if (!validatePrintField()) {
         return;
@@ -2981,7 +2982,7 @@ const EditTemplateModal = (props) => {
       }
       return;
     }
-
+    const templateData5 = JSON.parse(sessionStorage.getItem("Template")).layoutParameters;
     const key = uuidv4();
     try {
       const emptyExcelJsonFile = excelJsonFile.map((row) => {
@@ -3012,7 +3013,8 @@ const EditTemplateModal = (props) => {
             idMarksPattern: "000000000000000000000000",
             excelJsonFile: excelJsonFile,
             images: images,
-            numberedExcelJsonFile: emptyExcelJsonFile,
+            numberedExcelJsonFile: templateData5.numberedExcelJsonFile,
+            layoutCoordinate:[]
           },
           barcodeData: {
             barcodeSide: 0,
@@ -3053,12 +3055,22 @@ const EditTemplateModal = (props) => {
       ];
     
       const templateData2 = JSON.parse(sessionStorage.getItem("Template"));
-      const templateData3 = { ...templateData2, ...templateData[0] };
-      console.log(templateData3)
-      sessionStorage.setItem("Template", JSON.stringify(templateData3));
+    //  const updateTemplate = templateData2.layoutParameters = templateData[0];
 
+      // const templateData3 = { ...templateData2, ...templateData[0] };
+      // const templateData2 = JSON.parse(sessionStorage.getItem("Template")) || {};
+const templateData3 = JSON.parse(JSON.stringify({ ...templateData2, ...templateData[0] }));
+
+      console.log([[templateData3]])
+      sessionStorage.setItem("Template", JSON.stringify(templateData3));
+      // window.location.reload();
+      props.setData(templateData3.layoutParameters)
+     
+dataCtx.setNewTemplates([[templateData3]]);
       // dataCtx.setNewTemplates([[templateData3]]);
+
       props.onHide();
+      // window.location.reload();
       // setModalShow(false);
     } catch (error) {
       console.error("Error uploading file: ", error);
@@ -3116,9 +3128,10 @@ const EditTemplateModal = (props) => {
       return;
     }
     setFileModal(false);
-    setImages([
-      "Template Image\\19219_e59c79cb-044a-4cfc-bca7-126ffcf92260_1_Front.jpg",
-      "Template Image\\19219_702a07ba-50f3-422e-9b15-ca3990264752_22_Back.jpg",
+    setImages([{
+      "frontSide":"Template Image\\19219_e59c79cb-044a-4cfc-bca7-126ffcf92260_1_Front.jpg",
+      "backSide": "Template Image\\19219_702a07ba-50f3-422e-9b15-ca3990264752_22_Back.jpg",
+    }
     ]);
   };
 

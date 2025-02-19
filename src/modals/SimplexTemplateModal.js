@@ -477,7 +477,7 @@ const SimplexTemplateModal = (props) => {
             ngAction: windowNgOption?.id,
             dataReadDirection: direction?.id,
             idStatus: idPresent.id,
-            isBooklet:false,
+            isBooklet: false,
             iReject: 0,
             idMarksPattern: "000000000000000000000000",
             excelJsonFile: excelJsonFile,
@@ -588,8 +588,12 @@ const SimplexTemplateModal = (props) => {
     }
     setFileModal(false);
     setImages([
-      "Template Image\\19219_e59c79cb-044a-4cfc-bca7-126ffcf92260_1_Front.jpg",
-      "Template Image\\19219_702a07ba-50f3-422e-9b15-ca3990264752_22_Back.jpg",
+      {
+        frontSideImage:
+          "Template Image\\19219_e59c79cb-044a-4cfc-bca7-126ffcf92260_1_Front.jpg",
+        backSideImage:
+          "Template Image\\19219_702a07ba-50f3-422e-9b15-ca3990264752_22_Back.jpg",
+      },
     ]);
   };
 
