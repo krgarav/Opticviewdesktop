@@ -125,10 +125,10 @@ const EditDesignTemplate = () => {
   const [data, setData] = useState(
     sessionStorage.getItem("Template")
       ? convertToCamelCase(JSON.parse(sessionStorage.getItem("Template")))
-          .layoutParameters 
+          .layoutParameters
       : {}
   );
- 
+
   // const emptyExcelJsonFile = data.excelJsonFile.map((row) => {
   //   return Object.keys(row).reduce((acc, key) => {
   //     acc[key] = ""; // Set each value to an empty string
@@ -252,14 +252,15 @@ const EditDesignTemplate = () => {
   //     document.removeEventListener("keydown", trapFocus);
   //   };
   // }, []);
-  useEffect(()=>{
-    const template = sessionStorage.getItem("Template");
-    if(template){
-      // setData(JSON.parse(template))
-      // dataCtx.setNewTemplates([[JSON.parse(template)]])
+  useEffect(() => {
+    if (dataCtx.allTemplates.length > 0) {
+      console.log(dataCtx.allTemplates[0][0]);
+      sessionStorage.setItem(
+        "Template",
+        JSON.stringify(dataCtx.allTemplates[0][0])
+      );
     }
-  },[data])
-  console.log(dataCtx.allTemplates)
+  }, [dataCtx.allTemplates]);
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 576) {
@@ -308,12 +309,9 @@ const EditDesignTemplate = () => {
       const template = dataCtx.allTemplates[0];
       const layoutDetails = template[0].layoutParameters;
 
-
       setSensitivity(layoutDetails.iSensitivity);
 
-
       if (isQuestionField || isFormField) {
-       
         const parameters = isQuestionField
           ? template[0].questionsWindowParameters
           : template[0].formFieldWindowParameters;
@@ -402,7 +400,7 @@ const EditDesignTemplate = () => {
       try {
         // Fetch layout data by template ID
         const response = dataCtx.allTemplates[0];
-        console.log(response)
+        console.log(response);
         setLayoutFieldData(response[0]);
         if (response) {
           // Extract data from the response
@@ -410,8 +408,8 @@ const EditDesignTemplate = () => {
           const questionField = response[0]?.questionsWindowParameters ?? [];
           const skewField = response[0]?.skewMarksWindowParameters ?? [];
           const idField = response[0]?.layoutParameters ?? {};
-
           // Map and restructure data for coordinates
+
           const coordinateOfFormData = formFieldData.map((item) => ({
             ...item.Coordinate,
             name: item.windowName,
@@ -430,7 +428,7 @@ const EditDesignTemplate = () => {
             Object.keys(idField.layoutCoordinates).length > 0
               ? idField.layoutCoordinates
               : [];
-console.log(coordinateOfIdField)
+          console.log(coordinateOfIdField);
           if (
             coordinateOfIdField["Start Row"] === 0 &&
             coordinateOfIdField["Start Col"] === 0
@@ -444,7 +442,7 @@ console.log(coordinateOfIdField)
             ...coordinateOfSkewField,
             ...coordinateOfIdField,
           ];
-          console.log(allCoordinates)
+          console.log(allCoordinates);
           // Format the coordinates for the state update
           const newSelectedFields = allCoordinates.map((item) => {
             const {
@@ -484,7 +482,7 @@ console.log(coordinateOfIdField)
   }, []);
 
   // *****************************************************************************************
-console.log(dataCtx.allTemplates)
+  console.log(dataCtx.allTemplates);
   useEffect(() => {
     const classMap = {
       "rounded rectangle": "rounded-rectangle",
@@ -1063,7 +1061,7 @@ console.log(dataCtx.allTemplates)
   const handleIconMouseUp = (event) => {
     event.stopPropagation();
   };
-console.log(data)
+  console.log(data);
   const sendHandler = async () => {
     // Retrieve the selected template
     const template = dataCtx.allTemplates[0];
@@ -1172,8 +1170,11 @@ console.log(data)
       skewMarksWindowParameters,
       formFieldWindowParameters,
     };
-  
-    sessionStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
+
+    sessionStorage.setItem(
+      "StructuredTemplate",
+      JSON.stringify(fullRequestData)
+    );
     sessionStorage.setItem("Template", JSON.stringify(fullRequestData));
   };
   const handleImage = (images) => {
@@ -1610,7 +1611,7 @@ console.log(data)
                   >
                     {Array.from({ length: numRows }).map((_, rowIndex) => {
                       const result = [...data.excelJsonFile.map(Object.values)];
-                     
+
                       const numberedJson = [
                         ...data.numberedExcelJsonFile.map(Object.values),
                       ];
@@ -1644,15 +1645,16 @@ console.log(data)
                               const value = result[rowIndex][colIndex];
 
                               // Initialize bgColor
-                              
+
                               let bgColor =
-                              +result[rowIndex][colIndex] >= +data.iSensitivity &&
-                              result[rowIndex][colIndex] !== undefined
-                                ? "black"
-                                : "";
-                                if (num || num === 0) {
-                                  bgColor = "lightgreen";
-                                }
+                                +result[rowIndex][colIndex] >=
+                                  +data.iSensitivity &&
+                                result[rowIndex][colIndex] !== undefined
+                                  ? "black"
+                                  : "";
+                              if (num || num === 0) {
+                                bgColor = "lightgreen";
+                              }
                               // Calculate bgColor based on shades
                               // if (
                               //   value !== undefined &&
@@ -2302,45 +2304,45 @@ console.log(data)
               <input value={numRows} readOnly className="form-control" />
             </div>
           </Row>
-           <Row className="">
-                          <label htmlFor="example-select-input" className="col-2 ">
-                            Step In A Row
-                          </label>
-                          <div className="col-4">
-                            <input
-                              type="number"
-                              className="form-control"
-                              value={noOfStepInRow}
-                              onChange={(e) => {
-                                // if (e.target.value !== "") {
-                                setNoInRow(
-                                  calculateTotalRow(
-                                    startRowInput,
-                                    endRowInput,
-                                    e.target.value
-                                  )
-                                );
-                                // }
-          
-                                setNoOfStepInRow(e.target.value);
-                              }}
-                              required
-                            />
-                          </div>
-                          <label htmlFor="example-select-input" className="col-2 ">
-                            Total No In Row
-                          </label>
-                          <div className="col-4">
-                            <input
-                              type="number"
-                              className="form-control"
-                              value={noInRow}
-                              onChange={(e) => setNoInRow(e.target.value)}
-                              // required
-                              disabled
-                            />
-                          </div>
-                        </Row>
+          <Row className="">
+            <label htmlFor="example-select-input" className="col-2 ">
+              Step In A Row
+            </label>
+            <div className="col-4">
+              <input
+                type="number"
+                className="form-control"
+                value={noOfStepInRow}
+                onChange={(e) => {
+                  // if (e.target.value !== "") {
+                  setNoInRow(
+                    calculateTotalRow(
+                      startRowInput,
+                      endRowInput,
+                      e.target.value
+                    )
+                  );
+                  // }
+
+                  setNoOfStepInRow(e.target.value);
+                }}
+                required
+              />
+            </div>
+            <label htmlFor="example-select-input" className="col-2 ">
+              Total No In Row
+            </label>
+            <div className="col-4">
+              <input
+                type="number"
+                className="form-control"
+                value={noInRow}
+                onChange={(e) => setNoInRow(e.target.value)}
+                // required
+                disabled
+              />
+            </div>
+          </Row>
           <Row className="mb-2">
             <label
               htmlFor="example-select-input"
@@ -2421,42 +2423,42 @@ console.log(data)
               <input value={numCols} readOnly className="form-control" />
             </div>
           </Row>
-         <Row className="mb-2">
-                        <label htmlFor="example-select-input" className="col-2 ">
-                          Step In A Column
-                        </label>
-                        <div className="col-4">
-                          <input
-                            type="number"
-                            className="form-control"
-                            value={noOfStepInCol}
-                            onChange={(e) => {
-                              setNoInCol(
-                                calculateTotalRow(
-                                  startColInput,
-                                  endColInput,
-                                  e.target.value
-                                )
-                              );
-                              setNoOfStepInCol(e.target.value);
-                            }}
-                            required
-                          />
-                        </div>
-                        <label htmlFor="example-select-input" className="col-2 ">
-                          Total No In Column
-                        </label>
-                        <div className="col-4">
-                          <input
-                            type="number"
-                            className="form-control"
-                            value={noInCol}
-                            onChange={(e) => setNoInCol(e.target.value)}
-                            required
-                            disabled
-                          />
-                        </div>
-                      </Row>
+          <Row className="mb-2">
+            <label htmlFor="example-select-input" className="col-2 ">
+              Step In A Column
+            </label>
+            <div className="col-4">
+              <input
+                type="number"
+                className="form-control"
+                value={noOfStepInCol}
+                onChange={(e) => {
+                  setNoInCol(
+                    calculateTotalRow(
+                      startColInput,
+                      endColInput,
+                      e.target.value
+                    )
+                  );
+                  setNoOfStepInCol(e.target.value);
+                }}
+                required
+              />
+            </div>
+            <label htmlFor="example-select-input" className="col-2 ">
+              Total No In Column
+            </label>
+            <div className="col-4">
+              <input
+                type="number"
+                className="form-control"
+                value={noInCol}
+                onChange={(e) => setNoInCol(e.target.value)}
+                required
+                disabled
+              />
+            </div>
+          </Row>
 
           <Row className="mb-2">
             <label htmlFor="example-text-input" className="col-md-2 ">

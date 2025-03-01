@@ -54,6 +54,7 @@ import Slider from "@mui/material/Slider";
 import CustomTooltip from "components/CustomTooltip";
 import { Carousel } from "react-responsive-carousel";
 import { v4 as uuidv4 } from "uuid";
+import { getUrls } from "helper/url_helper";
 // const EditTemplateModal = (props) => {
 //   const [modalShow, setModalShow] = useState(false);
 //   const [name, setName] = useState("");
@@ -2557,7 +2558,7 @@ const LayoutDetailModal = (props) => {
   const [scannerLoading, setScannerLoading] = useState(false);
   const [value, setValue] = React.useState([5, 6]);
   const [images, setImages] = useState([]);
-  const [baseUrl, setBaseUrl] = useState(null);
+  const [baseUrl, setBaseUrl] = useState("http://localhost:5000");
   const [showFront, setShowFront] = useState(true);
 
   const handleChange = (event, newValue, activeThumb) => {
@@ -2640,6 +2641,18 @@ const LayoutDetailModal = (props) => {
     // setIdPresent("");
     // createTemplateHandler();
   };
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await getUrls();
+          const GetDataURL = response.MAIN_URL;
+          setBaseUrl(GetDataURL);
+        } catch (error) {
+          console.log("Error", error);
+        }
+      };
+      fetchData();
+    }, []);
   useEffect(() => {
     if (props.show) {
       setModalShow(true);
@@ -4883,7 +4896,7 @@ const createTemplateHandler = async () => {
                             {images.map((item, index) => (
                               <div key={index}>
                                 <img
-                                  src={`${baseUrl}GetTemplateImage?filePath=${item.frontImagePath}`}
+                                  src={`http://localhost:5000/GetImage?imagePath=${item.frontImagePath}`}
                                   alt={`Front Slide ${index + 1}`}
                                   className="img-fluid rounded"
                                   style={{
@@ -4911,7 +4924,7 @@ const createTemplateHandler = async () => {
                             {images.map((item, index) => (
                               <div key={index}>
                                 <img
-                                  src={`${baseUrl}GetTemplateImage?filePath=${item.backImagePath}`}
+                                  src={`http://localhost:5000/GetImage?imagePath=${item.backImagePath}`}
                                   alt={`Back Slide ${index + 1}`}
                                   className="img-fluid rounded"
                                   style={{

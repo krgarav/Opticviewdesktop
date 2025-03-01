@@ -46,10 +46,10 @@ const StructureData = (obj) => {
     ? skewMarksWindowParameters
         .map((item) => ({
           ...item,
-          Coordinate: renameKeys(item.coordinate),
+          Coordinate: renameKeys(item.layoutWindowCoordinates),
         }))
         .map((item) => {
-          delete item.coordinate;
+          delete item.layoutWindowCoordinates;
           return item;
         })
     : [];

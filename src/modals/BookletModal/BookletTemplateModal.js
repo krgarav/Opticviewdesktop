@@ -2248,7 +2248,7 @@ const BookletTemplateModal = (props) => {
                             {images.map((item, index) => (
                               <div key={index}>
                                 <img
-                                  src={`${baseUrl}GetTemplateImage?filePath=${item.frontImagePath}`}
+                                  src={`http://localhost:5000/GetImage?imagePath==${item.frontImagePath}`}
                                   alt={`Front Slide ${index + 1}`}
                                   className="img-fluid rounded"
                                   style={{
@@ -2276,7 +2276,7 @@ const BookletTemplateModal = (props) => {
                             {images.map((item, index) => (
                               <div key={index}>
                                 <img
-                                  src={`${baseUrl}GetTemplateImage?filePath=${item.backImagePath}`}
+                                  src={`http://localhost:5000/GetImage?imagePath=${item.backImagePath}`}
                                   alt={`Back Slide ${index + 1}`}
                                   className="img-fluid rounded"
                                   style={{

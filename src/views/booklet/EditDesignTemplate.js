@@ -181,7 +181,7 @@ const EditBookletDesignTemplate = () => {
       };
     });
   };
-  console.log(selectedCoordinates);
+  // console.log(selectedCoordinates);
   useEffect(() => {
     const fetchData = async () => {
       try {

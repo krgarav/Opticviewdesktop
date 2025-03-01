@@ -19,7 +19,7 @@ const getBaseUrl = () => {
       return `http://${backendIP}/`;
     } catch (error) {
       console.error("Error fetching config:", error);
-      return "http://localhost:81/";
+      return "http://localhost:5000/";
     }
   };
    return fetchDetails();
