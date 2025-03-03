@@ -35,7 +35,7 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [baseUrl, setBaseUrl] = useState(null);
   const [side, setSide] = useState(sideOption[0]);
-
+console.log(images)
   // images = splitFrontBackImagePaths(images);
   useEffect(() => {
     console.log(side)

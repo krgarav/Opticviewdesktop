@@ -537,9 +537,7 @@ const SimplexTemplateModal = (props) => {
     setScannerLoading(true);
     try {
       const response = await axios.post("http://localhost:5000/GetSampleData");
-      console.log(response);
       const { data, images } = response.data;
-      // const updateData = [images[0]["frontImagePath"], images[0]["backImagePath"]];
       const jsonData = data;
       const correctedJson = jsonData
         .map((item) => {
@@ -589,9 +587,9 @@ const SimplexTemplateModal = (props) => {
     setFileModal(false);
     setImages([
       {
-        frontSideImage:
+        frontImagePath:
           "Template Image\\19219_e59c79cb-044a-4cfc-bca7-126ffcf92260_1_Front.jpg",
-        backSideImage:
+        backImagePath:
           "Template Image\\19219_702a07ba-50f3-422e-9b15-ca3990264752_22_Back.jpg",
       },
     ]);

@@ -105,7 +105,7 @@ const BookletTemplateModal = (props) => {
   const [imageFile, setImageFile] = useState();
   const [imageModal, setImageModal] = useState();
   const [image, setImage] = useState();
-  const [images, setImages] = useState([]);
+
   const [imageTempFile, setTempImageFile] = useState();
   const [selectedUI, setSelectedUI] = useState("SIMPLEX");
   const [activeTab, setActiveTab] = useState("simplex");
@@ -131,6 +131,7 @@ const BookletTemplateModal = (props) => {
   const [printCustomValue, setPrintCustomValue] = useState(null);
   const [scannerLoading, setScannerLoading] = useState(false);
   const [value, setValue] = React.useState([5, 6]);
+  const [images, setImages] = useState([]);
   const [showFront, setShowFront] = useState(true);
   const [baseUrl, setBaseUrl] = useState(null);
   const navigate = useNavigate();
@@ -272,7 +273,6 @@ const BookletTemplateModal = (props) => {
             })
             .filter((item) => item !== null); // Remove nulls from the resulting array
 
-          console.log(correctedJson);
           const Row = correctedJson.length;
           const Column = Object.keys(json[1]).filter(
             (item) => item !== ""
@@ -443,7 +443,7 @@ const BookletTemplateModal = (props) => {
             dataReadDirection: direction?.id,
             idStatus: idPresent.id,
             iReject: 0,
-            isBooklet:true,
+            isBooklet: true,
             idMarksPattern: "000000000000000000000000",
             excelJsonFile: excelJsonFile,
             images: images,
@@ -498,10 +498,8 @@ const BookletTemplateModal = (props) => {
   const scannerHandler = async () => {
     setScannerLoading(true);
     try {
-      const response = await getSampleData();
-      console.log(response);
-
-      const { data, images } = response;
+      const response = await axios.post("http://localhost:5000/GetSampleData");
+      const { data, images } = response.data;
       const jsonData = data;
       const correctedJson = jsonData
         .map((item) => {
@@ -524,7 +522,7 @@ const BookletTemplateModal = (props) => {
       setImages(images);
     } catch (error) {
       console.log(error);
-      toast.error(error.message);
+      // toast.error(error.message);
     } finally {
       setScannerLoading(false);
     }
@@ -546,6 +544,26 @@ const BookletTemplateModal = (props) => {
       return;
     }
     setFileModal(false);
+    setImages([
+      {
+        frontImagePath:
+          "Template Image\\19219_e59c79cb-044a-4cfc-bca7-126ffcf92260_1_Front.jpg",
+        backImagePath:
+          "Template Image\\19219_702a07ba-50f3-422e-9b15-ca3990264752_22_Back.jpg",
+      },
+      {
+        frontImagePath:
+          "Template Image\\19219_e59c79cb-044a-4cfc-bca7-126ffcf92260_1_Front.jpg",
+        backImagePath:
+          "Template Image\\19219_702a07ba-50f3-422e-9b15-ca3990264752_22_Back.jpg",
+      },
+      {
+        frontImagePath:
+          "Template Image\\19219_e59c79cb-044a-4cfc-bca7-126ffcf92260_1_Front.jpg",
+        backImagePath:
+          "Template Image\\19219_702a07ba-50f3-422e-9b15-ca3990264752_22_Back.jpg",
+      },
+    ]);
   };
 
   return (
@@ -2213,7 +2231,7 @@ const BookletTemplateModal = (props) => {
                 </Col>
               </Row>
               <Row className="d-flex justify-content-center mt-2">
-                {images.length>0 && (
+                {images.length > 0 && (
                   <div className=" my-1">
                     <div className="row justify-content-center">
                       <div className="col-12 col-md-8">
@@ -2296,7 +2314,7 @@ const BookletTemplateModal = (props) => {
                     </div>
                   </div>
                 )}
-                {images.length===0  && <p>Please select the image</p>}
+                {images.length === 0 && <p>Please select the image</p>}
               </Row>
             </div>
           </>
