@@ -16,63 +16,45 @@ import {
 import classes from "./ImageCropper.module.css";
 import { toast } from "react-toastify";
 import DataContext from "store/DataContext";
-import { getUrls } from "helper/url_helper";
 import { sideOption } from "data/helperData";
 const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
-  const dataCtx = useContext(DataContext);
-  const cropperRef = useRef(null);
   const [cropData, setCropData] = useState(null);
-  const [modalShow, setModalShow] = useState(false);
   const [allImages, setAllImages] = useState([]);
   const [imageName, setImageName] = useState("");
   const [croppingSide, setCroppingSide] = useState("frontSide");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [currentImage, setCurrentImage] = useState(null);
   const [show, setShow] = useState(false);
   const [options, setOptions] = useState([]);
   const [prefix, setPrefix] = useState("");
-  const [baseUrl, setBaseUrl] = useState(null);
+  const [baseUrl, setBaseUrl] = useState("http://localhost:5000");
   const [side, setSide] = useState(sideOption[0]);
 
-  
+  const dataCtx = useContext(DataContext);
+  const cropperRef = useRef(null);
+
   useEffect(() => {
     const coordinateOptns = selectedCoordinateData.map((item) => {
       return { id: item.name, label: item.name };
     });
     setOptions(coordinateOptns);
   }, [selectedCoordinateData]);
-  // useEffect(() => {
-  //   const templateIndex = JSON.parse(sessionStorage.getItem("Template"))[0]
-  //     .layoutParameters.key;
 
-  //   const currentTemplate = dataCtx.allTemplates.find((item) => {
-  //     return item[0].layoutParameters?.key ?? "" === templateIndex;
-  //   });
+  useEffect(() => {
+    console.log(side);
+    setCroppingSide(side.name === "Front" ? "frontSide" : "backSide");
+  }, [side]);
 
-  //   const imageCoordinate = currentTemplate[0].imageCroppingDTO ?? [];
+  useEffect(() => {
+    const imageCoordinate = dataCtx.allTemplates[0][0]?.imageCroppingDTO ?? [];
+    setAllImages(imageCoordinate);
+  }, [dataCtx.allTemplates]);
 
-  //   setAllImages(imageCoordinate);
-  // }, [dataCtx.allTemplates]);
+  useEffect(() => {
+    if (allImages.length > 0) {
+      dataCtx.addImageCoordinateWithIndex(0, allImages);
+    }
+  }, [allImages]);
 
-  // useEffect(() => {
-  //   const templateIndex = JSON.parse(sessionStorage.getItem("Template"))[0]
-  //     .layoutParameters.key;
-  //   if (allImages.length > 0) {
-  //     dataCtx.addImageCoordinate(templateIndex, allImages);
-  //   }
-  // }, [allImages]);
-  // useEffect(() => {
-  //   if (!modalShow) {
-  //     document.body.classList.add(classes["blur-background"]);
-  //   } else {
-  //     document.body.classList.remove(classes["blur-background"]);
-  //   }
-
-  //   // Cleanup on unmount
-  //   return () => {
-  //     document.body.classList.remove(classes["blur-background"]);
-  //   };
-  // }, [modalShow]);
   useEffect(() => {
     handleImage(allImages);
   }, [allImages]);
@@ -106,11 +88,7 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
       croppedImage: cropper.getCroppedCanvas().toDataURL(),
     });
   };
-  const saveHandler2 = () => {
-    const template = localStorage.getItem("Template");
-    console.log(template);
-    // dataCtx.addImageCoordinate()
-  };
+
   const saveHandler = () => {
     const cropCoordinate = cropData.coordinates;
 
@@ -126,25 +104,23 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
     const bottomRightX = Math.floor(rawBottomLeftX);
     const bottomRightY = Math.floor(rawBottomRightY);
     const obj = {
-      // key: uuidv4(),
       imageName: imageName,
       croppingSide: croppingSide,
       topLeftX,
       topLeftY,
       bottomRightX,
       bottomRightY,
+      sheetNumber: currentImageIndex + 1,
     };
     console.log(obj);
     setAllImages((prevData) => {
       const updatedData = [...prevData, obj];
       return updatedData;
     });
-    // setModalShow(false)
   };
   const editHandler = () => {};
 
   const deleteHandler = (index) => {
-    console.log(index);
     setAllImages((prevData) => {
       const updatedData = prevData.filter((_, i) => i !== index);
       return updatedData;
@@ -160,7 +136,7 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
     saveHandler();
     setShow(false);
     setImageName("");
-    setCroppingSide("");
+    setCroppingSide(side.name === "Front" ? "frontSide" : "backSide");
   };
 
   const prevHandler = () => {
@@ -245,9 +221,17 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
             </Button>
           </div>
         </CardHeader>
-        <div>
-          <Table className="align-items-center table-flush mb-5" responsive>
-            <thead className="thead-light">
+        <div style={{ maxHeight: "50vh", overflow: "auto" }}>
+          <Table className="align-items-center table-flush mb-5">
+            <thead
+              className="thead-light"
+              style={{
+                position: "sticky",
+                top: 0,
+                zIndex: 1,
+                backgroundColor: "white",
+              }}
+            >
               <tr>
                 <th scope="col" className="text-center">
                   SL no.
@@ -278,6 +262,7 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
           </Table>
         </div>
       </Card>
+
       {/* ****************** modal for showing cropping images *************** */}
       <Modal
         show={show}
@@ -339,12 +324,44 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
               </label>
               <Select
                 value={side}
-                onChange={(selectedValue) => setSide(selectedValue)}
+                onChange={(selectedValue) => {
+                  setSide(selectedValue);
+                }}
                 options={sideOption}
                 getOptionLabel={(option) => option?.name || ""}
                 getOptionValue={(option) => option?.id?.toString() || ""}
-                placeholder="Select side..."
                 className="w-100"
+              />
+            </div>
+            <div className="d-flex align-items-center ">
+              <span>
+                {currentImageIndex + 1} of {images.length}
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <div className="border border-primary">
+              <Cropper
+                src={
+                  side.name === "Front"
+                    ? `${baseUrl}GetTemplateImage?filePath=${images[currentImageIndex].frontImagePath}`
+                    : `${baseUrl}GetTemplateImage?filePath=${images[currentImageIndex].backImagePath}`
+                }
+                style={{ height: "50dvh", width: "100%" }}
+                initialAspectRatio={1}
+                guides={true}
+                ref={cropperRef}
+                cropend={() => getCropData()}
+                viewMode={1}
+                minCropBoxHeight={10}
+                minCropBoxWidth={10}
+                background={true}
+                responsive={true}
+                autoCropArea={0}
+                checkOrientation={false}
+                rotatable={true}
+                autoCrop={false}
               />
             </div>
             <div className="d-flex justify-content-center flex-grow-1">
@@ -362,58 +379,9 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
               </Button>
             </div>
           </div>
-          <div className="border border-primary">
-            
-            {images.length > 0 && (
-              <Cropper
-              src={
-                side.name === "Front"
-                  ? `http://localhost:5000/GetImage?imagePath=${images[currentImageIndex].frontImagePath}`
-                  : `http://localhost:5000/GetImage?imagePath=${images[currentImageIndex].backImagePath}`
-              }
-              style={{ height: "50dvh", width: "100%" }}
-              initialAspectRatio={1}
-              guides={true}
-              ref={cropperRef}
-              cropend={() => getCropData()}
-              viewMode={1}
-              minCropBoxHeight={10}
-              minCropBoxWidth={10}
-              background={true}
-              responsive={true}
-              autoCropArea={0}
-              checkOrientation={false}
-              rotatable={true}
-              autoCrop={false}
-            />
-            )}
-            
-          </div>
-          <div
-            className="mb-2"
-            style={{ width: "100%", display: "flex", justifyContent: "center" }}
-          ></div>
+
           <br />
           <br />
-          {cropData && (
-            <Row className="">
-              <div
-                className="col-12"
-                style={{
-                  width: "100%",
-                  justifyContent: "center",
-                  display: "flex",
-                }}
-              >
-                <img
-                  src={cropData.croppedImage}
-                  alt="Cropped"
-                  className="img-fluid"
-                  style={{ width: 500, height: 200 }}
-                />
-              </div>
-            </Row>
-          )}
         </Modal.Body>
         <Modal.Footer>
           <Button

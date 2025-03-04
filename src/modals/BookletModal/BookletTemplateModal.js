@@ -2266,7 +2266,7 @@ const BookletTemplateModal = (props) => {
                             {images.map((item, index) => (
                               <div key={index}>
                                 <img
-                                  src={`http://localhost:5000/GetImage?imagePath==${item.frontImagePath}`}
+                                  src={`http://localhost:5000/GetImage?imagePath=${item.frontImagePath}`}
                                   alt={`Front Slide ${index + 1}`}
                                   className="img-fluid rounded"
                                   style={{

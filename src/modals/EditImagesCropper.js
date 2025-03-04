@@ -35,10 +35,10 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [baseUrl, setBaseUrl] = useState(null);
   const [side, setSide] = useState(sideOption[0]);
-console.log(images)
+console.log(side)
   // images = splitFrontBackImagePaths(images);
   useEffect(() => {
-    console.log(side)
+    console.log(side);
     setCroppingSide(side.name === "Front" ? "frontSide" : "backSide");
   }, [side]);
   useEffect(() => {
@@ -60,17 +60,15 @@ console.log(images)
     setOptions(coordinateOptns);
   }, [selectedCoordinateData]);
   useEffect(() => {
-    const currentTemplate = sessionStorage.getItem("templateIndex");
-    const imageCoordinate =
-      dataCtx.allTemplates[0]?.imageCroppingDTO ?? [];
+    const imageCoordinate = dataCtx.allTemplates[0][0]?.imageCroppingDTO ?? [];
     setAllImages(imageCoordinate);
   }, [dataCtx.allTemplates]);
   useEffect(() => {
-    const templateIndex = sessionStorage.getItem("templateIndex");
     if (allImages.length > 0) {
       dataCtx.addImageCoordinateWithIndex(0, allImages);
     }
   }, [allImages]);
+  
   useEffect(() => {
     if (!modalShow) {
       document.body.classList.add(classes["blur-background"]);
@@ -487,14 +485,43 @@ console.log(images)
               <Select
                 value={side}
                 onChange={(selectedValue) => {
-                
                   setSide(selectedValue);
                 }}
                 options={sideOption}
                 getOptionLabel={(option) => option?.name || ""}
                 getOptionValue={(option) => option?.id?.toString() || ""}
-                placeholder="Select side..."
                 className="w-100"
+              />
+            </div>
+            <div className="d-flex align-items-center ">
+              <span>
+                {currentImageIndex + 1} of {images.length}
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <div className="border border-primary">
+              <Cropper
+                src={
+                  side.name === "Front"
+                    ? `${baseUrl}GetTemplateImage?filePath=${images[currentImageIndex].frontImagePath}`
+                    : `${baseUrl}GetTemplateImage?filePath=${images[currentImageIndex].backImagePath}`
+                }
+                style={{ height: "50dvh", width: "100%" }}
+                initialAspectRatio={1}
+                guides={true}
+                ref={cropperRef}
+                cropend={() => getCropData()}
+                viewMode={1}
+                minCropBoxHeight={10}
+                minCropBoxWidth={10}
+                background={true}
+                responsive={true}
+                autoCropArea={0}
+                checkOrientation={false}
+                rotatable={true}
+                autoCrop={false}
               />
             </div>
             <div className="d-flex justify-content-center flex-grow-1">
@@ -513,56 +540,8 @@ console.log(images)
             </div>
           </div>
 
-          <div className="border border-primary">
-          
-          {images.length > 0 && (
-            <Cropper
-              src={
-                side.name === "Front"
-                  ? `http://localhost:5000/GetImage?imagePath=${images[currentImageIndex].frontImagePath}`
-                  : `http://localhost:5000/GetImage?imagePath=${images[currentImageIndex].backImagePath}`
-              }
-              style={{ height: "50dvh", width: "100%" }}
-              initialAspectRatio={1}
-              guides={true}
-              ref={cropperRef}
-              cropend={() => getCropData()}
-              viewMode={1}
-              minCropBoxHeight={10}
-              minCropBoxWidth={10}
-              background={true}
-              responsive={true}
-              autoCropArea={0}
-              checkOrientation={false}
-              rotatable={true}
-              autoCrop={false}
-            />
-          )}
-
-            
-          </div>
-
           <br />
           <br />
-          {cropData && (
-            <Row className="">
-              <div
-                className="col-12"
-                style={{
-                  width: "100%",
-                  justifyContent: "center",
-                  display: "flex",
-                }}
-              >
-                <img
-                  src={cropData.croppedImage}
-                  alt="Cropped"
-                  className="img-fluid"
-                  style={{ width: 500, height: 200 }}
-                />
-              </div>
-            </Row>
-          )}
         </Modal.Body>
         <Modal.Footer>
           <Button
