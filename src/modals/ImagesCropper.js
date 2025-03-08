@@ -345,8 +345,8 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
               <Cropper
                 src={
                   side.name === "Front"
-                    ? `${baseUrl}GetTemplateImage?filePath=${images[currentImageIndex].frontImagePath}`
-                    : `${baseUrl}GetTemplateImage?filePath=${images[currentImageIndex].backImagePath}`
+                    ? `http://localhost:5000/GetImage?imagePath=${images[currentImageIndex].frontImagePath}`
+                    : `http://localhost:5000/GetImage?imagePath=${images[currentImageIndex].backImagePath}`
                 }
                 style={{ height: "50dvh", width: "100%" }}
                 initialAspectRatio={1}

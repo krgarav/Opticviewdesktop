@@ -398,8 +398,7 @@ const SimplexTemplateModal = (props) => {
         toast.error("Please Select ID Field ");
         return;
       }
-      console.log(idPresent);
-      console.log(idPresent.id === "present");
+      
 
       if (idPresent && idPresent.id === "present") {
         if (Object.values(face).length === 0) {
