@@ -313,6 +313,12 @@ const DesignBookletTemplate = () => {
             // Process the data with the determined direction
             const stepInRow = data2.rowStep;
             const stepInCol = data2.columnStep;
+            const customRawValue = data2?.customFieldValue
+            ? data2.customFieldValue.split(",")
+            : [""];
+          const customValue = customRawValue.map((item) =>
+            item.slice(0, 2).toUpperCase()
+          );
             const data = processDirection(
               readingDirection,
               item.startRow,
@@ -322,7 +328,8 @@ const DesignBookletTemplate = () => {
               template[0].layoutParameters.numberedExcelJsonFile,
               type,
               stepInRow,
-              stepInCol
+              stepInCol,
+              customValue
             );
             const copiedObject = deepcopy(localData[0]);
             delete copiedObject.layoutParameters.numberedExcelJsonFile;

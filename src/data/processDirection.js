@@ -10,7 +10,6 @@ const processDirection = (
   stepInCol,
   customValue
 ) => {
-   
   if (type === "numeric") {
     let counter = 0;
     switch (direction) {
@@ -219,7 +218,6 @@ const processDirection = (
     sessionStorage.setItem("numberedExcelJsonFile", JSON.stringify(data));
     return JSON.stringify(data);
   } else if (type === "custom") {
-    
     let counter = 0;
     switch (direction) {
       case "rightToLeft":
@@ -236,8 +234,8 @@ const processDirection = (
           for (let j = endCol; j >= startCol; j -= stepInCol) {
             // Iterate from endCol to startCol
             if (i < data.length && j >= 0 && j < Object.keys(data[i]).length) {
-              data[i][j] = customValue[counter]|| "";
-              counter++
+              data[i][j] = customValue[counter] || "";
+              counter++;
             }
           }
           counter = 0;
@@ -245,7 +243,7 @@ const processDirection = (
         break;
 
       case "bottomToTop":
-        console.log("called this????????")
+        console.log("called this????????");
         for (let i = endRow; i >= startRow; i--) {
           for (let j = startCol; j <= endCol; j++) {
             if (i < data.length && j < Object.keys(data[i]).length) {
@@ -259,16 +257,56 @@ const processDirection = (
           counter = counter + 1;
           for (let j = startCol; j <= endCol; j += stepInCol) {
             if (i < data.length && j < Object.keys(data[i]).length) {
-                console.log(customValue[counter])
-              data[i][j] = customValue[counter]|| "";
-            //   counter++
+              data[i][j] = customValue[counter] || "";
+              //   counter++
             }
           }
-        //   counter= -1
+          //   counter= -1
         }
         break;
 
       case "leftToRight":
+        // for (let i = endCol; i >= startCol; i--) {
+        //   for (let j = startRow; j <= endRow; j++) {
+        //     if (j < data.length && i < Object.keys(data[j]).length) {
+        //       data[j][i] = "";
+        //     }
+        //   }
+        // }
+        // counter = -1;
+        // // Right to left, top to bottom
+
+        // for (let i = endCol; i >= startCol; i -= stepInCol) {
+        //   counter = counter + 1;
+        //   for (let j = startRow; j <= endRow; j += stepInRow) {
+        //     if (j < data.length && i < Object.keys(data[j]).length) {
+        //       data[j][i] = customValue[counter] || "";
+        //       //   counter++
+        //     }
+        //   }
+        //   //   counter = 0; // Reset counter for next row
+        // }
+        // break;
+        for (let i = startRow; i <= endRow; i++) {
+            for (let j = startCol; j <= endCol; j++) {
+              if (i < data.length && j < Object.keys(data[i]).length) {
+                data[i][j] = "";
+              }
+            }
+          }
+          // Left to right, top to bottom
+          for (let i = startRow; i <= endRow; i += stepInRow) {
+            counter = counter + 1; // Initialize counter at the start of each row
+            for (let j = startCol; j <= endCol; j += stepInCol) {
+              if (i < data.length && j < Object.keys(data[i]).length) {
+                data[j][i] = customValue[counter] || "";
+                // data[i][j] = counter++;
+              }
+            }
+          }
+          break;
+
+      case "topToBottom":
         for (let i = startRow; i <= endRow; i++) {
           for (let j = startCol; j <= endCol; j++) {
             if (i < data.length && j < Object.keys(data[i]).length) {
@@ -276,35 +314,16 @@ const processDirection = (
             }
           }
         }
+        counter = -1;
         // Left to right, top to bottom
         for (let i = startRow; i <= endRow; i += stepInRow) {
-          let counter = 0; // Initialize counter at the start of each row
+          counter = counter + 1; // Initialize counter at the start of each row
           for (let j = startCol; j <= endCol; j += stepInCol) {
             if (i < data.length && j < Object.keys(data[i]).length) {
-              data[i][j] = customValue[counter]|| "";
-              counter++
+              data[i][j] = customValue[counter] || "";
+              //   counter++
             }
           }
-        }
-        break;
-
-      case "topToBottom":
-        for (let i = endCol; i >= startCol; i--) {
-          for (let j = startRow; j <= endRow; j++) {
-            if (j < data.length && i < Object.keys(data[j]).length) {
-              data[j][i] = "";
-            }
-          }
-        }
-        // Right to left, top to bottom
-        for (let i = endCol; i >= startCol; i -= stepInCol) {
-          for (let j = startRow; j <= endRow; j += stepInRow) {
-            if (j < data.length && i < Object.keys(data[j]).length) {
-              data[j][i] = customValue[counter]|| "";
-              counter++
-            }
-          }
-          counter = 0; // Reset counter for next row
         }
         break;
 
