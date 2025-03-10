@@ -107,6 +107,8 @@ const DesignBookletTemplate = () => {
   const [imagesSelectedCount, setImagesSelectedCount] = useState(0);
   const [sizes, setSizes] = useState({});
   const [baseUrl, setBaseUrl] = useState(null);
+  const [prefix, setPrefix] = useState("");
+  const [suffix, setSuffix] = useState("");
   const location = useLocation();
   const {
     totalColumns,
@@ -714,6 +716,8 @@ const DesignBookletTemplate = () => {
         iSensitivity: +iSensitivity,
         iDifference: +iDifference,
         iOption: selectedFieldType === "formField" ? 1 : 0,
+        prefix: selectedFieldType === "formField" ? prefix : "",
+        suffix: selectedFieldType === "formField" ? suffix : "",
         iMinimumMarks: +minimumMark,
         iMaximumMarks: +maximumMark,
         iType: type,
@@ -869,6 +873,7 @@ const DesignBookletTemplate = () => {
       setCoordinateIndex(index);
       setModalUpdate(true);
       setModalShow(true);
+
     } else if (selectedField?.fieldType === "questionField") {
       // const data = template[0].questionsWindowParameters.filter((item) => {
       //     return isEqual(item.Coordinate, formattedSelectedFile);
@@ -943,6 +948,8 @@ const DesignBookletTemplate = () => {
       setMultipleValue(data?.multipleValue);
       setBlank(data?.blankAllow);
       setBlankValue(data?.blankValue);
+      setSuffix(data?.suffix);
+      setPrefix(data?.prefix);
     } else if (selectedField?.fieldType === "skewMarkField") {
       const parameters = template[0].skewMarksWindowParameters;
       const index = parameters.findIndex((item) =>
@@ -2239,7 +2246,7 @@ const DesignBookletTemplate = () => {
                 <label htmlFor="example-text-input" className="col-md-2 ">
                   Reading Direction :
                 </label>
-                <div className="col-md-10">
+                <div className="col-md-4">
                   <select
                     className="form-control"
                     value={readingDirectionOption}
@@ -2261,6 +2268,43 @@ const DesignBookletTemplate = () => {
                     <option value="7">From the lower right to the left </option>
                   </select>
                 </div>
+                {selectedFieldType !== "idField" && (
+                  <>
+                    <label
+                      htmlFor="example-text-input"
+                      className="col-md-2  col-form-label"
+                    >
+                      Type :
+                    </label>
+                    <div className="col-md-4">
+                      <select
+                        className="form-control"
+                        value={type}
+                        onChange={(e) => {
+                          setType(e.target.value);
+                        }}
+                        defaultValue={""}
+                      >
+                        <option value="">Select reading direction... </option>
+                        <option value="1">
+                          Mask (at the time set window) about a mark{" "}
+                        </option>
+                        <option value="2">Fixed mark </option>
+                        <option value="3">Checkdigits </option>
+                        <option value="4">
+                          Range checking (ascending order)
+                        </option>
+                        <option value="5">
+                          Range checking (descending order)
+                        </option>
+                        <option value="6">Range checking (not order) </option>
+                        <option value="7">
+                          Mask setting(common to partition)
+                        </option>
+                      </select>
+                    </div>
+                  </>
+                )}
               </Row>
               {selectedFieldType === "formField" && (
                 <Row className="mb-2">
@@ -2270,14 +2314,12 @@ const DesignBookletTemplate = () => {
                   >
                     Prefix :
                   </label>
-                  <div className="col-md-3">
+                  <div className="col-md-4">
                     <input
-                      type="number"
+                      type="text"
                       className="form-control"
-                      // value={noInCol}
-                      // onChange={(e) => setNoInCol(e.target.value)}
-                      // required
-                      // disabled
+                      value={prefix}
+                      onChange={(e) => setPrefix(e.target.value)}
                     />
                   </div>
                   <label
@@ -2286,70 +2328,17 @@ const DesignBookletTemplate = () => {
                   >
                     Suffix :
                   </label>
-                  <div className="col-md-3">
+                  <div className="col-md-4">
                     <input
-                      type="number"
+                      type="text"
                       className="form-control"
-                      // value={noInCol}
-                      // onChange={(e) => setNoInCol(e.target.value)}
-                      // required
-                      // disabled
+                      value={suffix}
+                      onChange={(e) => setSuffix(e.target.value)}
                     />
                   </div>
                 </Row>
               )}
-              {selectedFieldType !== "idField" && (
-                <Row className="mb-2">
-                  <label
-                    htmlFor="example-text-input"
-                    className="col-md-2  col-form-label"
-                  >
-                    Type :
-                  </label>
-                  <div className="col-md-5">
-                    <select
-                      className="form-control"
-                      value={type}
-                      onChange={(e) => {
-                        setType(e.target.value);
-                      }}
-                      defaultValue={""}
-                    >
-                      <option value="">Select reading direction... </option>
-                      <option value="1">
-                        Mask (at the time set window) about a mark{" "}
-                      </option>
-                      <option value="2">Fixed mark </option>
-                      <option value="3">Checkdigits </option>
-                      <option value="4">
-                        Range checking (ascending order)
-                      </option>
-                      <option value="5">
-                        Range checking (descending order)
-                      </option>
-                      <option value="6">Range checking (not order) </option>
-                      <option value="7">
-                        Mask setting(common to partition)
-                      </option>
-                    </select>
-                  </div>
-                  {/* <label
-                    htmlFor="example-text-input"
-                    className="col-md-2 col-form-label "
-                  >
-                    Option :
-                  </label>
-                  <div className="col-3 ">
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={option}
-                      onChange={(e) => setOption(e.target.value)}
-                      required
-                    />
-                  </div> */}
-                </Row>
-              )}
+
               {(selectedFieldType === "questionField" ||
                 selectedFieldType === "formField") && (
                 <Row className="mb-2">

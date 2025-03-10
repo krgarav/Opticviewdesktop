@@ -121,7 +121,8 @@ const EditDesignTemplate = () => {
   const [sensitivity, setSensitivity] = useState(5);
   const [showFieldDetails, setShowFieldDetails] = useState(false);
   const [fontSize, setFontSize] = useState("0.6rem"); // Default font size
-
+  const [prefix, setPrefix] = useState("");
+  const [suffix, setSuffix] = useState("");
   const [data, setData] = useState(
     sessionStorage.getItem("Template")
       ? convertToCamelCase(JSON.parse(sessionStorage.getItem("Template")))
@@ -398,22 +399,25 @@ const EditDesignTemplate = () => {
           //   name: item.windowName,
           // }));
           const coordinateOfSkewField = skewField
-  .map((item) => {
-    // Check if Coordinate exists and has all undefined values
-    const isCoordinateUndefined =
-      !item.Coordinate || Object.values(item.Coordinate).every((value) => value === undefined);
+            .map((item) => {
+              // Check if Coordinate exists and has all undefined values
+              const isCoordinateUndefined =
+                !item.Coordinate ||
+                Object.values(item.Coordinate).every(
+                  (value) => value === undefined
+                );
 
-    // If all values are undefined, return null (or filter later)
-    if (isCoordinateUndefined) return null;
+              // If all values are undefined, return null (or filter later)
+              if (isCoordinateUndefined) return null;
 
-    return {
-      ...item.Coordinate,
-      name: item.windowName,
-    };
-  })
-  .filter(Boolean); // Removes null entries
+              return {
+                ...item.Coordinate,
+                name: item.windowName,
+              };
+            })
+            .filter(Boolean); // Removes null entries
 
-          console.log(skewField)
+          console.log(skewField);
           let coordinateOfIdField =
             Object.keys(idField.layoutCoordinates).length > 0
               ? idField.layoutCoordinates
@@ -472,7 +476,6 @@ const EditDesignTemplate = () => {
   }, []);
 
   // *****************************************************************************************
-  console.log(dataCtx.allTemplates);
   useEffect(() => {
     const classMap = {
       "rounded rectangle": "rounded-rectangle",
@@ -726,6 +729,8 @@ const EditDesignTemplate = () => {
         iSensitivity: +layoutData.iSensitivity ?? 3,
         iDifference: +layoutData.iDifference ?? 5,
         iOption: selectedFieldType === "formField" ? 1 : 0,
+        prefix:selectedFieldType === "formField"? prefix:"",
+        suffix:selectedFieldType === "formField"? suffix:"",
         iMinimumMarks: +minimumMark,
         iMaximumMarks: +maximumMark,
         iType: type,
@@ -933,8 +938,10 @@ const EditDesignTemplate = () => {
       //     return isEqual(item.Coordinate, formattedSelectedFile);
       // })[0];
       const parameters = template[0].questionsWindowParameters;
-
-      const data = parameters[0];
+      const index = parameters.findIndex((item) =>
+        isEqual(item?.Coordinate, formattedSelectedFile)
+      );
+      const data = parameters[index];
       setCoordinateIndex(index);
       setModalUpdate(true);
       setModalShow(true);
@@ -963,10 +970,12 @@ const EditDesignTemplate = () => {
     } else if (selectedField?.fieldType === "formField") {
       const parameters = template[0].formFieldWindowParameters;
       console.log(parameters);
-      // const index = parameters.findIndex((item) =>
-      //   isEqual(item?.Coordinate, formattedSelectedFile)
-      // );
-      const data = parameters[0];
+      const index = parameters.findIndex((item) =>
+        isEqual(item?.Coordinate, formattedSelectedFile)
+      );
+  
+      const data = parameters[index];
+     
       // Get the matched object
       // setCoordinateIndex(index);
       setModalUpdate(true);
@@ -994,6 +1003,8 @@ const EditDesignTemplate = () => {
       setBlank(data?.blankAllow);
       setBlankValue(data?.blankValue);
       setCustomValue(data?.customFieldValue);
+      setSuffix(data?.suffix)
+      setPrefix(data?.prefix)
     } else if (selectedField?.fieldType === "skewMarkField") {
       const parameters = template[0].skewMarksWindowParameters;
       const data = parameters[0];
@@ -1095,7 +1106,7 @@ const EditDesignTemplate = () => {
     };
     delete updatedLayout.Coordinate;
     delete updatedLayout.imageStructureData;
-console.log(template[0])
+    console.log(template[0]);
     // Extract and format barcode, image, and printing data
     const barcodeData = template[0].barcodeData;
     const imageData = template[0].imageData;
@@ -1151,58 +1162,58 @@ console.log(template[0])
           : {};
         return { ...rest, formFieldCoordinates };
       });
-      if (skewMarksWindowParameters.length === 0) {
-        skewMarksWindowParameters.push({
-          iFace: 0,
-          columnStart: 1,
-          columnNumber: 1,
-          columnStep: 1,
-          rowStart: 1,
-          rowNumber: 1,
-          rowStep: 1,
-          iDirection: 1,
-          iSensitivity: 1,
-          iDifference: 1,
-          iOption: 1,
-          iMinimumMarks: 1,
-          iMaximumMarks: 1,
-          iType: "1",
-          ngAction: "0x00000001",
-          windowName: "sk2",
-          layoutWindowCoordinates:{}
-        });
-      } else if (skewMarksWindowParameters.length > 1) {
-        // Object to check
-        const targetObject = {
-          iFace: 0,
-          columnStart: 1,
-          columnNumber: 1,
-          columnStep: 1,
-          rowStart: 1,
-          rowNumber: 1,
-          rowStep: 1,
-          iDirection: 1,
-          iSensitivity: 1,
-          iDifference: 1,
-          iOption: 1,
-          iMinimumMarks: 1,
-          iMaximumMarks: 1,
-          iType: "1",
-          ngAction: "0x00000001",
-          windowName: "sk2",
-          layoutWindowCoordinates:{}
-        };
-  
-        // Find index of the object
-        const index = skewMarksWindowParameters.findIndex(
-          (item) => JSON.stringify(item) === JSON.stringify(targetObject)
-        );
-  
-        // Remove the object if found
-        if (index !== -1) {
-          skewMarksWindowParameters.splice(index, 1);
-        }
+    if (skewMarksWindowParameters.length === 0) {
+      skewMarksWindowParameters.push({
+        iFace: 0,
+        columnStart: 1,
+        columnNumber: 1,
+        columnStep: 1,
+        rowStart: 1,
+        rowNumber: 1,
+        rowStep: 1,
+        iDirection: 1,
+        iSensitivity: 1,
+        iDifference: 1,
+        iOption: 1,
+        iMinimumMarks: 1,
+        iMaximumMarks: 1,
+        iType: "1",
+        ngAction: "0x00000001",
+        windowName: "sk2",
+        layoutWindowCoordinates: {},
+      });
+    } else if (skewMarksWindowParameters.length > 1) {
+      // Object to check
+      const targetObject = {
+        iFace: 0,
+        columnStart: 1,
+        columnNumber: 1,
+        columnStep: 1,
+        rowStart: 1,
+        rowNumber: 1,
+        rowStep: 1,
+        iDirection: 1,
+        iSensitivity: 1,
+        iDifference: 1,
+        iOption: 1,
+        iMinimumMarks: 1,
+        iMaximumMarks: 1,
+        iType: "1",
+        ngAction: "0x00000001",
+        windowName: "sk2",
+        layoutWindowCoordinates: {},
+      };
+
+      // Find index of the object
+      const index = skewMarksWindowParameters.findIndex(
+        (item) => JSON.stringify(item) === JSON.stringify(targetObject)
+      );
+
+      // Remove the object if found
+      if (index !== -1) {
+        skewMarksWindowParameters.splice(index, 1);
       }
+    }
     // Assemble the full request data
     const fullRequestData = {
       layoutParameters: updatedLayout,
@@ -1387,7 +1398,7 @@ console.log(template[0])
           iDirection: +readingDirectionOption,
           iSensitivity: +layoutData.iSensitivity ?? 3,
           iDifference: +layoutData.iDifference ?? 5,
-          iOption: selectedFieldType==="formField"?1:0,
+          iOption: selectedFieldType === "formField" ? 1 : 0,
           iMinimumMarks: +minimumMark,
           iMaximumMarks: +maximumMark,
           iType: type,
@@ -2502,7 +2513,38 @@ console.log(template[0])
               />
             </div>
           </Row>
-
+          {selectedFieldType === "formField" && (
+            <Row className="mb-2">
+              <label
+                htmlFor="example-text-input"
+                className="col-md-2  col-form-label"
+              >
+                Prefix :
+              </label>
+              <div className="col-md-4">
+                <input
+                  type="text"
+                  className="form-control"
+                  value={prefix}
+                  onChange={(e) => setPrefix(e.target.value)}
+                />
+              </div>
+              <label
+                htmlFor="example-text-input"
+                className="col-md-2  col-form-label"
+              >
+                Suffix :
+              </label>
+              <div className="col-md-4">
+                <input
+                  type="text"
+                  className="form-control"
+                  value={suffix}
+                  onChange={(e) => setSuffix(e.target.value)}
+                />
+              </div>
+            </Row>
+          )}
           <Row className="mb-2">
             <label htmlFor="example-text-input" className="col-md-2 ">
               Reading Direction :
