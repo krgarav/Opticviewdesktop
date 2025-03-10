@@ -129,41 +129,6 @@ const EditDesignTemplate = () => {
       : {}
   );
 
-  // const emptyExcelJsonFile = data.excelJsonFile.map((row) => {
-  //   return Object.keys(row).reduce((acc, key) => {
-  //     acc[key] = ""; // Set each value to an empty string
-  //     return acc;
-  //   }, {});
-  // });
-  // const [data, setData] = useState(() => ({
-  //   totalColumns: getSessionStorageOrDefault(
-  //     "totalColumns",
-  //     state.totalColumns
-  //   ),
-  //   timingMarks: getSessionStorageOrDefault("timingMarks", state.timingMarks),
-  //   templateImagePath: getSessionStorageOrDefault(
-  //     "templateImagePath",
-  //     state.templateImagePath
-  //   ),
-  //   templateBackImagePath: getSessionStorageOrDefault(
-  //     "templateBackImagePath",
-  //     state.templateBackImagePath
-  //   ),
-  //   bubbleType: getSessionStorageOrDefault("bubbleType", state.bubbleType),
-  //   templateIndex: getSessionStorageOrDefault(
-  //     "templateIndex",
-  //     state.templateIndex
-  //   ),
-  //   templateId: getSessionStorageOrDefault("templateId", state.templateId),
-  //   excelJsonFile: getSessionStorageOrDefault(
-  //     "excelJsonFile",
-  //     state.excelJsonFile
-  //   ),
-  //   numberedExcelJsonFile: getSessionStorageOrDefault(
-  //     "numberedExcelJsonFile",
-  //     emptyExcelJsonFile
-  //   ),
-  // }));
   const divRefs = useRef([]);
   const numRows = data.timingMarks;
   const numCols = data.totalColumns;
@@ -352,6 +317,13 @@ const EditDesignTemplate = () => {
           const type = data2.numericOrAlphabets;
           // Process the data with the determined direction
 
+          const customRawValue = data2?.customFieldValue
+            ? data2.customFieldValue.split(",")
+            : [""];
+          const customValue = customRawValue.map((item) =>
+            item.slice(0, 2).toUpperCase()
+          );
+          // console.log(customValue);
           const stepInRow = data2.rowStep;
           const stepInCol = data2.columnStep;
           processDirection(
@@ -363,7 +335,8 @@ const EditDesignTemplate = () => {
             data.numberedExcelJsonFile,
             type,
             stepInRow,
-            stepInCol
+            stepInCol,
+            customValue
           );
         }
       }
@@ -420,10 +393,27 @@ const EditDesignTemplate = () => {
             name: item.windowName,
           }));
 
-          const coordinateOfSkewField = skewField.map((item) => ({
-            ...item.Coordinate,
-            name: item.windowName,
-          }));
+          // const coordinateOfSkewField = skewField.map((item) => ({
+          //   ...item.Coordinate,
+          //   name: item.windowName,
+          // }));
+          const coordinateOfSkewField = skewField
+  .map((item) => {
+    // Check if Coordinate exists and has all undefined values
+    const isCoordinateUndefined =
+      !item.Coordinate || Object.values(item.Coordinate).every((value) => value === undefined);
+
+    // If all values are undefined, return null (or filter later)
+    if (isCoordinateUndefined) return null;
+
+    return {
+      ...item.Coordinate,
+      name: item.windowName,
+    };
+  })
+  .filter(Boolean); // Removes null entries
+
+          console.log(skewField)
           let coordinateOfIdField =
             Object.keys(idField.layoutCoordinates).length > 0
               ? idField.layoutCoordinates
@@ -703,6 +693,7 @@ const EditDesignTemplate = () => {
         rowStep: +noOfStepInRow,
         iSensitivity: +layoutData.iSensitivity,
         iDifference: +layoutData.iDifference,
+        iOption: 1,
         iReject: +layoutData.iReject,
         iDirection: +readingDirectionOption,
         windowName: name,
@@ -734,6 +725,7 @@ const EditDesignTemplate = () => {
         iDirection: +readingDirectionOption,
         iSensitivity: +layoutData.iSensitivity ?? 3,
         iDifference: +layoutData.iDifference ?? 5,
+        iOption: selectedFieldType === "formField" ? 1 : 0,
         iMinimumMarks: +minimumMark,
         iMaximumMarks: +maximumMark,
         iType: type,
@@ -1103,7 +1095,7 @@ const EditDesignTemplate = () => {
     };
     delete updatedLayout.Coordinate;
     delete updatedLayout.imageStructureData;
-
+console.log(template[0])
     // Extract and format barcode, image, and printing data
     const barcodeData = template[0].barcodeData;
     const imageData = template[0].imageData;
@@ -1159,7 +1151,58 @@ const EditDesignTemplate = () => {
           : {};
         return { ...rest, formFieldCoordinates };
       });
-
+      if (skewMarksWindowParameters.length === 0) {
+        skewMarksWindowParameters.push({
+          iFace: 0,
+          columnStart: 1,
+          columnNumber: 1,
+          columnStep: 1,
+          rowStart: 1,
+          rowNumber: 1,
+          rowStep: 1,
+          iDirection: 1,
+          iSensitivity: 1,
+          iDifference: 1,
+          iOption: 1,
+          iMinimumMarks: 1,
+          iMaximumMarks: 1,
+          iType: "1",
+          ngAction: "0x00000001",
+          windowName: "sk2",
+          layoutWindowCoordinates:{}
+        });
+      } else if (skewMarksWindowParameters.length > 1) {
+        // Object to check
+        const targetObject = {
+          iFace: 0,
+          columnStart: 1,
+          columnNumber: 1,
+          columnStep: 1,
+          rowStart: 1,
+          rowNumber: 1,
+          rowStep: 1,
+          iDirection: 1,
+          iSensitivity: 1,
+          iDifference: 1,
+          iOption: 1,
+          iMinimumMarks: 1,
+          iMaximumMarks: 1,
+          iType: "1",
+          ngAction: "0x00000001",
+          windowName: "sk2",
+          layoutWindowCoordinates:{}
+        };
+  
+        // Find index of the object
+        const index = skewMarksWindowParameters.findIndex(
+          (item) => JSON.stringify(item) === JSON.stringify(targetObject)
+        );
+  
+        // Remove the object if found
+        if (index !== -1) {
+          skewMarksWindowParameters.splice(index, 1);
+        }
+      }
     // Assemble the full request data
     const fullRequestData = {
       layoutParameters: updatedLayout,
@@ -1312,7 +1355,7 @@ const EditDesignTemplate = () => {
           rowStep: +noOfStepInRow,
           iSensitivity: +layoutData.iSensitivity,
           iDifference: +layoutData.iDifference,
-          // iOption: +option,
+          iOption: 1,
           iReject: +layoutData.iReject,
           iDirection: +readingDirectionOption,
           windowName: name,
@@ -1344,7 +1387,7 @@ const EditDesignTemplate = () => {
           iDirection: +readingDirectionOption,
           iSensitivity: +layoutData.iSensitivity ?? 3,
           iDifference: +layoutData.iDifference ?? 5,
-          // iOption: +option,
+          iOption: selectedFieldType==="formField"?1:0,
           iMinimumMarks: +minimumMark,
           iMaximumMarks: +maximumMark,
           iType: type,

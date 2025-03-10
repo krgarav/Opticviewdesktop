@@ -681,7 +681,7 @@ const DesignBookletTemplate = () => {
         rowStep: +noOfStepInRow,
         iSensitivity: +iSensitivity,
         iDifference: +iDifference,
-        // iOption: +option,
+        iOption: 1,
         iReject: +iReject,
         iDirection: +readingDirectionOption,
         windowName: name,
@@ -713,7 +713,7 @@ const DesignBookletTemplate = () => {
         iDirection: +readingDirectionOption,
         iSensitivity: +iSensitivity,
         iDifference: +iDifference,
-        // iOption: +option,
+        iOption: selectedFieldType === "formField" ? 1 : 0,
         iMinimumMarks: +minimumMark,
         iMaximumMarks: +maximumMark,
         iType: type,
@@ -1079,21 +1079,22 @@ const DesignBookletTemplate = () => {
       });
 
     // Transform skew marks window parameters into the required format
-    const skewMarksWindowParameters =
-      template[0].skewMarksWindowParameters?.map((item) => {
-        const { Coordinate, ...rest } = item;
-        const layoutWindowCoordinates = Coordinate
-          ? {
-              right: Coordinate["End Col"],
-              end: Coordinate["End Row"],
-              left: Coordinate["Start Col"],
-              start: Coordinate["Start Row"],
-              name: Coordinate["name"],
-              fieldType: Coordinate["fieldType"],
-            }
-          : {};
-        return { ...rest, layoutWindowCoordinates };
-      });
+    const skewMarksWindowParameters = template[0].skewMarksWindowParameters
+      ? template[0].skewMarksWindowParameters.map((item) => {
+          const { Coordinate, ...rest } = item;
+          const layoutWindowCoordinates = Coordinate
+            ? {
+                right: Coordinate["End Col"],
+                end: Coordinate["End Row"],
+                left: Coordinate["Start Col"],
+                start: Coordinate["Start Row"],
+                name: Coordinate["name"],
+                fieldType: Coordinate["fieldType"],
+              }
+            : {};
+          return { ...rest, layoutWindowCoordinates };
+        })
+      : [];
 
     // Transform form field window parameters into the required format
     const formFieldWindowParameters =
@@ -1112,6 +1113,56 @@ const DesignBookletTemplate = () => {
         return { ...rest, formFieldCoordinates };
       });
     const { imageCroppingDTO } = template[0];
+    if (skewMarksWindowParameters.length === 0) {
+      skewMarksWindowParameters.push({
+        iFace: 0,
+        columnStart: 1,
+        columnNumber: 1,
+        columnStep: 1,
+        rowStart: 1,
+        rowNumber: 1,
+        rowStep: 1,
+        iDirection: 1,
+        iSensitivity: 1,
+        iDifference: 1,
+        iOption: 1,
+        iMinimumMarks: 1,
+        iMaximumMarks: 1,
+        iType: "1",
+        ngAction: "0x00000001",
+        windowName: "sk2",
+      });
+    } else if (skewMarksWindowParameters.length > 1) {
+      // Object to check
+      const targetObject = {
+        iFace: 0,
+        columnStart: 1,
+        columnNumber: 1,
+        columnStep: 1,
+        rowStart: 1,
+        rowNumber: 1,
+        rowStep: 1,
+        iDirection: 1,
+        iSensitivity: 1,
+        iDifference: 1,
+        iOption: 1,
+        iMinimumMarks: 1,
+        iMaximumMarks: 1,
+        iType: "1",
+        ngAction: "0x00000001",
+        windowName: "sk2",
+      };
+
+      // Find index of the object
+      const index = skewMarksWindowParameters.findIndex(
+        (item) => JSON.stringify(item) === JSON.stringify(targetObject)
+      );
+
+      // Remove the object if found
+      if (index !== -1) {
+        skewMarksWindowParameters.splice(index, 1);
+      }
+    }
     // Assemble the full request data
     const fullRequestData = {
       layoutParameters: updatedLayout,
@@ -1330,11 +1381,13 @@ const DesignBookletTemplate = () => {
                                 undefined
                                   ? numberedJson[rowIndex][colIndex]
                                   : null;
-                                  let bgColor =
-                                  +result[rowIndex][colIndex] >= +templates[0]?.layoutParameters?.iSensitivity &&
-                                  result[rowIndex][colIndex] !== undefined
-                                    ? "black"
-                                    : "";
+                              let bgColor =
+                                +result[rowIndex][colIndex] >=
+                                  +templates[0]?.layoutParameters
+                                    ?.iSensitivity &&
+                                result[rowIndex][colIndex] !== undefined
+                                  ? "black"
+                                  : "";
 
                               if (num || num === 0) {
                                 bgColor = "lightgreen";
@@ -2209,7 +2262,42 @@ const DesignBookletTemplate = () => {
                   </select>
                 </div>
               </Row>
-
+              {selectedFieldType === "formField" && (
+                <Row className="mb-2">
+                  <label
+                    htmlFor="example-text-input"
+                    className="col-md-2  col-form-label"
+                  >
+                    Prefix :
+                  </label>
+                  <div className="col-md-3">
+                    <input
+                      type="number"
+                      className="form-control"
+                      // value={noInCol}
+                      // onChange={(e) => setNoInCol(e.target.value)}
+                      // required
+                      // disabled
+                    />
+                  </div>
+                  <label
+                    htmlFor="example-text-input"
+                    className="col-md-2  col-form-label"
+                  >
+                    Suffix :
+                  </label>
+                  <div className="col-md-3">
+                    <input
+                      type="number"
+                      className="form-control"
+                      // value={noInCol}
+                      // onChange={(e) => setNoInCol(e.target.value)}
+                      // required
+                      // disabled
+                    />
+                  </div>
+                </Row>
+              )}
               {selectedFieldType !== "idField" && (
                 <Row className="mb-2">
                   <label

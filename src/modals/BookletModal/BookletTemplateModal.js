@@ -547,21 +547,21 @@ const BookletTemplateModal = (props) => {
     setImages([
       {
         frontImagePath:
-          "Template Image\\19219_e59c79cb-044a-4cfc-bca7-126ffcf92260_1_Front.jpg",
+          "D:\\\\Optic View\\\\Scan Data\\\\Sample Data\\\\1_Front.jpg",
         backImagePath:
-          "Template Image\\19219_702a07ba-50f3-422e-9b15-ca3990264752_22_Back.jpg",
+          "D:\\\\Optic View\\\\Scan Data\\\\Sample Data\\\\2_Back.jpg",
       },
       {
         frontImagePath:
-          "Template Image\\19219_e59c79cb-044a-4cfc-bca7-126ffcf92260_1_Front.jpg",
+          "D:\\\\Optic View\\\\Scan Data\\\\Sample Data\\\\3_Front.jpg",
         backImagePath:
-          "Template Image\\19219_702a07ba-50f3-422e-9b15-ca3990264752_22_Back.jpg",
+          "D:\\\\Optic View\\\\Scan Data\\\\Sample Data\\\\4_Back.jpg",
       },
       {
         frontImagePath:
-          "Template Image\\19219_e59c79cb-044a-4cfc-bca7-126ffcf92260_1_Front.jpg",
+          "D:\\\\Optic View\\\\Scan Data\\\\Sample Data\\\\5_Front.jpg",
         backImagePath:
-          "Template Image\\19219_702a07ba-50f3-422e-9b15-ca3990264752_22_Back.jpg",
+          "D:\\\\Optic View\\\\Scan Data\\\\Sample Data\\\\6_Back.jpg",
       },
     ]);
   };

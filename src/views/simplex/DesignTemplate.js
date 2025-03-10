@@ -117,7 +117,7 @@ const DesignTemplate = () => {
   const [sizes, setSizes] = useState({});
   const [baseUrl, setBaseUrl] = useState(null);
   const [trigger, setTrigger] = useState(false);
-
+console.log("caleed")
   const location = useLocation();
   const {
     totalColumns,
@@ -165,7 +165,6 @@ const DesignTemplate = () => {
     return () => clearTimeout(timeoutId);
   }, [trigger, dataCtx.allTemplates]);
 
- 
   useEffect(() => {
     setTimeout(() => {
       setLocalData(JSON.parse(localStorage.getItem("Template")));
@@ -315,7 +314,12 @@ const DesignTemplate = () => {
             // Process the data with the determined direction
             const stepInRow = data2.rowStep;
             const stepInCol = data2.columnStep;
-
+            const customRawValue = data2?.customFieldValue
+              ? data2.customFieldValue.split(",")
+              : [""];
+            const customValue = customRawValue.map((item) =>
+              item.slice(0, 2).toUpperCase()
+            );
             const data = processDirection(
               readingDirection,
               item.startRow,
@@ -325,7 +329,8 @@ const DesignTemplate = () => {
               template[0].layoutParameters.numberedExcelJsonFile,
               type,
               stepInRow,
-              stepInCol
+              stepInCol,
+              customValue
             );
             const copiedObject = deepcopy(localData[0]);
             copiedObject.layoutParameters = {
@@ -716,7 +721,7 @@ const DesignTemplate = () => {
         rowStep: +noOfStepInRow,
         iSensitivity: +iSensitivity,
         iDifference: +iDifference,
-        // iOption: +option,
+        iOption: 1,
         iReject: +iReject,
         iDirection: +readingDirectionOption,
         windowName: name,
@@ -748,7 +753,7 @@ const DesignTemplate = () => {
         iDirection: +readingDirectionOption,
         iSensitivity: +iSensitivity,
         iDifference: +iDifference,
-        // iOption: +option,
+        iOption: selectedFieldType === "formField" ? 1 : 0,
         iMinimumMarks: +minimumMark,
         iMaximumMarks: +maximumMark,
         iType: type,
@@ -1131,7 +1136,7 @@ const DesignTemplate = () => {
     const template = dataCtx.allTemplates.find((item) => {
       return item[0].layoutParameters?.key ?? "" === templateIndex;
     });
-    
+
     // Extract layout parameters and its coordinates
     const layoutParameters = template[0].layoutParameters;
     const idpatttern = "000000000000000000000000";
@@ -1235,6 +1240,56 @@ const DesignTemplate = () => {
         return { ...rest, formFieldCoordinates };
       });
     const { imageCroppingDTO } = template[0];
+    if (skewMarksWindowParameters.length === 0) {
+      skewMarksWindowParameters.push({
+        iFace: 0,
+        columnStart: 1,
+        columnNumber: 1,
+        columnStep: 1,
+        rowStart: 1,
+        rowNumber: 1,
+        rowStep: 1,
+        iDirection: 1,
+        iSensitivity: 1,
+        iDifference: 1,
+        iOption: 1,
+        iMinimumMarks: 1,
+        iMaximumMarks: 1,
+        iType: "1",
+        ngAction: "0x00000001",
+        windowName: "sk2",
+      });
+    } else if (skewMarksWindowParameters.length > 1) {
+      // Object to check
+      const targetObject = {
+        iFace: 0,
+        columnStart: 1,
+        columnNumber: 1,
+        columnStep: 1,
+        rowStart: 1,
+        rowNumber: 1,
+        rowStep: 1,
+        iDirection: 1,
+        iSensitivity: 1,
+        iDifference: 1,
+        iOption: 1,
+        iMinimumMarks: 1,
+        iMaximumMarks: 1,
+        iType: "1",
+        ngAction: "0x00000001",
+        windowName: "sk2",
+      };
+
+      // Find index of the object
+      const index = skewMarksWindowParameters.findIndex(
+        (item) => JSON.stringify(item) === JSON.stringify(targetObject)
+      );
+
+      // Remove the object if found
+      if (index !== -1) {
+        skewMarksWindowParameters.splice(index, 1);
+      }
+    }
     // Assemble the full request data
     const fullRequestData = {
       layoutParameters: updatedLayout,
@@ -1246,7 +1301,7 @@ const DesignTemplate = () => {
       formFieldWindowParameters,
       imageCroppingDTO,
     };
-    console.log(fullRequestData)
+    console.log(fullRequestData);
     localStorage.setItem("Template", JSON.stringify(fullRequestData));
     // console.log(fullRequestData);
 

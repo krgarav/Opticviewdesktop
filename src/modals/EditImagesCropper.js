@@ -20,6 +20,11 @@ import { toast } from "react-toastify";
 import DataContext from "store/DataContext";
 import { getUrls } from "helper/url_helper";
 import { sideOption } from "data/helperData";
+const getPageNumber = (index, frontImagePath) => {
+  if (!frontImagePath) return null; // Handle missing path
+  const fileName = frontImagePath.split("\\").pop(); // Extract file name
+  return parseInt(fileName.split("_")[0], 10) || null; // Extract number before "_"
+};
 // import splitFrontBackImagePaths from "services/splitImages";
 const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
   const dataCtx = useContext(DataContext);
@@ -35,7 +40,7 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [baseUrl, setBaseUrl] = useState(null);
   const [side, setSide] = useState(sideOption[0]);
-console.log(side)
+
   // images = splitFrontBackImagePaths(images);
   useEffect(() => {
     console.log(side);
@@ -149,6 +154,8 @@ console.log(side)
     const topLeftY = Math.floor(rawTopRightY);
     const bottomRightX = Math.floor(rawBottomLeftX);
     const bottomRightY = Math.floor(rawBottomRightY);
+    const sidePath =
+    croppingSide === "frontSide" ? "frontImagePath" : "backImagePath";
     const obj = {
       // key: uuidv4(),
       imageName: imageName,
@@ -157,6 +164,7 @@ console.log(side)
       topLeftY,
       bottomRightX,
       bottomRightY,
+      sheetNumber: getPageNumber(currentImageIndex, images[currentImageIndex][sidePath]),
     };
     console.log(obj);
     setAllImages((prevData) => {
@@ -187,7 +195,7 @@ console.log(side)
     saveHandler();
     setShow(false);
     setImageName("");
-    setCroppingSide("");
+    setCroppingSide(side.name === "Front" ? "frontSide" : "backSide");
   };
   const allData = allImages.map((item, index) => {
     return (
@@ -390,9 +398,15 @@ console.log(side)
             </Button>
           </div>
         </CardHeader>
-        <div>
-          <Table className="align-items-center table-flush mb-5" responsive>
-            <thead className="thead-light">
+        <div  style={{ maxHeight: "50vh", overflow: "auto" }}>
+          <Table className="align-items-center table-flush mb-5" >
+            <thead  className="thead-light"
+              style={{
+                position: "sticky",
+                top: 0,
+                zIndex: 1,
+                backgroundColor: "white",
+              }}>
               <tr>
                 <th scope="col" className="text-center">
                   SL no.
@@ -503,11 +517,13 @@ console.log(side)
           <div>
             <div className="border border-primary">
               <Cropper
-                src={
-                  side.name === "Front"
-                    ? `${baseUrl}GetTemplateImage?filePath=${images[currentImageIndex].frontImagePath}`
-                    : `${baseUrl}GetTemplateImage?filePath=${images[currentImageIndex].backImagePath}`
-                }
+                // src={
+                //   side.name === "Front"
+                //     ? `${baseUrl}GetTemplateImage?filePath=${images[currentImageIndex].frontImagePath}`
+                //     : `${baseUrl}GetTemplateImage?filePath=${images[currentImageIndex].backImagePath}`
+                // }
+                src= "https://static.vecteezy.com/system/resources/thumbnails/036/324/708/small/ai-generated-picture-of-a-tiger-walking-in-the-forest-photo.jpg"
+
                 style={{ height: "50dvh", width: "100%" }}
                 initialAspectRatio={1}
                 guides={true}

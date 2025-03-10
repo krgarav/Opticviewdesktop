@@ -17,6 +17,12 @@ import classes from "./ImageCropper.module.css";
 import { toast } from "react-toastify";
 import DataContext from "store/DataContext";
 import { sideOption } from "data/helperData";
+const getPageNumber = (index, frontImagePath) => {
+  if (!frontImagePath) return null; // Handle missing path
+  const fileName = frontImagePath.split("\\").pop(); // Extract file name
+  return parseInt(fileName.split("_")[0], 10) || null; // Extract number before "_"
+};
+
 const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
   const [cropData, setCropData] = useState(null);
   const [allImages, setAllImages] = useState([]);
@@ -88,10 +94,10 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
       croppedImage: cropper.getCroppedCanvas().toDataURL(),
     });
   };
-
+  console.log(images);
   const saveHandler = () => {
     const cropCoordinate = cropData.coordinates;
-
+    // images[currentImageIndex].frontImagePath.path.baseNaeme();
     const {
       startX: rawTopLeftX,
       startY: rawTopRightY,
@@ -103,6 +109,8 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
     const topLeftY = Math.floor(rawTopRightY);
     const bottomRightX = Math.floor(rawBottomLeftX);
     const bottomRightY = Math.floor(rawBottomRightY);
+    const sidePath =
+      croppingSide === "frontSide" ? "frontImagePath" : "backImagePath";
     const obj = {
       imageName: imageName,
       croppingSide: croppingSide,
@@ -110,7 +118,7 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
       topLeftY,
       bottomRightX,
       bottomRightY,
-      sheetNumber: currentImageIndex + 1,
+      sheetNumber: getPageNumber(currentImageIndex, images[currentImageIndex][sidePath]),
     };
     console.log(obj);
     setAllImages((prevData) => {
@@ -348,6 +356,7 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
                     ? `http://localhost:5000/GetImage?imagePath=${images[currentImageIndex].frontImagePath}`
                     : `http://localhost:5000/GetImage?imagePath=${images[currentImageIndex].backImagePath}`
                 }
+                // src= "https://static.vecteezy.com/system/resources/thumbnails/036/324/708/small/ai-generated-picture-of-a-tiger-walking-in-the-forest-photo.jpg"
                 style={{ height: "50dvh", width: "100%" }}
                 initialAspectRatio={1}
                 guides={true}
