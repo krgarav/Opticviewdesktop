@@ -417,10 +417,10 @@ const EditDesignTemplate = () => {
             })
             .filter(Boolean); // Removes null entries
 
-          console.log(skewField);
+          console.log(idField);
           let coordinateOfIdField =
             Object.keys(idField.layoutCoordinates).length > 0
-              ? idField.layoutCoordinates
+              ? [idField.layoutCoordinates]
               : [];
           console.log(coordinateOfIdField);
           if (
@@ -434,7 +434,7 @@ const EditDesignTemplate = () => {
             ...coordinateOfFormData,
             ...coordinateOfQuestionField,
             ...coordinateOfSkewField,
-            ...coordinateOfIdField,
+           ...coordinateOfIdField,
           ];
           console.log(allCoordinates);
           // Format the coordinates for the state update
@@ -1072,7 +1072,7 @@ const EditDesignTemplate = () => {
     const layoutParameters = template[0].layoutParameters;
     // layoutParameters.id = data.templateId;
     layoutParameters.numberedExcelJsonFile = data.numberedExcelJsonFile;
-    const Coordinate = layoutParameters.Coordinate;
+    const Coordinate = layoutParameters.layoutCoordinates;
     let layoutCoordinates = {};
     // Transform layout coordinates into the required format
     if (Coordinate) {

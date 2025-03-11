@@ -287,24 +287,45 @@ const processDirection = (
         //   //   counter = 0; // Reset counter for next row
         // }
         // break;
+        console.log("trigerred")
         for (let i = startRow; i <= endRow; i++) {
-            for (let j = startCol; j <= endCol; j++) {
-              if (i < data.length && j < Object.keys(data[i]).length) {
-                data[i][j] = "";
-              }
+          for (let j = startCol; j <= endCol; j++) {
+            if (i < data.length && j < Object.keys(data[i]).length) {
+              data[i][j] = "";
             }
           }
-          // Left to right, top to bottom
-          for (let i = startRow; i <= endRow; i += stepInRow) {
-            counter = counter + 1; // Initialize counter at the start of each row
-            for (let j = startCol; j <= endCol; j += stepInCol) {
-              if (i < data.length && j < Object.keys(data[i]).length) {
-                data[j][i] = customValue[counter] || "";
-                // data[i][j] = counter++;
-              }
+        }
+        // Left to right
+       
+        for (let i = startRow; i <= endRow; i += stepInRow) {
+          counter=-1
+          // Initialize counter at the start of each row
+          for (let j = startCol; j <= endCol; j += stepInCol) {
+            counter = counter + 1;
+            if (i < data.length && j < Object.keys(data[i]).length) {
+              data[i][j] = customValue[counter] || "";
             }
           }
-          break;
+        }
+        break;
+        // for (let i = startRow; i <= endRow; i++) {
+        //     for (let j = startCol; j <= endCol; j++) {
+        //       if (i < data.length && j < Object.keys(data[i]).length) {
+        //         data[i][j] = "";
+        //       }
+        //     }
+        //   }
+        //   // Left to right, top to bottom
+          // for (let i = startRow; i <= endRow; i += stepInRow) {
+          //   counter = counter + 1; // Initialize counter at the start of each row
+          //   for (let j = startCol; j <= endCol; j += stepInCol) {
+          //     if (i < data.length && j < Object.keys(data[i]).length) {
+          //       data[j][i] = customValue[counter] || "";
+          //       // data[i][j] = counter++;
+          //     }
+          //   }
+          // }
+          // break;
 
       case "topToBottom":
         for (let i = startRow; i <= endRow; i++) {

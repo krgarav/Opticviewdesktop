@@ -59,9 +59,9 @@ const StructureData = (obj) => {
     Object.keys(layoutParameters.layoutCoordinates).length > 0
       ? renameKeys(layoutParameters.layoutCoordinates)
       : [];
-
+console.log(coordinateOfIdField)
   if (coordinateOfIdField.start === 0 && coordinateOfIdField.end === 0) {
-    coordinateOfIdField = [];
+    coordinateOfIdField = {};
   }
 
   return {
