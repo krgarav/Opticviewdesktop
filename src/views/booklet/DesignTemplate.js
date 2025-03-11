@@ -1127,56 +1127,7 @@ const DesignBookletTemplate = () => {
         return { ...rest, formFieldCoordinates };
       });
     const { imageCroppingDTO } = template[0];
-    if (skewMarksWindowParameters.length === 0) {
-      skewMarksWindowParameters.push({
-        iFace: 0,
-        columnStart: 1,
-        columnNumber: 1,
-        columnStep: 1,
-        rowStart: 1,
-        rowNumber: 1,
-        rowStep: 1,
-        iDirection: 1,
-        iSensitivity: 1,
-        iDifference: 1,
-        iOption: 1,
-        iMinimumMarks: 1,
-        iMaximumMarks: 1,
-        iType: "1",
-        ngAction: "0x00000001",
-        windowName: "sk2",
-      });
-    } else if (skewMarksWindowParameters.length > 1) {
-      // Object to check
-      const targetObject = {
-        iFace: 0,
-        columnStart: 1,
-        columnNumber: 1,
-        columnStep: 1,
-        rowStart: 1,
-        rowNumber: 1,
-        rowStep: 1,
-        iDirection: 1,
-        iSensitivity: 1,
-        iDifference: 1,
-        iOption: 1,
-        iMinimumMarks: 1,
-        iMaximumMarks: 1,
-        iType: "1",
-        ngAction: "0x00000001",
-        windowName: "sk2",
-      };
-
-      // Find index of the object
-      const index = skewMarksWindowParameters.findIndex(
-        (item) => JSON.stringify(item) === JSON.stringify(targetObject)
-      );
-
-      // Remove the object if found
-      if (index !== -1) {
-        skewMarksWindowParameters.splice(index, 1);
-      }
-    }
+    
     // Assemble the full request data
     const fullRequestData = {
       layoutParameters: updatedLayout,
