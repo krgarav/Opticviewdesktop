@@ -37,6 +37,8 @@ import FieldDetails from "modals/FieldDetails";
 import EditImagesCropper from "modals/EditImagesCropper";
 import convertToCamelCase from "services/lowerLetter";
 import { calculateTotalRow } from "services/HelperFunctions";
+import SideBar from "components/SideBar";
+import { FiChevronRight, FiX } from "react-icons/fi";
 // Function to get values from sessionStorage or provide default
 const getSessionStorageOrDefault = (key, defaultValue) => {
   const stored = sessionStorage.getItem(key);
@@ -123,6 +125,7 @@ const EditDesignTemplate = () => {
   const [fontSize, setFontSize] = useState("0.6rem"); // Default font size
   const [prefix, setPrefix] = useState("");
   const [suffix, setSuffix] = useState("");
+  const [showSideBar, setShowSideBar] = useState(false);
   const [data, setData] = useState(
     sessionStorage.getItem("Template")
       ? convertToCamelCase(JSON.parse(sessionStorage.getItem("Template")))
@@ -969,15 +972,17 @@ const EditDesignTemplate = () => {
       setCustomValue(data?.customFieldValue);
     } else if (selectedField?.fieldType === "formField") {
       const parameters = template[0].formFieldWindowParameters;
-      console.log(parameters);
       const index = parameters.findIndex((item) =>
         isEqual(item?.Coordinate, formattedSelectedFile)
       );
 
+      if (index === -1) {
+        alert("No data found");
+      }
       const data = parameters[index];
 
       // Get the matched object
-      // setCoordinateIndex(index);
+      setCoordinateIndex(index);
       setModalUpdate(true);
       setModalShow(true);
       setSelectedFieldType("formField");
@@ -1212,7 +1217,9 @@ const EditDesignTemplate = () => {
       const MAX_COL = numCols; // Replace with your maximum column value
       const MIN_ROW = 0;
       const MAX_ROW = numRows; // Replace with your maximum row value
-      const template = dataCtx.allTemplates[data.templateIndex];
+
+      const template = dataCtx.allTemplates[0];
+      console.log(template);
       const formattedSelectedFile = {
         "End Col": selectedField.endCol,
         "End Row": selectedField.endRow + 1,
@@ -1221,7 +1228,7 @@ const EditDesignTemplate = () => {
         fieldType: selectedField.fieldType,
         name: selectedField.name,
       };
-      console.log(object);
+      console.log(edCol + Number(pitchValue), MAX_COL);
       switch (value) {
         case "end":
           if (edCol + Number(pitchValue) > MAX_COL) {
@@ -1363,11 +1370,7 @@ const EditDesignTemplate = () => {
           customFieldValue: customValue ? customValue : "",
         };
       }
-      // dataCtx.modifyAllTemplate(
-      //   data.templateIndex,
-      //   newData,
-      //   selectedField.fieldType
-      // );
+      dataCtx.modifyAllTemplate(0, newData, selectedField.fieldType);
       setSelectedCoordinates((prev) => {
         return [...prev, object];
       });
@@ -2746,6 +2749,43 @@ const EditDesignTemplate = () => {
           editHandler={(item, i) => handleEyeClick(item, i)}
         />
       )}
+      {!showSideBar && (
+        <div
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "0",
+            width: "50px",
+            height: "100px",
+            backgroundColor: "gray",
+            borderTopRightRadius: "50px",
+            borderBottomRightRadius: "50px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            zIndex: 1050,
+            transition: "all 0.3s ease",
+            transform: "translateX(-10px)",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.transform = "translateX(0)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.transform = "translateX(-10px)")
+          }
+          onClick={() => {
+            setShowSideBar(true);
+          }}
+        >
+          <FiChevronRight size={48} color="white" />
+        </div>
+      )}
+      <SideBar
+        isOpen={showSideBar}
+        onClose={() => setShowSideBar(false)}
+        selectedWindow={selectedCoordinates}
+      />
     </>
   );
 };

@@ -17,7 +17,8 @@ import { useWindowSize } from "react-use";
 import ImagesCropper from "modals/ImagesCropper";
 import { getUrls } from "helper/url_helper";
 import { calculateTotalRow } from "services/HelperFunctions";
-
+import { FiChevronRight, FiX } from "react-icons/fi";
+import SideBar from "components/SideBar";
 // Helper function to fetch an image and convert it to a File object
 async function fetchImageAsFile(imagePath, baseUrl) {
   const response = await fetch(
@@ -109,6 +110,7 @@ const DesignBookletTemplate = () => {
   const [baseUrl, setBaseUrl] = useState(null);
   const [prefix, setPrefix] = useState("");
   const [suffix, setSuffix] = useState("");
+  const [showSideBar, setShowSideBar] = useState(false);
   const location = useLocation();
   const {
     totalColumns,
@@ -2469,6 +2471,44 @@ const DesignBookletTemplate = () => {
           onHide={() => setDetailPage(false)}
         />
       )}
+
+      {!showSideBar && (
+        <div
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "0",
+            width: "50px",
+            height: "100px",
+            backgroundColor: "gray",
+            borderTopRightRadius: "50px",
+            borderBottomRightRadius: "50px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            zIndex: 1050,
+            transition: "all 0.3s ease",
+            transform: "translateX(-10px)",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.transform = "translateX(0)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.transform = "translateX(-10px)")
+          }
+          onClick={() => {
+            setShowSideBar(true);
+          }}
+        >
+          <FiChevronRight size={48} color="white" />
+        </div>
+      )}
+      <SideBar
+        isOpen={showSideBar}
+        onClose={() => setShowSideBar(false)}
+        selectedWindow={selectedCoordinates}
+      />
     </>
   );
 };
