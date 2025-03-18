@@ -434,7 +434,7 @@ const EditDesignTemplate = () => {
             ...coordinateOfFormData,
             ...coordinateOfQuestionField,
             ...coordinateOfSkewField,
-           ...coordinateOfIdField,
+            ...coordinateOfIdField,
           ];
           console.log(allCoordinates);
           // Format the coordinates for the state update
@@ -729,8 +729,8 @@ const EditDesignTemplate = () => {
         iSensitivity: +layoutData.iSensitivity ?? 3,
         iDifference: +layoutData.iDifference ?? 5,
         iOption: selectedFieldType === "formField" ? 1 : 0,
-        prefix:selectedFieldType === "formField"? prefix:"",
-        suffix:selectedFieldType === "formField"? suffix:"",
+        prefix: selectedFieldType === "formField" ? prefix : "",
+        suffix: selectedFieldType === "formField" ? suffix : "",
         iMinimumMarks: +minimumMark,
         iMaximumMarks: +maximumMark,
         iType: type,
@@ -973,9 +973,9 @@ const EditDesignTemplate = () => {
       const index = parameters.findIndex((item) =>
         isEqual(item?.Coordinate, formattedSelectedFile)
       );
-  
+
       const data = parameters[index];
-     
+
       // Get the matched object
       // setCoordinateIndex(index);
       setModalUpdate(true);
@@ -1003,8 +1003,8 @@ const EditDesignTemplate = () => {
       setBlank(data?.blankAllow);
       setBlankValue(data?.blankValue);
       setCustomValue(data?.customFieldValue);
-      setSuffix(data?.suffix)
-      setPrefix(data?.prefix)
+      setSuffix(data?.suffix);
+      setPrefix(data?.prefix);
     } else if (selectedField?.fieldType === "skewMarkField") {
       const parameters = template[0].skewMarksWindowParameters;
       const data = parameters[0];
@@ -1162,7 +1162,7 @@ const EditDesignTemplate = () => {
           : {};
         return { ...rest, formFieldCoordinates };
       });
-    
+
     // Assemble the full request data
     const fullRequestData = {
       layoutParameters: updatedLayout,
@@ -1221,53 +1221,47 @@ const EditDesignTemplate = () => {
         fieldType: selectedField.fieldType,
         name: selectedField.name,
       };
+      console.log(object);
       switch (value) {
         case "end":
-          if (edCol + +pitchValue > MAX_COL) {
+          if (edCol + Number(pitchValue) > MAX_COL) {
             alert("Out of bound Error: Column exceeds maximum limit.");
             return;
           }
-          switch (object.fieldType) {
-            case "questionField":
-              const parameters = template[0].questionsWindowParameters;
-              // Find the index of the matched object
-              const index = parameters.findIndex((item) =>
-                isEqual(item.Coordinate, formattedSelectedFile)
-              );
-              console.log(index);
-              // Get the matched object
-              const data = index !== -1 ? parameters[index] : null;
-              console.log(data);
-          }
-          object.startCol += +pitchValue;
-          object.endCol += +pitchValue;
+          const prevStartCol = object.startCol;
+          const prevEndColEnd = object.endCol;
+          object.startCol = object.endCol + Number(pitchValue);
+          object.endCol += prevEndColEnd - prevStartCol + Number(pitchValue);
           break;
 
         case "top":
-          if (stRow - pitchValue < MIN_ROW) {
+          if (stRow - Number(pitchValue) < MIN_ROW) {
             alert("Out of bound Error: Row exceeds minimum limit.");
             return;
           }
-          object.startRow -= +pitchValue;
-          object.endRow -= +pitchValue;
+          const prevEndRow = object.endRow;
+          object.endRow = object.startRow - Number(pitchValue);
+          object.startRow -= prevEndRow - Number(pitchValue);
           break;
 
         case "bottom":
-          if (edRow + +pitchValue > MAX_ROW) {
+          if (edRow + Number(pitchValue) > MAX_ROW) {
             alert("Out of bound Error: Row exceeds maximum limit.");
             return;
           }
-          object.startRow += +pitchValue;
-          object.endRow += +pitchValue;
+          const prevStartRow = object.startRow;
+          object.startRow = object.endRow + Number(pitchValue);
+          object.endRow += prevStartRow + Number(pitchValue);
           break;
 
         case "start":
-          if (stCol - pitchValue < MIN_COL) {
+          if (stCol - Number(pitchValue) < MIN_COL) {
             alert("Out of bound Error: Column exceeds minimum limit.");
             return;
           }
-          object.startCol -= +pitchValue;
-          object.endCol -= +pitchValue;
+          const prevEndCol = object.endCol;
+          object.endCol = object.startCol - Number(pitchValue);
+          object.startCol -= prevEndCol - Number(pitchValue);
           break;
 
         default:
@@ -1278,7 +1272,7 @@ const EditDesignTemplate = () => {
       console.log(pitchValue, value);
       console.log(selectedField);
       console.log(object);
-
+      // return
       const layoutData = layoutFieldData.layoutParameters;
       let newData = {};
       let selectedWindowName = "";
@@ -1369,20 +1363,20 @@ const EditDesignTemplate = () => {
           customFieldValue: customValue ? customValue : "",
         };
       }
-      dataCtx.modifyAllTemplate(
-        data.templateIndex,
-        newData,
-        selectedField.fieldType
-      );
+      // dataCtx.modifyAllTemplate(
+      //   data.templateIndex,
+      //   newData,
+      //   selectedField.fieldType
+      // );
       setSelectedCoordinates((prev) => {
         return [...prev, object];
       });
-      setSelection(null);
+      // setSelection(null);
     } catch (err) {
       console.log(err);
     }
   };
-
+  console.log(selectedCoordinates);
   return (
     <>
       <div style={{ position: "sticky", top: 0, zIndex: 99 }}>
