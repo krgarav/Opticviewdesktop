@@ -1197,13 +1197,19 @@ const EditDesignTemplate = () => {
     console.log(num);
   };
 
-  const saveRegion = (pitchValue, value) => {
+  const saveRegion = (pitchValue, value, copiedNumber) => {
     try {
       if (!value) {
         alert("Please select Position.");
+        return
       }
       if (!pitchValue) {
         alert("Pitch value cannot be blank.");
+        return
+      }
+      if (!copiedNumber) {
+        alert("Please select the number of copies.");
+        return
       }
       let object = { ...selectedField };
 
