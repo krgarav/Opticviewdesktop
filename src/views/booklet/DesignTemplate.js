@@ -47,12 +47,12 @@ const getLocalStorageOrDefault = (key, defaultValue) => {
     return defaultValue;
   }
 };
+
 const DesignBookletTemplate = () => {
   const [selected, setSelected] = useState({});
   const [selection, setSelection] = useState(null);
   const [dragStart, setDragStart] = useState(null);
   const [modalShow, setModalShow] = useState(false);
-  const [selectedClass, setSelectedClass] = useState("circle");
   const imageRef = useRef(null);
   const [selectedCoordinates, setSelectedCoordinates] = useState([]);
 
@@ -130,6 +130,7 @@ const DesignBookletTemplate = () => {
 
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
+
   useEffect(() => {
     setTimeout(() => {
       if (dataCtx.allTemplates.length > 0) {
@@ -314,11 +315,11 @@ const DesignBookletTemplate = () => {
             const stepInRow = data2.rowStep;
             const stepInCol = data2.columnStep;
             const customRawValue = data2?.customFieldValue
-            ? data2.customFieldValue.split(",")
-            : [""];
-          const customValue = customRawValue.map((item) =>
-            item.slice(0, 2).toUpperCase()
-          );
+              ? data2.customFieldValue.split(",")
+              : [""];
+            const customValue = customRawValue.map((item) =>
+              item.slice(0, 2).toUpperCase()
+            );
             const data = processDirection(
               readingDirection,
               item.startRow,
@@ -556,6 +557,34 @@ const DesignBookletTemplate = () => {
     setSelection(null);
     setModalShow(false);
     setModalUpdate(false);
+
+    setSkewOption("none");
+    setWindowNgOption("");
+    setReadingDirectionOption("");
+    setMinimumMark();
+    setMaximumMark();
+    setNoInRow();
+    setNoOfStepInRow();
+    setNoInCol();
+    setNoOfStepInCol();
+    setType();
+    setSelectedFieldType();
+    setFieldType();
+    setNumberOfField();
+    setOptions();
+    setMultipleValue();
+    setBlankValue();
+    setMultiple();
+    setBlank();
+    setStartRowInput();
+    setStartColInput();
+    setEndRowInput();
+    setEndColInput();
+    setIdType();
+    setCustomValue();
+    setPrefix();
+    setSuffix();
+    setName();
   };
 
   const validateFormField = () => {
@@ -880,7 +909,6 @@ const DesignBookletTemplate = () => {
       setCoordinateIndex(index);
       setModalUpdate(true);
       setModalShow(true);
-
     } else if (selectedField?.fieldType === "questionField") {
       // const data = template[0].questionsWindowParameters.filter((item) => {
       //     return isEqual(item.Coordinate, formattedSelectedFile);
@@ -892,7 +920,7 @@ const DesignBookletTemplate = () => {
       const index = parameters.findIndex((item) =>
         isEqual(item.Coordinate, formattedSelectedFile)
       );
-      console.log(index);
+
       // Get the matched object
       const data = index !== -1 ? parameters[index] : null;
       console.log(data);
@@ -919,6 +947,8 @@ const DesignBookletTemplate = () => {
       setMultipleValue(data?.multipleValue);
       setBlank(data?.blankAllow);
       setBlankValue(data?.blankValue);
+      setNoOfStepInRow(data?.rowStep);
+      setNoOfStepInCol(data?.columnStep);
     } else if (selectedField?.fieldType === "formField") {
       // const data = template[0].formFieldWindowParameters.filter((item) => {
 
@@ -930,6 +960,7 @@ const DesignBookletTemplate = () => {
       );
       // Get the matched object
       const data = index !== -1 ? parameters[index] : null;
+      console.log(data);
       setCoordinateIndex(index);
 
       setModalUpdate(true);
@@ -957,6 +988,8 @@ const DesignBookletTemplate = () => {
       setBlankValue(data?.blankValue);
       setSuffix(data?.suffix);
       setPrefix(data?.prefix);
+      setNoOfStepInRow(data?.rowStep);
+      setNoOfStepInCol(data?.columnStep);
     } else if (selectedField?.fieldType === "skewMarkField") {
       const parameters = template[0].skewMarksWindowParameters;
       const index = parameters.findIndex((item) =>
@@ -1127,7 +1160,7 @@ const DesignBookletTemplate = () => {
         return { ...rest, formFieldCoordinates };
       });
     const { imageCroppingDTO } = template[0];
-    
+
     // Assemble the full request data
     const fullRequestData = {
       layoutParameters: updatedLayout,
@@ -1150,7 +1183,6 @@ const DesignBookletTemplate = () => {
     //   dataCtx.addImageCoordinate(templateIndex, images)
     // }
   };
-  console.log(dataCtx.allTemplates);
   if (!dataCtx.allTemplates) {
     return <div>Loading</div>;
   }
@@ -2214,16 +2246,12 @@ const DesignBookletTemplate = () => {
                     defaultValue={""}
                   >
                     <option value="">Select reading direction... </option>
-                    <option value="0">From the upper left to the bottom</option>
-                    <option value="1">
-                      From the upper right to the bottom{" "}
-                    </option>
-                    <option value="2">From the lower left to a top</option>
-                    <option value="3">From the lower right to a top</option>
-                    <option value="4">From the upper left to right</option>
-                    <option value="5">From the upper right to the left</option>
-                    <option value="6">From the lower left to right</option>
-                    <option value="7">From the lower right to the left </option>
+                    <option value="0">From top to the bottom</option>
+
+                    <option value="2">From bottom to a top</option>
+
+                    <option value="4">From left to right</option>
+                    <option value="5">From right to left</option>
                   </select>
                 </div>
                 {selectedFieldType !== "idField" && (

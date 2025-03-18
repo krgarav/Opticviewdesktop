@@ -2502,14 +2502,13 @@ const EditDesignTemplate = () => {
                 defaultValue={""}
               >
                 <option value="">Select reading direction... </option>
-                <option value="0">From the upper left to the bottom</option>
-                <option value="1">From the upper right to the bottom </option>
-                <option value="2">From the lower left to a top</option>
-                <option value="3">From the lower right to a top</option>
-                <option value="4">From the upper left to right</option>
-                <option value="5">From the upper right to the left</option>
-                <option value="6">From the lower left to right</option>
-                <option value="7">From the lower right to the left </option>
+
+                <option value="0">From top to the bottom</option>
+
+                <option value="2">From bottom to a top</option>
+
+                <option value="4">From left to right</option>
+                <option value="5">From right to left</option>
               </select>
             </div>
 
