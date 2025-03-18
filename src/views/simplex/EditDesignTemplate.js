@@ -1197,137 +1197,412 @@ const EditDesignTemplate = () => {
     console.log(num);
   };
 
+  // const saveRegion = (pitchValue, value, copiedNumber) => {
+  //   try {
+  //     if (!value) {
+  //       alert("Please select Position.");
+  //       return
+  //     }
+  //     if (!pitchValue) {
+  //       alert("Pitch value cannot be blank.");
+  //       return
+  //     }
+  //     if (!copiedNumber) {
+  //       alert("Please select the number of copies.");
+  //       return
+  //     }
+
+  //     let object = { ...selectedField };
+
+  //     const stCol = object.startCol;
+  //     const stRow = object.startRow;
+  //     const edCol = object.endCol;
+  //     const edRow = object.endRow;
+
+  //     // Define the boundaries
+  //     const MIN_COL = 1;
+  //     const MAX_COL = numCols; // Replace with your maximum column value
+  //     const MIN_ROW = 1;
+  //     const MAX_ROW = numRows; // Replace with your maximum row value
+
+  //     const template = dataCtx.allTemplates[0];
+  //     console.log(object);
+  //     const formattedSelectedFile = {
+  //       "End Col": selectedField.endCol,
+  //       "End Row": selectedField.endRow + 1,
+  //       "Start Col": selectedField.startCol,
+  //       "Start Row": selectedField.startRow + 1,
+  //       fieldType: selectedField.fieldType,
+  //       name: selectedField.name,
+  //     };
+  //     switch (value) {
+  //       case "end":
+  //         const prevStartCol = object.startCol;
+  //         const prevEndColEnd = object.endCol;
+  //         if (
+  //           prevEndColEnd +
+  //             (prevEndColEnd - prevStartCol) +
+  //             Number(pitchValue) >
+  //           MAX_COL
+  //         ) {
+  //           alert("Out of bound Error: Column exceeds maximum limit.");
+  //           return;
+  //         }
+
+  //         object.startCol = object.endCol + Number(pitchValue);
+  //         object.endCol += prevEndColEnd - prevStartCol + Number(pitchValue);
+  //         break;
+
+  //       case "top":
+  //         const prevEndRow = object.endRow;
+  //         const prevStartTopRow = object.startRow;
+  //         if (
+  //           object.startRow -
+  //             (prevEndRow - prevStartTopRow) -
+  //             Number(pitchValue) <
+  //           MIN_ROW
+  //         ) {
+  //           alert("Out of bound Error: Row exceeds minimum limit.");
+  //           return;
+  //         }
+
+  //         object.endRow = object.startRow - Number(pitchValue);
+  //         object.startRow =
+  //           object.startRow -
+  //           (prevEndRow - prevStartTopRow) -
+  //           Number(pitchValue);
+  //         break;
+
+  //       case "bottom":
+  //         if (edRow + Number(pitchValue) > MAX_COL) {
+  //           alert("Out of bound Error: Row exceeds maximum limit.");
+  //           return;
+  //         }
+  //         const prevStartRow = object.startRow;
+  //         const prevEndBottomRow = object.endRow;
+  //         object.startRow = object.endRow + Number(pitchValue);
+  //         object.endRow += prevEndBottomRow - prevStartRow + Number(pitchValue);
+  //         break;
+
+  //       case "start":
+  //         const prevEndCol = object.endCol;
+  //         const prevStartColStart = object.startCol;
+
+  //         if (
+  //           object.startCol -
+  //             (prevEndCol - prevStartColStart) -
+  //             Number(pitchValue) <
+  //           MIN_COL
+  //         ) {
+  //           alert("Out of bound Error: Column exceeds minimum limit.");
+  //           return;
+  //         }
+
+  //         object.endCol = object.startCol - Number(pitchValue);
+  //         object.startCol =
+  //           object.startCol -
+  //           (prevEndCol - prevStartColStart) -
+  //           Number(pitchValue);
+  //         break;
+
+  //       default:
+  //         alert("Invalid direction.");
+  //         break;
+  //     }
+  //     const layoutData = layoutFieldData.layoutParameters;
+  //     let newData = {};
+  //     let selectedWindowName = "";
+  //     if (selectedField.fieldType === "idField") {
+  //       selectedWindowName = "Id Field";
+  //       newData = {
+  //         Coordinate: {
+  //           "Start Row": object?.startRow + 1,
+  //           "Start Col": object?.startCol,
+  //           "End Row": object?.endRow + 1,
+  //           "End Col": object?.endCol,
+  //           name: "Id Field",
+  //           fieldType: selectedFieldType,
+  //         },
+  //         imageStructureData: position,
+  //         columnStart: +selection?.startCol,
+  //         columnNumber: +noInCol,
+  //         columnStep: +noOfStepInCol,
+  //         rowStart: +selection?.startRow + 1,
+  //         rowNumber: +noInRow,
+  //         rowStep: +noOfStepInRow,
+  //         iDirection: +readingDirectionOption,
+  //         idMarksPattern: idNumber.toString(),
+  //       };
+  //     } else if (selectedField.fieldType === "skewMarkField") {
+  //       selectedWindowName = name;
+  //       newData = {
+  //         iFace: +layoutData.iFace ?? 0,
+  //         columnStart: +selection?.startCol,
+  //         columnNumber: +noInCol,
+  //         columnStep: +noOfStepInCol,
+  //         rowStart: +selection?.startRow + 1,
+  //         rowNumber: +noInRow,
+  //         rowStep: +noOfStepInRow,
+  //         iSensitivity: +layoutData.iSensitivity,
+  //         iDifference: +layoutData.iDifference,
+  //         iOption: 1,
+  //         iReject: +layoutData.iReject,
+  //         iDirection: +readingDirectionOption,
+  //         windowName: name,
+  //         Coordinate: {
+  //           "Start Row": object?.startRow + 1,
+  //           "Start Col": object?.startCol,
+  //           "End Row": object?.endRow + 1,
+  //           "End Col": object?.endCol,
+  //           name: name,
+  //           fieldType: selectedFieldType,
+  //         },
+  //         ngAction: windowNgOption,
+  //         iMinimumMarks: +minimumMark,
+  //         iMaximumMarks: +maximumMark,
+  //         skewMark: +skewoption,
+  //         iType: type,
+  //       };
+  //     } else {
+  //       selectedWindowName = name;
+  //       newData = {
+  //         iFace: +layoutData.iFace ?? 0,
+  //         windowName: name,
+  //         columnStart: +object?.startCol,
+  //         columnNumber: +noInCol,
+  //         columnStep: +noOfStepInCol,
+  //         rowStart: +object?.startRow + 1,
+  //         rowNumber: +noInRow,
+  //         rowStep: +noOfStepInRow,
+  //         iDirection: +readingDirectionOption,
+  //         iSensitivity: +layoutData.iSensitivity ?? 3,
+  //         iDifference: +layoutData.iDifference ?? 5,
+  //         iOption: selectedFieldType === "formField" ? 1 : 0,
+  //         iMinimumMarks: +minimumMark,
+  //         iMaximumMarks: +maximumMark,
+  //         iType: type,
+  //         ngAction: windowNgOption,
+  //         Coordinate: {
+  //           "Start Row": object?.startRow + 1,
+  //           "Start Col": object?.startCol,
+  //           "End Row": object?.endRow + 1,
+  //           "End Col": object?.endCol,
+  //           name: name,
+  //           fieldType: selectedFieldType,
+  //         },
+  //         totalNumberOfFields: numberOfField,
+  //         numericOrAlphabets: fieldType,
+  //         multipleAllow: multiple,
+  //         multipleValue: multipleValue ? multipleValue : "",
+  //         blankAllow: blank,
+  //         blankValue: blankValue ? blankValue : "",
+  //         customFieldValue: customValue ? customValue : "",
+  //       };
+  //     }
+  //     dataCtx.modifyAllTemplate(0, newData, selectedField.fieldType);
+  //     setSelectedCoordinates((prev) => {
+  //       return [...prev, object];
+  //     });
+  //     // setSelection(null);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+
+  // const saveRegion = (pitchValue, value, copiedNumber) => {
+  //   try {
+  //     if (!value) {
+  //       alert("Please select Position.");
+  //       return;
+  //     }
+  //     if (!pitchValue) {
+  //       alert("Pitch value cannot be blank.");
+  //       return;
+  //     }
+  //     if (!copiedNumber || copiedNumber < 1) {
+  //       alert("Please select a valid number of copies.");
+  //       return;
+  //     }
+
+  //     let object = { ...selectedField };
+
+  //     const MIN_COL = 1;
+  //     const MAX_COL = numCols;
+  //     const MIN_ROW = 1;
+  //     const MAX_ROW = numRows;
+
+  //     const newCoordinates = [];
+
+  //     for (let i = 0; i < copiedNumber; i++) {
+  //       let newObject = { ...object };
+
+  //       switch (value) {
+  //         case "end":
+  //           if (i === 0) {
+  //             newObject.startCol = object.endCol + Number(pitchValue);
+  //           } else {
+  //             newObject.startCol = newCoordinates[i - 1].endCol + Number(pitchValue);
+  //           }
+  //           newObject.endCol = newObject.startCol + (object.endCol - object.startCol);
+  //           if (newObject.endCol > MAX_COL) {
+  //             alert("Out of bound Error: Column exceeds maximum limit.");
+  //             return;
+  //           }
+  //           break;
+
+  //         case "top":
+  //           if (i === 0) {
+  //             newObject.startRow = object.startRow - Number(pitchValue);
+  //           } else {
+  //             newObject.startRow = newCoordinates[i - 1].startRow - Number(pitchValue);
+  //           }
+  //           newObject.endRow = newObject.startRow + (object.endRow - object.startRow);
+  //           if (newObject.startRow < MIN_ROW) {
+  //             alert("Out of bound Error: Row exceeds minimum limit.");
+  //             return;
+  //           }
+  //           break;
+
+  //         case "bottom":
+  //           if (i === 0) {
+  //             newObject.startRow = object.endRow + Number(pitchValue);
+  //           } else {
+  //             newObject.startRow = newCoordinates[i - 1].endRow + Number(pitchValue);
+  //           }
+  //           newObject.endRow = newObject.startRow + (object.endRow - object.startRow);
+  //           if (newObject.endRow > MAX_ROW) {
+  //             alert("Out of bound Error: Row exceeds maximum limit.");
+  //             return;
+  //           }
+  //           break;
+
+  //         case "start":
+  //           if (i === 0) {
+  //             newObject.startCol = object.startCol - Number(pitchValue);
+  //           } else {
+  //             newObject.startCol = newCoordinates[i - 1].startCol - Number(pitchValue);
+  //           }
+  //           newObject.endCol = newObject.startCol + (object.endCol - object.startCol);
+  //           if (newObject.startCol < MIN_COL) {
+  //             alert("Out of bound Error: Column exceeds minimum limit.");
+  //             return;
+  //           }
+  //           break;
+
+  //         default:
+  //           alert("Invalid direction.");
+  //           return;
+  //       }
+  //       newCoordinates.push(newObject);
+  //     }
+
+  //     setSelectedCoordinates((prev) => [...prev, ...newCoordinates]);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+
   const saveRegion = (pitchValue, value, copiedNumber) => {
     try {
       if (!value) {
         alert("Please select Position.");
-        return
+        return;
       }
       if (!pitchValue) {
         alert("Pitch value cannot be blank.");
-        return
+        return;
       }
-      if (!copiedNumber) {
-        alert("Please select the number of copies.");
-        return
+      if (!copiedNumber || copiedNumber < 1) {
+        alert("Please select a valid number of copies.");
+        return;
       }
+      console.log(selectedField);
+      // return
       let object = { ...selectedField };
 
-      const stCol = object.startCol;
-      const stRow = object.startRow;
-      const edCol = object.endCol;
-      const edRow = object.endRow;
-
-      // Define the boundaries
       const MIN_COL = 1;
-      const MAX_COL = numCols; // Replace with your maximum column value
+      const MAX_COL = numCols;
       const MIN_ROW = 1;
-      const MAX_ROW = numRows; // Replace with your maximum row value
+      const MAX_ROW = numRows;
 
-      const template = dataCtx.allTemplates[0];
-      console.log(object);
-      const formattedSelectedFile = {
-        "End Col": selectedField.endCol,
-        "End Row": selectedField.endRow + 1,
-        "Start Col": selectedField.startCol,
-        "Start Row": selectedField.startRow + 1,
-        fieldType: selectedField.fieldType,
-        name: selectedField.name,
-      };
-      console.log(edCol + Number(pitchValue), MAX_COL);
-      switch (value) {
-        case "end":
-          const prevStartCol = object.startCol;
-          const prevEndColEnd = object.endCol;
-          if (
-            prevEndColEnd +
-              (prevEndColEnd - prevStartCol) +
-              Number(pitchValue) >
-            MAX_COL
-          ) {
-            alert("Out of bound Error: Column exceeds maximum limit.");
+      const newCoordinates = [];
+
+      for (let i = 0; i < copiedNumber; i++) {
+        let newObject = { ...object };
+
+        switch (value) {
+          case "end":
+            if (i === 0) {
+              newObject.startCol = object.endCol + Number(pitchValue);
+            } else {
+              newObject.startCol =
+                newCoordinates[i - 1].endCol + Number(pitchValue);
+            }
+            newObject.endCol =
+              newObject.startCol + (object.endCol - object.startCol);
+            if (newObject.endCol > MAX_COL) {
+              alert("Out of bound Error: Column exceeds maximum limit.");
+              return;
+            }
+            break;
+
+            case "top":
+              if (i === 0) {
+                newObject.startRow = object.startRow - (object.endRow - object.startRow) - Number(pitchValue);
+              } else {
+                newObject.startRow = newCoordinates[i - 1].startRow - (object.endRow - object.startRow) - Number(pitchValue);
+              }
+              newObject.endRow = newObject.startRow + (object.endRow - object.startRow);
+              if (newObject.startRow < MIN_ROW) {
+                alert("Out of bound Error: Row exceeds minimum limit.");
+                return;
+              }
+              break;
+
+          case "bottom":
+            if (i === 0) {
+              newObject.startRow = object.endRow + Number(pitchValue);
+            } else {
+              newObject.startRow =
+                newCoordinates[i - 1].endRow + Number(pitchValue);
+            }
+            newObject.endRow =
+              newObject.startRow + (object.endRow - object.startRow);
+            if (newObject.endRow > MAX_ROW) {
+              alert("Out of bound Error: Row exceeds maximum limit.");
+              return;
+            }
+            break;
+
+            case "start":
+              if (i === 0) {
+                newObject.startCol = object.startCol - (object.endCol - object.startCol) - Number(pitchValue);
+              } else {
+                newObject.startCol = newCoordinates[i - 1].startCol - (object.endCol - object.startCol) - Number(pitchValue);
+              }
+              newObject.endCol = newObject.startCol + (object.endCol - object.startCol);
+              if (newObject.startCol < MIN_COL) {
+                alert("Out of bound Error: Column exceeds minimum limit.");
+                return;
+              }
+              break;
+            
+          default:
+            alert("Invalid direction.");
             return;
-          }
-
-          object.startCol = object.endCol + Number(pitchValue);
-          object.endCol += prevEndColEnd - prevStartCol + Number(pitchValue);
-          break;
-
-        case "top":
-          const prevEndRow = object.endRow;
-          const prevStartTopRow = object.startRow;
-          if (
-            object.startRow -
-              (prevEndRow - prevStartTopRow) -
-              Number(pitchValue) <
-            MIN_ROW
-          ) {
-            alert("Out of bound Error: Row exceeds minimum limit.");
-            return;
-          }
-
-          object.endRow = object.startRow - Number(pitchValue);
-          object.startRow =
-            object.startRow -
-            (prevEndRow - prevStartTopRow) -
-            Number(pitchValue);
-          break;
-
-        case "bottom":
-          if (edRow + Number(pitchValue) > MAX_COL) {
-            alert("Out of bound Error: Row exceeds maximum limit.");
-            return;
-          }
-          const prevStartRow = object.startRow;
-          const prevEndBottomRow = object.endRow;
-          object.startRow = object.endRow + Number(pitchValue);
-          object.endRow += prevEndBottomRow - prevStartRow + Number(pitchValue);
-          break;
-
-        case "start":
-          const prevEndCol = object.endCol;
-          const prevStartColStart = object.startCol;
-
-          if (
-            object.startCol -
-              (prevEndCol - prevStartColStart) -
-              Number(pitchValue) <
-            MIN_COL
-          ) {
-            alert("Out of bound Error: Column exceeds minimum limit.");
-            return;
-          }
-
-          object.endCol = object.startCol - Number(pitchValue);
-          object.startCol =
-            object.startCol -
-            (prevEndCol - prevStartColStart) -
-            Number(pitchValue);
-          break;
-
-        default:
-          alert("Invalid direction.");
-          break;
-      }
-
-      console.log(pitchValue, value);
-      console.log(selectedField);
-      console.log(object);
-      // return
-      const layoutData = layoutFieldData.layoutParameters;
-      let newData = {};
-      let selectedWindowName = "";
-      if (selectedField.fieldType === "idField") {
-        selectedWindowName = "Id Field";
-        newData = {
+        }
+        newCoordinates.push(newObject);
+        const layoutData = layoutFieldData.layoutParameters;
+        const newData = {
           Coordinate: {
-            "Start Row": object?.startRow + 1,
-            "Start Col": object?.startCol,
-            "End Row": object?.endRow + 1,
-            "End Col": object?.endCol,
-            name: "Id Field",
-            fieldType: selectedFieldType,
+            "Start Row": newObject?.startRow + 1,
+            "Start Col": newObject?.startCol,
+            "End Row": newObject?.endRow + 1,
+            "End Col": newObject?.endCol,
+            name: selectedField.name,
+            fieldType: selectedField.fieldType,
           },
+          windowName: selectedField.name,
           imageStructureData: position,
           columnStart: +selection?.startCol,
           columnNumber: +noInCol,
@@ -1337,49 +1612,7 @@ const EditDesignTemplate = () => {
           rowStep: +noOfStepInRow,
           iDirection: +readingDirectionOption,
           idMarksPattern: idNumber.toString(),
-        };
-      } else if (selectedField.fieldType === "skewMarkField") {
-        selectedWindowName = name;
-        newData = {
           iFace: +layoutData.iFace ?? 0,
-          columnStart: +selection?.startCol,
-          columnNumber: +noInCol,
-          columnStep: +noOfStepInCol,
-          rowStart: +selection?.startRow + 1,
-          rowNumber: +noInRow,
-          rowStep: +noOfStepInRow,
-          iSensitivity: +layoutData.iSensitivity,
-          iDifference: +layoutData.iDifference,
-          iOption: 1,
-          iReject: +layoutData.iReject,
-          iDirection: +readingDirectionOption,
-          windowName: name,
-          Coordinate: {
-            "Start Row": object?.startRow + 1,
-            "Start Col": object?.startCol,
-            "End Row": object?.endRow + 1,
-            "End Col": object?.endCol,
-            name: name,
-            fieldType: selectedFieldType,
-          },
-          ngAction: windowNgOption,
-          iMinimumMarks: +minimumMark,
-          iMaximumMarks: +maximumMark,
-          skewMark: +skewoption,
-          iType: type,
-        };
-      } else {
-        selectedWindowName = name;
-        newData = {
-          iFace: +layoutData.iFace ?? 0,
-          windowName: name,
-          columnStart: +object?.startCol,
-          columnNumber: +noInCol,
-          columnStep: +noOfStepInCol,
-          rowStart: +object?.startRow + 1,
-          rowNumber: +noInRow,
-          rowStep: +noOfStepInRow,
-          iDirection: +readingDirectionOption,
           iSensitivity: +layoutData.iSensitivity ?? 3,
           iDifference: +layoutData.iDifference ?? 5,
           iOption: selectedFieldType === "formField" ? 1 : 0,
@@ -1387,14 +1620,6 @@ const EditDesignTemplate = () => {
           iMaximumMarks: +maximumMark,
           iType: type,
           ngAction: windowNgOption,
-          Coordinate: {
-            "Start Row": object?.startRow + 1,
-            "Start Col": object?.startCol,
-            "End Row": object?.endRow + 1,
-            "End Col": object?.endCol,
-            name: name,
-            fieldType: selectedFieldType,
-          },
           totalNumberOfFields: numberOfField,
           numericOrAlphabets: fieldType,
           multipleAllow: multiple,
@@ -1403,12 +1628,10 @@ const EditDesignTemplate = () => {
           blankValue: blankValue ? blankValue : "",
           customFieldValue: customValue ? customValue : "",
         };
+        dataCtx.modifyAllTemplate(0, newData, selectedField.fieldType);
       }
-      dataCtx.modifyAllTemplate(0, newData, selectedField.fieldType);
-      setSelectedCoordinates((prev) => {
-        return [...prev, object];
-      });
-      // setSelection(null);
+
+      setSelectedCoordinates((prev) => [...prev, ...newCoordinates]);
     } catch (err) {
       console.log(err);
     }
