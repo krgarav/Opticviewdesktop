@@ -1069,7 +1069,6 @@ const EditDesignTemplate = () => {
   const handleIconMouseUp = (event) => {
     event.stopPropagation();
   };
-  console.log(data);
   const sendHandler = async () => {
     // Retrieve the selected template
     const template = dataCtx.allTemplates[0];
@@ -1197,6 +1196,7 @@ const EditDesignTemplate = () => {
   const sensitivityHandler = (num) => {
     console.log(num);
   };
+
   const saveRegion = (pitchValue, value) => {
     try {
       if (!value) {
@@ -1219,7 +1219,7 @@ const EditDesignTemplate = () => {
       const MAX_ROW = numRows; // Replace with your maximum row value
 
       const template = dataCtx.allTemplates[0];
-      console.log(template);
+      console.log(object);
       const formattedSelectedFile = {
         "End Col": selectedField.endCol,
         "End Row": selectedField.endRow + 1,
@@ -1231,12 +1231,18 @@ const EditDesignTemplate = () => {
       console.log(edCol + Number(pitchValue), MAX_COL);
       switch (value) {
         case "end":
-          if (edCol + Number(pitchValue) > MAX_COL) {
+          const prevStartCol = object.startCol;
+          const prevEndColEnd = object.endCol;
+          if (
+            prevEndColEnd +
+              (prevEndColEnd - prevStartCol) +
+              Number(pitchValue) >
+            MAX_COL
+          ) {
             alert("Out of bound Error: Column exceeds maximum limit.");
             return;
           }
-          const prevStartCol = object.startCol;
-          const prevEndColEnd = object.endCol;
+
           object.startCol = object.endCol + Number(pitchValue);
           object.endCol += prevEndColEnd - prevStartCol + Number(pitchValue);
           break;
@@ -1252,13 +1258,14 @@ const EditDesignTemplate = () => {
           break;
 
         case "bottom":
-          if (edRow + Number(pitchValue) > MAX_ROW) {
+          if (edRow + Number(pitchValue) > MAX_COL) {
             alert("Out of bound Error: Row exceeds maximum limit.");
             return;
           }
           const prevStartRow = object.startRow;
+          const prevEndBottomRow = object.endRow;
           object.startRow = object.endRow + Number(pitchValue);
-          object.endRow += prevStartRow + Number(pitchValue);
+          object.endRow += prevEndBottomRow - prevStartRow + Number(pitchValue);
           break;
 
         case "start":
@@ -1339,10 +1346,10 @@ const EditDesignTemplate = () => {
         newData = {
           iFace: +layoutData.iFace ?? 0,
           windowName: name,
-          columnStart: +selection?.startCol,
+          columnStart: +object?.startCol,
           columnNumber: +noInCol,
           columnStep: +noOfStepInCol,
-          rowStart: +selection?.startRow + 1,
+          rowStart: +object?.startRow + 1,
           rowNumber: +noInRow,
           rowStep: +noOfStepInRow,
           iDirection: +readingDirectionOption,
@@ -1379,7 +1386,7 @@ const EditDesignTemplate = () => {
       console.log(err);
     }
   };
-  console.log(selectedCoordinates);
+
   return (
     <>
       <div style={{ position: "sticky", top: 0, zIndex: 99 }}>

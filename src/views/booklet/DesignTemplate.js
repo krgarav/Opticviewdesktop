@@ -19,6 +19,12 @@ import { getUrls } from "helper/url_helper";
 import { calculateTotalRow } from "services/HelperFunctions";
 import { FiChevronRight, FiX } from "react-icons/fi";
 import SideBar from "components/SideBar";
+import CopyModal from "modals/CopyModal/CopyModal";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import IconButton from "@mui/material/IconButton";
+import { Button as Muibtn, Tooltip } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+
 // Helper function to fetch an image and convert it to a File object
 async function fetchImageAsFile(imagePath, baseUrl) {
   const response = await fetch(
@@ -111,6 +117,8 @@ const DesignBookletTemplate = () => {
   const [prefix, setPrefix] = useState("");
   const [suffix, setSuffix] = useState("");
   const [showSideBar, setShowSideBar] = useState(false);
+  const [showCopy, setShowCopy] = useState(false);
+  const [selectedField, setSelectedField] = useState();
   const location = useLocation();
   const {
     totalColumns,
@@ -872,7 +880,7 @@ const DesignBookletTemplate = () => {
   };
 
   const handleEyeClick = (selectedField, index) => {
-    console.log(selectedField);
+    setSelectedField(selectedField);
     setSelection(() => ({
       startRow: selectedField.startRow,
       startCol: selectedField.startCol,
@@ -925,7 +933,7 @@ const DesignBookletTemplate = () => {
 
       // Get the matched object
       const data = index !== -1 ? parameters[index] : null;
-      console.log(data);
+
       setCoordinateIndex(index);
       setModalUpdate(true);
       setModalShow(true);
@@ -962,7 +970,7 @@ const DesignBookletTemplate = () => {
       );
       // Get the matched object
       const data = index !== -1 ? parameters[index] : null;
-      console.log(data);
+
       setCoordinateIndex(index);
 
       setModalUpdate(true);
@@ -1184,6 +1192,188 @@ const DesignBookletTemplate = () => {
     // if (images.length > 0) {
     //   dataCtx.addImageCoordinate(templateIndex, images)
     // }
+  };
+  const saveRegion = (pitchValue, value) => {
+    try {
+      if (!value) {
+        alert("Please select Position.");
+      }
+      if (!pitchValue) {
+        alert("Pitch value cannot be blank.");
+      }
+      let object = { ...selectedField };
+
+      const stCol = object.startCol;
+      const stRow = object.startRow;
+      const edCol = object.endCol;
+      const edRow = object.endRow;
+
+      // Define the boundaries
+      const MIN_COL = 0;
+      const MAX_COL = numCols; // Replace with your maximum column value
+      const MIN_ROW = 0;
+      const MAX_ROW = numRows; // Replace with your maximum row value
+
+      const template = dataCtx.allTemplates[0];
+      console.log(template);
+      const formattedSelectedFile = {
+        "End Col": selectedField.endCol,
+        "End Row": selectedField.endRow + 1,
+        "Start Col": selectedField.startCol,
+        "Start Row": selectedField.startRow + 1,
+        fieldType: selectedField.fieldType,
+        name: selectedField.name,
+      };
+      console.log(edCol + Number(pitchValue), MAX_COL);
+      switch (value) {
+        case "end":
+          if (edCol + Number(pitchValue) > MAX_COL) {
+            alert("Out of bound Error: Column exceeds maximum limit.");
+            return;
+          }
+          const prevStartCol = object.startCol;
+          const prevEndColEnd = object.endCol;
+          object.startCol = object.endCol + Number(pitchValue);
+          object.endCol += prevEndColEnd - prevStartCol + Number(pitchValue);
+          break;
+
+        case "top":
+          if (stRow - Number(pitchValue) < MIN_ROW) {
+            alert("Out of bound Error: Row exceeds minimum limit.");
+            return;
+          }
+          const prevEndRow = object.endRow;
+          object.endRow = object.startRow - Number(pitchValue);
+          object.startRow -= prevEndRow - Number(pitchValue);
+          break;
+
+        case "bottom":
+          if (edRow + Number(pitchValue) > MAX_ROW) {
+            alert("Out of bound Error: Row exceeds maximum limit.");
+            return;
+          }
+          const prevStartRow = object.startRow;
+          object.startRow = object.endRow + Number(pitchValue);
+          object.endRow += prevStartRow + Number(pitchValue);
+          break;
+
+        case "start":
+          if (stCol - Number(pitchValue) < MIN_COL) {
+            alert("Out of bound Error: Column exceeds minimum limit.");
+            return;
+          }
+          const prevEndCol = object.endCol;
+          object.endCol = object.startCol - Number(pitchValue);
+          object.startCol -= prevEndCol - Number(pitchValue);
+          break;
+
+        default:
+          alert("Invalid direction.");
+          break;
+      }
+
+      console.log(pitchValue, value);
+      console.log(selectedField);
+      console.log(object);
+      // return
+      const layoutData = layoutFieldData.layoutParameters;
+      let newData = {};
+      let selectedWindowName = "";
+      if (selectedField.fieldType === "idField") {
+        selectedWindowName = "Id Field";
+        newData = {
+          Coordinate: {
+            "Start Row": object?.startRow + 1,
+            "Start Col": object?.startCol,
+            "End Row": object?.endRow + 1,
+            "End Col": object?.endCol,
+            name: "Id Field",
+            fieldType: selectedFieldType,
+          },
+          imageStructureData: position,
+          columnStart: +selection?.startCol,
+          columnNumber: +noInCol,
+          columnStep: +noOfStepInCol,
+          rowStart: +selection?.startRow + 1,
+          rowNumber: +noInRow,
+          rowStep: +noOfStepInRow,
+          iDirection: +readingDirectionOption,
+          idMarksPattern: idNumber.toString(),
+        };
+      } else if (selectedField.fieldType === "skewMarkField") {
+        selectedWindowName = name;
+        newData = {
+          iFace: +layoutData.iFace ?? 0,
+          columnStart: +selection?.startCol,
+          columnNumber: +noInCol,
+          columnStep: +noOfStepInCol,
+          rowStart: +selection?.startRow + 1,
+          rowNumber: +noInRow,
+          rowStep: +noOfStepInRow,
+          iSensitivity: +layoutData.iSensitivity,
+          iDifference: +layoutData.iDifference,
+          iOption: 1,
+          iReject: +layoutData.iReject,
+          iDirection: +readingDirectionOption,
+          windowName: name,
+          Coordinate: {
+            "Start Row": object?.startRow + 1,
+            "Start Col": object?.startCol,
+            "End Row": object?.endRow + 1,
+            "End Col": object?.endCol,
+            name: name,
+            fieldType: selectedFieldType,
+          },
+          ngAction: windowNgOption,
+          iMinimumMarks: +minimumMark,
+          iMaximumMarks: +maximumMark,
+          skewMark: +skewoption,
+          iType: type,
+        };
+      } else {
+        selectedWindowName = name;
+        newData = {
+          iFace: +layoutData.iFace ?? 0,
+          windowName: name,
+          columnStart: +selection?.startCol,
+          columnNumber: +noInCol,
+          columnStep: +noOfStepInCol,
+          rowStart: +selection?.startRow + 1,
+          rowNumber: +noInRow,
+          rowStep: +noOfStepInRow,
+          iDirection: +readingDirectionOption,
+          iSensitivity: +layoutData.iSensitivity ?? 3,
+          iDifference: +layoutData.iDifference ?? 5,
+          iOption: selectedFieldType === "formField" ? 1 : 0,
+          iMinimumMarks: +minimumMark,
+          iMaximumMarks: +maximumMark,
+          iType: type,
+          ngAction: windowNgOption,
+          Coordinate: {
+            "Start Row": object?.startRow + 1,
+            "Start Col": object?.startCol,
+            "End Row": object?.endRow + 1,
+            "End Col": object?.endCol,
+            name: name,
+            fieldType: selectedFieldType,
+          },
+          totalNumberOfFields: numberOfField,
+          numericOrAlphabets: fieldType,
+          multipleAllow: multiple,
+          multipleValue: multipleValue ? multipleValue : "",
+          blankAllow: blank,
+          blankValue: blankValue ? blankValue : "",
+          customFieldValue: customValue ? customValue : "",
+        };
+      }
+      dataCtx.modifyAllTemplate(0, newData, selectedField.fieldType);
+      setSelectedCoordinates((prev) => {
+        return [...prev, object];
+      });
+      // setSelection(null);
+    } catch (err) {
+      console.log(err);
+    }
   };
   if (!dataCtx.allTemplates) {
     return <div>Loading</div>;
@@ -2405,6 +2595,36 @@ const DesignBookletTemplate = () => {
           >
             Hide Modal
           </Button>
+ {modalUpdate && (
+            <>
+              <Tooltip title="Delete" placement="top">
+                <IconButton
+                  aria-label="delete"
+                  onClick={() => {
+                    handleCrossClick(selectedField, coordinateIndex);
+                    setModalShow(false);
+                    setSelection(null);
+                  }}
+                  color="secondary"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip
+                title="Copy Field"
+                placement="top"
+                onClick={() => {
+                  setShowCopy(true);
+                }}
+              >
+                <IconButton aria-label="copy" color="primary">
+                  <ContentCopyIcon />
+                </IconButton>
+              </Tooltip>
+            </>
+          )}
+
           <div style={{ display: "flex", gap: "10px" }}>
             <Button
               type="button"
@@ -2469,6 +2689,16 @@ const DesignBookletTemplate = () => {
           show={detailPage}
           layoutData={layoutFieldData}
           onHide={() => setDetailPage(false)}
+        />
+      )}
+
+      {showCopy && (
+        <CopyModal
+          show={showCopy}
+          onHide={() => {
+            setShowCopy(false);
+          }}
+          saveRegion={saveRegion}
         />
       )}
 
