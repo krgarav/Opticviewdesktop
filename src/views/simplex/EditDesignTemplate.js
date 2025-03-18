@@ -1213,9 +1213,9 @@ const EditDesignTemplate = () => {
       const edRow = object.endRow;
 
       // Define the boundaries
-      const MIN_COL = 0;
+      const MIN_COL = 1;
       const MAX_COL = numCols; // Replace with your maximum column value
-      const MIN_ROW = 0;
+      const MIN_ROW = 1;
       const MAX_ROW = numRows; // Replace with your maximum row value
 
       const template = dataCtx.allTemplates[0];
@@ -1269,13 +1269,24 @@ const EditDesignTemplate = () => {
           break;
 
         case "start":
-          if (stCol - Number(pitchValue) < MIN_COL) {
+          const prevEndCol = object.endCol;
+          const prevStartColStart = object.startCol;
+
+          if (
+            object.startCol -
+              (prevEndCol - prevStartColStart) -
+              Number(pitchValue) <
+            MIN_COL
+          ) {
             alert("Out of bound Error: Column exceeds minimum limit.");
             return;
           }
-          const prevEndCol = object.endCol;
+
           object.endCol = object.startCol - Number(pitchValue);
-          object.startCol -= prevEndCol - Number(pitchValue);
+          object.startCol =
+            object.startCol -
+            (prevEndCol - prevStartColStart) -
+            Number(pitchValue);
           break;
 
         default:
@@ -1377,7 +1388,7 @@ const EditDesignTemplate = () => {
           customFieldValue: customValue ? customValue : "",
         };
       }
-      dataCtx.modifyAllTemplate(0, newData, selectedField.fieldType);
+      // dataCtx.modifyAllTemplate(0, newData, selectedField.fieldType);
       setSelectedCoordinates((prev) => {
         return [...prev, object];
       });
