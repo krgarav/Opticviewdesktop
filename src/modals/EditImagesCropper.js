@@ -73,7 +73,7 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
       dataCtx.addImageCoordinateWithIndex(0, allImages);
     }
   }, [allImages]);
-  
+
   useEffect(() => {
     if (!modalShow) {
       document.body.classList.add(classes["blur-background"]);
@@ -155,7 +155,7 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
     const bottomRightX = Math.floor(rawBottomLeftX);
     const bottomRightY = Math.floor(rawBottomRightY);
     const sidePath =
-    croppingSide === "frontSide" ? "frontImagePath" : "backImagePath";
+      croppingSide === "frontSide" ? "frontImagePath" : "backImagePath";
     const obj = {
       // key: uuidv4(),
       imageName: imageName,
@@ -164,7 +164,10 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
       topLeftY,
       bottomRightX,
       bottomRightY,
-      sheetNumber: getPageNumber(currentImageIndex, images[currentImageIndex][sidePath]),
+      sheetNumber: getPageNumber(
+        currentImageIndex,
+        images[currentImageIndex][sidePath]
+      ),
     };
     console.log(obj);
     setAllImages((prevData) => {
@@ -192,10 +195,12 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
       toast.error("Cropping side cannot be empty");
       return;
     }
-    saveHandler();
-    setShow(false);
+    toast.success("Image saved successfully");
+
+    // setShow(false);
     setImageName("");
     setCroppingSide(side.name === "Front" ? "frontSide" : "backSide");
+    saveHandler();
   };
   const allData = allImages.map((item, index) => {
     return (
@@ -398,15 +403,17 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
             </Button>
           </div>
         </CardHeader>
-        <div  style={{ maxHeight: "50vh", overflow: "auto" }}>
-          <Table className="align-items-center table-flush mb-5" >
-            <thead  className="thead-light"
+        <div style={{ maxHeight: "50vh", overflow: "auto" }}>
+          <Table className="align-items-center table-flush mb-5">
+            <thead
+              className="thead-light"
               style={{
                 position: "sticky",
                 top: 0,
                 zIndex: 1,
                 backgroundColor: "white",
-              }}>
+              }}
+            >
               <tr>
                 <th scope="col" className="text-center">
                   SL no.
@@ -476,6 +483,7 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
                     Image Name :
                   </label>
                   <input
+                    value={imageName}
                     id="imageName"
                     type="text"
                     placeholder="Enter Image Name"
@@ -522,8 +530,7 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
                 //     ? `${baseUrl}GetTemplateImage?filePath=${images[currentImageIndex].frontImagePath}`
                 //     : `${baseUrl}GetTemplateImage?filePath=${images[currentImageIndex].backImagePath}`
                 // }
-                src= "https://static.vecteezy.com/system/resources/thumbnails/036/324/708/small/ai-generated-picture-of-a-tiger-walking-in-the-forest-photo.jpg"
-
+                src="https://static.vecteezy.com/system/resources/thumbnails/036/324/708/small/ai-generated-picture-of-a-tiger-walking-in-the-forest-photo.jpg"
                 style={{ height: "50dvh", width: "100%" }}
                 initialAspectRatio={1}
                 guides={true}
