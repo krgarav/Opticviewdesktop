@@ -1248,13 +1248,23 @@ const EditDesignTemplate = () => {
           break;
 
         case "top":
-          if (stRow - Number(pitchValue) < MIN_ROW) {
+          const prevEndRow = object.endRow;
+          const prevStartTopRow = object.startRow;
+          if (
+            object.startRow -
+              (prevEndRow - prevStartTopRow) -
+              Number(pitchValue) <
+            MIN_ROW
+          ) {
             alert("Out of bound Error: Row exceeds minimum limit.");
             return;
           }
-          const prevEndRow = object.endRow;
+
           object.endRow = object.startRow - Number(pitchValue);
-          object.startRow -= prevEndRow - Number(pitchValue);
+          object.startRow =
+            object.startRow -
+            (prevEndRow - prevStartTopRow) -
+            Number(pitchValue);
           break;
 
         case "bottom":
@@ -1388,7 +1398,7 @@ const EditDesignTemplate = () => {
           customFieldValue: customValue ? customValue : "",
         };
       }
-      // dataCtx.modifyAllTemplate(0, newData, selectedField.fieldType);
+      dataCtx.modifyAllTemplate(0, newData, selectedField.fieldType);
       setSelectedCoordinates((prev) => {
         return [...prev, object];
       });
