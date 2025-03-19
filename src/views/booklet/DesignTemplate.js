@@ -64,8 +64,6 @@ const DesignBookletTemplate = () => {
   const [selectedCoordinates, setSelectedCoordinates] = useState([]);
 
   const [name, setName] = useState();
-
-  const [spanDisplay, setSpanDisplay] = useState("none");
   const [skewoption, setSkewOption] = useState("none");
   const [windowNgOption, setWindowNgOption] = useState("");
   const [readingDirectionOption, setReadingDirectionOption] = useState("");
@@ -200,39 +198,48 @@ const DesignBookletTemplate = () => {
 
   useEffect(() => {
     const templateData = JSON.parse(localStorage.getItem("Template"));
+
     if (templateData) {
       if (dataCtx.allTemplates.length === 0) {
         dataCtx.setNewTemplates([templateData]);
       }
     }
-  }, []);
+  }, [dataCtx.allTemplates]);
+
   useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      const confirmationMessage =
-        "Are you sure you want to leave this page? All unsaved data will be lost.";
-      event.returnValue = confirmationMessage; // Standard for most browsers
-      return confirmationMessage; // Required for some browsers
-    };
+    const template = dataCtx.allTemplates[0];
+    if (template) {
+      localStorage.setItem("Template", JSON.stringify(template));
+    }
+  }, [dataCtx.allTemplates]);
+  console.log(dataCtx.allTemplates);
+  // useEffect(() => {
+  //   const handleBeforeUnload = (event) => {
+  //     const confirmationMessage =
+  //       "Are you sure you want to leave this page? All unsaved data will be lost.";
+  //     event.returnValue = confirmationMessage; // Standard for most browsers
+  //     return confirmationMessage; // Required for some browsers
+  //   };
 
-    const handleNavigation = (event) => {
-      if (
-        event.type === "POP" &&
-        !window.confirm(
-          "Are you sure you want to leave this page? All unsaved data will be lost."
-        )
-      ) {
-        navigate(location.pathname); // Navigate back to the current page
-      }
-    };
+  //   const handleNavigation = (event) => {
+  //     if (
+  //       event.type === "POP" &&
+  //       !window.confirm(
+  //         "Are you sure you want to leave this page? All unsaved data will be lost."
+  //       )
+  //     ) {
+  //       navigate(location.pathname); // Navigate back to the current page
+  //     }
+  //   };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    window.addEventListener("popstate", handleNavigation);
+  //   window.addEventListener("beforeunload", handleBeforeUnload);
+  //   window.addEventListener("popstate", handleNavigation);
 
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      window.removeEventListener("popstate", handleNavigation);
-    };
-  }, [navigate, location.pathname]);
+  //   return () => {
+  //     window.removeEventListener("beforeunload", handleBeforeUnload);
+  //     window.removeEventListener("popstate", handleNavigation);
+  //   };
+  // }, [navigate, location.pathname]);
   useEffect(() => {
     setStartRowInput(selection?.startRow + 1);
     setEndRowInput(selection?.endRow + 1);
@@ -578,7 +585,6 @@ const DesignBookletTemplate = () => {
     setNoInCol();
     setNoOfStepInCol();
     setType();
-    setSelectedFieldType();
     setFieldType();
     setNumberOfField();
     setOptions();
@@ -1237,18 +1243,25 @@ const DesignBookletTemplate = () => {
             }
             break;
 
-            case "top":
-              if (i === 0) {
-                newObject.startRow = object.startRow - (object.endRow - object.startRow) - Number(pitchValue);
-              } else {
-                newObject.startRow = newCoordinates[i - 1].startRow - (object.endRow - object.startRow) - Number(pitchValue);
-              }
-              newObject.endRow = newObject.startRow + (object.endRow - object.startRow);
-              if (newObject.startRow < MIN_ROW) {
-                alert("Out of bound Error: Row exceeds minimum limit.");
-                return;
-              }
-              break;
+          case "top":
+            if (i === 0) {
+              newObject.startRow =
+                object.startRow -
+                (object.endRow - object.startRow) -
+                Number(pitchValue);
+            } else {
+              newObject.startRow =
+                newCoordinates[i - 1].startRow -
+                (object.endRow - object.startRow) -
+                Number(pitchValue);
+            }
+            newObject.endRow =
+              newObject.startRow + (object.endRow - object.startRow);
+            if (newObject.startRow < MIN_ROW) {
+              alert("Out of bound Error: Row exceeds minimum limit.");
+              return;
+            }
+            break;
 
           case "bottom":
             if (i === 0) {
@@ -1265,19 +1278,26 @@ const DesignBookletTemplate = () => {
             }
             break;
 
-            case "start":
-              if (i === 0) {
-                newObject.startCol = object.startCol - (object.endCol - object.startCol) - Number(pitchValue);
-              } else {
-                newObject.startCol = newCoordinates[i - 1].startCol - (object.endCol - object.startCol) - Number(pitchValue);
-              }
-              newObject.endCol = newObject.startCol + (object.endCol - object.startCol);
-              if (newObject.startCol < MIN_COL) {
-                alert("Out of bound Error: Column exceeds minimum limit.");
-                return;
-              }
-              break;
-            
+          case "start":
+            if (i === 0) {
+              newObject.startCol =
+                object.startCol -
+                (object.endCol - object.startCol) -
+                Number(pitchValue);
+            } else {
+              newObject.startCol =
+                newCoordinates[i - 1].startCol -
+                (object.endCol - object.startCol) -
+                Number(pitchValue);
+            }
+            newObject.endCol =
+              newObject.startCol + (object.endCol - object.startCol);
+            if (newObject.startCol < MIN_COL) {
+              alert("Out of bound Error: Column exceeds minimum limit.");
+              return;
+            }
+            break;
+
           default:
             alert("Invalid direction.");
             return;
@@ -1327,7 +1347,8 @@ const DesignBookletTemplate = () => {
       console.log(err);
     }
   };
-  if (!dataCtx.allTemplates) {
+
+  if (dataCtx.allTemplates.length === 0) {
     return <div>Loading</div>;
   }
   return (
@@ -2228,12 +2249,15 @@ const DesignBookletTemplate = () => {
                     className="form-control"
                     value={noOfStepInRow}
                     onChange={(e) => {
-                      // if (e.target.value !== "") {
+                      if(+e.target.value<1){
+                        alert("Step in a row should be greater than 0");
+                        return
+                      }
                       setNoInRow(
                         calculateTotalRow(
-                          startRowInput,
-                          endRowInput,
-                          e.target.value
+                          +startRowInput,
+                          +endRowInput,
+                          +e.target.value
                         )
                       );
                       // }
@@ -2349,11 +2373,15 @@ const DesignBookletTemplate = () => {
                     className="form-control"
                     value={noOfStepInCol}
                     onChange={(e) => {
+                      if(+e.target.value<1){
+                        alert("Step in a column should be greater than 0");
+                        return
+                      }
                       setNoInCol(
                         calculateTotalRow(
-                          startColInput,
-                          endColInput,
-                          e.target.value
+                          +startColInput,
+                          +endColInput,
+                          +e.target.value
                         )
                       );
                       setNoOfStepInCol(e.target.value);
@@ -2547,7 +2575,7 @@ const DesignBookletTemplate = () => {
           >
             Hide Modal
           </Button>
- {modalUpdate && (
+          {modalUpdate && (
             <>
               <Tooltip title="Delete" placement="top">
                 <IconButton

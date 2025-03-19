@@ -1187,12 +1187,7 @@ const EditDesignTemplate = () => {
   const handleImage = (images) => {
     setImagesSelectedCount(images.length);
   };
-  const handleMouseDown2 = useCallback((index, e) => {
-    const rect = divRefs.current[index].getBoundingClientRect();
-    setDraggingIndex(index);
-    setDragStart2({ x: e.clientX, y: e.clientY });
-    setDragOffset({ left: e.clientX - rect.left, top: e.clientY - rect.top });
-  }, []);
+
   const sensitivityHandler = (num) => {
     console.log(num);
   };
