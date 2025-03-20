@@ -25,36 +25,6 @@ import IconButton from "@mui/material/IconButton";
 import { Button as Muibtn, Tooltip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-// Helper function to fetch an image and convert it to a File object
-async function fetchImageAsFile(imagePath, baseUrl) {
-  const response = await fetch(
-    `${baseUrl}GetTemplateImage?filePath=${imagePath}`
-  ); // Fetch the image
-  const blob = await response.blob(); // Convert response to a Blob
-  const fileName = imagePath.split("\\").pop(); // Extract file name from path
-  return new File([blob], fileName, { type: blob.type }); // Create a File object
-}
-
-// Function to get values from sessionStorage or provide default
-const getLocalStorageOrDefault = (key, defaultValue) => {
-  const stored = localStorage.getItem(key);
-
-  if (!stored) {
-    return defaultValue;
-  }
-  try {
-    const parsed = JSON.parse(stored);
-    // Check for 'undefined' string which is not a valid JSON
-    if (parsed === undefined) {
-      return defaultValue;
-    }
-    return parsed;
-  } catch (e) {
-    console.warn(`Error parsing localStorage item with key "${key}":`, e);
-    return defaultValue;
-  }
-};
-
 const DesignBookletTemplate = () => {
   const [selected, setSelected] = useState({});
   const [selection, setSelection] = useState(null);
@@ -73,7 +43,6 @@ const DesignBookletTemplate = () => {
   const [noOfStepInRow, setNoOfStepInRow] = useState();
   const [noInCol, setNoInCol] = useState();
   const [noOfStepInCol, setNoOfStepInCol] = useState();
-  const [option, setOption] = useState("");
   const [type, setType] = useState("");
   const [selectedFieldType, setSelectedFieldType] = useState("formField");
   const [fieldType, setFieldType] = useState();
@@ -131,13 +100,13 @@ const DesignBookletTemplate = () => {
     arr,
     excelJsonFile,
   } = localData[0].layoutParameters;
-  const navigate = useNavigate();
   const numRows = timingMarks;
   const numCols = totalColumns;
   const divRefs = useRef([]);
 
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
+
 
   useEffect(() => {
     setTimeout(() => {
@@ -146,18 +115,8 @@ const DesignBookletTemplate = () => {
       }
     }, 500);
   }, [dataCtx.allTemplates]);
-  const handleDragStop = (e, d) => {
-    setPosition((prev) => ({ ...prev, x: d.x, y: d.y }));
-  };
 
-  const handleResizeStop = (e, direction, ref, delta, position) => {
-    setPosition({
-      x: position.x,
-      y: position.y,
-      width: ref.style.width.replace("px", ""),
-      height: ref.style.height.replace("px", ""),
-    });
-  };
+ 
   const toggleSelection = (row, col) => {
     const key = `${row},${col}`;
     setSelected((prev) => {
@@ -212,7 +171,7 @@ const DesignBookletTemplate = () => {
       localStorage.setItem("Template", JSON.stringify(template));
     }
   }, [dataCtx.allTemplates]);
-  console.log(dataCtx.allTemplates);
+
   // useEffect(() => {
   //   const handleBeforeUnload = (event) => {
   //     const confirmationMessage =
@@ -1194,7 +1153,7 @@ const DesignBookletTemplate = () => {
     localStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
   };
   const handleImage = (images) => {
-    setImagesSelectedCount(images.length);
+    // setImagesSelectedCount(images.length);
     // if (images.length > 0) {
     //   dataCtx.addImageCoordinate(templateIndex, images)
     // }
@@ -1213,8 +1172,7 @@ const DesignBookletTemplate = () => {
         alert("Please select a valid number of copies.");
         return;
       }
-      console.log(selectedField);
-      // return
+      
       let object = { ...selectedField };
 
       const MIN_COL = 1;
@@ -1448,7 +1406,6 @@ const DesignBookletTemplate = () => {
             borderRadius: "50%",
             width: "50px", // Width of the button
             height: "50px", // Height of the button
-            // display: "flex",
             justifyContent: "center",
             alignItems: "center",
             padding: "50px", // Remove padding to center the text
@@ -1737,101 +1694,6 @@ const DesignBookletTemplate = () => {
               {!modalUpdate ? "Choose field type" : selectedFieldType}
             </h2>
             <br />
-            {/* <Row className="mb-2">
-              <Col sm={2} md={2} className="d-flex align-items-center">
-                <label htmlFor="formField" className="mr-2 mb-0 field-label">
-                  Form :{" "}
-                </label>  
-                <input
-                  id="formField"
-                  type="radio"
-                  name="fieldType"
-                  value="formField"
-                  checked={selectedFieldType === "formField"}
-                  onChange={handleRadioChange}
-                  className=" field-label mt-1"
-                />
-              </Col>
-              <Col sm={2} md={2} className="d-flex align-items-center">
-                <label htmlFor="fieldType" className="mr-2 mb-0 field-label">
-                  Question :{" "}
-                </label>
-                <input
-                  id="fieldType"
-                  type="radio"
-                  name="fieldType"
-                  value="questionField"
-                  checked={selectedFieldType === "questionField"}
-                  onChange={handleRadioChange}
-                  className=" field-label mt-1"
-                />
-              </Col>
-              <Col md={3} className="d-flex align-items-center">
-                <label
-                  htmlFor="skewMarkField"
-                  className="mr-2 mb-0 col-form-label"
-                  style={{ marginRight: "8px" }} // Inline style to add a bit more space if needed
-                >
-                  Skew Mark :
-                </label>
-                <input
-                  id="skewMarkField"
-                  type="radio"
-                  name="fieldType"
-                  value="skewMarkField"
-                  checked={selectedFieldType === "skewMarkField"}
-                  onChange={handleRadioChange}
-                  className=" field-label mt-1" // Add margin-left to input for better spacing if necessary
-                />
-              </Col>
-              <Col md={2} className="d-flex align-items-center">
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <div>
-                    <label htmlFor="idField" className="mr-2 mb-0 field-label">
-                      ID Mark :
-                    </label>
-                    <input
-                      id="idField"
-                      type="radio"
-                      name="fieldType"
-                      value="idField"
-                      checked={selectedFieldType === "idField"}
-                      onChange={handleRadioChange}
-                      className="field-label mt-1"
-                      disabled={idSelectionCount > 0}
-                    />
-                  </div>
-                  {idSelectionCount > 0 && (
-                    <div>
-                      <small style={{ color: "orangered" }}>
-                        already selected
-                      </small>
-                    </div>
-                  )}
-                </div>
-              </Col>
-              <Col md={3} className="d-flex align-items-center">
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <div>
-                    <label
-                      htmlFor="imageArea"
-                      className="mr-2 mb-0 field-label"
-                    >
-                      Image Area :
-                    </label>
-                    <input
-                      id="imageArea"
-                      type="radio"
-                      name="fieldType"
-                      value="imageArea"
-                      checked={selectedFieldType === "imageArea"}
-                      onChange={handleRadioChange}
-                      className="field-label mt-1"
-                    />
-                  </div>
-                </div>
-              </Col>
-            </Row> */}
             {!modalUpdate && (
               <Row className="mb-2 d-flex align-items-center">
                 <Col
@@ -2249,9 +2111,9 @@ const DesignBookletTemplate = () => {
                     className="form-control"
                     value={noOfStepInRow}
                     onChange={(e) => {
-                      if(+e.target.value<1){
+                      if (+e.target.value < 1) {
                         alert("Step in a row should be greater than 0");
-                        return
+                        return;
                       }
                       setNoInRow(
                         calculateTotalRow(
@@ -2311,11 +2173,6 @@ const DesignBookletTemplate = () => {
                     }}
                     className="form-control"
                   />
-                  {/* <input
-                value={selection?.startCol}
-                readOnly
-                className="form-control"
-              /> */}
                 </div>
 
                 <label
@@ -2347,11 +2204,6 @@ const DesignBookletTemplate = () => {
                     }}
                     className="form-control"
                   />
-                  {/* <input
-                value={selection?.endCol}
-                readOnly
-                className="form-control"
-              /> */}
                 </div>
                 <label
                   htmlFor="example-select-input"
@@ -2373,9 +2225,9 @@ const DesignBookletTemplate = () => {
                     className="form-control"
                     value={noOfStepInCol}
                     onChange={(e) => {
-                      if(+e.target.value<1){
+                      if (+e.target.value < 1) {
                         alert("Step in a column should be greater than 0");
-                        return
+                        return;
                       }
                       setNoInCol(
                         calculateTotalRow(
