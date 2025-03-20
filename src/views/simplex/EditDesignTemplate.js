@@ -559,7 +559,7 @@ const EditDesignTemplate = () => {
       setModalShow(true);
     }
   };
-  
+
   const handleCancel = () => {
     setDragStart(null);
     setSelection(null);
@@ -1202,7 +1202,7 @@ const EditDesignTemplate = () => {
       skewMarksWindowParameters,
       formFieldWindowParameters,
     };
-
+    handleCancel();
     sessionStorage.setItem(
       "StructuredTemplate",
       JSON.stringify(fullRequestData)
@@ -1536,8 +1536,12 @@ const EditDesignTemplate = () => {
         alert("Please select a valid number of copies.");
         return;
       }
-      console.log(selectedField);
-      // return
+      if (selectedField.fieldType === "idField") {
+        alert("Id Field cannot be copied.");
+        return;
+      }
+    
+     
       let object = { ...selectedField };
 
       const MIN_COL = 1;
@@ -1566,18 +1570,25 @@ const EditDesignTemplate = () => {
             }
             break;
 
-            case "top":
-              if (i === 0) {
-                newObject.startRow = object.startRow - (object.endRow - object.startRow) - Number(pitchValue);
-              } else {
-                newObject.startRow = newCoordinates[i - 1].startRow - (object.endRow - object.startRow) - Number(pitchValue);
-              }
-              newObject.endRow = newObject.startRow + (object.endRow - object.startRow);
-              if (newObject.startRow < MIN_ROW) {
-                alert("Out of bound Error: Row exceeds minimum limit.");
-                return;
-              }
-              break;
+          case "top":
+            if (i === 0) {
+              newObject.startRow =
+                object.startRow -
+                (object.endRow - object.startRow) -
+                Number(pitchValue);
+            } else {
+              newObject.startRow =
+                newCoordinates[i - 1].startRow -
+                (object.endRow - object.startRow) -
+                Number(pitchValue);
+            }
+            newObject.endRow =
+              newObject.startRow + (object.endRow - object.startRow);
+            if (newObject.startRow < MIN_ROW) {
+              alert("Out of bound Error: Row exceeds minimum limit.");
+              return;
+            }
+            break;
 
           case "bottom":
             if (i === 0) {
@@ -1594,19 +1605,26 @@ const EditDesignTemplate = () => {
             }
             break;
 
-            case "start":
-              if (i === 0) {
-                newObject.startCol = object.startCol - (object.endCol - object.startCol) - Number(pitchValue);
-              } else {
-                newObject.startCol = newCoordinates[i - 1].startCol - (object.endCol - object.startCol) - Number(pitchValue);
-              }
-              newObject.endCol = newObject.startCol + (object.endCol - object.startCol);
-              if (newObject.startCol < MIN_COL) {
-                alert("Out of bound Error: Column exceeds minimum limit.");
-                return;
-              }
-              break;
-            
+          case "start":
+            if (i === 0) {
+              newObject.startCol =
+                object.startCol -
+                (object.endCol - object.startCol) -
+                Number(pitchValue);
+            } else {
+              newObject.startCol =
+                newCoordinates[i - 1].startCol -
+                (object.endCol - object.startCol) -
+                Number(pitchValue);
+            }
+            newObject.endCol =
+              newObject.startCol + (object.endCol - object.startCol);
+            if (newObject.startCol < MIN_COL) {
+              alert("Out of bound Error: Column exceeds minimum limit.");
+              return;
+            }
+            break;
+
           default:
             alert("Invalid direction.");
             return;

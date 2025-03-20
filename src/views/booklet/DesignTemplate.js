@@ -543,6 +543,7 @@ const DesignBookletTemplate = () => {
     if (dragStart) {
       setDragStart(null);
       setModalShow(true);
+      
     }
   };
 
@@ -1179,7 +1180,7 @@ const DesignBookletTemplate = () => {
     };
 
     // localStorage.setItem("Template", JSON.stringify(dataCtx.allTemplates[0]));
-
+    handleCancel()
     localStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
   };
 
@@ -1204,7 +1205,10 @@ const DesignBookletTemplate = () => {
         alert("Please select a valid number of copies.");
         return;
       }
-
+      if (selectedField.fieldType === "idField") {
+        alert("Id Field cannot be copied.");
+        return;
+      }
       let object = { ...selectedField };
 
       const MIN_COL = 1;
