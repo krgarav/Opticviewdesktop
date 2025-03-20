@@ -107,7 +107,13 @@ const DesignBookletTemplate = () => {
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
 
-
+  useEffect(() => {
+    const template = localStorage.getItem("Template");
+    if (template) {
+      setLocalData(JSON.parse(template));
+    }
+  }, [dataCtx.allTemplates]);
+  console.log(arr);
   useEffect(() => {
     setTimeout(() => {
       if (dataCtx.allTemplates.length > 0) {
@@ -116,7 +122,6 @@ const DesignBookletTemplate = () => {
     }, 500);
   }, [dataCtx.allTemplates]);
 
- 
   const toggleSelection = (row, col) => {
     const key = `${row},${col}`;
     setSelected((prev) => {
@@ -168,6 +173,7 @@ const DesignBookletTemplate = () => {
   useEffect(() => {
     const template = dataCtx.allTemplates[0];
     if (template) {
+      console.log(template);
       localStorage.setItem("Template", JSON.stringify(template));
     }
   }, [dataCtx.allTemplates]);
@@ -241,7 +247,6 @@ const DesignBookletTemplate = () => {
   }, [selectedCoordinates, selection]);
 
   useEffect(() => {
-    const template = dataCtx.allTemplates[0];
     selectedCoordinates.forEach((item) => {
       const isQuestionField = item?.fieldType === "questionField";
       const isFormField = item?.fieldType === "formField";
@@ -315,7 +320,7 @@ const DesignBookletTemplate = () => {
               numberedExcelJsonFile: data,
             };
             // dataCtx.replaceTemplate([copiedObject])
-            localStorage.setItem("Template", JSON.stringify([copiedObject]));
+            // localStorage.setItem("Template", JSON.stringify([copiedObject]));
           }
         }
       }
@@ -323,6 +328,8 @@ const DesignBookletTemplate = () => {
   }, [selectedCoordinates, dataCtx]);
 
   useEffect(() => {
+    const arr = dataCtx.allTemplates[0];
+    // console.log(template);
     if (arr) {
       // Extract parameters from the first element of the array (if it exists)
       const formFieldData = arr[0]?.formFieldWindowParameters;
@@ -344,8 +351,9 @@ const DesignBookletTemplate = () => {
         ...coordinateOfFormData,
         ...coordinateOfQuestionField,
         ...coordinateOfSkewField,
-        coordinateOfIdField,
+        ...coordinateOfIdField,
       ];
+      console.log(allCoordinates);
 
       // Map each coordinate to a new format
       const newSelectedFields = allCoordinates?.map((item) => {
@@ -354,16 +362,25 @@ const DesignBookletTemplate = () => {
           "Start Col": startCol,
           "End Row": endRow,
           "End Col": endCol,
+
           name,
+          fieldType,
         } = item;
-        return { startRow, startCol, endRow, endCol, name };
+
+        return {
+          startRow: startRow - 1,
+          startCol,
+          endRow: endRow - 1,
+          endCol,
+          name,
+          fieldType,
+        };
       });
 
       // Update the state with the new coordinates and image structure data
       setSelectedCoordinates(newSelectedFields);
-      setPosition(idField?.imageStructureData);
     }
-  }, []); // Run only once on component mount
+  }, [dataCtx, localData]); // Run only once on component mount
 
   // *************************For Fetching the details and setting the coordinate******************
   // useEffect(() => {
@@ -478,9 +495,9 @@ const DesignBookletTemplate = () => {
 
     // Check if the clicked cell is a timing mark or already selected (a circle)
     if (col === 0 || selected[`${row},${col}`]) return;
-
     setDragStart({ row, col });
   };
+
   // const handleMouseMove = (e) => {
   //     if (!e.buttons || !dragStart) return;
   //     const boundingRect = imageRef.current.getBoundingClientRect();
@@ -528,12 +545,12 @@ const DesignBookletTemplate = () => {
       setModalShow(true);
     }
   };
+
   const handleCancel = () => {
     setDragStart(null);
     setSelection(null);
     setModalShow(false);
     setModalUpdate(false);
-
     setSkewOption("none");
     setWindowNgOption("");
     setReadingDirectionOption("");
@@ -546,7 +563,6 @@ const DesignBookletTemplate = () => {
     setType();
     setFieldType();
     setNumberOfField();
-    setOptions();
     setMultipleValue();
     setBlankValue();
     setMultiple();
@@ -555,11 +571,10 @@ const DesignBookletTemplate = () => {
     setStartColInput();
     setEndRowInput();
     setEndColInput();
-    setIdType();
-    setCustomValue();
-    setPrefix();
-    setSuffix();
-    setName();
+    setCustomValue("");
+    setPrefix("");
+    setSuffix("");
+    setName("");
   };
 
   const validateFormField = () => {
@@ -614,6 +629,7 @@ const DesignBookletTemplate = () => {
     }
     return true;
   };
+
   const validateIdField = () => {
     const errors = {
       noInRow: "Total number in row cannot be empty",
@@ -834,17 +850,21 @@ const DesignBookletTemplate = () => {
       sendHandler();
     }, 500);
   };
+
   const handleSkewMarkOptionChange = (event) => {
     setSkewOption(event.target.value);
   };
+
   const handleWindowNgOptionChange = (event) => {
     setWindowNgOption(event.target.value);
   };
+
   const handleRadioChange = (e) => {
     setSelectedFieldType(e.target.value);
   };
 
   const handleEyeClick = (selectedField, index) => {
+    // console.log(selectedField);
     setSelectedField(selectedField);
     setSelection(() => ({
       startRow: selectedField.startRow,
@@ -862,7 +882,6 @@ const DesignBookletTemplate = () => {
     };
     setSelectionIndex(index);
     const template = dataCtx.allTemplates.find((item) => {
-      console.log(item);
       return item[0].layoutParameters?.key ?? "" === templateIndex;
     });
     // console.log(template);
@@ -889,12 +908,14 @@ const DesignBookletTemplate = () => {
       //     return isEqual(item.Coordinate, formattedSelectedFile);
       // })[0];
       const parameters = template[0].questionsWindowParameters;
-      console.log(parameters);
-      console.log(formattedSelectedFile);
+  
       // Find the index of the matched object
       const index = parameters.findIndex((item) =>
         isEqual(item.Coordinate, formattedSelectedFile)
       );
+      if (index === -1) {
+        alert("Coordinate Not Found");
+      }
 
       // Get the matched object
       const data = index !== -1 ? parameters[index] : null;
@@ -930,9 +951,16 @@ const DesignBookletTemplate = () => {
       //     return isEqual(item.Coordinate, formattedSelectedFile);
       // })[0];
       const parameters = template[0].formFieldWindowParameters;
-      const index = parameters.findIndex((item) =>
-        isEqual(item.Coordinate, formattedSelectedFile)
-      );
+
+      const index = parameters.findIndex((item) => {
+        // console.log(isEqual(item.Coordinate, formattedSelectedFile));
+        return isEqual(item.Coordinate, formattedSelectedFile);
+      });
+
+      if (index === -1) {
+        alert("Coordinate Not Found");
+      }
+
       // Get the matched object
       const data = index !== -1 ? parameters[index] : null;
 
@@ -984,6 +1012,7 @@ const DesignBookletTemplate = () => {
       setEndColInput(formattedSelectedFile["End Col"]);
     }
   };
+
   const handleCrossClick = (selectedField, index) => {
     const response = window.confirm(
       "Are you sure you want to delete the selected field ?"
@@ -1016,6 +1045,7 @@ const DesignBookletTemplate = () => {
       formattedSelectedFile["End Col"]
     );
   };
+
   const handleIconMouseUp = (event) => {
     event.stopPropagation();
   };
@@ -1152,12 +1182,14 @@ const DesignBookletTemplate = () => {
 
     localStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
   };
+
   const handleImage = (images) => {
-    // setImagesSelectedCount(images.length);
-    // if (images.length > 0) {
-    //   dataCtx.addImageCoordinate(templateIndex, images)
-    // }
+    setImagesSelectedCount(images.length);
+    if (images.length > 0) {
+      dataCtx.addImageCoordinate(templateIndex, images);
+    }
   };
+
   const saveRegion = (pitchValue, value, copiedNumber) => {
     try {
       if (!value) {
@@ -1172,7 +1204,7 @@ const DesignBookletTemplate = () => {
         alert("Please select a valid number of copies.");
         return;
       }
-      
+
       let object = { ...selectedField };
 
       const MIN_COL = 1;
@@ -1309,6 +1341,7 @@ const DesignBookletTemplate = () => {
   if (dataCtx.allTemplates.length === 0) {
     return <div>Loading</div>;
   }
+
   return (
     <>
       <div style={{ position: "sticky", top: 0, zIndex: 99 }}>

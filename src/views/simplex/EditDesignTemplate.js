@@ -559,11 +559,36 @@ const EditDesignTemplate = () => {
       setModalShow(true);
     }
   };
+  
   const handleCancel = () => {
     setDragStart(null);
     setSelection(null);
     setModalShow(false);
     setModalUpdate(false);
+    setSkewOption("none");
+    setWindowNgOption("");
+    setReadingDirectionOption("");
+    setMinimumMark();
+    setMaximumMark();
+    setNoInRow();
+    setNoOfStepInRow();
+    setNoInCol();
+    setNoOfStepInCol();
+    setType();
+    setFieldType();
+    setNumberOfField();
+    setMultipleValue();
+    setBlankValue();
+    setMultiple();
+    setBlank();
+    setStartRowInput();
+    setStartColInput();
+    setEndRowInput();
+    setEndColInput();
+    setCustomValue("");
+    setPrefix("");
+    setSuffix("");
+    setName("");
   };
   const validateFormField = () => {
     const errors = {
