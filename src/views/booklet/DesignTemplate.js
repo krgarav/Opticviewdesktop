@@ -113,7 +113,7 @@ const DesignBookletTemplate = () => {
       setLocalData(JSON.parse(template));
     }
   }, [dataCtx.allTemplates]);
-  console.log(arr);
+  
   useEffect(() => {
     setTimeout(() => {
       if (dataCtx.allTemplates.length > 0) {

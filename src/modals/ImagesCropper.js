@@ -142,7 +142,8 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
     }
 
     saveHandler();
-    setShow(false);
+    toast.success("Image Saved successfully");
+    // setShow(false);
     setImageName("");
     setCroppingSide(side.name === "Front" ? "frontSide" : "backSide");
   };
@@ -310,6 +311,7 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
                     Image Name :
                   </label>
                   <input
+                  value={imageName}
                     id="imageName"
                     type="text"
                     placeholder="Enter Image Name"
@@ -351,12 +353,12 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
           <div>
             <div className="border border-primary">
               <Cropper
-                src={
-                  side.name === "Front"
-                    ? `http://localhost:5000/GetImage?imagePath=${images[currentImageIndex].frontImagePath}`
-                    : `http://localhost:5000/GetImage?imagePath=${images[currentImageIndex].backImagePath}`
-                }
-                // src= "https://static.vecteezy.com/system/resources/thumbnails/036/324/708/small/ai-generated-picture-of-a-tiger-walking-in-the-forest-photo.jpg"
+                // src={
+                //   side.name === "Front"
+                //     ? `http://localhost:5000/GetImage?imagePath=${images[currentImageIndex].frontImagePath}`
+                //     : `http://localhost:5000/GetImage?imagePath=${images[currentImageIndex].backImagePath}`
+                // }
+                src= "https://static.vecteezy.com/system/resources/thumbnails/036/324/708/small/ai-generated-picture-of-a-tiger-walking-in-the-forest-photo.jpg"
                 style={{ height: "50dvh", width: "100%" }}
                 initialAspectRatio={1}
                 guides={true}
