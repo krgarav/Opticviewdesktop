@@ -61,6 +61,23 @@
 .draggable-resizable-image:active {
   cursor: grabbing;
 }
+.sidebar-btn {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  width: 50px;
+  height: 100px;
+  background-color: gray;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1050;
+  transition: all 0.3s ease;
+  transform: translateX(-10px);
+}
 
 /* WebKit-based browsers (Chrome, Safari) */
 ::-webkit-scrollbar {
