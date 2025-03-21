@@ -20,9 +20,7 @@ import { fetchAllTemplate } from "helper/TemplateHelper";
 import TextLoader from "loaders/TextLoader";
 import { toast } from "react-toastify";
 import Template from "views/Template";
-import EditDesignTemplate from "views/simplex/EditDesignTemplate";
-import DesignTemplate from "views/simplex/DesignTemplate";
-import DesignBookletTemplate from "views/booklet/DesignTemplate";
+import DesignTemplate from "views/DesignTemplate/Designtemplate";
 import Redirect from "components/Redirect";
 const useTokenRedirect = () => {
   const navigate = useNavigate();
@@ -75,12 +73,6 @@ const useTokenRedirect = () => {
 };
 
 const App = () => {
-  
-  const [showIpModal, setShowIpModal] = useState(false);
-  const [templateLoading, setTemplateLoading] = useState(true); // State to manage loading
-  const dataCtx = useContext(DataContext); // Assuming you are using context
-
- 
   useEffect(() => {
     const handleKeyDown = (event) => {
       // Prevent Ctrl+R or Ctrl+Shift+R
@@ -106,90 +98,17 @@ const App = () => {
     event.preventDefault(); // Prevent right-click menu
     // alert("Right-click is disabled!");
   };
-  // const toggle = true;
-  // useEffect(() => {
-  //   if (dataCtx.allTemplates.length === 0) {
-  //     const fetchData = async () => {
-  //       setTemplateLoading(true);
-  //       try {
-  //         const templates = await fetchAllTemplate();
-  //         if (!templates) {
-  //           throw new Error("Error fetching templates");
-  //         }
-  //         const mpObj = templates.map((item) => {
-  //           return [{ layoutParameters: item }];
-  //         });
-  //         dataCtx.addToAllTemplate(mpObj);
-  //       } catch (error) {
-  //         toast.error(error.message || "Error fetching templates");
-  //       } finally {
-  //         setTemplateLoading(false);
-  //       }
-  //     };
-  //     fetchData();
-  //   }
-  // }, []);
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response2 = await getUrls();
-  //       const getUserUrl = response2?.GET_USERS;
 
-  //       if (!getUserUrl) {
-  //         throw new Error("GET_USERS URL is not defined in configuration");
-  //       }
-
-  //       // Perform the GET request to fetch user data
-  //       const getUserResponse = await fetch(getUserUrl);
-
-  //       if (!getUserResponse.ok) {
-  //         throw new Error("Failed to fetch user data");
-  //       }
-
-  //       const userData = await getUserResponse.json();
-  //       console.log(userData);
-
-  //       // Handle successful fetch here
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //       setShowIpModal(true); // Show the modal or handle the error as needed
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
-
-  // const handleSaveIp = (ip, protocol) => {
-  //   const Obj = {
-  //     backendUrl: ip,
-  //   };
-  //   const res2 = axios.post("http://localhost/api/config", Obj);
-
-  //   setTimeout(() => {
-  //     window.location.reload(); // Reload the page
-  //   }, 400);
-  // };
-
-  // useTokenRedirect();
-
-  // if (templateLoading) {
-  //   return <TextLoader message={"Loading, Please wait..."} />; // Show loader while fetching templates
-  // }
-
-  
   return (
     <>
-      {/* <IpModal
-        show={showIpModal}
-        onHide={() => setShowIpModal(false)}
-        onSave={handleSaveIp}
-      /> */}
       <div onContextMenu={handleContextMenu}>
         <Routes>
           <Route path="/admin/*" element={<AdminLayout />} />
           <Route path="/operator/*" element={<Operator />} />
           <Route path="/moderator/*" element={<Moderator />} />
           <Route path="/auth/*" element={<AuthLayout />} />
+
+          <Route path="/design-template" element={<DesignTemplate />} />
           <Route path="/edit" element={<Redirect />} />
           <Route path="/" element={<Template />} />
           {/* <Route path="*" element={<Navigate to="/auth/login" replace />} /> */}

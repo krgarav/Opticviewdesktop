@@ -10,8 +10,8 @@ const BookletModal = (props) => {
   const [modalShow, setModalShow] = useState(false);
   const [bookletModalShow, setBookletModalShow] = useState(false);
   const [simplexModalShow, setSimplexModalShow] = useState(false);
-  const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [showDuplexModal, setShowDuplexModal] = useState(false);
+
   useEffect(() => {
     if (props.show) {
       setModalShow(true);
@@ -19,6 +19,7 @@ const BookletModal = (props) => {
       setModalShow(false);
     }
   }, [props.show]);
+
   const handleJob = (text) => {
     if (text === "Simplex") {
       setSimplexModalShow(true);
@@ -28,6 +29,7 @@ const BookletModal = (props) => {
       setShowDuplexModal(true);
     }
   };
+
   return (
     <>
       <Modal
@@ -59,11 +61,7 @@ const BookletModal = (props) => {
             <Col md={2}></Col>
           </Row>
         </Modal.Body>
-        <Modal.Footer>
-          {/* <Button variant="secondary" onClick={props.onHide}>
-            Close
-          </Button> */}
-        </Modal.Footer>
+        <Modal.Footer></Modal.Footer>
       </Modal>
 
       {simplexModalShow && (

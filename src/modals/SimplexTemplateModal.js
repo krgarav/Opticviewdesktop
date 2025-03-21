@@ -525,7 +525,7 @@ const SimplexTemplateModal = (props) => {
       dataCtx.setNewTemplates([templateData]);
 
       setModalShow(false);
-      navigate("/admin/template/booklet/design-template");
+      navigate("/design-template");
     } catch (error) {
       console.error("Error uploading file: ", error);
     }

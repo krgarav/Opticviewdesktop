@@ -1,5 +1,5 @@
 import TextLoader from "loaders/TextLoader";
-import EditDesignTemplate from "views/simplex/EditDesignTemplate";
+import EditDesignTemplate from "views/EditDesignTemplate/EditDesignTemplate";
 import React, { useEffect, useState } from "react";
 
 const Redirect = () => {
