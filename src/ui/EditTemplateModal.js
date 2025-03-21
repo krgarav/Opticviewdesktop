@@ -3123,11 +3123,21 @@ const EditTemplateModal = (props) => {
     setFileModal(false);
     setImages([
       {
-        frontSide:
-          "Template Image\\19219_e59c79cb-044a-4cfc-bca7-126ffcf92260_1_Front.jpg",
-        backSide:
-          "Template Image\\19219_702a07ba-50f3-422e-9b15-ca3990264752_22_Back.jpg",
-      },
+        "frontImagePath": "1_Front.jpg",
+        "backImagePath": "2_Back.jpg"
+     },
+     {
+        "frontImagePath": "3_Front.jpg",
+        "backImagePath": "4_Back.jpg"
+     },
+     {
+        "frontImagePath": "5_Front.jpg",
+        "backImagePath": "6_Back.jpg"
+     },
+     {
+        "frontImagePath": "7_Front.jpg",
+        "backImagePath": "8_Back.jpg"
+     },
     ]);
   };
 

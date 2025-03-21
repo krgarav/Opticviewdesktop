@@ -220,7 +220,6 @@ const LayoutDetailModal = (props) => {
   };
   useEffect(() => {
     const runandupdate = async () => {
-      
       const layoutData = props.layoutData;
 
       if (layoutData) {
@@ -441,155 +440,154 @@ const LayoutDetailModal = (props) => {
     return true;
   };
 
-  
-const createTemplateHandler = async () => {
-  if (printEnable.id !== "0") {
-    if (!validatePrintField()) {
+  const createTemplateHandler = async () => {
+    if (printEnable.id !== "0") {
+      if (!validatePrintField()) {
+        return;
+      }
+    }
+
+    settoggle((prevData) => ({
+      ...prevData,
+      name: !name ? true : prevData.name,
+      row: !numberOfLines ? true : prevData.row,
+      col: !numberOfFrontSideColumn ? true : prevData.col,
+      barcode: !barCount ? true : prevData.barcode,
+      ID: !idPresent ? true : prevData.idPresent,
+      numberOfLines: !numberOfLines ? true : prevData.numberOfLines,
+      barcodeEnable: !barcodeEnable ? true : prevData.barcodeEnable,
+      bubbleVariant: Object.values(selectedBubble).length == 0 ? true : false,
+      Rejected: !reject ? true : prevData.Rejected,
+      difference: difference.length == 0 ? true : prevData.difference,
+      face: face.length == 0 ? true : prevData.face,
+      direction: !direction ? true : prevData.direction,
+      windowNgOption:
+        Object.values(windowNgOption).length == 0
+          ? true
+          : prevData.windowNgOption,
+    }));
+    if (!name) {
+      toast.error("Name Field can not be empty");
       return;
     }
-  }
-
-  settoggle((prevData) => ({
-    ...prevData,
-    name: !name ? true : prevData.name,
-    row: !numberOfLines ? true : prevData.row,
-    col: !numberOfFrontSideColumn ? true : prevData.col,
-    barcode: !barCount ? true : prevData.barcode,
-    ID: !idPresent ? true : prevData.idPresent,
-    numberOfLines: !numberOfLines ? true : prevData.numberOfLines,
-    barcodeEnable: !barcodeEnable ? true : prevData.barcodeEnable,
-    bubbleVariant: Object.values(selectedBubble).length == 0 ? true : false,
-    Rejected: !reject ? true : prevData.Rejected,
-    difference: difference.length == 0 ? true : prevData.difference,
-    face: face.length == 0 ? true : prevData.face,
-    direction: !direction ? true : prevData.direction,
-    windowNgOption:
-      Object.values(windowNgOption).length == 0
-        ? true
-        : prevData.windowNgOption,
-  }));
-  if (!name) {
-    toast.error("Name Field can not be empty");
-    return;
-  }
-  if (!numberOfLines) {
-    toast.error("Row can not be empty");
-    return;
-  }
-  if (!numberOfFrontSideColumn) {
-    toast.error("Columns can not be empty");
-    return;
-  }
-
-  if (!idPresent) {
-    toast.error("Please Select ID Field ");
-    return;
-  }
-  if (idPresent.id === "present") {
-    if (!face) {
-      toast.error("Please Select Id Mark");
+    if (!numberOfLines) {
+      toast.error("Row can not be empty");
       return;
     }
-  }
-
-  if (Object.values(selectedBubble).length == 0) {
-    toast.error("Please Select Bubble Variant");
-    return;
-  }
-  if (idPresent.id === "present") {
-    if (Object.values(windowNgOption).length == 0) {
-      toast.error("Please Select WindowNg");
+    if (!numberOfFrontSideColumn) {
+      toast.error("Columns can not be empty");
       return;
     }
-  }
-  if (idPresent.id === "present") {
-    if (!reject) {
-      toast.error("Please Select a Value in Rejected Field");
+
+    if (!idPresent) {
+      toast.error("Please Select ID Field ");
       return;
     }
-  }
-  if (barCount.length === 0) {
-    toast.error("Barcode Field can not be empty");
-    return;
-  }
-  if (difference.length === 0) {
-    toast.error("Difference can not be empty");
-    return;
-  }
-  if (!direction) {
-    toast.error("Please Select Page Position");
-    return;
-  }
+    if (idPresent.id === "present") {
+      if (!face) {
+        toast.error("Please Select Id Mark");
+        return;
+      }
+    }
 
-  try {
-    const templateData = [
-      {
-        layoutParameters: {
-          layoutName: name,
-          timingMarks: +numberOfLines,
-          barcodeCount: +barCount,
-          iFace: +face.id ?? 0,
-          totalColumns: +numberOfFrontSideColumn,
-          bubbleType: selectedBubble?.name,
-          templateImagePath: imageSrc,
-          templateBackImagePath: backImageSrc,
-          iSensitivity: +sensitivity,
-          iDifference: +difference,
-          ngAction: windowNgOption?.id,
-          dataReadDirection: direction?.id,
-          iReject: 1,
-          excelJsonFile: excelJsonFile,
-          images: images,
+    if (Object.values(selectedBubble).length == 0) {
+      toast.error("Please Select Bubble Variant");
+      return;
+    }
+    if (idPresent.id === "present") {
+      if (Object.values(windowNgOption).length == 0) {
+        toast.error("Please Select WindowNg");
+        return;
+      }
+    }
+    if (idPresent.id === "present") {
+      if (!reject) {
+        toast.error("Please Select a Value in Rejected Field");
+        return;
+      }
+    }
+    if (barCount.length === 0) {
+      toast.error("Barcode Field can not be empty");
+      return;
+    }
+    if (difference.length === 0) {
+      toast.error("Difference can not be empty");
+      return;
+    }
+    if (!direction) {
+      toast.error("Please Select Page Position");
+      return;
+    }
+
+    try {
+      const templateData = [
+        {
+          layoutParameters: {
+            layoutName: name,
+            timingMarks: +numberOfLines,
+            barcodeCount: +barCount,
+            iFace: +face.id ?? 0,
+            totalColumns: +numberOfFrontSideColumn,
+            bubbleType: selectedBubble?.name,
+            templateImagePath: imageSrc,
+            templateBackImagePath: backImageSrc,
+            iSensitivity: +sensitivity,
+            iDifference: +difference,
+            ngAction: windowNgOption?.id,
+            dataReadDirection: direction?.id,
+            iReject: 1,
+            excelJsonFile: excelJsonFile,
+            images: images,
+          },
+          barcodeData: {
+            barcodeSide: 0,
+            barcodeColor: 0,
+            barcodeType: barcodeType?.id ? barcodeType?.id : "",
+            barcodeCheckDigit: checkDigit !== null ? +checkDigit?.id : 0,
+            barcodeOption: option !== null ? +option?.id : 0,
+            barcodeRightPos: barcodeRightPos ? +barcodeRightPos : 0,
+            barcodeLeftPos: barcodeLeftPos ? +barcodeLeftPos : 0,
+            barcodeTopPos: barcodeTopPos ? +barcodeTopPos : 0,
+            barcodeBottomPos: barcodeBottomPos ? +barcodeBottomPos : 0,
+            readFrom:
+              barcodeCategory?.id === undefined ? "" : barcodeCategory?.id,
+          },
+          imageData: {
+            imageEnable: imageStatus ? +imageStatus?.id : 0,
+            imageColor: colorType ? +colorType?.id : 0,
+            imageType: encoding ? +encoding?.id : 0,
+            imageParam: 0,
+            imageRotation: rotation ? +rotation?.id : 0,
+            imageResoMode: 1,
+            imageResolution: resolution ? +resolution?.id : 1,
+          },
+          printingData: {
+            printEnable: +printEnable?.id ?? 0,
+            printStartPos: +startPosition ?? 0,
+            printDigit: +printDigit ?? 0,
+            printStartNumber: +printStartNumber ?? 0,
+            printOrientation:
+              printOrientation?.id === undefined ? 0 : +printOrientation?.id,
+            printFontSize: 0,
+            printFontSpace: +fontSpace ?? 0,
+            printMode: printMode?.id === undefined ? 0 : +printMode?.id,
+            customType: printCustom?.id === undefined ? "" : printCustom?.id,
+            customValue: printCustomValue ? printCustomValue : "",
+          },
         },
-        barcodeData: {
-          barcodeSide: 0,
-          barcodeColor: 0,
-          barcodeType: barcodeType?.id ? barcodeType?.id : "",
-          barcodeCheckDigit: checkDigit !== null ? +checkDigit?.id : 0,
-          barcodeOption: option !== null ? +option?.id : 0,
-          barcodeRightPos: barcodeRightPos ? +barcodeRightPos : 0,
-          barcodeLeftPos: barcodeLeftPos ? +barcodeLeftPos : 0,
-          barcodeTopPos: barcodeTopPos ? +barcodeTopPos : 0,
-          barcodeBottomPos: barcodeBottomPos ? +barcodeBottomPos : 0,
-          readFrom : barcodeCategory?.id===undefined?"":barcodeCategory?.id
-        },
-        imageData: {
-          imageEnable: imageStatus ? +imageStatus?.id : 0,
-          imageColor: colorType ? +colorType?.id : 0,
-          imageType: encoding ? +encoding?.id : 0,
-          imageParam: 0,
-          imageRotation: rotation ? +rotation?.id : 0,
-          imageResoMode: 1,
-          imageResolution: resolution ? +resolution?.id : 1,
-        },
-        printingData: {
-          printEnable: +printEnable?.id ?? 0,
-          printStartPos: +startPosition ?? 0,
-          printDigit: +printDigit ?? 0,
-          printStartNumber: +printStartNumber ?? 0,
-          printOrientation:
-            printOrientation?.id === undefined ? 0 : +printOrientation?.id,
-          printFontSize: 0,
-          printFontSpace: +fontSpace ?? 0,
-          printMode: printMode?.id === undefined ? 0 : +printMode?.id,
-          customType: printCustom?.id === undefined ? "" : printCustom?.id,
-          customValue: printCustomValue ? printCustomValue : "",
-        },
-      },
-    ];
-    const layoutDataKey = props.layoutData.layoutParameters.key;
-    const templateIndex = dataCtx.allTemplates.findIndex(
-      (item) => item[0].layoutParameters?.key === layoutDataKey
-    );
-  
- 
-    dataCtx.updateLayoutParameter(templateIndex, templateData[0]);
-    localStorage.setItem("Template", JSON.stringify(templateData));
-    props.onHide();
-  } catch (error) {
-    console.error("Error uploading file: ", error);
-  }
-};
+      ];
+      const layoutDataKey = props.layoutData.layoutParameters.key;
+      const templateIndex = dataCtx.allTemplates.findIndex(
+        (item) => item[0].layoutParameters?.key === layoutDataKey
+      );
+
+      dataCtx.updateLayoutParameter(templateIndex, templateData[0]);
+      localStorage.setItem("Template", JSON.stringify(templateData));
+      props.onHide();
+    } catch (error) {
+      console.error("Error uploading file: ", error);
+    }
+  };
 
   const scannerHandler = async () => {
     setScannerLoading(true);
@@ -642,10 +640,23 @@ const createTemplateHandler = async () => {
       return;
     }
     setFileModal(false);
-    setImages([{
-      "frontSide":"Template Image\\19219_e59c79cb-044a-4cfc-bca7-126ffcf92260_1_Front.jpg",
-      "backSide": "Template Image\\19219_702a07ba-50f3-422e-9b15-ca3990264752_22_Back.jpg",
-    }
+    setImages([
+      {
+        frontImagePath: "1_Front.jpg",
+        backImagePath: "2_Back.jpg",
+      },
+      {
+        frontImagePath: "3_Front.jpg",
+        backImagePath: "4_Back.jpg",
+      },
+      {
+        frontImagePath: "5_Front.jpg",
+        backImagePath: "6_Back.jpg",
+      },
+      {
+        frontImagePath: "7_Front.jpg",
+        backImagePath: "8_Back.jpg",
+      },
     ]);
   };
 

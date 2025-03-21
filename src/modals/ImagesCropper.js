@@ -17,7 +17,7 @@ import classes from "./ImageCropper.module.css";
 import { toast } from "react-toastify";
 import DataContext from "store/DataContext";
 import { sideOption } from "data/helperData";
-const getPageNumber = (index, frontImagePath) => {
+const getPageNumber = (frontImagePath) => {
   if (!frontImagePath) return null; // Handle missing path
   const fileName = frontImagePath.split("\\").pop(); // Extract file name
   return parseInt(fileName.split("_")[0], 10) || null; // Extract number before "_"
@@ -34,9 +34,110 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
   const [prefix, setPrefix] = useState("");
   const [baseUrl, setBaseUrl] = useState("http://localhost:5000");
   const [side, setSide] = useState(sideOption[0]);
+  const [allCoordinates, setAllCoordinates] = useState(null);
+  const [filteredCoordinate, setFilterCoordinate] = useState([]);
 
   const dataCtx = useContext(DataContext);
   const cropperRef = useRef(null);
+
+  useEffect(() => {
+    const imageName =
+      side.name === "Front"
+        ? images[currentImageIndex].frontImagePath
+        : images[currentImageIndex].backImagePath;
+    // console.log(images[currentImageIndex].frontImagePath)
+
+    const pageNumber = getPageNumber(imageName);
+    const filteredImages = allImages.filter(
+      (item) => item.sheetNumber === pageNumber
+    );
+    setFilterCoordinate(filteredImages);
+  }, [currentImageIndex, images]);
+  useEffect(() => {
+    if (filteredCoordinate.length === 0) {
+      setAllCoordinates(null);
+      return;
+    }
+
+    if (filteredCoordinate && cropperRef.current) {
+      const cropper = cropperRef.current.cropper; // Access Cropper instance
+      const imageData = cropper.getImageData(); // Get image dimensions
+
+      const boxes = filteredCoordinate.map((item, index) => {
+        // Calculate relative positions
+        const relativeTop =
+          (item.topLeftY / imageData.naturalHeight) * imageData.height;
+        const relativeLeft =
+          (item.topLeftX / imageData.naturalWidth) * imageData.width;
+        const relativeWidth =
+          ((item.bottomRightX - item.topLeftX) / imageData.naturalWidth) *
+          imageData.width;
+        const relativeHeight =
+          ((item.bottomRightY - item.topLeftY) / imageData.naturalHeight) *
+          imageData.height;
+
+        return (
+          <div
+            key={index}
+            style={{
+              position: "absolute",
+              top: `${relativeTop}px`,
+              left: `${relativeLeft}px`,
+              width: `${relativeWidth}px`,
+              height: `${relativeHeight}px`,
+              border: "2px solid red",
+              pointerEvents: "none",
+            }}
+          ></div>
+        );
+      });
+
+      setAllCoordinates(boxes);
+    }
+  }, [allImages, cropperRef, currentImageIndex, filteredCoordinate]);
+
+  const updateCoordinates = () => {
+    if (filteredCoordinate && cropperRef.current) {
+      const cropper = cropperRef.current.cropper; // Access Cropper instance
+      const imageData = cropper.getImageData(); // Get updated image data
+      const canvasData = cropper.getCanvasData(); // Get displayed canvas size
+
+      // const filterBoxes = allImages.
+
+      const boxes = filteredCoordinate.map((item, index) => {
+        // 🔥 Adjust for zoom and position
+        const scaleX = canvasData.width / imageData.naturalWidth;
+        const scaleY = canvasData.height / imageData.naturalHeight;
+
+        const relativeTop = item.topLeftY * scaleY + canvasData.top;
+        const relativeLeft = item.topLeftX * scaleX + canvasData.left;
+        const relativeWidth = (item.bottomRightX - item.topLeftX) * scaleX;
+        const relativeHeight = (item.bottomRightY - item.topLeftY) * scaleY;
+
+        return (
+          <div
+            key={index}
+            style={{
+              position: "absolute",
+              top: `${relativeTop}px`,
+              left: `${relativeLeft}px`,
+              width: `${relativeWidth}px`,
+              height: `${relativeHeight}px`,
+              border: "2px solid red",
+              pointerEvents: "none",
+            }}
+          ></div>
+        );
+      });
+
+      setAllCoordinates(boxes);
+    }
+  };
+console.log(allCoordinates)
+  // 🔥 Run `updateCoordinates` whenever `allImages` changes
+  useEffect(() => {
+    updateCoordinates();
+  }, [allImages, currentImageIndex, filteredCoordinate,cropperRef]);
 
   useEffect(() => {
     const coordinateOptns = selectedCoordinateData.map((item) => {
@@ -94,7 +195,7 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
       croppedImage: cropper.getCroppedCanvas().toDataURL(),
     });
   };
-  console.log(images);
+
   const saveHandler = () => {
     const cropCoordinate = cropData.coordinates;
     // images[currentImageIndex].frontImagePath.path.baseNaeme();
@@ -118,7 +219,7 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
       topLeftY,
       bottomRightX,
       bottomRightY,
-      sheetNumber: getPageNumber(currentImageIndex, images[currentImageIndex][sidePath]),
+      sheetNumber: getPageNumber(images[currentImageIndex][sidePath]),
     };
     console.log(obj);
     setAllImages((prevData) => {
@@ -311,7 +412,7 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
                     Image Name :
                   </label>
                   <input
-                  value={imageName}
+                    value={imageName}
                     id="imageName"
                     type="text"
                     placeholder="Enter Image Name"
@@ -351,7 +452,10 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
           </div>
 
           <div>
-            <div className="border border-primary">
+            <div
+              className="border border-primary"
+              style={{ position: "relative" }}
+            >
               <Cropper
                 src={
                   side.name === "Front"
@@ -364,6 +468,8 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
                 guides={true}
                 ref={cropperRef}
                 cropend={() => getCropData()}
+                zoom={() => updateCoordinates()} // 🔥 Update boxes on zoom
+                cropmove={() => updateCoordinates()}
                 viewMode={1}
                 minCropBoxHeight={10}
                 minCropBoxWidth={10}
@@ -373,7 +479,10 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
                 checkOrientation={false}
                 rotatable={true}
                 autoCrop={false}
+                
               />
+              {filteredCoordinate&&allCoordinates}
+              {/* {allCoordinates} */}
             </div>
             <div className="d-flex justify-content-center flex-grow-1">
               <Button

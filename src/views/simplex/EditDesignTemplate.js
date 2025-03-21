@@ -1191,7 +1191,7 @@ const EditDesignTemplate = () => {
           : {};
         return { ...rest, formFieldCoordinates };
       });
-
+      const { imageCroppingDTO } = template[0];
     // Assemble the full request data
     const fullRequestData = {
       layoutParameters: updatedLayout,
@@ -1201,6 +1201,7 @@ const EditDesignTemplate = () => {
       questionsWindowParameters,
       skewMarksWindowParameters,
       formFieldWindowParameters,
+      imageCroppingDTO
     };
     handleCancel();
     sessionStorage.setItem(

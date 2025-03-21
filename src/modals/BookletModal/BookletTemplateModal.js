@@ -546,22 +546,20 @@ const BookletTemplateModal = (props) => {
     setFileModal(false);
     setImages([
       {
-        frontImagePath:
-          "D:\\\\Optic View\\\\Scan Data\\\\Sample Data\\\\1_Front.jpg",
-        backImagePath:
-          "D:\\\\Optic View\\\\Scan Data\\\\Sample Data\\\\2_Back.jpg",
+        frontImagePath: "1_Front.jpg",
+        backImagePath: "2_Back.jpg",
       },
       {
-        frontImagePath:
-          "D:\\\\Optic View\\\\Scan Data\\\\Sample Data\\\\3_Front.jpg",
-        backImagePath:
-          "D:\\\\Optic View\\\\Scan Data\\\\Sample Data\\\\4_Back.jpg",
+        frontImagePath: "3_Front.jpg",
+        backImagePath: "4_Back.jpg",
       },
       {
-        frontImagePath:
-          "D:\\\\Optic View\\\\Scan Data\\\\Sample Data\\\\5_Front.jpg",
-        backImagePath:
-          "D:\\\\Optic View\\\\Scan Data\\\\Sample Data\\\\6_Back.jpg",
+        frontImagePath: "5_Front.jpg",
+        backImagePath: "6_Back.jpg",
+      },
+      {
+        frontImagePath: "7_Front.jpg",
+        backImagePath: "8_Back.jpg",
       },
     ]);
   };
