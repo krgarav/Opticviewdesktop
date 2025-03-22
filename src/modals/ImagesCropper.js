@@ -53,48 +53,65 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
     );
     setFilterCoordinate(filteredImages);
   }, [currentImageIndex, images]);
+
+
   useEffect(() => {
     if (filteredCoordinate.length === 0) {
       setAllCoordinates(null);
       return;
     }
+  console.log("called")
+    const timeoutId = setTimeout(() => {
+      if (cropperRef.current?.cropper) {
+        const cropper = cropperRef.current.cropper;
+  
+        // Ensure both getImageData() and getCanvasData() are available
+        if (typeof cropper.getImageData === "function" && typeof cropper.getCanvasData === "function") {
+          const imageData = cropper.getImageData();
+          const canvasData = cropper.getCanvasData();
+  
+          if (!imageData || !canvasData) {
+            console.warn("imageData or canvasData is undefined, skipping calculation.");
+            return;
+          }
+  
+          const boxes = filteredCoordinate.map((item, index) => {
+            // 🔥 Adjust for zoom and position using canvasData
+            const scaleX = canvasData.width / imageData.naturalWidth;
+            const scaleY = canvasData.height / imageData.naturalHeight;
+  
+            const relativeTop = item.topLeftY * scaleY + canvasData.top;
+            const relativeLeft = item.topLeftX * scaleX + canvasData.left;
+            const relativeWidth = (item.bottomRightX - item.topLeftX) * scaleX;
+            const relativeHeight = (item.bottomRightY - item.topLeftY) * scaleY;
+  
+            return (
+              <div
+                key={index}
+                style={{
+                  position: "absolute",
+                  top: `${relativeTop}px`,
+                  left: `${relativeLeft}px`,
+                  width: `${relativeWidth}px`,
+                  height: `${relativeHeight}px`,
+                  border: "2px solid red",
+                  pointerEvents: "none",
+                }}
+              ></div>
+            );
+          });
+  
+          setAllCoordinates(boxes);
+        } else {
+          console.warn("cropper.getImageData or cropper.getCanvasData is not available yet.");
+        }
+      }
+    }, 60); // Slight delay to ensure Cropper is ready
+  
+    return () => clearTimeout(timeoutId); // Cleanup function to prevent memory leaks
+  }, [allImages, currentImageIndex, filteredCoordinate]);
+  
 
-    if (filteredCoordinate && cropperRef.current) {
-      const cropper = cropperRef.current.cropper; // Access Cropper instance
-      const imageData = cropper.getImageData(); // Get image dimensions
-
-      const boxes = filteredCoordinate.map((item, index) => {
-        // Calculate relative positions
-        const relativeTop =
-          (item.topLeftY / imageData.naturalHeight) * imageData.height;
-        const relativeLeft =
-          (item.topLeftX / imageData.naturalWidth) * imageData.width;
-        const relativeWidth =
-          ((item.bottomRightX - item.topLeftX) / imageData.naturalWidth) *
-          imageData.width;
-        const relativeHeight =
-          ((item.bottomRightY - item.topLeftY) / imageData.naturalHeight) *
-          imageData.height;
-
-        return (
-          <div
-            key={index}
-            style={{
-              position: "absolute",
-              top: `${relativeTop}px`,
-              left: `${relativeLeft}px`,
-              width: `${relativeWidth}px`,
-              height: `${relativeHeight}px`,
-              border: "2px solid red",
-              pointerEvents: "none",
-            }}
-          ></div>
-        );
-      });
-
-      setAllCoordinates(boxes);
-    }
-  }, [allImages, cropperRef, currentImageIndex, filteredCoordinate]);
 
   const updateCoordinates = () => {
     if (filteredCoordinate && cropperRef.current) {
@@ -133,11 +150,10 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
       setAllCoordinates(boxes);
     }
   };
-console.log(allCoordinates)
   // 🔥 Run `updateCoordinates` whenever `allImages` changes
   useEffect(() => {
     updateCoordinates();
-  }, [allImages, currentImageIndex, filteredCoordinate,cropperRef]);
+  }, [allImages, currentImageIndex, filteredCoordinate, cropperRef]);
 
   useEffect(() => {
     const coordinateOptns = selectedCoordinateData.map((item) => {
@@ -479,9 +495,8 @@ console.log(allCoordinates)
                 checkOrientation={false}
                 rotatable={true}
                 autoCrop={false}
-                
               />
-              {filteredCoordinate&&allCoordinates}
+              {filteredCoordinate && allCoordinates}
               {/* {allCoordinates} */}
             </div>
             <div className="d-flex justify-content-center flex-grow-1">
