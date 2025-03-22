@@ -1187,7 +1187,7 @@ const DesignTemplate = () => {
       dataCtx.addImageCoordinate(templateIndex, images);
     }
   };
-
+console.log(endColInput)
   const saveRegion = (pitchValue, value, copiedNumber) => {
     try {
       if (!value) {
