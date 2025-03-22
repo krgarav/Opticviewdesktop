@@ -344,8 +344,7 @@ const DesignTemplate = () => {
         questionField?.map((item) => item.Coordinate) ?? [];
       const coordinateOfSkewField =
         skewField?.map((item) => item.Coordinate) ?? [];
-      const coordinateOfIdField = idField?.Coordinate ?? [];
-
+      const coordinateOfIdField = idField?.Coordinate? [idField?.Coordinate] : [];
       // Combine all coordinates into a single array
       const allCoordinates = [
         ...coordinateOfFormData,
@@ -353,8 +352,7 @@ const DesignTemplate = () => {
         ...coordinateOfSkewField,
         ...coordinateOfIdField,
       ];
-      console.log(allCoordinates);
-
+      console.log(allCoordinates)
       // Map each coordinate to a new format
       const newSelectedFields = allCoordinates?.map((item) => {
         const {
@@ -1067,7 +1065,7 @@ const DesignTemplate = () => {
       layoutParameters.columnStart = 1;
       layoutParameters.columnStep = 1;
       layoutParameters.rowNumber = 1;
-      layoutParameters.rowStart = 1;
+      layoutParameters.rowStart = 2;
       layoutParameters.rowStep = 1;
     }
 

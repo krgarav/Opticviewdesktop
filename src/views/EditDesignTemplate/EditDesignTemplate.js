@@ -138,27 +138,21 @@ const EditDesignTemplate = () => {
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
 
-  // Function to fetch data from localStorage
-  // const fetchDataFromLocalStorage = () => {
-  //   setData((item) => {
-  //     return {
-  //       ...item,
-  //       totalColumns: JSON.parse(sessionStorage.getItem("totalColumns")),
-  //       timingMarks: JSON.parse(sessionStorage.getItem("timingMarks")),
-  //       templateImagePath: JSON.parse(
-  //         sessionStorage.getItem("templateImagePath")
-  //       ),
-  //       templateBackImagePath: JSON.parse(
-  //         sessionStorage.getItem("templateBackImagePath")
-  //       ),
-  //       bubbleType: JSON.parse(sessionStorage.getItem("bubbleType")),
-  //       excelJsonFile: JSON.parse(sessionStorage.getItem("excelJsonFile")),
-  //       numberedExcelJsonFile: JSON.parse(
-  //         sessionStorage.getItem("numberedExcelJsonFile")
-  //       ),
-  //     };
-  //   });
-  // };
+  useEffect(() => {
+    const template = dataCtx.allTemplates;
+    console.log(template)
+    if (template) {
+      const imageData = template[0][0]?.imageCroppingDTO;
+      console.log(imageData)
+      if(imageData){
+
+        setImagesSelectedCount(imageData?.length)
+      }
+      console.log(imageData?.length);
+    }
+    console.log(template);
+  }, [dataCtx.allTemplates]);
+
   useEffect(() => {
     setTimeout(() => {
       if (dataCtx.allTemplates.length > 0) {
@@ -1095,6 +1089,15 @@ const EditDesignTemplate = () => {
     const layoutParameters = template[0].layoutParameters;
     // layoutParameters.id = data.templateId;
     layoutParameters.numberedExcelJsonFile = data.numberedExcelJsonFile;
+    const idpatttern = "000000000000000000000000";
+    if (layoutParameters.idMarksPattern === idpatttern) {
+      layoutParameters.columnNumber = 1;
+      layoutParameters.columnStart = 1;
+      layoutParameters.columnStep = 1;
+      layoutParameters.rowNumber = 1;
+      layoutParameters.rowStart = 2;
+      layoutParameters.rowStep = 1;
+    }
     const Coordinate = layoutParameters.layoutCoordinates;
     let layoutCoordinates = {};
     // Transform layout coordinates into the required format
