@@ -344,7 +344,9 @@ const DesignTemplate = () => {
         questionField?.map((item) => item.Coordinate) ?? [];
       const coordinateOfSkewField =
         skewField?.map((item) => item.Coordinate) ?? [];
-      const coordinateOfIdField = idField?.Coordinate? [idField?.Coordinate] : [];
+      const coordinateOfIdField = idField?.Coordinate
+        ? [idField?.Coordinate]
+        : [];
       // Combine all coordinates into a single array
       const allCoordinates = [
         ...coordinateOfFormData,
@@ -352,7 +354,7 @@ const DesignTemplate = () => {
         ...coordinateOfSkewField,
         ...coordinateOfIdField,
       ];
-      console.log(allCoordinates)
+      console.log(allCoordinates);
       // Map each coordinate to a new format
       const newSelectedFields = allCoordinates?.map((item) => {
         const {
@@ -1173,10 +1175,8 @@ const DesignTemplate = () => {
       questionsWindowParameters,
       skewMarksWindowParameters,
       formFieldWindowParameters,
-      imageCroppingDTO,
+      imageCroppingDTO:imageCroppingDTO?imageCroppingDTO:[],
     };
-
-    // localStorage.setItem("Template", JSON.stringify(dataCtx.allTemplates[0]));
     handleCancel();
     localStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
   };
@@ -1187,7 +1187,7 @@ const DesignTemplate = () => {
       dataCtx.addImageCoordinate(templateIndex, images);
     }
   };
-console.log(endColInput)
+  console.log(endColInput);
   const saveRegion = (pitchValue, value, copiedNumber) => {
     try {
       if (!value) {
@@ -2149,13 +2149,14 @@ console.log(endColInput)
                         alert("Step in a row should be greater than 0");
                         return;
                       }
-                      setNoInRow(
-                        calculateTotalRow(
-                          +startRowInput,
-                          +endRowInput,
-                          +e.target.value
-                        )
-                      );
+                      setNoInRow(+endRowInput - +startRowInput + 1);
+                      // setNoInRow(
+                      //   calculateTotalRow(
+                      //     +startRowInput,
+                      //     +endRowInput,
+                      //     +e.target.value
+                      //   )
+                      // );
                       // }
 
                       setNoOfStepInRow(e.target.value);
@@ -2263,13 +2264,14 @@ console.log(endColInput)
                         alert("Step in a column should be greater than 0");
                         return;
                       }
-                      setNoInCol(
-                        calculateTotalRow(
-                          +startColInput,
-                          +endColInput,
-                          +e.target.value
-                        )
-                      );
+                      setNoInCol(+endColInput - +startColInput + 1);
+                      // setNoInCol(
+                      //   calculateTotalRow(
+                      //     +startColInput,
+                      //     +endColInput,
+                      //     +e.target.value
+                      //   )
+                      // );
                       setNoOfStepInCol(e.target.value);
                     }}
                     required

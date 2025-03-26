@@ -140,13 +140,12 @@ const EditDesignTemplate = () => {
 
   useEffect(() => {
     const template = dataCtx.allTemplates;
-    console.log(template)
+    console.log(template);
     if (template) {
       const imageData = template[0][0]?.imageCroppingDTO;
-      console.log(imageData)
-      if(imageData){
-
-        setImagesSelectedCount(imageData?.length)
+      console.log(imageData);
+      if (imageData) {
+        setImagesSelectedCount(imageData?.length);
       }
       console.log(imageData?.length);
     }
@@ -1198,7 +1197,7 @@ const EditDesignTemplate = () => {
       questionsWindowParameters,
       skewMarksWindowParameters,
       formFieldWindowParameters,
-      imageCroppingDTO,
+      imageCroppingDTO:imageCroppingDTO?imageCroppingDTO:[],
     };
     handleCancel();
     sessionStorage.setItem(
@@ -2259,15 +2258,19 @@ const EditDesignTemplate = () => {
                 className="form-control"
                 value={noOfStepInRow}
                 onChange={(e) => {
-                  // if (e.target.value !== "") {
-                  setNoInRow(
-                    calculateTotalRow(
-                      startRowInput,
-                      endRowInput,
-                      e.target.value
-                    )
-                  );
-                  // }
+                  if (+e.target.value < 1) {
+                    alert("Step in a row should be greater than 0");
+                    return;
+                  }
+
+                  setNoInRow(+endRowInput - +startRowInput + 1);
+                  // setNoInRow(
+                  //   calculateTotalRow(
+                  //     startRowInput,
+                  //     endRowInput,
+                  //     e.target.value
+                  //   )
+                  // );
 
                   setNoOfStepInRow(e.target.value);
                 }}
@@ -2378,13 +2381,18 @@ const EditDesignTemplate = () => {
                 className="form-control"
                 value={noOfStepInCol}
                 onChange={(e) => {
-                  setNoInCol(
-                    calculateTotalRow(
-                      startColInput,
-                      endColInput,
-                      e.target.value
-                    )
-                  );
+                  if (+e.target.value < 1) {
+                    alert("Step in a column should be greater than 0");
+                    return;
+                  }
+                  setNoInCol(+endColInput - +startColInput + 1);
+                  // setNoInCol(
+                  //   calculateTotalRow(
+                  //     startColInput,
+                  //     endColInput,
+                  //     e.target.value
+                  //   )
+                  // );
                   setNoOfStepInCol(e.target.value);
                 }}
                 required
