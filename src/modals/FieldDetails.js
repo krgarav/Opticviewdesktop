@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { Modal, Button } from "react-bootstrap";
 import DataContext from "store/DataContext";
 import Placeholder from "ui/Placeholder";
@@ -12,16 +12,42 @@ import {
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import IconButton from "@mui/material/IconButton";
+import TableRow from "components/TableRow";
 
 const FieldDetails = (props) => {
   const [fields, setFields] = useState([]);
   const [animatingIndex, setAnimatingIndex] = useState(null);
   const [direction, setDirection] = useState(null);
+  const [questionField, setQuestionFields] = useState([]);
+  const [skewField, setSkewField] = useState([]);
+  const [formField, setFormField] = useState([]);
+  const [idField, setIdField] = useState([]);
+
   const dataCtx = useContext(DataContext);
 
   useEffect(() => {
     if (props.selected) {
-      setFields(props.selected);
+      const selectedFields = props.selected;
+
+      // Group the fields by fieldType
+      const groupedFields = selectedFields.reduce((acc, item) => {
+        if (!acc[item.fieldType]) {
+          acc[item.fieldType] = [];
+        }
+        acc[item.fieldType].push(item);
+        return acc;
+      }, {});
+
+      console.log(groupedFields);
+
+      // Set individual field states
+      setQuestionFields(groupedFields["questionField"] || []);
+      setSkewField(groupedFields["skewField"] || []);
+      setFormField(groupedFields["formField"] || []);
+      setIdField(groupedFields["idField"] || []);
+
+      // Update the state with selected fields
+      setFields(selectedFields);
     }
   }, [props.selected]);
 
@@ -58,13 +84,14 @@ const FieldDetails = (props) => {
         setDirection(null);
         resetAnimation();
       }, 300);
-    } 
+    }
   };
+
   const resetAnimation = () => {
     setAnimatingIndex(null);
     setDirection(null);
   };
-  const LoadedTemplates = fields?.map((item, i) => {
+  const questionTemplates = questionField?.map((item, i) => {
     const isAnimating = animatingIndex === i;
     const slno = isAnimating ? (direction === "up" ? i + 1 : i - 1) : i + 1;
     return (
@@ -108,14 +135,191 @@ const FieldDetails = (props) => {
               <i className="fas fa-ellipsis-v" />
             </DropdownToggle>
             <DropdownMenu className="dropdown-menu-arrow" right>
-              <DropdownItem 
-              onClick={() =>{ 
-              
-              console.log(item, i)
-                props.editHandler(item, i)
-                }
-              }
-                >Edit</DropdownItem>
+              <DropdownItem
+                onClick={() => {
+                  console.log(item, i);
+                  props.editHandler(item, i);
+                }}
+              >
+                Edit
+              </DropdownItem>
+              <DropdownItem style={{ color: "red" }}>Delete</DropdownItem>
+            </DropdownMenu>
+          </UncontrolledDropdown>
+        </td>
+      </tr>
+    );
+  });
+  const formTemplates = formField?.map((item, i) => {
+    const isAnimating = animatingIndex === i;
+    const slno = isAnimating ? (direction === "up" ? i + 1 : i - 1) : i + 1;
+    return (
+      <tr
+        key={i}
+        style={{
+          backgroundColor: isAnimating
+            ? direction === "up"
+              ? "#f0f0f0"
+              : "#d9d9d9"
+            : "transparent",
+          transition:
+            "background-color 0.3s ease-in-out, transform 0.3s ease-in-out",
+          transform: isAnimating
+            ? direction === "up"
+              ? "translateY(-50px)"
+              : "translateY(50px)"
+            : "none",
+        }}
+      >
+        <td>{slno}</td> {/* Serial number */}
+        <td>{item.name}</td>
+        <td>{item.fieldType}</td>
+        <td>
+          <IconButton onClick={() => moveUp(i)} aria-label="move up">
+            <ArrowCircleUpIcon fontSize="inherit" />
+          </IconButton>
+          <IconButton onClick={() => moveDown(i)} aria-label="move down">
+            <ArrowCircleDownIcon fontSize="inherit" />
+          </IconButton>
+        </td>
+        <td>
+          <UncontrolledDropdown>
+            <DropdownToggle
+              className="btn-icon-only "
+              href="#pablo"
+              role="button"
+              size="sm"
+              onClick={(e) => e.preventDefault()}
+            >
+              <i className="fas fa-ellipsis-v" />
+            </DropdownToggle>
+            <DropdownMenu className="dropdown-menu-arrow" right>
+              <DropdownItem
+                onClick={() => {
+                  console.log(item, i);
+                  props.editHandler(item, i);
+                }}
+              >
+                Edit
+              </DropdownItem>
+              <DropdownItem style={{ color: "red" }}>Delete</DropdownItem>
+            </DropdownMenu>
+          </UncontrolledDropdown>
+        </td>
+      </tr>
+    );
+  });
+  const skewTemplates = skewField?.map((item, i) => {
+    const isAnimating = animatingIndex === i;
+    const slno = isAnimating ? (direction === "up" ? i + 1 : i - 1) : i + 1;
+    return (
+      <tr
+        key={i}
+        style={{
+          backgroundColor: isAnimating
+            ? direction === "up"
+              ? "#f0f0f0"
+              : "#d9d9d9"
+            : "transparent",
+          transition:
+            "background-color 0.3s ease-in-out, transform 0.3s ease-in-out",
+          transform: isAnimating
+            ? direction === "up"
+              ? "translateY(-50px)"
+              : "translateY(50px)"
+            : "none",
+        }}
+      >
+        <td>{slno}</td> {/* Serial number */}
+        <td>{item.name}</td>
+        <td>{item.fieldType}</td>
+        <td>
+          <IconButton onClick={() => moveUp(i)} aria-label="move up">
+            <ArrowCircleUpIcon fontSize="inherit" />
+          </IconButton>
+          <IconButton onClick={() => moveDown(i)} aria-label="move down">
+            <ArrowCircleDownIcon fontSize="inherit" />
+          </IconButton>
+        </td>
+        <td>
+          <UncontrolledDropdown>
+            <DropdownToggle
+              className="btn-icon-only "
+              href="#pablo"
+              role="button"
+              size="sm"
+              onClick={(e) => e.preventDefault()}
+            >
+              <i className="fas fa-ellipsis-v" />
+            </DropdownToggle>
+            <DropdownMenu className="dropdown-menu-arrow" right>
+              <DropdownItem
+                onClick={() => {
+                  console.log(item, i);
+                  props.editHandler(item, i);
+                }}
+              >
+                Edit
+              </DropdownItem>
+              <DropdownItem style={{ color: "red" }}>Delete</DropdownItem>
+            </DropdownMenu>
+          </UncontrolledDropdown>
+        </td>
+      </tr>
+    );
+  });
+  const idTemplates = idField?.map((item, i) => {
+    const isAnimating = animatingIndex === i;
+    const slno = isAnimating ? (direction === "up" ? i + 1 : i - 1) : i + 1;
+    return (
+      <tr
+        key={i}
+        style={{
+          backgroundColor: isAnimating
+            ? direction === "up"
+              ? "#f0f0f0"
+              : "#d9d9d9"
+            : "transparent",
+          transition:
+            "background-color 0.3s ease-in-out, transform 0.3s ease-in-out",
+          transform: isAnimating
+            ? direction === "up"
+              ? "translateY(-50px)"
+              : "translateY(50px)"
+            : "none",
+        }}
+      >
+        <td>{slno}</td> {/* Serial number */}
+        <td>{item.name}</td>
+        <td>{item.fieldType}</td>
+        <td>
+          <IconButton onClick={() => moveUp(i)} aria-label="move up">
+            <ArrowCircleUpIcon fontSize="inherit" />
+          </IconButton>
+          <IconButton onClick={() => moveDown(i)} aria-label="move down">
+            <ArrowCircleDownIcon fontSize="inherit" />
+          </IconButton>
+        </td>
+        <td>
+          <UncontrolledDropdown>
+            <DropdownToggle
+              className="btn-icon-only "
+              href="#pablo"
+              role="button"
+              size="sm"
+              onClick={(e) => e.preventDefault()}
+            >
+              <i className="fas fa-ellipsis-v" />
+            </DropdownToggle>
+            <DropdownMenu className="dropdown-menu-arrow" right>
+              <DropdownItem
+                onClick={() => {
+                  console.log(item, i);
+                  props.editHandler(item, i);
+                }}
+              >
+                Edit
+              </DropdownItem>
               <DropdownItem style={{ color: "red" }}>Delete</DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>
@@ -147,6 +351,32 @@ const FieldDetails = (props) => {
     </tr>
   ));
 
+  const handleSort = useCallback((type, sortedFields) => {
+    if (type === "questionField") {
+      setQuestionFields(sortedFields);
+    }
+    if (type === "skewField") {
+      setSkewField(sortedFields);
+    }
+    if (type === "formField") {
+      setFormField(sortedFields);
+    }
+
+    if (type === "idField") {
+      setIdField(sortedFields);
+    }
+
+    // console.log("Received sorted fields:", sortedFields); // Debugging
+    // setQuestionField(sortedFields); // Update state
+  }, []);
+  const handleFormSort = useCallback((sortedFields) => {}, []);
+  const handleSave = ()=>{
+    dataCtx.changeIndexTemplate(questionField,"questionField");
+    // dataCtx.changeIndexTemplate(skewField,"skewField");
+    // dataCtx.changeIndexTemplate(formField,"formField");
+    // dataCtx.changeIndexTemplate(idField,"idField");
+  }
+  console.log(dataCtx.allTemplates)
   return (
     <Modal
       show={props.show}
@@ -157,13 +387,26 @@ const FieldDetails = (props) => {
       <Modal.Header>
         <Modal.Title id="contained-modal-title-vcenter">All Fields</Modal.Title>
       </Modal.Header>
-      <Modal.Body style={{ height: "60vh", overflow: "auto", paddingTop:"0",marginTop:"10px" }}>
+      <Modal.Body
+        style={{
+          height: "60vh",
+          overflow: "auto",
+          paddingTop: "0",
+          marginTop: "10px",
+        }}
+      >
         <Table
           className="align-items-center table-flush mb-5 table-hover"
           // responsive
         >
-          <thead className="thead-light"
-             style={{ position: 'sticky', top: 0, zIndex: 1,backgroundColor: 'white' }}
+          <thead
+            className="thead-light"
+            style={{
+              position: "sticky",
+              top: 0,
+              zIndex: 1,
+              backgroundColor: "white",
+            }}
           >
             <tr>
               <th scope="col">SL no.</th>
@@ -174,7 +417,28 @@ const FieldDetails = (props) => {
             </tr>
           </thead>
           <tbody>
-            {props.fieldsLoading ? placeHolderJobs : LoadedTemplates}
+            <TableRow
+              type="questionField"
+              fieldData={questionField}
+              handleSort={handleSort}
+            />
+            <TableRow
+              type="idField"
+              fieldData={idField}
+              handleSort={handleSort}
+            />
+            <TableRow
+              type="formField"
+              fieldData={formField}
+              handleSort={handleSort}
+            />
+            <TableRow
+              type="skewField"
+              fieldData={skewField}
+              handleSort={handleSort}
+            />
+
+            {/* {props.fieldsLoading ? placeHolderJobs : LoadedTemplates} */}
           </tbody>
         </Table>
       </Modal.Body>
@@ -191,6 +455,8 @@ const FieldDetails = (props) => {
           type="button"
           variant="success"
           className="waves-effect waves-light"
+          onClick={handleSave}
+        
         >
           Save
         </Button>

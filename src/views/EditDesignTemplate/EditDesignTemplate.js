@@ -463,7 +463,7 @@ const EditDesignTemplate = () => {
 
     // Call the fetch details function
     fetchDetails();
-  }, []);
+  }, [dataCtx.allTemplates]);
 
   // *****************************************************************************************
   useEffect(() => {
@@ -1438,14 +1438,14 @@ const EditDesignTemplate = () => {
               </Button>
             </Col>
             <Col xs="auto">
-              {/* <Button
+              <Button
                 variant="success"
                 onClick={() => {
                   setShowFieldDetails(true);
                 }}
               >
                 Field Details
-              </Button> */}
+              </Button>
             </Col>
           </Row>
         </Container>
@@ -2691,7 +2691,7 @@ const EditDesignTemplate = () => {
           saveRegion={saveRegion}
         />
       )}
-      {/* {showFieldDetails && (
+      {showFieldDetails && (
         <FieldDetails
           show={showFieldDetails}
           onHide={() => {
@@ -2700,7 +2700,7 @@ const EditDesignTemplate = () => {
           selected={selectedCoordinates}
           editHandler={(item, i) => handleEyeClick(item, i)}
         />
-      )} */}
+      )}
       {!showSideBar && (
         <div
           className={classes["sidebar-btn"]}

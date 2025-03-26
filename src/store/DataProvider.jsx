@@ -5,7 +5,7 @@ import convertToCamelCase from "services/lowerLetter";
 import StructureData from "services/dataSrtucture";
 
 const initialData = {
-  allTemplates:[],
+  allTemplates: [],
   backendIP: "localhost",
 }; // Initial data if localStorage is empty
 
@@ -18,16 +18,11 @@ const DataProvider = (props) => {
       if (storedData) {
         setDataState({
           allTemplates: [
-            [
-              StructureData(
-                convertToCamelCase(JSON.parse(storedData))
-              ),
-            ],
+            [StructureData(convertToCamelCase(JSON.parse(storedData)))],
           ],
           backendIP: "localhost",
         });
       }
-      
     }, 1000);
 
     return () => clearTimeout(timer); // Cleanup timeout
@@ -678,14 +673,76 @@ const DataProvider = (props) => {
       };
     });
   };
-const setNewTemplatesHandler = (templateData)=>{
-  setDataState((prevState) => {
-    return {
-      ...prevState,
-      allTemplates: templateData,
-    };
-  })
-}
+  const setNewTemplatesHandler = (templateData) => {
+    setDataState((prevState) => {
+      return {
+        ...prevState,
+        allTemplates: templateData,
+      };
+    });
+  };
+
+  const changeIndexTemplateHandler = (updatedRegionDatas, fieldType) => {
+    let updatedRegionData = updatedRegionDatas.map((item) => {
+      return {
+        "End Col": item.endCol,
+        "End Row": item.endRow + 1,
+        "Start Col": item.startCol,
+        "Start Row": item.startRow + 1,
+        fieldType: item.fieldType,
+        name: item.name,
+      };
+    });
+
+    setDataState((item) => {
+      const copiedData = [...item.allTemplates];
+      const currentTemplate = { ...copiedData[0][0] }; // Create a shallow copy of the first template
+
+      const updateField = (fieldArray) => {
+        const updatedIndexField = [];
+
+        updatedRegionData.forEach((item) => {
+          const fileIndex = fieldArray.findIndex((fieldItem) =>
+            isEqual(fieldItem?.Coordinate, item)
+          );
+
+          if (fileIndex !== -1) {
+            updatedIndexField.push(fieldArray[fileIndex]);
+          }
+        });
+
+        return updatedIndexField;
+      };
+      console.log(fieldType);
+      switch (fieldType) {
+        case "skewMarkField":
+          currentTemplate.skewMarksWindowParameters = updateField(
+            currentTemplate.skewMarksWindowParameters
+          );
+          break;
+        case "formField":
+          currentTemplate.formFieldWindowParameters = updateField(
+            currentTemplate.formFieldWindowParameters
+          );
+          break;
+        case "questionField":
+          console.log(updateField(currentTemplate.questionsWindowParameters));
+          currentTemplate.questionsWindowParameters = updateField(
+            currentTemplate.questionsWindowParameters
+          );
+          break;
+        default:
+          return item; // If no valid fieldType is provided, return the existing state
+      }
+      console.log(currentTemplate);
+     
+      return {
+        ...item,
+        allTemplates: [[currentTemplate]], // Ensure we only modify the first template
+      };
+    });
+  };
+
   const dataContext = {
     allTemplates: dataState.allTemplates,
     setAllTemplates: templateHandler,
@@ -706,6 +763,7 @@ const setNewTemplatesHandler = (templateData)=>{
     setBackendIP: setBackendIPHandler,
     replaceTemplate: templateReplaceHandler,
     setNewTemplates: setNewTemplatesHandler,
+    changeIndexTemplate: changeIndexTemplateHandler,
   };
 
   return (
