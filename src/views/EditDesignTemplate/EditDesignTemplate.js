@@ -141,16 +141,14 @@ const EditDesignTemplate = () => {
 
   useEffect(() => {
     const template = dataCtx.allTemplates;
-    console.log(template);
+
     if (template) {
       const imageData = template[0][0]?.imageCroppingDTO;
       console.log(imageData);
       if (imageData) {
         setImagesSelectedCount(imageData?.length);
       }
-      console.log(imageData?.length);
     }
-    console.log(template);
   }, [dataCtx.allTemplates]);
 
   useEffect(() => {
@@ -605,6 +603,7 @@ const EditDesignTemplate = () => {
     }
     return true;
   };
+
   const validateSkewField = () => {
     const errors = {
       name: "Name Field can not be empty",
@@ -1198,7 +1197,7 @@ const EditDesignTemplate = () => {
       questionsWindowParameters,
       skewMarksWindowParameters,
       formFieldWindowParameters,
-      imageCroppingDTO:imageCroppingDTO?imageCroppingDTO:[],
+      imageCroppingDTO: imageCroppingDTO ? imageCroppingDTO : [],
     };
     handleCancel();
     sessionStorage.setItem(
@@ -1323,7 +1322,10 @@ const EditDesignTemplate = () => {
         }
         newCoordinates.push(newObject);
         const layoutData = layoutFieldData.layoutParameters;
-        const updatedName = questionNameGenerator(selectedField.name,i+1)
+        const updatedName =
+          selectedField.fieldType === "questionField"
+            ? questionNameGenerator(selectedField.name, i + 1)
+            : selectedField.name;
         const newData = {
           Coordinate: {
             "Start Row": newObject?.startRow + 1,
@@ -2455,6 +2457,11 @@ const EditDesignTemplate = () => {
                 className="form-control"
                 value={readingDirectionOption}
                 onChange={(e) => {
+                  if (e.target.value === 0 || e.target.value === 2) {
+                    setNumberOfField(Math.ceil(noInRow / noOfStepInRow));
+                  } else {
+                    setNumberOfField(Math.ceil(noInCol / noOfStepInCol));
+                  }
                   setReadingDirectionOption(e.target.value);
                 }}
                 defaultValue={""}

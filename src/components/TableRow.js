@@ -10,7 +10,12 @@ import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import IconButton from "@mui/material/IconButton";
 
-const TableRow = ({ type, fieldData, handleSort = () => {} }) => {
+const TableRow = ({
+  type,
+  fieldData,
+  handleSort = () => {},
+  editHandler = () => {},
+}) => {
   const [direction, setDirection] = useState(null);
   const [fields, setFields] = useState(fieldData);
   const [animatingIndex, setAnimatingIndex] = useState(null);
@@ -121,7 +126,7 @@ const TableRow = ({ type, fieldData, handleSort = () => {} }) => {
               <i className="fas fa-ellipsis-v" />
             </DropdownToggle>
             <DropdownMenu className="dropdown-menu-arrow" right>
-              <DropdownItem>Edit</DropdownItem>
+              <DropdownItem onClick={()=>{editHandler(item, i)}}>Edit</DropdownItem>
               <DropdownItem style={{ color: "red" }}>Delete</DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>

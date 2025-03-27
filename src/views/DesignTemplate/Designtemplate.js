@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Modal, Button, Col, Badge } from "react-bootstrap";
+import { Modal, Button, Col, Badge, Container } from "react-bootstrap";
 import { Row } from "reactstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import classes from "./DesignTemplate.module.css";
@@ -24,6 +24,8 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import IconButton from "@mui/material/IconButton";
 import { Button as Muibtn, Tooltip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import questionNameGenerator from "helper/questionNameGenerator";
+import FieldDetails from "modals/FieldDetails";
 
 const DesignTemplate = () => {
   const [selected, setSelected] = useState({});
@@ -86,6 +88,7 @@ const DesignTemplate = () => {
   const [showSideBar, setShowSideBar] = useState(false);
   const [showCopy, setShowCopy] = useState(false);
   const [selectedField, setSelectedField] = useState();
+  const [showFieldDetails, setShowFieldDetails] = useState(false);
   const location = useLocation();
   const {
     totalColumns,
@@ -540,7 +543,7 @@ const DesignTemplate = () => {
   };
 
   const handleMouseUp = () => {
-    if (dragStart) {
+    if (dragStart && selection) {
       setDragStart(null);
       setModalShow(true);
     }
@@ -864,7 +867,6 @@ const DesignTemplate = () => {
   };
 
   const handleEyeClick = (selectedField, index) => {
-    // console.log(selectedField);
     setSelectedField(selectedField);
     setSelection(() => ({
       startRow: selectedField.startRow,
@@ -1175,7 +1177,7 @@ const DesignTemplate = () => {
       questionsWindowParameters,
       skewMarksWindowParameters,
       formFieldWindowParameters,
-      imageCroppingDTO:imageCroppingDTO?imageCroppingDTO:[],
+      imageCroppingDTO: imageCroppingDTO ? imageCroppingDTO : [],
     };
     handleCancel();
     localStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
@@ -1295,16 +1297,20 @@ const DesignTemplate = () => {
         }
         newCoordinates.push(newObject);
         const layoutData = layoutFieldData.layoutParameters;
+        const updatedName =
+          selectedField.fieldType === "questionField"
+            ? questionNameGenerator(selectedField.name, i + 1)
+            : selectedField.name;
         const newData = {
           Coordinate: {
             "Start Row": newObject?.startRow + 1,
             "Start Col": newObject?.startCol,
             "End Row": newObject?.endRow + 1,
             "End Col": newObject?.endCol,
-            name: selectedField.name,
+            name: updatedName,
             fieldType: selectedField.fieldType,
           },
-          windowName: selectedField.name,
+          windowName: updatedName,
           imageStructureData: position,
           columnStart: +selection?.startCol,
           columnNumber: +noInCol,
@@ -1379,37 +1385,56 @@ const DesignTemplate = () => {
           zIndex: "999",
         }}
       >
-        <Button
-          variant="primary"
-          onClick={() => {
-            setImageModalShow(true);
-          }}
-          style={{ position: "relative" }}
-        >
-          Image Area
-          <Badge
-            pill
-            variant="light"
-            style={{
-              position: "absolute",
-              top: "-5px", // Adjust this value to position the badge correctly
-              right: "-5px", // Adjust this value to position the badge correctly
-              transform: "translate(50%, -50%)",
-              zIndex: "1000",
-            }}
-          >
-            {imagesSelectedCount} {/* Replace this with your dynamic number */}
-          </Badge>
-        </Button>
+        <Container fluid>
+          <Row className="justify-content-center">
+            <Col xs="auto">
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setImageModalShow(true);
+                }}
+                style={{ position: "relative" }}
+              >
+                Image Area
+                <Badge
+                  pill
+                  variant="light"
+                  style={{
+                    position: "absolute",
+                    top: "-5px", // Adjust this value to position the badge correctly
+                    right: "-5px", // Adjust this value to position the badge correctly
+                    transform: "translate(50%, -50%)",
+                    zIndex: "1000",
+                  }}
+                >
+                  {imagesSelectedCount}{" "}
+                  {/* Replace this with your dynamic number */}
+                </Badge>
+              </Button>
+            </Col>
+            <Col xs="auto">
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setDetailPage(true);
+                }}
+              >
+                Layout details
+              </Button>
+            </Col>
 
-        <Button
-          variant="secondary"
-          onClick={() => {
-            setDetailPage(true);
-          }}
-        >
-          Layout details
-        </Button>
+            <Col xs="auto">
+              <Button
+                variant="success"
+                onClick={() => {
+                  setShowFieldDetails(true);
+                }}
+              >
+                Field Details
+              </Button>
+            </Col>
+          </Row>
+        </Container>
       </div>
       {!modalShow && selection && (
         <Button
@@ -1627,7 +1652,7 @@ const DesignTemplate = () => {
                         <div
                           className="d-flex justify-content-between align-items-center bg-dark text-white p-1"
                           style={{
-                            opacity: 0.8,
+                            opacity: 0.6,
                             fontSize: "12px",
                             position: "relative",
                             overflow: "hidden",
@@ -2145,21 +2170,14 @@ const DesignTemplate = () => {
                     className="form-control"
                     value={noOfStepInRow}
                     onChange={(e) => {
+                      setNoInRow(+endRowInput - +startRowInput + 1);
+                      setNoOfStepInRow(e.target.value);
+                    }}
+                    onBlur={(e) => {
                       if (+e.target.value < 1) {
                         alert("Step in a row should be greater than 0");
                         return;
                       }
-                      setNoInRow(+endRowInput - +startRowInput + 1);
-                      // setNoInRow(
-                      //   calculateTotalRow(
-                      //     +startRowInput,
-                      //     +endRowInput,
-                      //     +e.target.value
-                      //   )
-                      // );
-                      // }
-
-                      setNoOfStepInRow(e.target.value);
                     }}
                     required
                   />
@@ -2260,19 +2278,14 @@ const DesignTemplate = () => {
                     className="form-control"
                     value={noOfStepInCol}
                     onChange={(e) => {
+                      setNoInCol(+endColInput - +startColInput + 1);
+                      setNoOfStepInCol(e.target.value);
+                    }}
+                    onBlur={(e) => {
                       if (+e.target.value < 1) {
                         alert("Step in a column should be greater than 0");
                         return;
                       }
-                      setNoInCol(+endColInput - +startColInput + 1);
-                      // setNoInCol(
-                      //   calculateTotalRow(
-                      //     +startColInput,
-                      //     +endColInput,
-                      //     +e.target.value
-                      //   )
-                      // );
-                      setNoOfStepInCol(e.target.value);
                     }}
                     required
                   />
@@ -2301,6 +2314,11 @@ const DesignTemplate = () => {
                     className="form-control"
                     value={readingDirectionOption}
                     onChange={(e) => {
+                      if (e.target.value === 0 || e.target.value === 2) {
+                        setNumberOfField(Math.ceil(noInRow / noOfStepInRow));
+                      } else {
+                        setNumberOfField(Math.ceil(noInCol / noOfStepInCol));
+                      }
                       setReadingDirectionOption(e.target.value);
                     }}
                     defaultValue={""}
@@ -2567,6 +2585,16 @@ const DesignTemplate = () => {
             setShowCopy(false);
           }}
           saveRegion={saveRegion}
+        />
+      )}
+      {showFieldDetails && (
+        <FieldDetails
+          show={showFieldDetails}
+          onHide={() => {
+            setShowFieldDetails(false);
+          }}
+          selected={selectedCoordinates}
+          editHandler={(item, i) => handleEyeClick(item, i)}
         />
       )}
 

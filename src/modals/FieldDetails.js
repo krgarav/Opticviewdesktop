@@ -38,8 +38,6 @@ const FieldDetails = (props) => {
         return acc;
       }, {});
 
-      console.log(groupedFields);
-
       // Set individual field states
       setQuestionFields(groupedFields["questionField"] || []);
       setSkewField(groupedFields["skewMarkField"] || []);
@@ -50,7 +48,7 @@ const FieldDetails = (props) => {
       setFields(selectedFields);
     }
   }, [props.selected]);
-  console.log(skewField);
+
   const moveUp = (index) => {
     if (index > 0) {
       setAnimatingIndex(index);
@@ -137,6 +135,7 @@ const FieldDetails = (props) => {
             <DropdownMenu className="dropdown-menu-arrow" right>
               <DropdownItem
                 onClick={() => {
+                  console.log("called");
                   console.log(item, i);
                   props.editHandler(item, i);
                 }}
@@ -373,11 +372,11 @@ const FieldDetails = (props) => {
   const handleSave = () => {
     console.log(formField);
     dataCtx.changeIndexTemplate(questionField, "questionField");
-    dataCtx.changeIndexTemplate(skewField,"skewField");
+    dataCtx.changeIndexTemplate(skewField, "skewField");
     dataCtx.changeIndexTemplate(formField, "formField");
-    dataCtx.changeIndexTemplate(idField,"idField");
-toast.success("Saved the positions!!")
-props.onHide()
+    dataCtx.changeIndexTemplate(idField, "idField");
+    toast.success("Saved the positions!!");
+    props.onHide();
   };
   console.log(dataCtx.allTemplates);
   return (
@@ -424,23 +423,27 @@ props.onHide()
               type="formField"
               fieldData={formField}
               handleSort={handleSort}
+              editHandler={(item, i) => props.editHandler(item, i)}
             />
 
             <TableRow
               type="questionField"
               fieldData={questionField}
               handleSort={handleSort}
+              editHandler={(item, i) => props.editHandler(item, i)}
             />
 
             <TableRow
               type="skewField"
               fieldData={skewField}
               handleSort={handleSort}
+              editHandler={(item, i) => props.editHandler(item, i)}
             />
             <TableRow
               type="idField"
               fieldData={idField}
               handleSort={handleSort}
+              editHandler={(item, i) => props.editHandler(item, i)}
             />
 
             {/* {props.fieldsLoading ? placeHolderJobs : LoadedTemplates} */}
