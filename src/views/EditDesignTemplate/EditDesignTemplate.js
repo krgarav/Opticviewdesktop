@@ -38,6 +38,7 @@ import convertToCamelCase from "services/lowerLetter";
 import { calculateTotalRow } from "services/HelperFunctions";
 import SideBar from "components/SideBar";
 import { FiChevronRight, FiX } from "react-icons/fi";
+import questionNameGenerator from "helper/questionNameGenerator";
 // Function to get values from sessionStorage or provide default
 const getSessionStorageOrDefault = (key, defaultValue) => {
   const stored = sessionStorage.getItem(key);
@@ -1322,16 +1323,17 @@ const EditDesignTemplate = () => {
         }
         newCoordinates.push(newObject);
         const layoutData = layoutFieldData.layoutParameters;
+        const updatedName = questionNameGenerator(selectedField.name,i+1)
         const newData = {
           Coordinate: {
             "Start Row": newObject?.startRow + 1,
             "Start Col": newObject?.startCol,
             "End Row": newObject?.endRow + 1,
             "End Col": newObject?.endCol,
-            name: selectedField.name,
+            name: updatedName,
             fieldType: selectedField.fieldType,
           },
-          windowName: selectedField.name,
+          windowName: updatedName,
           imageStructureData: position,
           columnStart: +selection?.startCol,
           columnNumber: +noInCol,
