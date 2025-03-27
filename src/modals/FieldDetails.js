@@ -13,7 +13,7 @@ import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import IconButton from "@mui/material/IconButton";
 import TableRow from "components/TableRow";
-
+import { toast } from "react-toastify";
 const FieldDetails = (props) => {
   const [fields, setFields] = useState([]);
   const [animatingIndex, setAnimatingIndex] = useState(null);
@@ -42,7 +42,7 @@ const FieldDetails = (props) => {
 
       // Set individual field states
       setQuestionFields(groupedFields["questionField"] || []);
-      setSkewField(groupedFields["skewField"] || []);
+      setSkewField(groupedFields["skewMarkField"] || []);
       setFormField(groupedFields["formField"] || []);
       setIdField(groupedFields["idField"] || []);
 
@@ -50,7 +50,7 @@ const FieldDetails = (props) => {
       setFields(selectedFields);
     }
   }, [props.selected]);
-
+  console.log(skewField);
   const moveUp = (index) => {
     if (index > 0) {
       setAnimatingIndex(index);
@@ -370,13 +370,16 @@ const FieldDetails = (props) => {
     // setQuestionField(sortedFields); // Update state
   }, []);
   const handleFormSort = useCallback((sortedFields) => {}, []);
-  const handleSave = ()=>{
-    dataCtx.changeIndexTemplate(questionField,"questionField");
-    // dataCtx.changeIndexTemplate(skewField,"skewField");
-    // dataCtx.changeIndexTemplate(formField,"formField");
-    // dataCtx.changeIndexTemplate(idField,"idField");
-  }
-  console.log(dataCtx.allTemplates)
+  const handleSave = () => {
+    console.log(formField);
+    dataCtx.changeIndexTemplate(questionField, "questionField");
+    dataCtx.changeIndexTemplate(skewField,"skewField");
+    dataCtx.changeIndexTemplate(formField, "formField");
+    dataCtx.changeIndexTemplate(idField,"idField");
+toast.success("Saved the positions!!")
+props.onHide()
+  };
+  console.log(dataCtx.allTemplates);
   return (
     <Modal
       show={props.show}
@@ -418,23 +421,25 @@ const FieldDetails = (props) => {
           </thead>
           <tbody>
             <TableRow
+              type="formField"
+              fieldData={formField}
+              handleSort={handleSort}
+            />
+
+            <TableRow
               type="questionField"
               fieldData={questionField}
+              handleSort={handleSort}
+            />
+
+            <TableRow
+              type="skewField"
+              fieldData={skewField}
               handleSort={handleSort}
             />
             <TableRow
               type="idField"
               fieldData={idField}
-              handleSort={handleSort}
-            />
-            <TableRow
-              type="formField"
-              fieldData={formField}
-              handleSort={handleSort}
-            />
-            <TableRow
-              type="skewField"
-              fieldData={skewField}
               handleSort={handleSort}
             />
 
@@ -456,7 +461,6 @@ const FieldDetails = (props) => {
           variant="success"
           className="waves-effect waves-light"
           onClick={handleSave}
-        
         >
           Save
         </Button>

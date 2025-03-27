@@ -3,7 +3,7 @@ import DataContext from "./DataContext"; // Assuming you have a DataContext
 import { isEqual } from "lodash";
 import convertToCamelCase from "services/lowerLetter";
 import StructureData from "services/dataSrtucture";
-
+import _ from "lodash";
 const initialData = {
   allTemplates: [],
   backendIP: "localhost",
@@ -683,6 +683,13 @@ const DataProvider = (props) => {
   };
 
   const changeIndexTemplateHandler = (updatedRegionDatas, fieldType) => {
+    const isEqualIgnoreCase = (obj1, obj2) => {
+      return _.isEqualWith(obj1, obj2, (val1, val2, key) => {
+        if (key === "name" && typeof val1 === "string" && typeof val2 === "string") {
+          return val1.toLowerCase() === val2.toLowerCase();
+        }
+      });
+    };
     let updatedRegionData = updatedRegionDatas.map((item) => {
       return {
         "End Col": item.endCol,
@@ -693,7 +700,7 @@ const DataProvider = (props) => {
         name: item.name,
       };
     });
-
+console.log(updatedRegionData)
     setDataState((item) => {
       const copiedData = [...item.allTemplates];
       const currentTemplate = { ...copiedData[0][0] }; // Create a shallow copy of the first template
@@ -703,7 +710,7 @@ const DataProvider = (props) => {
 
         updatedRegionData.forEach((item) => {
           const fileIndex = fieldArray.findIndex((fieldItem) =>
-            isEqual(fieldItem?.Coordinate, item)
+            isEqualIgnoreCase(fieldItem?.Coordinate, item) 
           );
 
           if (fileIndex !== -1) {
@@ -713,7 +720,6 @@ const DataProvider = (props) => {
 
         return updatedIndexField;
       };
-      console.log(fieldType);
       switch (fieldType) {
         case "skewMarkField":
           currentTemplate.skewMarksWindowParameters = updateField(
@@ -721,12 +727,14 @@ const DataProvider = (props) => {
           );
           break;
         case "formField":
+          console.log(updateField(
+            currentTemplate.formFieldWindowParameters
+          ))
           currentTemplate.formFieldWindowParameters = updateField(
             currentTemplate.formFieldWindowParameters
           );
           break;
         case "questionField":
-          console.log(updateField(currentTemplate.questionsWindowParameters));
           currentTemplate.questionsWindowParameters = updateField(
             currentTemplate.questionsWindowParameters
           );
@@ -734,8 +742,7 @@ const DataProvider = (props) => {
         default:
           return item; // If no valid fieldType is provided, return the existing state
       }
-      console.log(currentTemplate);
-     
+
       return {
         ...item,
         allTemplates: [[currentTemplate]], // Ensure we only modify the first template

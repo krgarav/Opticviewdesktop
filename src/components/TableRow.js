@@ -10,7 +10,7 @@ import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import IconButton from "@mui/material/IconButton";
 
-const TableRow = ({type, fieldData, handleSort = () => {}  }) => {
+const TableRow = ({ type, fieldData, handleSort = () => {} }) => {
   const [direction, setDirection] = useState(null);
   const [fields, setFields] = useState(fieldData);
   const [animatingIndex, setAnimatingIndex] = useState(null);
@@ -21,11 +21,11 @@ const TableRow = ({type, fieldData, handleSort = () => {}  }) => {
 
   useEffect(() => {
     if (typeof handleSort === "function") {
-      console.log(fields)
-      handleSort(type,fields);
+      console.log(fields);
+      handleSort(type, fields);
     }
   }, [fields, handleSort]);
-  
+
   const moveUp = (index) => {
     if (index > 0) {
       setAnimatingIndex(index);
@@ -70,7 +70,16 @@ const TableRow = ({type, fieldData, handleSort = () => {}  }) => {
   return fields?.map((item, i) => {
     const isAnimating = animatingIndex === i;
     const slno = isAnimating ? (direction === "up" ? i + 1 : i - 1) : i + 1;
-
+    let fieldValue = type === "formField" ? "FF" : "QF";
+    if (type === "formField") {
+      fieldValue = "Fm_F";
+    } else if (type === "questionField") {
+      fieldValue = "Qn_F";
+    } else if (type === "skewField") {
+      fieldValue = "Sk_F";
+    } else {
+      fieldValue = "Id_F";
+    }
     return (
       <tr
         key={i}
@@ -89,7 +98,7 @@ const TableRow = ({type, fieldData, handleSort = () => {}  }) => {
             : "none",
         }}
       >
-        <td>{slno}</td> {/* Serial number */}
+        <td> {fieldValue + slno}</td> {/* Serial number */}
         <td>{item.name}</td>
         <td>{item.fieldType}</td>
         <td>
