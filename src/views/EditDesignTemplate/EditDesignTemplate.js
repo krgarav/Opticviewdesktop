@@ -124,6 +124,7 @@ const EditDesignTemplate = () => {
           .layoutParameters
       : {}
   );
+  const [skewFieldValue, setSkewFieldValue] = useState(null);
   const divRefs = useRef([]);
   const numRows = data.timingMarks;
   const numCols = data.totalColumns;
@@ -599,8 +600,6 @@ const EditDesignTemplate = () => {
     const errors = {
       name: "Name Field can not be empty",
       windowNgOption: "Please select window Ng",
-      minimumMark: "Minimum mark cannot be empty",
-      maximumMark: "Maximum mark cannot be empty",
       skewoption: "Please select the skew mark position",
       noInRow: "Total number in row cannot be empty",
       noOfStepInRow: "Total number of step in a row cannot be empty",
@@ -719,6 +718,8 @@ const EditDesignTemplate = () => {
         iMaximumMarks: +maximumMark,
         skewMark: +skewoption,
         iType: type,
+        dataRejection: skewoption,
+        skewFieldValue: skewFieldValue,
       };
     } else {
       selectedWindowName = name;
@@ -2081,45 +2082,52 @@ const EditDesignTemplate = () => {
               </div>
             </Row>
           )}
-          {selectedFieldType !== "idField" && (
-            <Row>
-              <label htmlFor="example-select-input" className="col-md-2">
-                Minimum Mark
-              </label>
-              <div className="col-md-4">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter the minimum mark"
-                  value={minimumMark}
-                  onChange={(e) => {
-                    // Allow only numeric input (including empty input)
-                    const numericValue = e.target.value.replace(/[^0-9]/g, "");
-                    setMinimumMark(numericValue);
-                  }}
-                  min={0}
-                  required
-                />
-              </div>
-              <label htmlFor="example-select-input" className="col-md-2 ">
-                Maximum Mark
-              </label>
-              <div className="col-md-4">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter the maximum mark"
-                  value={maximumMark}
-                  onChange={(e) => {
-                    // Allow only numeric input (including empty input)
-                    const numericValue = e.target.value.replace(/[^0-9]/g, "");
-                    setMaximumMark(numericValue);
-                  }}
-                  required
-                />
-              </div>
-            </Row>
-          )}
+          {(selectedFieldType !== "idField" &&
+            selectedFieldType !== "skewMarkField") && (
+              <Row>
+                <label htmlFor="example-select-input" className="col-md-2">
+                  Minimum Mark
+                </label>
+                <div className="col-md-4">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter the minimum mark"
+                    value={minimumMark}
+                    onChange={(e) => {
+                      // Allow only numeric input (including empty input)
+                      const numericValue = e.target.value.replace(
+                        /[^0-9]/g,
+                        ""
+                      );
+                      setMinimumMark(numericValue);
+                    }}
+                    min={0}
+                    required
+                  />
+                </div>
+                <label htmlFor="example-select-input" className="col-md-2 ">
+                  Maximum Mark
+                </label>
+                <div className="col-md-4">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter the maximum mark"
+                    value={maximumMark}
+                    onChange={(e) => {
+                      // Allow only numeric input (including empty input)
+                      const numericValue = e.target.value.replace(
+                        /[^0-9]/g,
+                        ""
+                      );
+                      setMaximumMark(numericValue);
+                    }}
+                    required
+                  />
+                </div>
+              </Row>
+            )}
           {selectedFieldType === "idField" && (
             <Row className="mb-2">
               <label className="col-md-2 " style={{}}>
@@ -2153,13 +2161,10 @@ const EditDesignTemplate = () => {
           )}
           {selectedFieldType === "skewMarkField" && (
             <Row className="mb-2">
-              <label
-                htmlFor="example-select-input"
-                className="col-md-2 col-form-label"
-              >
-                Skew Mark
+              <label htmlFor="example-select-input" className="col-md-2">
+                Data Rejection
               </label>
-              <div className="col-md-10">
+              <div className="col-md-4">
                 <select
                   className="form-control"
                   value={skewoption}
@@ -2167,9 +2172,21 @@ const EditDesignTemplate = () => {
                   defaultValue={"none"}
                 >
                   <option value="">Select an option</option>
-                  <option value="rear">Top Skew Mark</option>
-                  <option value="front">Bottom Skew Mark</option>
+                  <option value="use">Use</option>
+                  <option value="not use">Not</option>
                 </select>
+              </div>
+              <label htmlFor="example-select-input" className="col-md-2 col-form-label">
+                Field Value
+              </label>
+              <div className="col-md-4">
+                <input
+                  className="form-control"
+                  value={skewFieldValue}
+                  onChange={(e) => {
+                    setSkewFieldValue(e.target.value);
+                  }}
+                />
               </div>
             </Row>
           )}

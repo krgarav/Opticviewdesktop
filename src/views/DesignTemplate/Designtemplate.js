@@ -89,6 +89,7 @@ const DesignTemplate = () => {
   const [showCopy, setShowCopy] = useState(false);
   const [selectedField, setSelectedField] = useState();
   const [showFieldDetails, setShowFieldDetails] = useState(false);
+  const [skewFieldValue,setSkewFieldValue] = useState(null);
   const location = useLocation();
   const {
     totalColumns,
@@ -612,8 +613,6 @@ const DesignTemplate = () => {
     const errors = {
       name: "Name Field can not be empty",
       windowNgOption: "Please select window Ng",
-      minimumMark: "Minimum mark cannot be empty",
-      maximumMark: "Maximum mark cannot be empty",
       skewoption: "Please select the skew mark position",
       noInRow: "Total number in row cannot be empty",
       noOfStepInRow: "Total number of step in a row cannot be empty",
@@ -726,10 +725,12 @@ const DesignTemplate = () => {
           fieldType: selectedFieldType,
         },
         ngAction: windowNgOption,
-        iMinimumMarks: +minimumMark,
-        iMaximumMarks: +maximumMark,
+        iMinimumMarks: 1,
+        iMaximumMarks: 1,
         skewMark: +skewoption,
         iType: type,
+        dataRejection: skewoption,
+        skewFieldValue : skewFieldValue
         // imageStructureData: position,
       };
     } else {
@@ -889,7 +890,7 @@ const DesignTemplate = () => {
     // console.log(template);
     if (selectedField?.fieldType === "idField") {
       const data = template[0].layoutParameters;
-      console.log(data)
+
       setSelectedFieldType("idField");
       setWindowNgOption(data?.ngAction);
       setMinimumMark(data?.minimumMark);
@@ -906,7 +907,6 @@ const DesignTemplate = () => {
       setCoordinateIndex(index);
       setModalUpdate(true);
       setModalShow(true);
-
     } else if (selectedField?.fieldType === "questionField") {
       const parameters = template[0].questionsWindowParameters;
 
@@ -1999,7 +1999,8 @@ const DesignTemplate = () => {
                   </div>
                 </Row>
               )}
-              {selectedFieldType !== "idField" && (
+              {(selectedFieldType !== "idField" &&
+                selectedFieldType !== "skewMarkField") && (
                 <Row>
                   <label htmlFor="example-select-input" className="col-md-2">
                     Minimum Mark
@@ -2069,13 +2070,10 @@ const DesignTemplate = () => {
               )}
               {selectedFieldType === "skewMarkField" && (
                 <Row className="mb-2">
-                  <label
-                    htmlFor="example-select-input"
-                    className="col-md-2 col-form-label"
-                  >
-                    Skew Mark
+                  <label htmlFor="example-select-input" className="col-md-2">
+                    Data Rejection
                   </label>
-                  <div className="col-md-10">
+                  <div className="col-md-4">
                     <select
                       className="form-control"
                       value={skewoption}
@@ -2083,9 +2081,20 @@ const DesignTemplate = () => {
                       defaultValue={"none"}
                     >
                       <option value="">Select an option</option>
-                      <option value="rear">Top Skew Mark</option>
-                      <option value="front">Bottom Skew Mark</option>
+                      <option value="use">Use</option>
+                      <option value="not use">Not</option>
                     </select>
+                  </div>
+                  <label htmlFor="example-select-input" className="col-md-2">
+                    Field Value
+                  </label>
+                  <div className="col-md-4">
+                    <input
+                      className="form-control"
+                      value={skewFieldValue}
+                      onChange={(e)=>{setSkewFieldValue(e.target.value)}}
+                    />
+                      
                   </div>
                 </Row>
               )}
