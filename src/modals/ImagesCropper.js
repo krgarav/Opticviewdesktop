@@ -36,6 +36,7 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
   const [side, setSide] = useState(sideOption[0]);
   const [allCoordinates, setAllCoordinates] = useState(null);
   const [filteredCoordinate, setFilterCoordinate] = useState([]);
+  const [zoomState, setZoomState] = useState(false);
 
   const dataCtx = useContext(DataContext);
   const cropperRef = useRef(null);
@@ -52,7 +53,7 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
       (item) => item.sheetNumber === pageNumber
     );
     setFilterCoordinate(filteredImages);
-  }, [currentImageIndex, images, side]);
+  }, [currentImageIndex, images, side, show, allImages]);
 
   useEffect(() => {
     if (filteredCoordinate.length === 0) {
@@ -114,46 +115,12 @@ const ImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
     }, 60); // Slight delay to ensure Cropper is ready
 
     return () => clearTimeout(timeoutId); // Cleanup function to prevent memory leaks
-  }, [allImages, currentImageIndex, side, filteredCoordinate]);
+  }, [allImages, currentImageIndex, side, filteredCoordinate, zoomState, show]);
 
   const updateCoordinates = () => {
-    if (filteredCoordinate && cropperRef.current) {
-      const cropper = cropperRef.current.cropper; // Access Cropper instance
-      const imageData = cropper.getImageData(); // Get updated image data
-      const canvasData = cropper.getCanvasData(); // Get displayed canvas size
-
-      // const filterBoxes = allImages.
-
-      const boxes = filteredCoordinate.map((item, index) => {
-        // 🔥 Adjust for zoom and position
-        const scaleX = canvasData.width / imageData.naturalWidth;
-        const scaleY = canvasData.height / imageData.naturalHeight;
-
-        const relativeTop = item.topLeftY * scaleY + canvasData.top;
-        const relativeLeft = item.topLeftX * scaleX + canvasData.left;
-        const relativeWidth = (item.bottomRightX - item.topLeftX) * scaleX;
-        const relativeHeight = (item.bottomRightY - item.topLeftY) * scaleY;
-
-        return (
-          <div
-            key={index}
-            style={{
-              position: "absolute",
-              top: `${relativeTop}px`,
-              left: `${relativeLeft}px`,
-              width: `${relativeWidth}px`,
-              height: `${relativeHeight}px`,
-              border: "2px solid red",
-              pointerEvents: "none",
-            }}
-          ></div>
-        );
-      });
-
-      setAllCoordinates(boxes);
-    }
+    setZoomState((prev) => !prev);
   };
-  
+
   useEffect(() => {
     updateCoordinates();
   }, [allImages, currentImageIndex, filteredCoordinate, cropperRef]);

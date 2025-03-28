@@ -41,6 +41,7 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
   const [side, setSide] = useState(sideOption[0]);
   const [allCoordinates, setAllCoordinates] = useState(null);
   const [filteredCoordinate, setFilterCoordinate] = useState([]);
+  const [zoomState, setZoomState] = useState(false);
 
   // images = splitFrontBackImagePaths(images);
 
@@ -49,15 +50,15 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
       side.name === "Front"
         ? images[currentImageIndex].frontImagePath
         : images[currentImageIndex].backImagePath;
-
     const pageNumber = getPageNumber(imageName);
     const filteredImages = allImages.filter(
       (item) => item.sheetNumber === pageNumber
     );
     setFilterCoordinate(filteredImages);
-  }, [currentImageIndex, images, side]);
+  }, [currentImageIndex, allImages, images, side, show]);
 
   useEffect(() => {
+    console.log("called");
     if (filteredCoordinate.length === 0) {
       setAllCoordinates(null);
       return;
@@ -82,7 +83,7 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
           }
 
           const boxes = filteredCoordinate.map((item, index) => {
-            // 🔥 Adjust for zoom and position using canvasData
+            //  Adjust for zoom and position using canvasData
             const scaleX = canvasData.width / imageData.naturalWidth;
             const scaleY = canvasData.height / imageData.naturalHeight;
 
@@ -117,44 +118,10 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
     }, 60); // Slight delay to ensure Cropper is ready
 
     return () => clearTimeout(timeoutId); // Cleanup function to prevent memory leaks
-  }, [allImages, currentImageIndex, side, filteredCoordinate]);
+  }, [allImages, currentImageIndex, side, filteredCoordinate, zoomState, show]);
 
   const updateCoordinates = () => {
-    if (filteredCoordinate && cropperRef.current) {
-      const cropper = cropperRef.current.cropper; // Access Cropper instance
-      const imageData = cropper.getImageData(); // Get updated image data
-      const canvasData = cropper.getCanvasData(); // Get displayed canvas size
-
-      // const filterBoxes = allImages.
-
-      const boxes = filteredCoordinate.map((item, index) => {
-        // 🔥 Adjust for zoom and position
-        const scaleX = canvasData.width / imageData.naturalWidth;
-        const scaleY = canvasData.height / imageData.naturalHeight;
-
-        const relativeTop = item.topLeftY * scaleY + canvasData.top;
-        const relativeLeft = item.topLeftX * scaleX + canvasData.left;
-        const relativeWidth = (item.bottomRightX - item.topLeftX) * scaleX;
-        const relativeHeight = (item.bottomRightY - item.topLeftY) * scaleY;
-
-        return (
-          <div
-            key={index}
-            style={{
-              position: "absolute",
-              top: `${relativeTop}px`,
-              left: `${relativeLeft}px`,
-              width: `${relativeWidth}px`,
-              height: `${relativeHeight}px`,
-              border: "2px solid red",
-              pointerEvents: "none",
-            }}
-          ></div>
-        );
-      });
-
-      setAllCoordinates(boxes);
-    }
+    setZoomState((prev) => !prev);
   };
 
   // 🔥 Run `updateCoordinates` whenever `allImages` changes
@@ -202,6 +169,7 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
   }, [allImages]);
 
   const getCropData = () => {
+    console.log("hgjhg");
     const cropper = cropperRef.current.cropper;
     const cropBoxData = cropper.getCropBoxData();
     const imageData = cropper.getImageData();
@@ -249,7 +217,7 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
       toast.warn("last page reached", { toastId });
     }
   };
- 
+
   const saveHandler = () => {
     const cropCoordinate = cropData.coordinates;
 
@@ -418,7 +386,7 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
         size="xl"
         onHide={() => setShow(false)}
       >
-        <Modal.Header closeButton>  
+        <Modal.Header closeButton>
           <Modal.Title
             style={{
               display: "flex",
