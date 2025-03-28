@@ -124,7 +124,6 @@ const EditDesignTemplate = () => {
           .layoutParameters
       : {}
   );
-
   const divRefs = useRef([]);
   const numRows = data.timingMarks;
   const numCols = data.totalColumns;

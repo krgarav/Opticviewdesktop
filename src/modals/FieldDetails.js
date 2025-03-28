@@ -368,11 +368,12 @@ const FieldDetails = (props) => {
     // console.log("Received sorted fields:", sortedFields); // Debugging
     // setQuestionField(sortedFields); // Update state
   }, []);
+  console.log(skewField)
   const handleFormSort = useCallback((sortedFields) => {}, []);
   const handleSave = () => {
     console.log(formField);
     dataCtx.changeIndexTemplate(questionField, "questionField");
-    dataCtx.changeIndexTemplate(skewField, "skewField");
+    dataCtx.changeIndexTemplate(skewField, "skewMarkField");
     dataCtx.changeIndexTemplate(formField, "formField");
     dataCtx.changeIndexTemplate(idField, "idField");
     toast.success("Saved the positions!!");

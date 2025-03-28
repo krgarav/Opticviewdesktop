@@ -1003,7 +1003,7 @@ const DesignTemplate = () => {
 
       // Get the matched object
       const data = index !== -1 ? parameters[index] : null;
-
+console.log(data)
       setCoordinateIndex(index);
       setModalUpdate(true);
       setModalShow(true);
@@ -1012,6 +1012,15 @@ const DesignTemplate = () => {
       setEndRowInput(formattedSelectedFile["End Row"]);
       setStartColInput(formattedSelectedFile["Start Col"]);
       setEndColInput(formattedSelectedFile["End Col"]);
+      setNumberOfField(data?.totalNumberOfFields);
+      setNoOfStepInRow(data?.rowStep);
+      setNoOfStepInCol(data?.columnStep);
+      setName(data?.windowName);
+      setWindowNgOption(data?.ngAction);
+      setMinimumMark(data?.iMaximumMarks);
+      setMaximumMark(data?.iMinimumMarks);
+      setType(data?.iType);
+      setReadingDirectionOption(data?.iDirection);
     }
   };
 

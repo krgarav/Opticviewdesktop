@@ -722,6 +722,9 @@ console.log(updatedRegionData)
       };
       switch (fieldType) {
         case "skewMarkField":
+          console.log( updateField(
+            currentTemplate.skewMarksWindowParameters
+          ))
           currentTemplate.skewMarksWindowParameters = updateField(
             currentTemplate.skewMarksWindowParameters
           );
