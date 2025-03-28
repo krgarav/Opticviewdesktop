@@ -906,9 +906,6 @@ const DesignTemplate = () => {
       setModalUpdate(true);
       setModalShow(true);
     } else if (selectedField?.fieldType === "questionField") {
-      // const data = template[0].questionsWindowParameters.filter((item) => {
-      //     return isEqual(item.Coordinate, formattedSelectedFile);
-      // })[0];
       const parameters = template[0].questionsWindowParameters;
 
       // Find the index of the matched object
@@ -938,7 +935,6 @@ const DesignTemplate = () => {
       setEndColInput(formattedSelectedFile["End Col"]);
       setReadingDirectionOption(data?.iDirection);
       setType(data?.iType);
-      // setOption(data?.iOption);
       setNumberOfField(data?.totalNumberOfFields);
       setFieldType(data?.numericOrAlphabets);
       setMultiple(data?.multipleAllow);
@@ -948,14 +944,9 @@ const DesignTemplate = () => {
       setNoOfStepInRow(data?.rowStep);
       setNoOfStepInCol(data?.columnStep);
     } else if (selectedField?.fieldType === "formField") {
-      // const data = template[0].formFieldWindowParameters.filter((item) => {
-
-      //     return isEqual(item.Coordinate, formattedSelectedFile);
-      // })[0];
       const parameters = template[0].formFieldWindowParameters;
 
       const index = parameters.findIndex((item) => {
-        // console.log(isEqual(item.Coordinate, formattedSelectedFile));
         return isEqual(item.Coordinate, formattedSelectedFile);
       });
 
@@ -1003,7 +994,6 @@ const DesignTemplate = () => {
 
       // Get the matched object
       const data = index !== -1 ? parameters[index] : null;
-console.log(data)
       setCoordinateIndex(index);
       setModalUpdate(true);
       setModalShow(true);
@@ -1198,7 +1188,6 @@ console.log(data)
       dataCtx.addImageCoordinate(templateIndex, images);
     }
   };
-  console.log(endColInput);
   const saveRegion = (pitchValue, value, copiedNumber) => {
     try {
       if (!value) {
@@ -2486,10 +2475,11 @@ console.log(data)
               setModalShow(false);
             }}
             variant="warning"
-            style={{ marginRight: "auto" }}
+            className="primary-btn-fcs"
           >
             Hide Modal
           </Button>
+
           {modalUpdate && (
             <>
               <Tooltip title="Delete" placement="top">
@@ -2519,13 +2509,12 @@ console.log(data)
               </Tooltip>
             </>
           )}
-
           <div style={{ display: "flex", gap: "10px" }}>
             <Button
               type="button"
               variant="danger"
               onClick={handleCancel}
-              className="waves-effect waves-light"
+              className="waves-effect waves-light primary-btn-fcs"
             >
               Cancel
             </Button>
@@ -2533,7 +2522,7 @@ console.log(data)
               type="button"
               color="success"
               onClick={handleSave}
-              className="waves-effect waves-light"
+              className="waves-effect waves-light secondary-btn-fcs"
             >
               {!modalUpdate ? "Save" : "Update"}
             </Button>
