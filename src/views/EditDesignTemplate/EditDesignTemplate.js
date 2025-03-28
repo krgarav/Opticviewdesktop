@@ -935,10 +935,11 @@ const EditDesignTemplate = () => {
       setEndRowInput(formattedSelectedFile["End Row"]);
       setStartColInput(formattedSelectedFile["Start Col"]);
       setEndColInput(formattedSelectedFile["End Col"]);
-
+      setReadingDirectionOption(data?.iDirection);
       setCoordinateIndex(index);
       setModalUpdate(true);
       setModalShow(true);
+      setIdNumber(data?.idMarksPattern);
     } else if (selectedField?.fieldType === "questionField") {
       // const data = template[0].questionsWindowParameters.filter((item) => {
       //     return isEqual(item.Coordinate, formattedSelectedFile);
@@ -1036,6 +1037,7 @@ const EditDesignTemplate = () => {
       setEndColInput(formattedSelectedFile["End Col"]);
       setNoOfStepInRow(data?.rowStep);
       setNoOfStepInCol(data?.columnStep);
+      setWindowNgOption(data?.ngAction);
     }
   };
 

@@ -889,15 +889,16 @@ const DesignTemplate = () => {
     // console.log(template);
     if (selectedField?.fieldType === "idField") {
       const data = template[0].layoutParameters;
+      console.log(data)
       setSelectedFieldType("idField");
       setWindowNgOption(data?.ngAction);
       setMinimumMark(data?.minimumMark);
       setMaximumMark(data?.maximumMark);
-      // setNoInRow(data?.totalNoInRow);
-      // setNoInCol(data?.totalNoInColumn);
       setReadingDirectionOption(data?.iDirection);
       setNoInRow(data?.rowNumber);
       setNoInCol(data?.columnNumber);
+      setNoOfStepInRow(data?.rowStep);
+      setNoOfStepInCol(data?.columnStep);
       setStartRowInput(formattedSelectedFile["Start Row"]);
       setEndRowInput(formattedSelectedFile["End Row"]);
       setStartColInput(formattedSelectedFile["Start Col"]);
@@ -905,6 +906,7 @@ const DesignTemplate = () => {
       setCoordinateIndex(index);
       setModalUpdate(true);
       setModalShow(true);
+
     } else if (selectedField?.fieldType === "questionField") {
       const parameters = template[0].questionsWindowParameters;
 
@@ -1011,6 +1013,8 @@ const DesignTemplate = () => {
       setMaximumMark(data?.iMinimumMarks);
       setType(data?.iType);
       setReadingDirectionOption(data?.iDirection);
+      setNoInRow(data?.rowNumber);
+      setNoInCol(data?.columnNumber);
     }
   };
 

@@ -15,11 +15,10 @@ import {
   Container,
 } from "reactstrap";
 import classes from "./ImageCropper.module.css";
-import { v4 as uuidv4 } from "uuid";
 import { toast } from "react-toastify";
 import DataContext from "store/DataContext";
-import { getUrls } from "helper/url_helper";
 import { sideOption } from "data/helperData";
+
 const getPageNumber = (frontImagePath) => {
   if (!frontImagePath) return null; // Handle missing path
   const fileName = frontImagePath.split("\\").pop(); // Extract file name
@@ -169,7 +168,6 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
   }, [allImages]);
 
   const getCropData = () => {
-    console.log("hgjhg");
     const cropper = cropperRef.current.cropper;
     const cropBoxData = cropper.getCropBoxData();
     const imageData = cropper.getImageData();
