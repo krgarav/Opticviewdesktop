@@ -620,7 +620,6 @@ const DesignTemplate = () => {
       noOfStepInCol: "Total number of step in a col cannot be empty",
       readingDirectionOption: "Please select reading direction",
       type: "Please select type",
-      // option: "Please select option",
     };
 
     for (let [field, errorMsg] of Object.entries(errors)) {

@@ -607,7 +607,6 @@ const EditDesignTemplate = () => {
       noOfStepInCol: "Total number of step in a col cannot be empty",
       readingDirectionOption: "Please select reading direction",
       type: "Please select type",
-      // option: "Please select option",
     };
 
     for (let [field, errorMsg] of Object.entries(errors)) {
@@ -1058,6 +1057,7 @@ const EditDesignTemplate = () => {
       fieldType: selectedField.fieldType,
       name: selectedField.name,
     };
+    console.log(formattedSelectedFile)
     setSelectedCoordinates((prevState) => {
       const copiedState = [...prevState];
       copiedState.splice(index, 1); // Remove the item at the specified index
@@ -2718,6 +2718,7 @@ const EditDesignTemplate = () => {
           }}
           selected={selectedCoordinates}
           editHandler={(item, i) => handleEyeClick(item, i)}
+          deleteHandler= {(item,i)=> handleCrossClick(item,i)}
         />
       )}
       {!showSideBar && (

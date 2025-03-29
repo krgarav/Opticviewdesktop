@@ -405,9 +405,12 @@ const DataProvider = (props) => {
           copiedLayout.rowNumber = 0;
           copiedLayout.rowStart = 0;
           copiedLayout.rowStep = 0;
+          copiedLayout.layoutCoordinates={};
           currentTemplate.layoutParameters = copiedLayout;
+
           break;
       }
+      console.log(copiedData)
       return {
         ...item,
         allTemplates: copiedData,

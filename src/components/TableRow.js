@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
   DropdownMenu,
   DropdownItem,
@@ -15,18 +15,21 @@ const TableRow = ({
   fieldData,
   handleSort = () => {},
   editHandler = () => {},
+  deleteHander = () => {},
 }) => {
   const [direction, setDirection] = useState(null);
   const [fields, setFields] = useState(fieldData);
   const [animatingIndex, setAnimatingIndex] = useState(null);
+  const setFieldsCallback = useCallback((data) => setFields(data), []);
 
-  useEffect(() => {
-    setFields(fieldData);
-  }, [fieldData]);
+useEffect(() => {
+  setFields(fieldData);
+}, [fieldData]);
+console.log(fieldData)
 
   useEffect(() => {
     if (typeof handleSort === "function") {
-      console.log(fields);
+     
       handleSort(type, fields);
     }
   }, [fields, handleSort]);
@@ -126,8 +129,21 @@ const TableRow = ({
               <i className="fas fa-ellipsis-v" />
             </DropdownToggle>
             <DropdownMenu className="dropdown-menu-arrow" right>
-              <DropdownItem onClick={()=>{editHandler(item, i)}}>Edit</DropdownItem>
-              <DropdownItem style={{ color: "red" }}>Delete</DropdownItem>
+              <DropdownItem
+                onClick={() => {
+                  editHandler(item, i);
+                }}
+              >
+                Edit
+              </DropdownItem>
+              <DropdownItem
+                onClick={() => {
+                  deleteHander(item, i);
+                }}
+                style={{ color: "red" }}
+              >
+                Delete
+              </DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>
         </td>
@@ -136,4 +152,4 @@ const TableRow = ({
   });
 };
 
-export default TableRow;
+export default React.memo(TableRow);

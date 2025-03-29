@@ -47,7 +47,7 @@ const FieldDetails = (props) => {
       // Update the state with selected fields
       setFields(selectedFields);
     }
-  }, [props.selected]);
+  }, []);
 
   const moveUp = (index) => {
     if (index > 0) {
@@ -364,9 +364,6 @@ const FieldDetails = (props) => {
     if (type === "idField") {
       setIdField(sortedFields);
     }
-
-    // console.log("Received sorted fields:", sortedFields); // Debugging
-    // setQuestionField(sortedFields); // Update state
   }, []);
   console.log(skewField)
   const handleFormSort = useCallback((sortedFields) => {}, []);
@@ -425,6 +422,7 @@ const FieldDetails = (props) => {
               fieldData={formField}
               handleSort={handleSort}
               editHandler={(item, i) => props.editHandler(item, i)}
+              deleteHander={(item, i) => props.deleteHandler(item, i)}
             />
 
             <TableRow
@@ -432,6 +430,7 @@ const FieldDetails = (props) => {
               fieldData={questionField}
               handleSort={handleSort}
               editHandler={(item, i) => props.editHandler(item, i)}
+              deleteHander={(item, i) => props.deleteHandler(item, i)}
             />
 
             <TableRow
@@ -439,12 +438,14 @@ const FieldDetails = (props) => {
               fieldData={skewField}
               handleSort={handleSort}
               editHandler={(item, i) => props.editHandler(item, i)}
+              deleteHander={(item, i) => props.deleteHandler(item, i)}
             />
             <TableRow
               type="idField"
               fieldData={idField}
               handleSort={handleSort}
               editHandler={(item, i) => props.editHandler(item, i)}
+              deleteHander={(item, i) => props.deleteHandler(item, i)}
             />
 
             {/* {props.fieldsLoading ? placeHolderJobs : LoadedTemplates} */}
@@ -473,4 +474,4 @@ const FieldDetails = (props) => {
   );
 };
 
-export default FieldDetails;
+export default React.memo(FieldDetails);
