@@ -14,6 +14,7 @@ import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import IconButton from "@mui/material/IconButton";
 import TableRow from "components/TableRow";
 import { toast } from "react-toastify";
+
 const FieldDetails = (props) => {
   const [fields, setFields] = useState([]);
   const [animatingIndex, setAnimatingIndex] = useState(null);
@@ -365,7 +366,7 @@ const FieldDetails = (props) => {
       setIdField(sortedFields);
     }
   }, []);
-  console.log(skewField)
+  console.log(skewField);
   const handleFormSort = useCallback((sortedFields) => {}, []);
   const handleSave = () => {
     console.log(formField);
