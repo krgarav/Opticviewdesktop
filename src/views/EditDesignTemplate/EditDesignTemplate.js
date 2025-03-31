@@ -1057,7 +1057,7 @@ const EditDesignTemplate = () => {
       fieldType: selectedField.fieldType,
       name: selectedField.name,
     };
-    console.log(formattedSelectedFile)
+    console.log(formattedSelectedFile);
     setSelectedCoordinates((prevState) => {
       const copiedState = [...prevState];
       copiedState.splice(index, 1); // Remove the item at the specified index
@@ -1145,7 +1145,9 @@ const EditDesignTemplate = () => {
               name: Coordinate["name"],
             }
           : {};
-        return { ...rest, questionWindowCoordinates };
+        const columnStart = Coordinate["Start Col"];
+        const rowStart = Coordinate["Start Row"];
+        return { ...rest, columnStart, rowStart, questionWindowCoordinates };
       });
 
     // Transform skew marks window parameters into the required format
@@ -1162,7 +1164,9 @@ const EditDesignTemplate = () => {
               name: Coordinate["name"],
             }
           : {};
-        return { ...rest, layoutWindowCoordinates };
+        const columnStart = Coordinate["Start Col"];
+        const rowStart = Coordinate["Start Row"];
+        return { ...rest, columnStart, rowStart, layoutWindowCoordinates };
       });
 
     // Transform form field window parameters into the required format
@@ -1331,10 +1335,10 @@ const EditDesignTemplate = () => {
           },
           windowName: updatedName,
           imageStructureData: position,
-          columnStart: +selection?.startCol,
+          columnStart: +newObject?.startCol,
           columnNumber: +noInCol,
           columnStep: +noOfStepInCol,
-          rowStart: +selection?.startRow + 1,
+          rowStart: +newObject?.startRow + 1,
           rowNumber: +noInRow,
           rowStep: +noOfStepInRow,
           iDirection: +readingDirectionOption,
@@ -2082,8 +2086,8 @@ const EditDesignTemplate = () => {
               </div>
             </Row>
           )}
-          {(selectedFieldType !== "idField" &&
-            selectedFieldType !== "skewMarkField") && (
+          {selectedFieldType !== "idField" &&
+            selectedFieldType !== "skewMarkField" && (
               <Row>
                 <label htmlFor="example-select-input" className="col-md-2">
                   Minimum Mark
@@ -2176,7 +2180,10 @@ const EditDesignTemplate = () => {
                   <option value="not use">Not</option>
                 </select>
               </div>
-              <label htmlFor="example-select-input" className="col-md-2 col-form-label">
+              <label
+                htmlFor="example-select-input"
+                className="col-md-2 col-form-label"
+              >
                 Field Value
               </label>
               <div className="col-md-4">
@@ -2718,7 +2725,7 @@ const EditDesignTemplate = () => {
           }}
           selected={selectedCoordinates}
           editHandler={(item, i) => handleEyeClick(item, i)}
-          deleteHandler= {(item,i)=> handleCrossClick(item,i)}
+          deleteHandler={(item, i) => handleCrossClick(item, i)}
         />
       )}
       {!showSideBar && (
