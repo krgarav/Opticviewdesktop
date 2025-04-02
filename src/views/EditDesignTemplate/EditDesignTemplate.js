@@ -713,8 +713,8 @@ const EditDesignTemplate = () => {
           fieldType: selectedFieldType,
         },
         ngAction: windowNgOption,
-        iMinimumMarks: +minimumMark,
-        iMaximumMarks: +maximumMark,
+        iMinimumMarks: 1,
+        iMaximumMarks: 1,
         skewMark: +skewoption,
         iType: type,
         dataRejection: skewoption,
@@ -853,6 +853,7 @@ const EditDesignTemplate = () => {
 
     // setSelectedCoordinates((prev) => [...prev, newSelected]);//chamnge here
     // setSelection(null);
+
     setModalShow(false);
     if (!modalUpdate) {
       dataCtx.modifyAllTemplate(0, newData, selectedFieldType);
@@ -1016,7 +1017,14 @@ const EditDesignTemplate = () => {
       setPrefix(data?.prefix);
     } else if (selectedField?.fieldType === "skewMarkField") {
       const parameters = template[0].skewMarksWindowParameters;
-      const data = parameters[0];
+      const index = parameters.findIndex((item) =>
+        isEqual(item?.Coordinate, formattedSelectedFile)
+      );
+      console.log(index);
+      if (index === -1) {
+        alert("No data found");
+      }
+      const data = parameters[index];
       setName(data?.windowName);
       setMinimumMark(data?.iMaximumMarks);
       setNoOfStepInRow(data?.rowStep);
@@ -1038,6 +1046,8 @@ const EditDesignTemplate = () => {
       setNoOfStepInRow(data?.rowStep);
       setNoOfStepInCol(data?.columnStep);
       setWindowNgOption(data?.ngAction);
+      setSkewOption(data?.dataRejection);
+      setSkewFieldValue(data?.skewFieldValue);
     }
   };
 
@@ -1088,7 +1098,7 @@ const EditDesignTemplate = () => {
       layoutParameters.columnStart = 1;
       layoutParameters.columnStep = 1;
       layoutParameters.rowNumber = 1;
-      layoutParameters.rowStart = 2;
+      layoutParameters.rowStart = 1;
       layoutParameters.rowStep = 1;
     }
     const Coordinate = layoutParameters.layoutCoordinates;
@@ -1318,47 +1328,154 @@ const EditDesignTemplate = () => {
             alert("Invalid direction.");
             return;
         }
+
         newCoordinates.push(newObject);
+        let newData = {};
         const layoutData = layoutFieldData.layoutParameters;
-        const updatedName =
-          selectedField.fieldType === "questionField"
-            ? questionNameGenerator(selectedField.name, i + 1)
-            : selectedField.name;
-        const newData = {
-          Coordinate: {
-            "Start Row": newObject?.startRow + 1,
-            "Start Col": newObject?.startCol,
-            "End Row": newObject?.endRow + 1,
-            "End Col": newObject?.endCol,
-            name: updatedName,
-            fieldType: selectedField.fieldType,
-          },
-          windowName: updatedName,
-          imageStructureData: position,
-          columnStart: +newObject?.startCol,
-          columnNumber: +noInCol,
-          columnStep: +noOfStepInCol,
-          rowStart: +newObject?.startRow + 1,
-          rowNumber: +noInRow,
-          rowStep: +noOfStepInRow,
-          iDirection: +readingDirectionOption,
-          idMarksPattern: idNumber.toString(),
-          iFace: +layoutData.iFace ?? 0,
-          iSensitivity: +layoutData.iSensitivity ?? 3,
-          iDifference: +layoutData.iDifference ?? 5,
-          iOption: selectedFieldType === "formField" ? 1 : 0,
-          iMinimumMarks: +minimumMark,
-          iMaximumMarks: +maximumMark,
-          iType: type,
-          ngAction: windowNgOption,
-          totalNumberOfFields: numberOfField,
-          numericOrAlphabets: fieldType,
-          multipleAllow: multiple,
-          multipleValue: multipleValue ? multipleValue : "",
-          blankAllow: blank,
-          blankValue: blankValue ? blankValue : "",
-          customFieldValue: customValue ? customValue : "",
-        };
+        if (
+          selectedField.fieldType === "questionField" ||
+          selectedField.fieldType === "formField"
+        ) {
+          const updatedName =
+            selectedField.fieldType === "questionField"
+              ? questionNameGenerator(selectedField.name, i + 1)
+              : selectedField.name;
+          newData = {
+            Coordinate: {
+              "Start Row": newObject?.startRow + 1,
+              "Start Col": newObject?.startCol,
+              "End Row": newObject?.endRow + 1,
+              "End Col": newObject?.endCol,
+              name: updatedName,
+              fieldType: selectedField.fieldType,
+            },
+            windowName: updatedName,
+
+            columnStart: +newObject?.startCol,
+            columnNumber: +noInCol,
+            columnStep: +noOfStepInCol,
+            rowStart: +newObject?.startRow + 1,
+            rowNumber: +noInRow,
+            rowStep: +noOfStepInRow,
+            iDirection: +readingDirectionOption,
+            iFace: +layoutData.iFace ?? 0,
+            iSensitivity: +layoutData.iSensitivity ?? 3,
+            iDifference: +layoutData.iDifference ?? 5,
+            iOption: selectedFieldType === "formField" ? 1 : 0,
+            iMinimumMarks: +minimumMark,
+            iMaximumMarks: +maximumMark,
+            iType: type,
+            ngAction: windowNgOption,
+            totalNumberOfFields: numberOfField,
+            numericOrAlphabets: fieldType,
+            multipleAllow: multiple,
+            multipleValue: multipleValue ? multipleValue : "",
+            blankAllow: blank,
+            blankValue: blankValue ? blankValue : "",
+            customFieldValue: customValue ? customValue : "",
+            prefix: selectedFieldType === "formField" ? prefix : "",
+            suffix: selectedFieldType === "formField" ? suffix : "",
+          };
+        } else if (selectedField.fieldType === "skewMarkField") {
+          const updatedName =
+            selectedField.fieldType === "questionField"
+              ? questionNameGenerator(selectedField.name, i + 1)
+              : selectedField.name;
+          newData = {
+            Coordinate: {
+              "Start Row": newObject?.startRow + 1,
+              "Start Col": newObject?.startCol,
+              "End Row": newObject?.endRow + 1,
+              "End Col": newObject?.endCol,
+              name: updatedName,
+              fieldType: selectedField.fieldType,
+            },
+            windowName: updatedName,
+            columnStart: +newObject?.startCol,
+            columnNumber: +noInCol,
+            columnStep: +noOfStepInCol,
+            rowStart: +newObject?.startRow + 1,
+            rowNumber: +noInRow,
+            rowStep: +noOfStepInRow,
+            iDirection: +readingDirectionOption,
+            iFace: +layoutData.iFace ?? 0,
+            iSensitivity: +layoutData.iSensitivity ?? 3,
+            iDifference: +layoutData.iDifference ?? 5,
+            iOption: selectedFieldType === "formField" ? 1 : 0,
+            iMinimumMarks: 1,
+            iMaximumMarks: 1,
+            iType: type,
+            ngAction: windowNgOption,
+            skewMark: +skewoption,
+            dataRejection: skewoption,
+            skewFieldValue: skewFieldValue,
+          };
+        } else {
+          const updatedName =
+            selectedField.fieldType === "questionField"
+              ? questionNameGenerator(selectedField.name, i + 1)
+              : selectedField.name;
+          newData = {
+            Coordinate: {
+              "Start Row": newObject?.startRow + 1,
+              "Start Col": newObject?.startCol,
+              "End Row": newObject?.endRow + 1,
+              "End Col": newObject?.endCol,
+              name: updatedName,
+              fieldType: selectedField.fieldType,
+            },
+
+            imageStructureData: position,
+            columnStart: +newObject?.startCol,
+            columnNumber: +noInCol,
+            columnStep: +noOfStepInCol,
+            rowStart: +newObject?.startRow + 1,
+            rowNumber: +noInRow,
+            rowStep: +noOfStepInRow,
+            iDirection: +readingDirectionOption,
+            idMarksPattern: idNumber.toString(),
+          };
+        }
+
+        // const updatedName =
+        //   selectedField.fieldType === "questionField"
+        //     ? questionNameGenerator(selectedField.name, i + 1)
+        //     : selectedField.name;
+        // const newData = {
+        //   Coordinate: {
+        //     "Start Row": newObject?.startRow + 1,
+        //     "Start Col": newObject?.startCol,
+        //     "End Row": newObject?.endRow + 1,
+        //     "End Col": newObject?.endCol,
+        //     name: updatedName,
+        //     fieldType: selectedField.fieldType,
+        //   },
+        //   windowName: updatedName,
+        //   imageStructureData: position,
+        //   columnStart: +newObject?.startCol,
+        //   columnNumber: +noInCol,
+        //   columnStep: +noOfStepInCol,
+        //   rowStart: +newObject?.startRow + 1,
+        //   rowNumber: +noInRow,
+        //   rowStep: +noOfStepInRow,
+        //   iDirection: +readingDirectionOption,
+        //   idMarksPattern: idNumber.toString(),
+        //   iFace: +layoutData.iFace ?? 0,
+        //   iSensitivity: +layoutData.iSensitivity ?? 3,
+        //   iDifference: +layoutData.iDifference ?? 5,
+        //   iOption: selectedFieldType === "formField" ? 1 : 0,
+        //   iMinimumMarks: +minimumMark,
+        //   iMaximumMarks: +maximumMark,
+        //   iType: type,
+        //   ngAction: windowNgOption,
+        //   totalNumberOfFields: numberOfField,
+        //   numericOrAlphabets: fieldType,
+        //   multipleAllow: multiple,
+        //   multipleValue: multipleValue ? multipleValue : "",
+        //   blankAllow: blank,
+        //   blankValue: blankValue ? blankValue : "",
+        //   customFieldValue: customValue ? customValue : "",
+        // };
         dataCtx.modifyAllTemplate(0, newData, selectedField.fieldType);
       }
 

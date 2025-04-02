@@ -89,7 +89,7 @@ const DesignTemplate = () => {
   const [showCopy, setShowCopy] = useState(false);
   const [selectedField, setSelectedField] = useState();
   const [showFieldDetails, setShowFieldDetails] = useState(false);
-  const [skewFieldValue,setSkewFieldValue] = useState(null);
+  const [skewFieldValue, setSkewFieldValue] = useState(null);
   const location = useLocation();
   const {
     totalColumns,
@@ -729,7 +729,7 @@ const DesignTemplate = () => {
         skewMark: +skewoption,
         iType: type,
         dataRejection: skewoption,
-        skewFieldValue : skewFieldValue
+        skewFieldValue: skewFieldValue,
         // imageStructureData: position,
       };
     } else {
@@ -1014,6 +1014,8 @@ const DesignTemplate = () => {
       setReadingDirectionOption(data?.iDirection);
       setNoInRow(data?.rowNumber);
       setNoInCol(data?.columnNumber);
+      setSkewOption(data?.dataRejection);
+      setSkewFieldValue(data?.skewFieldValue);
     }
   };
 
@@ -1071,7 +1073,7 @@ const DesignTemplate = () => {
       layoutParameters.columnStart = 1;
       layoutParameters.columnStep = 1;
       layoutParameters.rowNumber = 1;
-      layoutParameters.rowStart = 2;
+      layoutParameters.rowStart = 1;
       layoutParameters.rowStep = 1;
     }
 
@@ -1209,6 +1211,7 @@ const DesignTemplate = () => {
         alert("Id Field cannot be copied.");
         return;
       }
+
       let object = { ...selectedField };
 
       const MIN_COL = 1;
@@ -1296,47 +1299,154 @@ const DesignTemplate = () => {
             alert("Invalid direction.");
             return;
         }
+
         newCoordinates.push(newObject);
+        let newData = {};
         const layoutData = layoutFieldData.layoutParameters;
-        const updatedName =
-          selectedField.fieldType === "questionField"
-            ? questionNameGenerator(selectedField.name, i + 1)
-            : selectedField.name;
-        const newData = {
-          Coordinate: {
-            "Start Row": newObject?.startRow + 1,
-            "Start Col": newObject?.startCol,
-            "End Row": newObject?.endRow + 1,
-            "End Col": newObject?.endCol,
-            name: updatedName,
-            fieldType: selectedField.fieldType,
-          },
-          windowName: updatedName,
-          imageStructureData: position,
-          columnStart: +newObject?.startCol,
-          columnNumber: +noInCol,
-          columnStep: +noOfStepInCol,
-          rowStart: +newObject?.startRow + 1,
-          rowNumber: +noInRow,
-          rowStep: +noOfStepInRow,
-          iDirection: +readingDirectionOption,
-          idMarksPattern: idNumber.toString(),
-          iFace: +layoutData.iFace ?? 0,
-          iSensitivity: +layoutData.iSensitivity ?? 3,
-          iDifference: +layoutData.iDifference ?? 5,
-          iOption: selectedFieldType === "formField" ? 1 : 0,
-          iMinimumMarks: +minimumMark,
-          iMaximumMarks: +maximumMark,
-          iType: type,
-          ngAction: windowNgOption,
-          totalNumberOfFields: numberOfField,
-          numericOrAlphabets: fieldType,
-          multipleAllow: multiple,
-          multipleValue: multipleValue ? multipleValue : "",
-          blankAllow: blank,
-          blankValue: blankValue ? blankValue : "",
-          customFieldValue: customValue ? customValue : "",
-        };
+        if (
+          selectedField.fieldType === "questionField" ||
+          selectedField.fieldType === "formField"
+        ) {
+          const updatedName =
+            selectedField.fieldType === "questionField"
+              ? questionNameGenerator(selectedField.name, i + 1)
+              : selectedField.name;
+          newData = {
+            Coordinate: {
+              "Start Row": newObject?.startRow + 1,
+              "Start Col": newObject?.startCol,
+              "End Row": newObject?.endRow + 1,
+              "End Col": newObject?.endCol,
+              name: updatedName,
+              fieldType: selectedField.fieldType,
+            },
+            windowName: updatedName,
+
+            columnStart: +newObject?.startCol,
+            columnNumber: +noInCol,
+            columnStep: +noOfStepInCol,
+            rowStart: +newObject?.startRow + 1,
+            rowNumber: +noInRow,
+            rowStep: +noOfStepInRow,
+            iDirection: +readingDirectionOption,
+            iFace: +layoutData.iFace ?? 0,
+            iSensitivity: +layoutData.iSensitivity ?? 3,
+            iDifference: +layoutData.iDifference ?? 5,
+            iOption: selectedFieldType === "formField" ? 1 : 0,
+            iMinimumMarks: +minimumMark,
+            iMaximumMarks: +maximumMark,
+            iType: type,
+            ngAction: windowNgOption,
+            totalNumberOfFields: numberOfField,
+            numericOrAlphabets: fieldType,
+            multipleAllow: multiple,
+            multipleValue: multipleValue ? multipleValue : "",
+            blankAllow: blank,
+            blankValue: blankValue ? blankValue : "",
+            customFieldValue: customValue ? customValue : "",
+            prefix: selectedFieldType === "formField" ? prefix : "",
+            suffix: selectedFieldType === "formField" ? suffix : "",
+          };
+        } else if (selectedField.fieldType === "skewMarkField") {
+          const updatedName =
+            selectedField.fieldType === "questionField"
+              ? questionNameGenerator(selectedField.name, i + 1)
+              : selectedField.name;
+          newData = {
+            Coordinate: {
+              "Start Row": newObject?.startRow + 1,
+              "Start Col": newObject?.startCol,
+              "End Row": newObject?.endRow + 1,
+              "End Col": newObject?.endCol,
+              name: updatedName,
+              fieldType: selectedField.fieldType,
+            },
+            windowName: updatedName,
+            columnStart: +newObject?.startCol,
+            columnNumber: +noInCol,
+            columnStep: +noOfStepInCol,
+            rowStart: +newObject?.startRow + 1,
+            rowNumber: +noInRow,
+            rowStep: +noOfStepInRow,
+            iDirection: +readingDirectionOption,
+            iFace: +layoutData.iFace ?? 0,
+            iSensitivity: +layoutData.iSensitivity ?? 3,
+            iDifference: +layoutData.iDifference ?? 5,
+            iOption: selectedFieldType === "formField" ? 1 : 0,
+            iMinimumMarks: 1,
+            iMaximumMarks: 1,
+            iType: type,
+            ngAction: windowNgOption,
+            skewMark: +skewoption,
+            dataRejection: skewoption,
+            skewFieldValue: skewFieldValue,
+          };
+        } else {
+          const updatedName =
+            selectedField.fieldType === "questionField"
+              ? questionNameGenerator(selectedField.name, i + 1)
+              : selectedField.name;
+          newData = {
+            Coordinate: {
+              "Start Row": newObject?.startRow + 1,
+              "Start Col": newObject?.startCol,
+              "End Row": newObject?.endRow + 1,
+              "End Col": newObject?.endCol,
+              name: updatedName,
+              fieldType: selectedField.fieldType,
+            },
+
+            imageStructureData: position,
+            columnStart: +newObject?.startCol,
+            columnNumber: +noInCol,
+            columnStep: +noOfStepInCol,
+            rowStart: +newObject?.startRow + 1,
+            rowNumber: +noInRow,
+            rowStep: +noOfStepInRow,
+            iDirection: +readingDirectionOption,
+            idMarksPattern: idNumber.toString(),
+          };
+        }
+
+        // const updatedName =
+        //   selectedField.fieldType === "questionField"
+        //     ? questionNameGenerator(selectedField.name, i + 1)
+        //     : selectedField.name;
+        // const newData = {
+        //   Coordinate: {
+        //     "Start Row": newObject?.startRow + 1,
+        //     "Start Col": newObject?.startCol,
+        //     "End Row": newObject?.endRow + 1,
+        //     "End Col": newObject?.endCol,
+        //     name: updatedName,
+        //     fieldType: selectedField.fieldType,
+        //   },
+        //   windowName: updatedName,
+        //   imageStructureData: position,
+        //   columnStart: +newObject?.startCol,
+        //   columnNumber: +noInCol,
+        //   columnStep: +noOfStepInCol,
+        //   rowStart: +newObject?.startRow + 1,
+        //   rowNumber: +noInRow,
+        //   rowStep: +noOfStepInRow,
+        //   iDirection: +readingDirectionOption,
+        //   idMarksPattern: idNumber.toString(),
+        //   iFace: +layoutData.iFace ?? 0,
+        //   iSensitivity: +layoutData.iSensitivity ?? 3,
+        //   iDifference: +layoutData.iDifference ?? 5,
+        //   iOption: selectedFieldType === "formField" ? 1 : 0,
+        //   iMinimumMarks: +minimumMark,
+        //   iMaximumMarks: +maximumMark,
+        //   iType: type,
+        //   ngAction: windowNgOption,
+        //   totalNumberOfFields: numberOfField,
+        //   numericOrAlphabets: fieldType,
+        //   multipleAllow: multiple,
+        //   multipleValue: multipleValue ? multipleValue : "",
+        //   blankAllow: blank,
+        //   blankValue: blankValue ? blankValue : "",
+        //   customFieldValue: customValue ? customValue : "",
+        // };
         dataCtx.modifyAllTemplate(0, newData, selectedField.fieldType);
       }
 
@@ -1998,44 +2108,44 @@ const DesignTemplate = () => {
                   </div>
                 </Row>
               )}
-              {(selectedFieldType !== "idField" &&
-                selectedFieldType !== "skewMarkField") && (
-                <Row>
-                  <label htmlFor="example-select-input" className="col-md-2">
-                    Minimum Mark
-                  </label>
-                  <div className="col-md-4">
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter the minimum mark"
-                      value={minimumMark}
-                      onChange={(e) => {
-                        // Allow only numeric input (including empty input)
-                        const numericValue = e.target.value.replace(
-                          /[^0-9]/g,
-                          ""
-                        );
-                        setMinimumMark(numericValue);
-                      }}
-                      required
-                    />
-                  </div>
-                  <label htmlFor="example-select-input" className="col-md-2 ">
-                    Maximum Mark
-                  </label>
-                  <div className="col-md-4">
-                    <input
-                      type="number"
-                      className="form-control"
-                      placeholder="Enter the maximum mark"
-                      value={maximumMark}
-                      onChange={(e) => setMaximumMark(e.target.value)}
-                      required
-                    />
-                  </div>
-                </Row>
-              )}
+              {selectedFieldType !== "idField" &&
+                selectedFieldType !== "skewMarkField" && (
+                  <Row>
+                    <label htmlFor="example-select-input" className="col-md-2">
+                      Minimum Mark
+                    </label>
+                    <div className="col-md-4">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Enter the minimum mark"
+                        value={minimumMark}
+                        onChange={(e) => {
+                          // Allow only numeric input (including empty input)
+                          const numericValue = e.target.value.replace(
+                            /[^0-9]/g,
+                            ""
+                          );
+                          setMinimumMark(numericValue);
+                        }}
+                        required
+                      />
+                    </div>
+                    <label htmlFor="example-select-input" className="col-md-2 ">
+                      Maximum Mark
+                    </label>
+                    <div className="col-md-4">
+                      <input
+                        type="number"
+                        className="form-control"
+                        placeholder="Enter the maximum mark"
+                        value={maximumMark}
+                        onChange={(e) => setMaximumMark(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </Row>
+                )}
               {selectedFieldType === "idField" && (
                 <Row className="mb-2">
                   <label className="col-md-2 " style={{}}>
@@ -2091,9 +2201,10 @@ const DesignTemplate = () => {
                     <input
                       className="form-control"
                       value={skewFieldValue}
-                      onChange={(e)=>{setSkewFieldValue(e.target.value)}}
+                      onChange={(e) => {
+                        setSkewFieldValue(e.target.value);
+                      }}
                     />
-                      
                   </div>
                 </Row>
               )}

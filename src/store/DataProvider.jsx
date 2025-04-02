@@ -311,6 +311,7 @@ const DataProvider = (props) => {
     fieldType,
     coordinateIndex
   ) => {
+    console.log(coordinateIndex)
     if (coordinateIndex === -1) {
       alert("Coordinate index cannot be -1");
       return;
