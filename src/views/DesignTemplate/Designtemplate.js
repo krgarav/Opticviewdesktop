@@ -547,6 +547,7 @@ const DesignTemplate = () => {
     if (dragStart && selection) {
       setDragStart(null);
       setModalShow(true);
+      setSelectedFieldType(null)
     }
   };
 
@@ -1966,10 +1967,8 @@ const DesignTemplate = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ height: "55vh", overflowX: "auto" }}>
-          {selectedFieldType === "imageArea" && (
-            <>{/* <ImageCropper images={templateImagePath} /> */}</>
-          )}
-          {selectedFieldType !== "imageArea" && (
+         
+          {selectedFieldType  && (
             <>
               {selectedFieldType !== "idField" && (
                 <Row className="mb-2">

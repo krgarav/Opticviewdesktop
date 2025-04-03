@@ -73,7 +73,7 @@ const EditDesignTemplate = () => {
   const [noInCol, setNoInCol] = useState();
   const [noOfStepInCol, setNoOfStepInCol] = useState();
   const [type, setType] = useState("");
-  const [selectedFieldType, setSelectedFieldType] = useState("formField");
+  const [selectedFieldType, setSelectedFieldType] = useState(false);
   const [fieldType, setFieldType] = useState();
   const [numberOfField, setNumberOfField] = useState();
   const [position, setPosition] = useState({
@@ -130,7 +130,7 @@ const EditDesignTemplate = () => {
   const numCols = data.totalColumns;
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
-
+  useEffect(() => {}, []);
   useEffect(() => {
     const template = dataCtx.allTemplates;
 
@@ -535,6 +535,7 @@ const EditDesignTemplate = () => {
     if (dragStart && selection) {
       setDragStart(null);
       setModalShow(true);
+      setSelectedFieldType(null);
     }
   };
 
@@ -2014,7 +2015,7 @@ const EditDesignTemplate = () => {
                     className=" field-label"
                   />
                 </Col>
-                <Col md={3} className="d-flex align-items-center">
+                <Col md={3} className="d-flex align-items-center ">
                   <label
                     htmlFor="skewMarkField"
                     className="mr-2 mb-0 field-label"
@@ -2028,12 +2029,12 @@ const EditDesignTemplate = () => {
                     value="skewMarkField"
                     checked={selectedFieldType === "skewMarkField"}
                     onChange={handleRadioChange}
-                    className=" field-label"
+                    className=" field-label mt-0.9"
                   />
                 </Col>
-                <Col md={2} className="d-flex align-items-center">
+                <Col md={2} className="d-flex align-items-center mt-1">
                   <div style={{ display: "flex", flexDirection: "column" }}>
-                    <div>
+                    <div className="d-flex align-items-center mt-2">
                       <label
                         htmlFor="idField"
                         className="mr-2 mb-0 field-label"
@@ -2047,7 +2048,7 @@ const EditDesignTemplate = () => {
                         value="idField"
                         checked={selectedFieldType === "idField"}
                         onChange={handleRadioChange}
-                        className="field-label"
+                        className="field-label align-items-center"
                         disabled={idSelectionCount > 0}
                       />
                     </div>
@@ -2065,177 +2066,439 @@ const EditDesignTemplate = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ height: "55vh", overflowX: "auto" }}>
-          {selectedFieldType !== "idField" && (
-            <Row className="mb-2">
-              <label
-                htmlFor="example-text-input"
-                className="col-md-2 col-form-label "
-                style={{ fontSize: "1rem" }}
-              >
-                Name
-              </label>
-              <div className="col-md-10">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter Window Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  style={{ color: "black" }}
-                />
-              </div>
-            </Row>
-          )}
-          {(selectedFieldType === "questionField" ||
-            selectedFieldType === "formField") && (
-            <Row className="mb-2">
-              <label
-                htmlFor="example-text-input"
-                className="col-md-2 col-form-label"
-              >
-                Grid
-              </label>
-              <div className={multiple !== "allow" ? "col-md-4" : "col-md-10"}>
-                <select
-                  className="form-control"
-                  value={multiple}
-                  onChange={(e) => {
-                    setMultiple(e.target.value);
-                  }}
-                  defaultValue={""}
-                >
-                  <option value="">Select an option</option>
-                  <option value="allow">Allow All</option>
-                  <option value="not allow">Allow None</option>
-                </select>
-              </div>
-              {multiple !== "allow" && (
-                <>
+          {selectedFieldType && (
+            <>
+              {selectedFieldType !== "idField" && (
+                <Row className="mb-2">
+                  <label
+                    htmlFor="example-text-input"
+                    className="col-md-2 col-form-label "
+                    style={{ fontSize: "1rem" }}
+                  >
+                    Name
+                  </label>
+                  <div className="col-md-10">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Window Name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                      style={{ color: "black" }}
+                    />
+                  </div>
+                </Row>
+              )}
+              {(selectedFieldType === "questionField" ||
+                selectedFieldType === "formField") && (
+                <Row className="mb-2">
                   <label
                     htmlFor="example-text-input"
                     className="col-md-2 col-form-label"
                   >
-                    Grid Value
+                    Grid
                   </label>
-                  <div className="col-md-4">
-                    <input
-                      type="text"
+                  <div
+                    className={multiple !== "allow" ? "col-md-4" : "col-md-10"}
+                  >
+                    <select
                       className="form-control"
-                      placeholder="Character of Multiple"
-                      value={multipleValue}
-                      onChange={(e) => setMultipleValue(e.target.value)}
-                      required
-                    />
+                      value={multiple}
+                      onChange={(e) => {
+                        setMultiple(e.target.value);
+                      }}
+                      defaultValue={""}
+                    >
+                      <option value="">Select an option</option>
+                      <option value="allow">Allow All</option>
+                      <option value="not allow">Allow None</option>
+                    </select>
                   </div>
-                </>
+                  {multiple !== "allow" && (
+                    <>
+                      <label
+                        htmlFor="example-text-input"
+                        className="col-md-2 col-form-label"
+                      >
+                        Grid Value
+                      </label>
+                      <div className="col-md-4">
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Character of Multiple"
+                          value={multipleValue}
+                          onChange={(e) => setMultipleValue(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </>
+                  )}
+                </Row>
               )}
-            </Row>
-          )}
-          {(selectedFieldType === "questionField" ||
-            selectedFieldType === "formField") && (
-            <Row className="mb-2">
-              <label
-                htmlFor="example-text-input"
-                className="col-md-2 col-form-label"
-              >
-                Blanks
-              </label>
-              <div className={blank !== "allow" ? "col-md-4" : "col-md-10"}>
-                <select
-                  className="form-control"
-                  value={blank}
-                  onChange={(e) => {
-                    setBlank(e.target.value);
-                  }}
-                  defaultValue={""}
-                >
-                  <option value="">Select an option</option>
-                  <option value="allow">Allow All</option>
-                  <option value="not allow">Allow None</option>
-                </select>
-              </div>
-              {blank !== "allow" && (
-                <>
+              {(selectedFieldType === "questionField" ||
+                selectedFieldType === "formField") && (
+                <Row className="mb-2">
                   <label
                     htmlFor="example-text-input"
                     className="col-md-2 col-form-label"
                   >
-                    Blank Value
+                    Blanks
+                  </label>
+                  <div className={blank !== "allow" ? "col-md-4" : "col-md-10"}>
+                    <select
+                      className="form-control"
+                      value={blank}
+                      onChange={(e) => {
+                        setBlank(e.target.value);
+                      }}
+                      defaultValue={""}
+                    >
+                      <option value="">Select an option</option>
+                      <option value="allow">Allow All</option>
+                      <option value="not allow">Allow None</option>
+                    </select>
+                  </div>
+                  {blank !== "allow" && (
+                    <>
+                      <label
+                        htmlFor="example-text-input"
+                        className="col-md-2 col-form-label"
+                      >
+                        Blank Value
+                      </label>
+                      <div className="col-md-4">
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Character of Blank"
+                          value={blankValue}
+                          onChange={(e) => setBlankValue(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </>
+                  )}
+                </Row>
+              )}
+              {(selectedFieldType !== "idField" ||
+                selectedFieldType !== "skewMarkField") && (
+                <Row className="mb-2">
+                  <label
+                    htmlFor="example-text-input"
+                    className="col-md-2 col-form-label"
+                  >
+                    Window NG
+                  </label>
+                  <div className="col-md-10">
+                    <select
+                      className="form-control"
+                      value={windowNgOption}
+                      onChange={handleWindowNgOptionChange}
+                      defaultValue={""}
+                    >
+                      <option value="">Select an option</option>
+                      <option value="0x00000001">
+                        Paper ejection to select stacker
+                      </option>
+                      <option value="0x00000002">Stop reading</option>
+                      <option value="0">No Action</option>
+                    </select>
+                  </div>
+                </Row>
+              )}
+              {selectedFieldType !== "idField" &&
+                selectedFieldType !== "skewMarkField" && (
+                  <Row>
+                    <label htmlFor="example-select-input" className="col-md-2">
+                      Minimum Mark
+                    </label>
+                    <div className="col-md-4">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Enter the minimum mark"
+                        value={minimumMark}
+                        onChange={(e) => {
+                          // Allow only numeric input (including empty input)
+                          const numericValue = e.target.value.replace(
+                            /[^0-9]/g,
+                            ""
+                          );
+                          setMinimumMark(numericValue);
+                        }}
+                        min={0}
+                        required
+                      />
+                    </div>
+                    <label htmlFor="example-select-input" className="col-md-2 ">
+                      Maximum Mark
+                    </label>
+                    <div className="col-md-4">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Enter the maximum mark"
+                        value={maximumMark}
+                        onChange={(e) => {
+                          // Allow only numeric input (including empty input)
+                          const numericValue = e.target.value.replace(
+                            /[^0-9]/g,
+                            ""
+                          );
+                          setMaximumMark(numericValue);
+                        }}
+                        required
+                      />
+                    </div>
+                  </Row>
+                )}
+              {selectedFieldType === "idField" && (
+                <Row className="mb-2">
+                  <label className="col-md-2 " style={{}}>
+                    Set Id Pattern
+                  </label>
+
+                  <div className="col-md-2">
+                    <select
+                      value={idType}
+                      onChange={(e) => {
+                        setIdType(e.target.value);
+                      }}
+                      className=" form-control"
+                    >
+                      <option value="Row">Row</option>
+                      <option value="Col">Col</option>
+                    </select>
+                  </div>
+                  <label htmlFor="example-select-input" className="col-md-2 ">
+                    Id selection
+                  </label>
+                  <div className="col-md-6">
+                    <MultiSelect
+                      options={options}
+                      value={selectedCol}
+                      onChange={setSelectedCol}
+                      labelledBy="Select"
+                    />
+                  </div>
+                </Row>
+              )}
+              {selectedFieldType === "skewMarkField" && (
+                <Row className="mb-2">
+                  <label htmlFor="example-select-input" className="col-md-2">
+                    Data Rejection
+                  </label>
+                  <div className="col-md-4">
+                    <select
+                      className="form-control"
+                      value={skewoption}
+                      onChange={handleSkewMarkOptionChange}
+                      defaultValue={"none"}
+                    >
+                      <option value="">Select an option</option>
+                      <option value="use">Use</option>
+                      <option value="not use">Not</option>
+                    </select>
+                  </div>
+                  <label
+                    htmlFor="example-select-input"
+                    className="col-md-2 col-form-label"
+                  >
+                    Field Value
                   </label>
                   <div className="col-md-4">
                     <input
-                      type="text"
                       className="form-control"
-                      placeholder="Character of Blank"
-                      value={blankValue}
-                      onChange={(e) => setBlankValue(e.target.value)}
-                      required
+                      value={skewFieldValue}
+                      onChange={(e) => {
+                        setSkewFieldValue(e.target.value);
+                      }}
                     />
                   </div>
-                </>
+                </Row>
               )}
-            </Row>
-          )}
-          {(selectedFieldType !== "idField" ||
-            selectedFieldType !== "skewMarkField") && (
-            <Row className="mb-2">
-              <label
-                htmlFor="example-text-input"
-                className="col-md-2 col-form-label"
-              >
-                Window NG
-              </label>
-              <div className="col-md-10">
-                <select
-                  className="form-control"
-                  value={windowNgOption}
-                  onChange={handleWindowNgOptionChange}
-                  defaultValue={""}
+
+              <Row className="mb-2">
+                <label
+                  htmlFor="example-select-input"
+                  className="col-2 col-form-label"
                 >
-                  <option value="">Select an option</option>
-                  <option value="0x00000001">
-                    Paper ejection to select stacker
-                  </option>
-                  <option value="0x00000002">Stop reading</option>
-                  <option value="0">No Action</option>
-                </select>
-              </div>
-            </Row>
-          )}
-          {selectedFieldType !== "idField" &&
-            selectedFieldType !== "skewMarkField" && (
-              <Row>
-                <label htmlFor="example-select-input" className="col-md-2">
-                  Minimum Mark
+                  Start Row
                 </label>
-                <div className="col-md-4">
+                <div className="col-2 ">
+                  <input
+                    id="startRow"
+                    type="text"
+                    disabled={modalUpdate}
+                    value={startRowInput}
+                    onBlur={(e) => {
+                      const newValue = e.target.valueAsNumber;
+                      if (newValue > 0) {
+                        setSelection((item) => ({
+                          ...item,
+                          startRow: newValue - 1,
+                        }));
+                      } else {
+                        setStartRowInput(selection.startRow + 1); // Reset to previous valid value
+                      }
+                    }}
+                    onChange={(e) => {
+                      const numericValue = e.target.value.replace(
+                        /[^0-9]/g,
+                        ""
+                      );
+                      setStartRowInput(numericValue >= 0 ? numericValue : "");
+                    }}
+                    className="form-control"
+                  />
+                </div>
+                <label
+                  htmlFor="example-select-input"
+                  className="col-2 col-form-label"
+                >
+                  End Row
+                </label>
+                <div className="col-2">
                   <input
                     type="text"
-                    className="form-control"
-                    placeholder="Enter the minimum mark"
-                    value={minimumMark}
+                    value={endRowInput}
+                    disabled={modalUpdate}
+                    onBlur={(e) => {
+                      const newValue = e.target.valueAsNumber;
+                      if (newValue > 0) {
+                        setSelection((item) => ({
+                          ...item,
+                          endRow: newValue - 1,
+                        }));
+                      } else {
+                        setEndRowInput(selection?.endRow + 1); // Reset to previous valid value
+                      }
+                    }}
                     onChange={(e) => {
                       // Allow only numeric input (including empty input)
                       const numericValue = e.target.value.replace(
                         /[^0-9]/g,
                         ""
                       );
-                      setMinimumMark(numericValue);
+                      setEndRowInput(numericValue >= 0 ? numericValue : "");
                     }}
-                    min={0}
+                    className="form-control"
+                  />
+                </div>
+                <label
+                  htmlFor="example-select-input"
+                  className="col-2 col-form-label"
+                >
+                  Total Row
+                </label>
+                <div className="col-2">
+                  <input value={numRows} readOnly className="form-control" />
+                </div>
+              </Row>
+              <Row className="">
+                <label htmlFor="example-select-input" className="col-2 ">
+                  Step In A Row
+                </label>
+                <div className="col-4">
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={noOfStepInRow}
+                    onChange={(e) => {
+                      if (+e.target.value < 1) {
+                        alert("Step in a row should be greater than 0");
+                        return;
+                      }
+
+                      setNoInRow(+endRowInput - +startRowInput + 1);
+                      // setNoInRow(
+                      //   calculateTotalRow(
+                      //     startRowInput,
+                      //     endRowInput,
+                      //     e.target.value
+                      //   )
+                      // );
+
+                      setNoOfStepInRow(e.target.value);
+                    }}
                     required
                   />
                 </div>
-                <label htmlFor="example-select-input" className="col-md-2 ">
-                  Maximum Mark
+                <label htmlFor="example-select-input" className="col-2 ">
+                  Total No In Row
                 </label>
-                <div className="col-md-4">
+                <div className="col-4">
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={noInRow}
+                    onChange={(e) => setNoInRow(e.target.value)}
+                    // required
+                    disabled
+                  />
+                </div>
+              </Row>
+              <Row className="mb-2">
+                <label
+                  htmlFor="example-select-input"
+                  className="col-2  col-form-label"
+                >
+                  Start Col
+                </label>
+                <div className="col-2">
                   <input
                     type="text"
+                    value={startColInput}
+                    disabled={modalUpdate}
+                    onBlur={(e) => {
+                      const newValue = e.target.valueAsNumber;
+                      if (newValue > 0) {
+                        setSelection((item) => ({
+                          ...item,
+                          startCol: newValue,
+                        }));
+                      } else {
+                        setStartColInput(selection?.startCol); // Reset to previous valid value
+                      }
+                    }}
+                    onChange={(e) => {
+                      setStartColInput(
+                        e.target.valueAsNumber >= 0 ? e.target.value : ""
+                      );
+                    }}
                     className="form-control"
-                    placeholder="Enter the maximum mark"
-                    value={maximumMark}
+                  />
+                  {/* <input
+                value={selection?.startCol}
+                readOnly
+                className="form-control"
+              /> */}
+                </div>
+
+                <label
+                  htmlFor="example-select-input"
+                  className="col-2 col-form-label"
+                >
+                  End Col
+                </label>
+                <div className="col-2">
+                  <input
+                    type="text"
+                    value={endColInput}
+                    disabled={modalUpdate}
+                    onBlur={(e) => {
+                      const newValue = e.target.valueAsNumber;
+                      if (newValue > 0) {
+                        setSelection((item) => ({
+                          ...item,
+                          endCol: newValue,
+                        }));
+                      } else {
+                        setEndColInput(selection?.endCol); // Reset to previous valid value
+                      }
+                    }}
                     onChange={(e) => {
                       // Allow only numeric input (including empty input)
                       const numericValue = e.target.value.replace(
@@ -2243,474 +2506,236 @@ const EditDesignTemplate = () => {
                         ""
                       );
                       setMaximumMark(numericValue);
+                      setEndColInput(numericValue >= 0 ? numericValue : "");
                     }}
-                    required
+                    className="form-control"
                   />
-                </div>
-              </Row>
-            )}
-          {selectedFieldType === "idField" && (
-            <Row className="mb-2">
-              <label className="col-md-2 " style={{}}>
-                Set Id Pattern
-              </label>
-
-              <div className="col-md-2">
-                <select
-                  value={idType}
-                  onChange={(e) => {
-                    setIdType(e.target.value);
-                  }}
-                  className=" form-control"
-                >
-                  <option value="Row">Row</option>
-                  <option value="Col">Col</option>
-                </select>
-              </div>
-              <label htmlFor="example-select-input" className="col-md-2 ">
-                Id selection
-              </label>
-              <div className="col-md-6">
-                <MultiSelect
-                  options={options}
-                  value={selectedCol}
-                  onChange={setSelectedCol}
-                  labelledBy="Select"
-                />
-              </div>
-            </Row>
-          )}
-          {selectedFieldType === "skewMarkField" && (
-            <Row className="mb-2">
-              <label htmlFor="example-select-input" className="col-md-2">
-                Data Rejection
-              </label>
-              <div className="col-md-4">
-                <select
-                  className="form-control"
-                  value={skewoption}
-                  onChange={handleSkewMarkOptionChange}
-                  defaultValue={"none"}
-                >
-                  <option value="">Select an option</option>
-                  <option value="use">Use</option>
-                  <option value="not use">Not</option>
-                </select>
-              </div>
-              <label
-                htmlFor="example-select-input"
-                className="col-md-2 col-form-label"
-              >
-                Field Value
-              </label>
-              <div className="col-md-4">
-                <input
-                  className="form-control"
-                  value={skewFieldValue}
-                  onChange={(e) => {
-                    setSkewFieldValue(e.target.value);
-                  }}
-                />
-              </div>
-            </Row>
-          )}
-
-          <Row className="mb-2">
-            <label
-              htmlFor="example-select-input"
-              className="col-2 col-form-label"
-            >
-              Start Row
-            </label>
-            <div className="col-2 ">
-              <input
-                id="startRow"
-                type="text"
-                disabled={modalUpdate}
-                value={startRowInput}
-                onBlur={(e) => {
-                  const newValue = e.target.valueAsNumber;
-                  if (newValue > 0) {
-                    setSelection((item) => ({
-                      ...item,
-                      startRow: newValue - 1,
-                    }));
-                  } else {
-                    setStartRowInput(selection.startRow + 1); // Reset to previous valid value
-                  }
-                }}
-                onChange={(e) => {
-                  const numericValue = e.target.value.replace(/[^0-9]/g, "");
-                  setStartRowInput(numericValue >= 0 ? numericValue : "");
-                }}
-                className="form-control"
-              />
-            </div>
-            <label
-              htmlFor="example-select-input"
-              className="col-2 col-form-label"
-            >
-              End Row
-            </label>
-            <div className="col-2">
-              <input
-                type="text"
-                value={endRowInput}
-                disabled={modalUpdate}
-                onBlur={(e) => {
-                  const newValue = e.target.valueAsNumber;
-                  if (newValue > 0) {
-                    setSelection((item) => ({
-                      ...item,
-                      endRow: newValue - 1,
-                    }));
-                  } else {
-                    setEndRowInput(selection?.endRow + 1); // Reset to previous valid value
-                  }
-                }}
-                onChange={(e) => {
-                  // Allow only numeric input (including empty input)
-                  const numericValue = e.target.value.replace(/[^0-9]/g, "");
-                  setEndRowInput(numericValue >= 0 ? numericValue : "");
-                }}
-                className="form-control"
-              />
-            </div>
-            <label
-              htmlFor="example-select-input"
-              className="col-2 col-form-label"
-            >
-              Total Row
-            </label>
-            <div className="col-2">
-              <input value={numRows} readOnly className="form-control" />
-            </div>
-          </Row>
-          <Row className="">
-            <label htmlFor="example-select-input" className="col-2 ">
-              Step In A Row
-            </label>
-            <div className="col-4">
-              <input
-                type="number"
-                className="form-control"
-                value={noOfStepInRow}
-                onChange={(e) => {
-                  if (+e.target.value < 1) {
-                    alert("Step in a row should be greater than 0");
-                    return;
-                  }
-
-                  setNoInRow(+endRowInput - +startRowInput + 1);
-                  // setNoInRow(
-                  //   calculateTotalRow(
-                  //     startRowInput,
-                  //     endRowInput,
-                  //     e.target.value
-                  //   )
-                  // );
-
-                  setNoOfStepInRow(e.target.value);
-                }}
-                required
-              />
-            </div>
-            <label htmlFor="example-select-input" className="col-2 ">
-              Total No In Row
-            </label>
-            <div className="col-4">
-              <input
-                type="number"
-                className="form-control"
-                value={noInRow}
-                onChange={(e) => setNoInRow(e.target.value)}
-                // required
-                disabled
-              />
-            </div>
-          </Row>
-          <Row className="mb-2">
-            <label
-              htmlFor="example-select-input"
-              className="col-2  col-form-label"
-            >
-              Start Col
-            </label>
-            <div className="col-2">
-              <input
-                type="text"
-                value={startColInput}
-                disabled={modalUpdate}
-                onBlur={(e) => {
-                  const newValue = e.target.valueAsNumber;
-                  if (newValue > 0) {
-                    setSelection((item) => ({
-                      ...item,
-                      startCol: newValue,
-                    }));
-                  } else {
-                    setStartColInput(selection?.startCol); // Reset to previous valid value
-                  }
-                }}
-                onChange={(e) => {
-                  setStartColInput(
-                    e.target.valueAsNumber >= 0 ? e.target.value : ""
-                  );
-                }}
-                className="form-control"
-              />
-              {/* <input
-                value={selection?.startCol}
-                readOnly
-                className="form-control"
-              /> */}
-            </div>
-
-            <label
-              htmlFor="example-select-input"
-              className="col-2 col-form-label"
-            >
-              End Col
-            </label>
-            <div className="col-2">
-              <input
-                type="text"
-                value={endColInput}
-                disabled={modalUpdate}
-                onBlur={(e) => {
-                  const newValue = e.target.valueAsNumber;
-                  if (newValue > 0) {
-                    setSelection((item) => ({
-                      ...item,
-                      endCol: newValue,
-                    }));
-                  } else {
-                    setEndColInput(selection?.endCol); // Reset to previous valid value
-                  }
-                }}
-                onChange={(e) => {
-                  // Allow only numeric input (including empty input)
-                  const numericValue = e.target.value.replace(/[^0-9]/g, "");
-                  setMaximumMark(numericValue);
-                  setEndColInput(numericValue >= 0 ? numericValue : "");
-                }}
-                className="form-control"
-              />
-              {/* <input
+                  {/* <input
                 value={selection?.endCol}
                 readOnly
                 className="form-control"
               /> */}
-            </div>
-            <label htmlFor="example-select-input" className="col-2 ">
-              Total Column
-            </label>
-            <div className="col-2">
-              <input value={numCols} readOnly className="form-control" />
-            </div>
-          </Row>
-          <Row className="mb-2">
-            <label htmlFor="example-select-input" className="col-2 ">
-              Step In A Column
-            </label>
-            <div className="col-4">
-              <input
-                type="number"
-                className="form-control"
-                value={noOfStepInCol}
-                onChange={(e) => {
-                  if (+e.target.value < 1) {
-                    alert("Step in a column should be greater than 0");
-                    return;
-                  }
-                  setNoInCol(+endColInput - +startColInput + 1);
-                  // setNoInCol(
-                  //   calculateTotalRow(
-                  //     startColInput,
-                  //     endColInput,
-                  //     e.target.value
-                  //   )
-                  // );
-                  setNoOfStepInCol(e.target.value);
-                }}
-                required
-              />
-            </div>
-            <label htmlFor="example-select-input" className="col-2 ">
-              Total No In Column
-            </label>
-            <div className="col-4">
-              <input
-                type="number"
-                className="form-control"
-                value={noInCol}
-                onChange={(e) => setNoInCol(e.target.value)}
-                required
-                disabled
-              />
-            </div>
-          </Row>
-          {selectedFieldType === "formField" && (
-            <Row className="mb-2">
-              <label
-                htmlFor="example-text-input"
-                className="col-md-2  col-form-label"
-              >
-                Prefix :
-              </label>
-              <div className="col-md-4">
-                <input
-                  type="text"
-                  className="form-control"
-                  value={prefix}
-                  onChange={(e) => setPrefix(e.target.value)}
-                />
-              </div>
-              <label
-                htmlFor="example-text-input"
-                className="col-md-2  col-form-label"
-              >
-                Suffix :
-              </label>
-              <div className="col-md-4">
-                <input
-                  type="text"
-                  className="form-control"
-                  value={suffix}
-                  onChange={(e) => setSuffix(e.target.value)}
-                />
-              </div>
-            </Row>
-          )}
-          <Row className="mb-2">
-            <label htmlFor="example-text-input" className="col-md-2 ">
-              Reading Direction :
-            </label>
-            <div className="col-4">
-              <select
-                className="form-control"
-                value={readingDirectionOption}
-                onChange={(e) => {
-                  if (e.target.value === 0 || e.target.value === 2) {
-                    setNumberOfField(Math.ceil(noInRow / noOfStepInRow));
-                  } else {
-                    setNumberOfField(Math.ceil(noInCol / noOfStepInCol));
-                  }
-                  setReadingDirectionOption(e.target.value);
-                }}
-                defaultValue={""}
-              >
-                <option value="">Select reading direction... </option>
-
-                <option value="0">From top to the bottom</option>
-
-                <option value="2">From bottom to a top</option>
-
-                <option value="4">From left to right</option>
-                <option value="5">From right to left</option>
-              </select>
-            </div>
-
-            {selectedFieldType !== "idField" && (
-              <>
-                <label
-                  htmlFor="example-text-input"
-                  className="col-md-2 col-form-label"
-                >
-                  Type :
+                </div>
+                <label htmlFor="example-select-input" className="col-2 ">
+                  Total Column
                 </label>
-                <div className="col-md-4">
+                <div className="col-2">
+                  <input value={numCols} readOnly className="form-control" />
+                </div>
+              </Row>
+              <Row className="mb-2">
+                <label htmlFor="example-select-input" className="col-2 ">
+                  Step In A Column
+                </label>
+                <div className="col-4">
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={noOfStepInCol}
+                    onChange={(e) => {
+                      if (+e.target.value < 1) {
+                        alert("Step in a column should be greater than 0");
+                        return;
+                      }
+                      setNoInCol(+endColInput - +startColInput + 1);
+                      // setNoInCol(
+                      //   calculateTotalRow(
+                      //     startColInput,
+                      //     endColInput,
+                      //     e.target.value
+                      //   )
+                      // );
+                      setNoOfStepInCol(e.target.value);
+                    }}
+                    required
+                  />
+                </div>
+                <label htmlFor="example-select-input" className="col-2 ">
+                  Total No In Column
+                </label>
+                <div className="col-4">
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={noInCol}
+                    onChange={(e) => setNoInCol(e.target.value)}
+                    required
+                    disabled
+                  />
+                </div>
+              </Row>
+              {selectedFieldType === "formField" && (
+                <Row className="mb-2">
+                  <label
+                    htmlFor="example-text-input"
+                    className="col-md-2  col-form-label"
+                  >
+                    Prefix :
+                  </label>
+                  <div className="col-md-4">
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={prefix}
+                      onChange={(e) => setPrefix(e.target.value)}
+                    />
+                  </div>
+                  <label
+                    htmlFor="example-text-input"
+                    className="col-md-2  col-form-label"
+                  >
+                    Suffix :
+                  </label>
+                  <div className="col-md-4">
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={suffix}
+                      onChange={(e) => setSuffix(e.target.value)}
+                    />
+                  </div>
+                </Row>
+              )}
+              <Row className="mb-2">
+                <label htmlFor="example-text-input" className="col-md-2 ">
+                  Reading Direction :
+                </label>
+                <div className="col-4">
                   <select
                     className="form-control"
-                    value={type}
+                    value={readingDirectionOption}
                     onChange={(e) => {
-                      setType(e.target.value);
+                      if (e.target.value === 0 || e.target.value === 2) {
+                        setNumberOfField(Math.ceil(noInRow / noOfStepInRow));
+                      } else {
+                        setNumberOfField(Math.ceil(noInCol / noOfStepInCol));
+                      }
+                      setReadingDirectionOption(e.target.value);
                     }}
                     defaultValue={""}
                   >
                     <option value="">Select reading direction... </option>
-                    <option value="1">
-                      Mask (at the time set window) about a mark{" "}
-                    </option>
-                    <option value="2">Fixed mark </option>
-                    <option value="3">Checkdigits </option>
-                    <option value="4">Range checking (ascending order)</option>
-                    <option value="5">Range checking (descending order)</option>
-                    <option value="6">Range checking (not order) </option>
-                    <option value="7">Mask setting(common to partition)</option>
+
+                    <option value="0">From top to the bottom</option>
+
+                    <option value="2">From bottom to a top</option>
+
+                    <option value="4">From left to right</option>
+                    <option value="5">From right to left</option>
                   </select>
                 </div>
-              </>
-            )}
-          </Row>
 
-          {(selectedFieldType === "questionField" ||
-            selectedFieldType === "formField") && (
-            <Row className="mb-2">
-              <label
-                htmlFor="example-text-input"
-                className="col-md-2 col-form-label "
-              >
-                Total Fields :
-              </label>
-              <div className="col-4 ">
-                <input
-                  type="text"
-                  className="form-control"
-                  value={numberOfField}
-                  onChange={(e) => {
-                    // Allow only numeric input (including empty input)
-                    const numericValue = e.target.value.replace(/[^0-9]/g, "");
-                    setNumberOfField(numericValue);
-                  }}
-                  required
-                />
-              </div>
-              <label
-                htmlFor="example-text-input"
-                className="col-md-2 col-form-label "
-              >
-                Field Type :
-              </label>
-              <div className="col-4 ">
-                <select
-                  className="form-control"
-                  value={fieldType}
-                  onChange={(e) => {
-                    setFieldType(e.target.value);
-                  }}
-                  defaultValue={""}
-                >
-                  <option value="">Select field type... </option>
-                  <option value="numeric">Numeric </option>
-                  <option value="alphabet">Alphabet </option>
-                  <option value="binary">Litho code</option>
-                  <option value="custom">Custom </option>
-                </select>
-              </div>
-            </Row>
-          )}
-          {(selectedFieldType === "questionField" ||
-            selectedFieldType === "formField") &&
-            fieldType === "custom" && (
-              <Row>
-                <label htmlFor="example-text-input" className="col-md-2 ">
-                  Custom Value :
-                </label>
-                <div className="col-10 ">
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={customValue}
-                    onChange={(e) => setCustomValue(e.target.value)}
-                    placeholder="Enter value separated by value, For Eg (2,3,4,Feild1, Feild2)"
-                  />
-                  <small style={{ color: "red" }}>
-                    *Custom value should be in the reading direction
-                  </small>
-                </div>
+                {selectedFieldType !== "idField" && (
+                  <>
+                    <label
+                      htmlFor="example-text-input"
+                      className="col-md-2 col-form-label"
+                    >
+                      Type :
+                    </label>
+                    <div className="col-md-4">
+                      <select
+                        className="form-control"
+                        value={type}
+                        onChange={(e) => {
+                          setType(e.target.value);
+                        }}
+                        defaultValue={""}
+                      >
+                        <option value="">Select reading direction... </option>
+                        <option value="1">
+                          Mask (at the time set window) about a mark{" "}
+                        </option>
+                        <option value="2">Fixed mark </option>
+                        <option value="3">Checkdigits </option>
+                        <option value="4">
+                          Range checking (ascending order)
+                        </option>
+                        <option value="5">
+                          Range checking (descending order)
+                        </option>
+                        <option value="6">Range checking (not order) </option>
+                        <option value="7">
+                          Mask setting(common to partition)
+                        </option>
+                      </select>
+                    </div>
+                  </>
+                )}
               </Row>
-            )}
+
+              {(selectedFieldType === "questionField" ||
+                selectedFieldType === "formField") && (
+                <Row className="mb-2">
+                  <label
+                    htmlFor="example-text-input"
+                    className="col-md-2 col-form-label "
+                  >
+                    Total Fields :
+                  </label>
+                  <div className="col-4 ">
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={numberOfField}
+                      onChange={(e) => {
+                        // Allow only numeric input (including empty input)
+                        const numericValue = e.target.value.replace(
+                          /[^0-9]/g,
+                          ""
+                        );
+                        setNumberOfField(numericValue);
+                      }}
+                      required
+                    />
+                  </div>
+                  <label
+                    htmlFor="example-text-input"
+                    className="col-md-2 col-form-label "
+                  >
+                    Field Type :
+                  </label>
+                  <div className="col-4 ">
+                    <select
+                      className="form-control"
+                      value={fieldType}
+                      onChange={(e) => {
+                        setFieldType(e.target.value);
+                      }}
+                      defaultValue={""}
+                    >
+                      <option value="">Select field type... </option>
+                      <option value="numeric">Numeric </option>
+                      <option value="alphabet">Alphabet </option>
+                      <option value="binary">Litho code</option>
+                      <option value="custom">Custom </option>
+                    </select>
+                  </div>
+                </Row>
+              )}
+              {(selectedFieldType === "questionField" ||
+                selectedFieldType === "formField") &&
+                fieldType === "custom" && (
+                  <Row>
+                    <label htmlFor="example-text-input" className="col-md-2 ">
+                      Custom Value :
+                    </label>
+                    <div className="col-10 ">
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={customValue}
+                        onChange={(e) => setCustomValue(e.target.value)}
+                        placeholder="Enter value separated by value, For Eg (2,3,4,Feild1, Feild2)"
+                      />
+                      <small style={{ color: "red" }}>
+                        *Custom value should be in the reading direction
+                      </small>
+                    </div>
+                  </Row>
+                )}
+            </>
+          )}
         </Modal.Body>
         <Modal.Footer
           style={{ display: "flex", justifyContent: "space-between" }}
