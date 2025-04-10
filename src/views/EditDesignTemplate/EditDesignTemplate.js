@@ -1,13 +1,7 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Modal, Button, Col, Badge, Container } from "react-bootstrap";
 import { Row } from "reactstrap";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import classes from "./DesignTemplate.module.css";
 import DataContext from "store/DataContext";
 import { MultiSelect } from "react-multi-select-component";
@@ -21,7 +15,6 @@ import { useWindowSize } from "react-use";
 import { Button as Muibtn, Tooltip } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CopyModal from "modals/CopyModal/CopyModal";
 import FieldDetails from "modals/FieldDetails";
@@ -29,32 +22,12 @@ import EditImagesCropper from "modals/EditImagesCropper";
 import convertToCamelCase from "services/lowerLetter";
 import { calculateTotalRow } from "services/HelperFunctions";
 import SideBar from "components/SideBar";
-import { FiChevronRight, FiX } from "react-icons/fi";
+import { FiChevronRight } from "react-icons/fi";
 import questionNameGenerator from "helper/questionNameGenerator";
-// Function to get values from sessionStorage or provide default
-const getSessionStorageOrDefault = (key, defaultValue) => {
-  const stored = sessionStorage.getItem(key);
-  if (!stored) {
-    return defaultValue;
-  }
-  try {
-    const parsed = JSON.parse(stored);
-    // Check for 'undefined' string which is not a valid JSON
-    if (parsed === undefined) {
-      return defaultValue;
-    }
-    return parsed;
-  } catch (e) {
-    console.warn(`Error parsing sessionStorage item with key "${key}":`, e);
-    return defaultValue;
-  }
-};
+import AddLinkIcon from "@mui/icons-material/AddLink";
+import LinkModal from "modals/LinkModal/LinkModal";
 
 const EditDesignTemplate = () => {
-  const [draggingIndex, setDraggingIndex] = useState(null);
-  const [dragStart2, setDragStart2] = useState({ x: 0, y: 0 });
-  const [dragOffset, setDragOffset] = useState({ left: 0, top: 0 });
-  const [copiedCoordinates, setCopiedCoordinates] = useState([]);
   const [selected, setSelected] = useState({});
   const [selection, setSelection] = useState(null);
   const [dragStart, setDragStart] = useState(null);
@@ -76,12 +49,6 @@ const EditDesignTemplate = () => {
   const [selectedFieldType, setSelectedFieldType] = useState(false);
   const [fieldType, setFieldType] = useState();
   const [numberOfField, setNumberOfField] = useState();
-  const [position, setPosition] = useState({
-    x: 0,
-    y: 0,
-    width: 400,
-    height: 400,
-  });
   const [loading, setLoading] = useState(false);
   const dataCtx = useContext(DataContext);
   const [selectedCol, setSelectedCol] = useState([]);
@@ -106,10 +73,8 @@ const EditDesignTemplate = () => {
   const [imageModalShow, setImageModalShow] = useState(false);
   const [imagesSelectedCount, setImagesSelectedCount] = useState(0);
   const location = useLocation();
-  const state = location.state || {};
   const navigate = useNavigate();
   const [sizes, setSizes] = useState({});
-  const [detailLoader, setDetailLoader] = useState(false);
   const [selectedField, setSelectedField] = useState();
   const [showCopy, setShowCopy] = useState(false);
   const [sensitivity, setSensitivity] = useState(5);
@@ -125,12 +90,13 @@ const EditDesignTemplate = () => {
       : {}
   );
   const [skewFieldValue, setSkewFieldValue] = useState(null);
+  const [showLinkModal, setShowLinkModal] = useState(false);
   const divRefs = useRef([]);
   const numRows = data.timingMarks;
   const numCols = data.totalColumns;
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
-  useEffect(() => {}, []);
+
   useEffect(() => {
     const template = dataCtx.allTemplates;
 
@@ -180,39 +146,15 @@ const EditDesignTemplate = () => {
     };
   }, [navigate, location.pathname]);
 
-  // *****************************************************************
-  // useEffect(() => {
-  //   if (!detailPage) {
-  //     setTimeout(() => {
-  //       fetchDataFromLocalStorage();
-  //     }, [2000]);
-  //   }
-  // }, [detailPage]);
-
-  // useEffect(() => {
-  //   const trapFocus = (e) => {
-  //     if (e.key === "Tab") {
-  //       e.preventDefault();
-  //     }
-  //   };
-
-  //   // Attach the keydown event listener when component mounts
-  //   document.addEventListener("keydown", trapFocus);
-
-  //   // Cleanup event listener when component unmounts
-  //   return () => {
-  //     document.removeEventListener("keydown", trapFocus);
-  //   };
-  // }, []);
   useEffect(() => {
     if (dataCtx.allTemplates.length > 0) {
-      console.log(dataCtx.allTemplates[0][0]);
       sessionStorage.setItem(
         "Template",
         JSON.stringify(dataCtx.allTemplates[0][0])
       );
     }
   }, [dataCtx.allTemplates]);
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 576) {
@@ -233,6 +175,7 @@ const EditDesignTemplate = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
   useEffect(() => {
     const idFieldCount = selectedCoordinates.filter(
       (item) => item.fieldType === "idField"
@@ -353,9 +296,7 @@ const EditDesignTemplate = () => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        // Fetch layout data by template ID
         const response = dataCtx.allTemplates[0];
-        console.log(response);
         setLayoutFieldData(response[0]);
         if (response) {
           // Extract data from the response
@@ -434,7 +375,6 @@ const EditDesignTemplate = () => {
           });
           // Update state with the formatted coordinates and image data
           setSelectedCoordinates(newSelectedFields);
-          setPosition(idField?.imageCoordinates);
         }
 
         // const templates = await fetchAllTemplate();
@@ -679,7 +619,6 @@ const EditDesignTemplate = () => {
           name: "Id Field",
           fieldType: selectedFieldType,
         },
-        imageStructureData: position,
         columnStart: +selection?.startCol,
         columnNumber: +noInCol,
         columnStep: +noOfStepInCol,
@@ -894,6 +833,7 @@ const EditDesignTemplate = () => {
       setSelection(null);
     }
   };
+
   const handleSkewMarkOptionChange = (event) => {
     setSkewOption(event.target.value);
   };
@@ -1426,7 +1366,7 @@ const EditDesignTemplate = () => {
               fieldType: selectedField.fieldType,
             },
 
-            imageStructureData: position,
+            
             columnStart: +newObject?.startCol,
             columnNumber: +noInCol,
             columnStep: +noOfStepInCol,
@@ -1590,31 +1530,6 @@ const EditDesignTemplate = () => {
       )}
 
       <div style={{ overflow: "auto" }}>
-        {!selection && (
-          <Button
-            onClick={sendHandler}
-            // disabled={true}
-            style={{
-              position: "fixed",
-              bottom: "50px", // Distance from the bottom of the screen
-              right: "50px", // Distance from the right of the screen
-              borderRadius: "50%",
-              width: "50px", // Width of the button
-              height: "50px", // Height of the button
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              padding: "50px", // Remove padding to center the text
-              zIndex: "999",
-              color: "white", // Optional: Set the text color
-              border: "none", // Optional: Remove border if desired
-              cursor: "pointer", // Optional: Change cursor to pointer on hover
-              display: "none",
-            }}
-          >
-            {!loading ? "Update" : "Updating"}
-          </Button>
-        )}
         <div className="main-container">
           <div className="containers">
             <div className="d-flex" style={{ overflow: "auto" }}>
@@ -1870,7 +1785,6 @@ const EditDesignTemplate = () => {
                           }px`,
                         }}
                         onClick={(e) => e.stopPropagation()}
-                        // onMouseDown={(e) => handleMouseDown2(index, e)}
                       >
                         <div
                           className="d-flex justify-content-between align-items-center bg-dark text-white p-1"
@@ -2765,6 +2679,17 @@ const EditDesignTemplate = () => {
                   <DeleteIcon />
                 </IconButton>
               </Tooltip>
+              <Tooltip title="Link" placement="top">
+                <IconButton
+                  aria-label="delete"
+                  onClick={() => {
+                    setShowLinkModal(true);
+                  }}
+                  color="warning"
+                >
+                  <AddLinkIcon />
+                </IconButton>
+              </Tooltip>
 
               <Tooltip
                 title="Copy Field"
@@ -2849,7 +2774,14 @@ const EditDesignTemplate = () => {
           setData={setData}
         />
       )}
-
+      {showLinkModal && (
+        <LinkModal
+          show={showLinkModal}
+          onHide={() => setShowLinkModal(false)}
+          selectedCoordinates={selectedCoordinates}
+          fieldType={selectedFieldType}
+        />
+      )}
       {showCopy && (
         <CopyModal
           show={showCopy}
@@ -2894,5 +2826,4 @@ const EditDesignTemplate = () => {
     </>
   );
 };
-
 export default EditDesignTemplate;

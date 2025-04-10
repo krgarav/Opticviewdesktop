@@ -46,7 +46,7 @@ const DesignTemplate = () => {
   const [noInCol, setNoInCol] = useState();
   const [noOfStepInCol, setNoOfStepInCol] = useState();
   const [type, setType] = useState("");
-  const [selectedFieldType, setSelectedFieldType] = useState("formField");
+  const [selectedFieldType, setSelectedFieldType] = useState();
   const [fieldType, setFieldType] = useState();
   const [numberOfField, setNumberOfField] = useState();
   const [position, setPosition] = useState({
@@ -215,6 +215,7 @@ const DesignTemplate = () => {
     setStartColInput(selection?.startCol);
     setEndColInput(selection?.endCol);
   }, [selection]);
+
   useEffect(() => {
     const gridDiv = document.getElementById("grid-div");
     const imgDiv = document.getElementById("imagecontainer");
@@ -547,7 +548,7 @@ const DesignTemplate = () => {
     if (dragStart && selection) {
       setDragStart(null);
       setModalShow(true);
-      setSelectedFieldType(null)
+      setSelectedFieldType(null);
     }
   };
 
@@ -1866,12 +1867,116 @@ const DesignTemplate = () => {
             </h2>
             <br />
             {!modalUpdate && (
-              <Row className="mb-2 d-flex align-items-center">
+              // <Row className="mb-2 d-flex align-items-center" style={{position:"absolute",translate:"transformX(-100px) "}}>
+              //   <Col
+              //     xs={12}
+              //     sm={4}
+              //     md={3}
+              //     // className="d-flex align-items-center"
+              //     style={{ display: "flex", justifyContent: "center" }}
+              //   >
+              //     <label htmlFor="formField" className="mr-2 mb-0 field-label">
+              //       Form:
+              //     </label>
+              //     <input
+              //       id="formField"
+              //       type="radio"
+              //       name="fieldType"
+              //       value="formField"
+              //       checked={selectedFieldType === "formField"}
+              //       onChange={handleRadioChange}
+              //       className="field-label mt-1"
+              //     />
+              //   </Col>
+              //   <Col
+              //     xs={12}
+              //     sm={4}
+              //     md={3}
+              //     className="d-flex align-items-center"
+              //   >
+              //     <label htmlFor="fieldType" className="mr-2 mb-0 field-label">
+              //       Question:
+              //     </label>
+              //     <input
+              //       id="fieldType"
+              //       type="radio"
+              //       name="fieldType"
+              //       value="questionField"
+              //       checked={selectedFieldType === "questionField"}
+              //       onChange={handleRadioChange}
+              //       className="field-label mt-1"
+              //     />
+              //   </Col>
+              //   <Col
+              //     xs={12}
+              //     sm={4}
+              //     md={3}
+              //     className="d-flex align-items-center"
+              //   >
+              //     <label
+              //       htmlFor="skewMarkField"
+              //       className="mr-2 mb-0 col-form-label"
+              //     >
+              //       Skew Mark:
+              //     </label>
+              //     <input
+              //       id="skewMarkField"
+              //       type="radio"
+              //       name="fieldType"
+              //       value="skewMarkField"
+              //       checked={selectedFieldType === "skewMarkField"}
+              //       onChange={handleRadioChange}
+              //       className="field-label mt-1"
+              //     />
+              //   </Col>
+              //   <Col
+              //     xs={12}
+              //     sm={6}
+              //     md={3}
+              //     className="d-flex align-items-center"
+              //   >
+              //     <div style={{ display: "flex", flexDirection: "column" }}>
+              //       <div>
+              //         <label
+              //           htmlFor="idField"
+              //           className="mr-2 mb-0 field-label"
+              //         >
+              //           ID Mark:
+              //         </label>
+              //         <input
+              //           id="idField"
+              //           type="radio"
+              //           name="fieldType"
+              //           value="idField"
+              //           checked={selectedFieldType === "idField"}
+              //           onChange={handleRadioChange}
+              //           className="field-label mt-1"
+              //           disabled={idSelectionCount > 0}
+              //         />
+              //       </div>
+              //       {idSelectionCount > 0 && (
+              //         <div>
+              //           <small style={{ color: "orangered" }}>
+              //             already selected
+              //           </small>
+              //         </div>
+              //       )}
+              //     </div>
+              //   </Col>
+              // </Row>
+              <Row
+                className="mb-2 d-flex align-items-center"
+                style={{
+                  // position: "relative",
+                  // left: "55%",
+                  // transform: !selectedFieldType ? "translate(-50%, 300%)" : "translate(-50%, -50%)",
+                  transition: "all 0.5s ease-in-out",
+                }}
+              >
                 <Col
                   xs={12}
                   sm={4}
                   md={3}
-                  // className="d-flex align-items-center"
                   style={{ display: "flex", justifyContent: "center" }}
                 >
                   <label htmlFor="formField" className="mr-2 mb-0 field-label">
@@ -1967,8 +2072,7 @@ const DesignTemplate = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ height: "55vh", overflowX: "auto" }}>
-         
-          {selectedFieldType  && (
+          {selectedFieldType && (
             <>
               {selectedFieldType !== "idField" && (
                 <Row className="mb-2">
