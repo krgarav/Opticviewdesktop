@@ -775,12 +775,16 @@ const DataProvider = (props) => {
       };
     });
   };
-  const linkFieldHandler = (fields, fieldName) => {
+  const linkFieldHandler = (fields, fieldName, fieldIndexes, fieldType) => {
     setDataState((item) => {
       const copiedData = [...item.allTemplates];
       const linkedCoordinates = getBoundingBox(fields);
-      const updatedLinkedCoordinates = { ...linkedCoordinates, fieldName };
-      console.log(copiedData[0][0]);
+      const updatedLinkedCoordinates = {
+        ...linkedCoordinates,
+        fieldName,
+        fieldIndexes,
+        fieldType,
+      };
       copiedData[0][0].linkedCoordinates = [
         ...(copiedData[0][0].linkedCoordinates || []),
         updatedLinkedCoordinates,

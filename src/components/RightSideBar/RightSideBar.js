@@ -13,12 +13,16 @@ const RightSideBar = ({ isOpen, onClose, selectedWindow }) => {
   const toggleSidebar = () => {
     onClose(!isOpen);
   };
+
+  const deleteHandler = (index)=>{
+    console.log(index)
+  }
   const allFields = fields.map((field, index) => (
     <li
       key={index}
       style={{
         display: "grid",
-        gridTemplateColumns: "10% 40% 20% 20%", // Improved proportions
+        gridTemplateColumns: "10% 60% 40%", // Improved proportions
         gap: "10px",
         padding: "8px 0",
         borderBottom: "1px solid #ddd",
@@ -40,11 +44,11 @@ const RightSideBar = ({ isOpen, onClose, selectedWindow }) => {
         {field.fieldName}
       </a>
 
-      <span style={{ color: "#000" }}>{field.fieldType}</span>
       <span
         className="mx-2 text-dark"
         title="Delete"
         style={{ cursor: "pointer" }}
+        onClick={()=>deleteHandler(index)}
       >
         <IoMdTrash color="black" />
       </span>

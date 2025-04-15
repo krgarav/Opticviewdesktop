@@ -9,7 +9,12 @@ import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
 import DataContext from "store/DataContext";
 import { TextField } from "@mui/material";
-import { first } from "lodash";
+import isEqual from "lodash/isEqual";
+
+const identifier = {
+  formField: "formFieldWindowParameters",
+};
+
 const LinkModal = (props) => {
   const [fieldValues, setFieldValues] = React.useState([]);
   const [fieldName, setFieldName] = React.useState(null);
@@ -50,10 +55,11 @@ const LinkModal = (props) => {
     id: `${field.name}_${index}`,
   }));
   const saveArea = () => {
+    const fieldIndexes = [];
     const filteredFields = allFields.filter((field) => {
       return fieldValues.includes(field.id);
     });
-    
+
     if (!fieldName) {
       alert("Field Name is required");
       return;
@@ -62,11 +68,41 @@ const LinkModal = (props) => {
       alert("Please select the fields");
       return;
     }
+    console.log(dataCtx.allTemplates);
+    console.log(props.fieldType);
+    const keyIdentifier = identifier[props.fieldType];
+    console.log(keyIdentifier);
+    const template = dataCtx.allTemplates[0][0][keyIdentifier];
+    const formatCoordinate = (field) => ({
+      "End Col": field.endCol,
+      "End Row": field.endRow + 1,
+      "Start Col": field.startCol,
+      "Start Row": field.startRow + 1,
+      fieldType: field.fieldType,
+      name: field.name,
+    });
 
-    dataCtx.linkField(filteredFields, fieldName);
+    if (Array.isArray(template)) {
+      filteredFields.forEach((field) => {
+        const formatted = formatCoordinate(field);
+
+        const index = template.findIndex((item) =>
+          isEqual(item.Coordinate, formatted)
+        );
+
+        if (index !== -1) {
+          fieldIndexes.push(index);
+        }
+
+        // Optional: log only if unmatched
+        // else console.log("No match for:", formatted);
+      });
+    }
+    console.log(fieldIndexes);
+    dataCtx.linkField(filteredFields, fieldName,fieldIndexes,keyIdentifier);
     props.onHide();
   };
-
+  // console.log(dataCtx.allTemplates);
   return (
     <Modal
       show={props.show}
