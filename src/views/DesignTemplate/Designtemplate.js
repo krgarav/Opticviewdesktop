@@ -17,7 +17,7 @@ import { useWindowSize } from "react-use";
 import ImagesCropper from "modals/ImagesCropper";
 import { getUrls } from "helper/url_helper";
 import { calculateTotalRow } from "services/HelperFunctions";
-import { FiChevronRight, FiX } from "react-icons/fi";
+import { FiChevronRight, FiChevronLeft } from "react-icons/fi";
 import SideBar from "components/SideBar";
 import CopyModal from "modals/CopyModal/CopyModal";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -26,6 +26,9 @@ import { Button as Muibtn, Tooltip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import questionNameGenerator from "helper/questionNameGenerator";
 import FieldDetails from "modals/FieldDetails";
+import AddLinkIcon from "@mui/icons-material/AddLink";
+import LinkModal from "modals/LinkModal/LinkModal";
+import RightSideBar from "components/RightSideBar/RightSideBar";
 
 const DesignTemplate = () => {
   const [selected, setSelected] = useState({});
@@ -86,10 +89,13 @@ const DesignTemplate = () => {
   const [prefix, setPrefix] = useState("");
   const [suffix, setSuffix] = useState("");
   const [showSideBar, setShowSideBar] = useState(false);
+  const [showRightSideBar, setShowRightSideBar] = useState(false);
   const [showCopy, setShowCopy] = useState(false);
   const [selectedField, setSelectedField] = useState();
   const [showFieldDetails, setShowFieldDetails] = useState(false);
   const [skewFieldValue, setSkewFieldValue] = useState(null);
+  const [showLinkModal, setShowLinkModal] = useState(false);
+  const [linkFields, setLinkFields] = useState([]);
   const location = useLocation();
   const {
     totalColumns,
@@ -384,6 +390,7 @@ const DesignTemplate = () => {
 
       // Update the state with the new coordinates and image structure data
       setSelectedCoordinates(newSelectedFields);
+      setLinkFields(arr[0]?.linkedCoordinates || []);
     }
   }, [dataCtx, localData]); // Run only once on component mount
 
@@ -1765,6 +1772,7 @@ const DesignTemplate = () => {
                         <div
                           className="d-flex justify-content-between align-items-center bg-dark text-white p-1"
                           style={{
+                            zIndex:2,
                             opacity: 0.6,
                             fontSize: "12px",
                             position: "relative",
@@ -1811,6 +1819,47 @@ const DesignTemplate = () => {
                         </div>
                       </div>
                     ))}
+                     {linkFields.map((data, index) => {
+                      return (
+                        <div
+                          key={index}
+                          ref={(el) => (divRefs.current[index] = el)}
+                          className="border-blue-900"
+                          style={{
+                            border: "4px dashed rgb(132, 71, 230)",
+                            position: "absolute",
+                            overflow: "hidden",
+                            padding: "10px",
+                            left: `${
+                              data.minStartCol *
+                                (imageRef.current.getBoundingClientRect()
+                                  .width /
+                                  numCols) -
+                              4
+                            }px`,
+                            top: `${
+                              data.minStartRow *
+                                (imageRef.current.getBoundingClientRect()
+                                  .height /
+                                  numRows) -
+                              3
+                            }px`,
+                            width: `${
+                              (data.maxEndCol - data.minStartCol + 1) *
+                              (imageRef.current.getBoundingClientRect().width /
+                                numCols)
+                            }px`,
+                            height: `${
+                              (data.maxEndRow - data.minStartRow + 1) *
+                              (imageRef.current.getBoundingClientRect().height /
+                                numRows +
+                                0.1)
+                            }px`,
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        ></div>
+                      );
+                    })}
                     {selection && (
                       <div
                         className="border-green-700"
@@ -2721,7 +2770,17 @@ const DesignTemplate = () => {
                   <DeleteIcon />
                 </IconButton>
               </Tooltip>
-
+              <Tooltip title="Link" placement="top">
+                <IconButton
+                  aria-label="delete"
+                  onClick={() => {
+                    setShowLinkModal(true);
+                  }}
+                  color="warning"
+                >
+                  <AddLinkIcon />
+                </IconButton>
+              </Tooltip>
               <Tooltip
                 title="Copy Field"
                 placement="top"
@@ -2801,7 +2860,14 @@ const DesignTemplate = () => {
           onHide={() => setDetailPage(false)}
         />
       )}
-
+      {showLinkModal && (
+        <LinkModal
+          show={showLinkModal}
+          onHide={() => setShowLinkModal(false)}
+          selectedCoordinates={selectedCoordinates}
+          fieldType={selectedFieldType}
+        />
+      )}
       {showCopy && (
         <CopyModal
           show={showCopy}
@@ -2854,6 +2920,30 @@ const DesignTemplate = () => {
           <FiChevronRight size={48} color="white" />
         </div>
       )}
+
+      {!showRightSideBar && (
+        <div
+          className={classes["right-sidebar-btn"]}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.transform = "translateX(0)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.transform = "translateX(10px)")
+          }
+          onClick={() => {
+            setShowRightSideBar(true);
+          }}
+        >
+          <FiChevronLeft size={48} color="white" />
+        </div>
+      )}
+
+      <RightSideBar
+        isOpen={showRightSideBar}
+        onClose={() => setShowRightSideBar(false)}
+        selectedWindow={linkFields}
+      />
+
       <SideBar
         isOpen={showSideBar}
         onClose={() => setShowSideBar(false)}

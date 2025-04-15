@@ -53,6 +53,7 @@ const LinkModal = (props) => {
     const filteredFields = allFields.filter((field) => {
       return fieldValues.includes(field.id);
     });
+    
     if (!fieldName) {
       alert("Field Name is required");
       return;
