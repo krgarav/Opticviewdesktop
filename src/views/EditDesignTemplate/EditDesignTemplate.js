@@ -22,10 +22,11 @@ import EditImagesCropper from "modals/EditImagesCropper";
 import convertToCamelCase from "services/lowerLetter";
 import { calculateTotalRow } from "services/HelperFunctions";
 import SideBar from "components/SideBar";
-import { FiChevronRight } from "react-icons/fi";
+import { FiChevronRight, FiChevronLeft } from "react-icons/fi";
 import questionNameGenerator from "helper/questionNameGenerator";
 import AddLinkIcon from "@mui/icons-material/AddLink";
 import LinkModal from "modals/LinkModal/LinkModal";
+import RightSideBar from "components/RightSideBar/RightSideBar";
 
 const EditDesignTemplate = () => {
   const [selected, setSelected] = useState({});
@@ -83,6 +84,7 @@ const EditDesignTemplate = () => {
   const [prefix, setPrefix] = useState("");
   const [suffix, setSuffix] = useState("");
   const [showSideBar, setShowSideBar] = useState(false);
+  const [showRightSideBar, setShowRightSideBar] = useState(false);
   const [data, setData] = useState(
     sessionStorage.getItem("Template")
       ? convertToCamelCase(JSON.parse(sessionStorage.getItem("Template")))
@@ -91,6 +93,7 @@ const EditDesignTemplate = () => {
   );
   const [skewFieldValue, setSkewFieldValue] = useState(null);
   const [showLinkModal, setShowLinkModal] = useState(false);
+  const [linkFields, setLinkFields] = useState([]);
   const divRefs = useRef([]);
   const numRows = data.timingMarks;
   const numCols = data.totalColumns;
@@ -375,6 +378,7 @@ const EditDesignTemplate = () => {
           });
           // Update state with the formatted coordinates and image data
           setSelectedCoordinates(newSelectedFields);
+          setLinkFields(response[0]?.linkedCoordinates || []);
         }
 
         // const templates = await fetchAllTemplate();
@@ -1036,7 +1040,7 @@ const EditDesignTemplate = () => {
     const idpatttern = "000000000000000000000000";
     if (layoutParameters.idMarksPattern === idpatttern) {
       layoutParameters.columnNumber = 1;
-      layoutParameters.columnStart = 1;
+      layoutParameters.columnStart = 3;
       layoutParameters.columnStep = 1;
       layoutParameters.rowNumber = 1;
       layoutParameters.rowStart = 1;
@@ -1366,7 +1370,6 @@ const EditDesignTemplate = () => {
               fieldType: selectedField.fieldType,
             },
 
-            
             columnStart: +newObject?.startCol,
             columnNumber: +noInCol,
             columnStep: +noOfStepInCol,
@@ -1793,6 +1796,7 @@ const EditDesignTemplate = () => {
                             fontSize: "12px",
                             position: "relative",
                             overflow: "hidden",
+                            zIndex: 2,
                           }}
                           onClick={(e) => e.stopPropagation()}
                         >
@@ -1838,6 +1842,47 @@ const EditDesignTemplate = () => {
                         </div>
                       </div>
                     ))}
+                    {linkFields.map((data, index) => {
+                      return (
+                        <div
+                          key={index}
+                          ref={(el) => (divRefs.current[index] = el)}
+                          className="border-blue-900"
+                          style={{
+                            border: "4px dashed rgb(132, 71, 230)",
+                            position: "absolute",
+                            overflow: "hidden",
+                            padding: "10px",
+                            left: `${
+                              data.minStartCol *
+                                (imageRef.current.getBoundingClientRect()
+                                  .width /
+                                  numCols) -
+                              4
+                            }px`,
+                            top: `${
+                              data.minStartRow *
+                                (imageRef.current.getBoundingClientRect()
+                                  .height /
+                                  numRows) -
+                              3
+                            }px`,
+                            width: `${
+                              (data.maxEndCol - data.minStartCol + 1) *
+                              (imageRef.current.getBoundingClientRect().width /
+                                numCols)
+                            }px`,
+                            height: `${
+                              (data.maxEndRow - data.minStartRow + 1) *
+                              (imageRef.current.getBoundingClientRect().height /
+                                numRows +
+                                0.1)
+                            }px`,
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        ></div>
+                      );
+                    })}
                     {selection && (
                       <div
                         className="border-green-700"
@@ -2818,10 +2863,33 @@ const EditDesignTemplate = () => {
           <FiChevronRight size={48} color="white" />
         </div>
       )}
+      {!showRightSideBar && (
+        <div
+          className={classes["right-sidebar-btn"]}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.transform = "translateX(0)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.transform = "translateX(10px)")
+          }
+          onClick={() => {
+            setShowRightSideBar(true);
+          }}
+        >
+          <FiChevronLeft size={48} color="white" />
+        </div>
+      )}
+
       <SideBar
         isOpen={showSideBar}
         onClose={() => setShowSideBar(false)}
         selectedWindow={selectedCoordinates}
+      />
+
+      <RightSideBar
+        isOpen={showRightSideBar}
+        onClose={() => setShowRightSideBar(false)}
+        selectedWindow={linkFields}
       />
     </>
   );

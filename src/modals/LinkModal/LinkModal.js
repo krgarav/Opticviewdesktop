@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Modal, Button, Col } from "react-bootstrap";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
@@ -7,10 +7,14 @@ import FormControl from "@mui/material/FormControl";
 import ListItemText from "@mui/material/ListItemText";
 import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
+import DataContext from "store/DataContext";
+import { TextField } from "@mui/material";
+import { first } from "lodash";
 const LinkModal = (props) => {
-  const [personName, setPersonName] = React.useState([]);
+  const [fieldValues, setFieldValues] = React.useState([]);
+  const [fieldName, setFieldName] = React.useState(null);
   const [fields, setFields] = React.useState([]);
-
+  const dataCtx = useContext(DataContext);
   React.useEffect(() => {
     if (props.selectedCoordinates.length !== 0) {
       const fields = props.selectedCoordinates.filter((field) => {
@@ -24,12 +28,12 @@ const LinkModal = (props) => {
     const {
       target: { value },
     } = event;
-    setPersonName(
+    setFieldValues(
       // On autofill we get a stringified value.
       typeof value === "string" ? value.split(",") : value
     );
   };
-// console.log("personName", personName);
+  // console.log("fieldValues", fieldValues);
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
   const MenuProps = {
@@ -46,16 +50,22 @@ const LinkModal = (props) => {
     id: `${field.name}_${index}`,
   }));
   const saveArea = () => {
-   
-    const filteredFields = allFields.filter((field) =>{
-        return personName.includes(field.id)
-    })
-    console.log(filteredFields)
+    const filteredFields = allFields.filter((field) => {
+      return fieldValues.includes(field.id);
+    });
+    if (!fieldName) {
+      alert("Field Name is required");
+      return;
+    }
+    if (filteredFields.length <= 1) {
+      alert("Please select the fields");
+      return;
+    }
 
-//    const person =  personName.includes(field.id)
-//     console.log(person);
-  }
-//   console.log("allFields", allFields);
+    dataCtx.linkField(filteredFields, fieldName);
+    props.onHide();
+  };
+
   return (
     <Modal
       show={props.show}
@@ -76,27 +86,37 @@ const LinkModal = (props) => {
       </Modal.Header>
       <Modal.Body style={{ width: "100%", height: "70dvh", overflow: "auto" }}>
         <FormControl sx={{ m: 1, width: 420 }}>
+          <TextField
+            id="field-name"
+            label="Name"
+            variant="outlined"
+            fullWidth
+            value={fieldName}
+            onChange={(e) => setFieldName(e.target.value)}
+          />
+        </FormControl>
+        <FormControl sx={{ m: 1, width: 420 }}>
           <InputLabel id="demo-multiple-checkbox-label">FIELDS</InputLabel>
           <Select
             labelId="demo-multiple-checkbox-label"
             id="demo-multiple-checkbox"
             multiple
-            value={personName}
+            value={fieldValues}
             onChange={handleChange}
             input={<OutlinedInput label="FIELDS" />}
             renderValue={(selected) =>
-                selected
-                  .map((id) => {
-                    const field = fields.find((f) => f.id === id);
-                    return field ? field.name : id;
-                  })
-                  .join(", ")
-              }
+              selected
+                .map((id) => {
+                  const field = fields.find((f) => f.id === id);
+                  return field ? field.name : id;
+                })
+                .join(", ")
+            }
             MenuProps={MenuProps}
           >
             {allFields.map((field) => (
               <MenuItem key={field.id} value={field.id}>
-                <Checkbox checked={personName.includes(field.id)} />
+                <Checkbox checked={fieldValues.includes(field.id)} />
                 <ListItemText primary={field.name} />
               </MenuItem>
             ))}

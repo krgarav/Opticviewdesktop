@@ -12,6 +12,7 @@ const DataContext = React.createContext({
   addImageCoordinate: () => {},
   setBackendIP: () => {},
   changeIndexTemplate: () => {},
+  linkField:()=>{}
 });
 
 export default DataContext;

@@ -1072,7 +1072,7 @@ const DesignTemplate = () => {
     const idpatttern = "000000000000000000000000";
     if (layoutParameters.idMarksPattern === idpatttern) {
       layoutParameters.columnNumber = 1;
-      layoutParameters.columnStart = 1;
+      layoutParameters.columnStart = 3;
       layoutParameters.columnStep = 1;
       layoutParameters.rowNumber = 1;
       layoutParameters.rowStart = 1;

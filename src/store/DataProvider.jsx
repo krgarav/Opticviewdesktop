@@ -8,7 +8,26 @@ const initialData = {
   allTemplates: [],
   backendIP: "localhost",
 }; // Initial data if localStorage is empty
+function getBoundingBox(fields) {
+  let minStartRow = Infinity;
+  let minStartCol = Infinity;
+  let maxEndRow = -Infinity;
+  let maxEndCol = -Infinity;
 
+  for (const field of fields) {
+    if (field.startRow < minStartRow) minStartRow = field.startRow;
+    if (field.startCol < minStartCol) minStartCol = field.startCol;
+    if (field.endRow > maxEndRow) maxEndRow = field.endRow;
+    if (field.endCol > maxEndCol) maxEndCol = field.endCol;
+  }
+
+  return {
+    minStartRow,
+    minStartCol,
+    maxEndRow,
+    maxEndCol,
+  };
+}
 const DataProvider = (props) => {
   // Initialize dataState from localStorage if it exists, otherwise use initialData
   const [dataState, setDataState] = useState(initialData);
@@ -311,7 +330,7 @@ const DataProvider = (props) => {
     fieldType,
     coordinateIndex
   ) => {
-    console.log(coordinateIndex)
+    console.log(coordinateIndex);
     if (coordinateIndex === -1) {
       alert("Coordinate index cannot be -1");
       return;
@@ -406,12 +425,12 @@ const DataProvider = (props) => {
           copiedLayout.rowNumber = 0;
           copiedLayout.rowStart = 0;
           copiedLayout.rowStep = 0;
-          copiedLayout.layoutCoordinates={};
+          copiedLayout.layoutCoordinates = {};
           currentTemplate.layoutParameters = copiedLayout;
 
           break;
       }
-      console.log(copiedData)
+      console.log(copiedData);
       return {
         ...item,
         allTemplates: copiedData,
@@ -689,7 +708,11 @@ const DataProvider = (props) => {
   const changeIndexTemplateHandler = (updatedRegionDatas, fieldType) => {
     const isEqualIgnoreCase = (obj1, obj2) => {
       return _.isEqualWith(obj1, obj2, (val1, val2, key) => {
-        if (key === "name" && typeof val1 === "string" && typeof val2 === "string") {
+        if (
+          key === "name" &&
+          typeof val1 === "string" &&
+          typeof val2 === "string"
+        ) {
           return val1.toLowerCase() === val2.toLowerCase();
         }
       });
@@ -704,7 +727,7 @@ const DataProvider = (props) => {
         name: item.name,
       };
     });
-console.log(updatedRegionData)
+    console.log(updatedRegionData);
     setDataState((item) => {
       const copiedData = [...item.allTemplates];
       const currentTemplate = { ...copiedData[0][0] }; // Create a shallow copy of the first template
@@ -714,7 +737,7 @@ console.log(updatedRegionData)
 
         updatedRegionData.forEach((item) => {
           const fileIndex = fieldArray.findIndex((fieldItem) =>
-            isEqualIgnoreCase(fieldItem?.Coordinate, item) 
+            isEqualIgnoreCase(fieldItem?.Coordinate, item)
           );
 
           if (fileIndex !== -1) {
@@ -726,17 +749,13 @@ console.log(updatedRegionData)
       };
       switch (fieldType) {
         case "skewMarkField":
-          console.log( updateField(
-            currentTemplate.skewMarksWindowParameters
-          ))
+          console.log(updateField(currentTemplate.skewMarksWindowParameters));
           currentTemplate.skewMarksWindowParameters = updateField(
             currentTemplate.skewMarksWindowParameters
           );
           break;
         case "formField":
-          console.log(updateField(
-            currentTemplate.formFieldWindowParameters
-          ))
+          console.log(updateField(currentTemplate.formFieldWindowParameters));
           currentTemplate.formFieldWindowParameters = updateField(
             currentTemplate.formFieldWindowParameters
           );
@@ -753,6 +772,23 @@ console.log(updatedRegionData)
       return {
         ...item,
         allTemplates: [[currentTemplate]], // Ensure we only modify the first template
+      };
+    });
+  };
+  const linkFieldHandler = (fields, fieldName) => {
+    setDataState((item) => {
+      const copiedData = [...item.allTemplates];
+      const linkedCoordinates = getBoundingBox(fields);
+      const updatedLinkedCoordinates = { ...linkedCoordinates, fieldName };
+      console.log(copiedData[0][0]);
+      copiedData[0][0].linkedCoordinates = [
+        ...(copiedData[0][0].linkedCoordinates || []),
+        updatedLinkedCoordinates,
+      ];
+
+      return {
+        ...item,
+        allTemplates: copiedData, // Ensure we only modify the first template
       };
     });
   };
@@ -778,6 +814,7 @@ console.log(updatedRegionData)
     replaceTemplate: templateReplaceHandler,
     setNewTemplates: setNewTemplatesHandler,
     changeIndexTemplate: changeIndexTemplateHandler,
+    linkField: linkFieldHandler,
   };
 
   return (

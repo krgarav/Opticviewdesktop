@@ -78,7 +78,23 @@
   transition: all 0.3s ease;
   transform: translateX(-10px);
 }
-
+.right-sidebar-btn {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  width: 50px;
+  height: 100px;
+  background-color: gray;
+  border-top-left-radius: 50px;
+  border-bottom-left-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1050;
+  transition: all 0.3s ease;
+  transform: translateX(10px);
+}
 /* WebKit-based browsers (Chrome, Safari) */
 ::-webkit-scrollbar {
   width: 8px; /* Width of the scrollbar */
