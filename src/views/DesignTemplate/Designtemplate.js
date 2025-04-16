@@ -1823,13 +1823,15 @@ const DesignTemplate = () => {
                     ))}
                     {linkFields.map((data, index) => {
                         const border = currentLinkField === index ? "4px dashed red" : "4px dashed rgb(142, 95, 218)";
-                      return (
+                        const boxShadow = currentLinkField === index ? "0 0 5px rgba(255, 0, 0, 0.5)" : "";
+                        return (
                         <div
                           key={index}
                           ref={(el) => (divRefs.current[index] = el)}
                           className="border-blue-900"
                           style={{
                             border,
+                            boxShadow,
                             position: "absolute",
                             overflow: "hidden",
                             padding: "10px",
