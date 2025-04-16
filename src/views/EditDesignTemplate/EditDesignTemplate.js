@@ -1835,7 +1835,7 @@ console.log(currentLinkField);
                     ))}
                     {linkFields.map((data, index) => {
                       const border = currentLinkField === index ? "4px dashed red" : "4px dashed rgb(142, 95, 218)";
-                
+                      const boxShadow = currentLinkField === index ? "0 0 5px rgba(255, 0, 0, 0.5)" : "";
                       return (
                         <div
                           key={index}
@@ -1843,6 +1843,7 @@ console.log(currentLinkField);
                           className="border-blue-900"
                           style={{
                             border,
+                            boxShadow,
                             position: "absolute",
                             overflow: "hidden",
                             padding: "10px",

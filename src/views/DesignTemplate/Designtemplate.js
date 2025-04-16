@@ -110,8 +110,10 @@ const DesignTemplate = () => {
     arr,
     excelJsonFile,
   } = localData[0].layoutParameters;
+  const [currentLinkField, setCurrentLinkField] = useState(null);
   const numRows = timingMarks;
   const numCols = totalColumns;
+
   const divRefs = useRef([]);
 
   const { width } = useWindowSize();
@@ -1772,7 +1774,7 @@ const DesignTemplate = () => {
                         <div
                           className="d-flex justify-content-between align-items-center bg-dark text-white p-1"
                           style={{
-                            zIndex:2,
+                            zIndex: 2,
                             opacity: 0.6,
                             fontSize: "12px",
                             position: "relative",
@@ -1819,14 +1821,15 @@ const DesignTemplate = () => {
                         </div>
                       </div>
                     ))}
-                     {linkFields.map((data, index) => {
+                    {linkFields.map((data, index) => {
+                        const border = currentLinkField === index ? "4px dashed red" : "4px dashed rgb(142, 95, 218)";
                       return (
                         <div
                           key={index}
                           ref={(el) => (divRefs.current[index] = el)}
                           className="border-blue-900"
                           style={{
-                            border: "4px dashed rgb(132, 71, 230)",
+                            border,
                             position: "absolute",
                             overflow: "hidden",
                             padding: "10px",
@@ -2942,6 +2945,8 @@ const DesignTemplate = () => {
         isOpen={showRightSideBar}
         onClose={() => setShowRightSideBar(false)}
         selectedWindow={linkFields}
+        setCurrentLinkField={setCurrentLinkField}
+        currentLinkField={currentLinkField}
       />
 
       <SideBar

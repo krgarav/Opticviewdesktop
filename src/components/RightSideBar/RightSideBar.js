@@ -40,7 +40,7 @@ const RightSideBar = ({
       currentLinkField === index
         ? classes["sidebar-list-active"]
         : classes["sidebar-list"];
-    console.log(backgroundColor);
+
     return (
       <li
         key={index}
