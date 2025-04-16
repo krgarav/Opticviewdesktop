@@ -94,12 +94,13 @@ const EditDesignTemplate = () => {
   const [skewFieldValue, setSkewFieldValue] = useState(null);
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkFields, setLinkFields] = useState([]);
+  const [currentLinkField, setCurrentLinkField] = useState(null);
   const divRefs = useRef([]);
   const numRows = data.timingMarks;
   const numCols = data.totalColumns;
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
-
+console.log(currentLinkField);
   useEffect(() => {
     const template = dataCtx.allTemplates;
 
@@ -380,17 +381,6 @@ const EditDesignTemplate = () => {
           setSelectedCoordinates(newSelectedFields);
           setLinkFields(response[0]?.linkedCoordinates || []);
         }
-
-        // const templates = await fetchAllTemplate();
-        // if (templates === undefined) {
-        //     toast.error('Error fetching templates');
-
-        // }
-        // const mpObj = templates?.map((item) => {
-        //     return [{ layoutParameters: item }]
-        // });
-        // console.log(mpObj)
-        // dataCtx.addToAllTemplate(mpObj);
       } catch (error) {
         console.error("Error fetching layout data:", error);
       }
@@ -1140,7 +1130,7 @@ const EditDesignTemplate = () => {
           : {};
         return { ...rest, formFieldCoordinates };
       });
-    const { imageCroppingDTO } = template[0];
+    const { imageCroppingDTO, linkedCoordinates } = template[0];
     // Assemble the full request data
     const fullRequestData = {
       layoutParameters: updatedLayout,
@@ -1151,6 +1141,7 @@ const EditDesignTemplate = () => {
       skewMarksWindowParameters,
       formFieldWindowParameters,
       imageCroppingDTO: imageCroppingDTO ? imageCroppingDTO : [],
+      linkedCoordinates,
     };
     handleCancel();
     sessionStorage.setItem(
@@ -1843,13 +1834,15 @@ const EditDesignTemplate = () => {
                       </div>
                     ))}
                     {linkFields.map((data, index) => {
+                      const border = currentLinkField === index ? "4px dashed red" : "4px dashed rgb(142, 95, 218)";
+                
                       return (
                         <div
                           key={index}
                           ref={(el) => (divRefs.current[index] = el)}
                           className="border-blue-900"
                           style={{
-                            border: "4px dashed rgb(132, 71, 230)",
+                            border,
                             position: "absolute",
                             overflow: "hidden",
                             padding: "10px",
@@ -2890,6 +2883,8 @@ const EditDesignTemplate = () => {
         isOpen={showRightSideBar}
         onClose={() => setShowRightSideBar(false)}
         selectedWindow={linkFields}
+        setCurrentLinkField={setCurrentLinkField}
+        currentLinkField={currentLinkField}
       />
     </>
   );

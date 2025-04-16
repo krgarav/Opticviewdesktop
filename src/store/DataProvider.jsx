@@ -797,6 +797,23 @@ const DataProvider = (props) => {
     });
   };
 
+  const deleteLinkFieldHandler = (index) => {
+    setDataState((item) => {
+      const copiedData = [...item.allTemplates];
+      const linkedCoordinates = copiedData[0][0].linkedCoordinates;
+      const updatedLinkedCoordinates = linkedCoordinates.filter(
+        (_, i) => i !== index
+      );
+
+      copiedData[0][0].linkedCoordinates = updatedLinkedCoordinates;
+
+      return {
+        ...item,
+        allTemplates: copiedData,
+      };
+    });
+  };
+
   const dataContext = {
     allTemplates: dataState.allTemplates,
     setAllTemplates: templateHandler,
@@ -819,6 +836,7 @@ const DataProvider = (props) => {
     setNewTemplates: setNewTemplatesHandler,
     changeIndexTemplate: changeIndexTemplateHandler,
     linkField: linkFieldHandler,
+    deleteLinkField: deleteLinkFieldHandler,
   };
 
   return (

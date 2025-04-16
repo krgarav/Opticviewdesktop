@@ -13,6 +13,7 @@ import isEqual from "lodash/isEqual";
 
 const identifier = {
   formField: "formFieldWindowParameters",
+  skewMarkField: "skewMarksWindowParameters",
 };
 
 const LinkModal = (props) => {
@@ -27,7 +28,7 @@ const LinkModal = (props) => {
       });
       setFields(fields);
     }
-  }, [props.selectedCoordinates]);
+  }, [props.selectedCoordinates, props.fieldType]);
 
   const handleChange = (event) => {
     const {
@@ -93,13 +94,10 @@ const LinkModal = (props) => {
         if (index !== -1) {
           fieldIndexes.push(index);
         }
-
-        // Optional: log only if unmatched
-        // else console.log("No match for:", formatted);
       });
     }
-    console.log(fieldIndexes);
-    dataCtx.linkField(filteredFields, fieldName,fieldIndexes,keyIdentifier);
+
+    dataCtx.linkField(filteredFields, fieldName, fieldIndexes, keyIdentifier);
     props.onHide();
   };
   // console.log(dataCtx.allTemplates);
@@ -121,8 +119,25 @@ const LinkModal = (props) => {
           SELECT FIELDS THAT ARE TO BE LINKED
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body style={{ width: "100%", height: "70dvh", overflow: "auto" }}>
-        <FormControl sx={{ m: 1, width: 420 }}>
+      <Modal.Body
+        style={{
+          width: "100%",
+          height: "70dvh",
+          overflow: "auto",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          padding: "1rem",
+          gap: "1.5rem",
+          backgroundColor: "#f9f9f9", // optional: light background
+          borderRadius: "12px", // optional: soft rounded edges
+        }}
+      >
+        <div style={{ fontWeight: "bold", fontSize: "1.25rem" }}>
+          {props.fieldType}
+        </div>
+
+        <FormControl sx={{ width: "100%", maxWidth: 420 }}>
           <TextField
             id="field-name"
             label="Name"
@@ -132,7 +147,8 @@ const LinkModal = (props) => {
             onChange={(e) => setFieldName(e.target.value)}
           />
         </FormControl>
-        <FormControl sx={{ m: 1, width: 420 }}>
+
+        <FormControl sx={{ width: "100%", maxWidth: 420 }}>
           <InputLabel id="demo-multiple-checkbox-label">FIELDS</InputLabel>
           <Select
             labelId="demo-multiple-checkbox-label"
@@ -160,6 +176,7 @@ const LinkModal = (props) => {
           </Select>
         </FormControl>
       </Modal.Body>
+
       <Modal.Footer>
         <Button
           type="button"

@@ -1,71 +1,97 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FiX } from "react-icons/fi";
 import { IoMdTrash } from "react-icons/io";
 import classes from "./RightSideBar.module.css";
+import DataContext from "store/DataContext";
 
-const RightSideBar = ({ isOpen, onClose, selectedWindow }) => {
+const RightSideBar = ({
+  isOpen,
+  onClose,
+  selectedWindow,
+  setCurrentLinkField,
+  currentLinkField,
+}) => {
   const [fields, setFields] = useState([]);
+  const dataCtx = useContext(DataContext);
   useEffect(() => {
     if (selectedWindow.length > 0) {
       setFields(selectedWindow);
+    } else {
+      setFields([]);
     }
   }, [selectedWindow]);
+
   const toggleSidebar = () => {
     onClose(!isOpen);
   };
 
-  const deleteHandler = (index)=>{
-    console.log(index)
-  }
-  const allFields = fields.map((field, index) => (
-    <li
-      key={index}
-      style={{
-        display: "grid",
-        gridTemplateColumns: "10% 60% 40%", // Improved proportions
-        gap: "10px",
-        padding: "8px 0",
-        borderBottom: "1px solid #ddd",
-        alignItems: "center", // Vertical alignment for consistent layout
-      }}
-    >
-      <span style={{ color: "#000", fontWeight: "bold" }}>{index + 1})</span>
-
-      <a
+  const deleteHandler = (index) => {
+    const result = window.confirm(
+      "Are you sure you want to delete this field? This action cannot be undone."
+    );
+    if (!result) return;
+    dataCtx.deleteLinkField(index);
+  };
+  const rowClickHandler = (index) => {
+    setCurrentLinkField(index);
+  };
+  const allFields = fields.map((field, index) => {
+    const backgroundColor =
+      currentLinkField === index
+        ? classes["sidebar-list-active"]
+        : classes["sidebar-list"];
+    console.log(backgroundColor);
+    return (
+      <li
+        key={index}
+        className={backgroundColor}
         style={{
-          color: "#000",
-          textDecoration: "none",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
+          display: "grid",
+          gridTemplateColumns: "10% 60% 40%", // Improved proportions
+          gap: "10px",
+          borderBottom: "1px solid #ddd",
+          alignItems: "center", // Vertical alignment for consistent layout
         }}
-        title={field.fieldName} // Tooltip for full text visibility
+        onClick={() => rowClickHandler(index)}
       >
-        {field.fieldName}
-      </a>
+        <span style={{ color: "#000", fontWeight: "bold" }}>{index + 1})</span>
 
-      <span
-        className="mx-2 text-dark"
-        title="Delete"
-        style={{ cursor: "pointer" }}
-        onClick={()=>deleteHandler(index)}
-      >
-        <IoMdTrash color="black" />
-      </span>
-    </li>
-  ));
+        <a
+          style={{
+            color: "#000",
+            textDecoration: "none",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+          title={field.fieldName} // Tooltip for full text visibility
+        >
+          {field.fieldName}
+        </a>
+
+        <span
+          className="mx-2 text-dark"
+          title="Delete"
+          style={{ cursor: "pointer" }}
+          onClick={() => deleteHandler(index)}
+        >
+          <IoMdTrash color="black" />
+        </span>
+      </li>
+    );
+  });
   return (
     <div
       className={`${classes.sidebar} ${isOpen ? classes.active : ""}`}
       style={{
-        backdropFilter: "blur(10px)",
+        backdropFilter: "blur(20px)",
         color: "#007bff",
         padding: "15px",
         boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-        borderRadius: "12px",
+        borderRadius: "12px ",
         display: "flex",
-        flexDirection: "column", // Enables better layout control
-        height: "100vh", // Full viewport height
+        flexDirection: "column",
+        height: "100vh",
       }}
     >
       <span className={classes["close-btn"]} onClick={toggleSidebar}>
