@@ -100,13 +100,13 @@ const EditDesignTemplate = () => {
   const numCols = data.totalColumns;
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
-console.log(currentLinkField);
+
   useEffect(() => {
     const template = dataCtx.allTemplates;
 
     if (template) {
       const imageData = template[0][0]?.imageCroppingDTO;
-      console.log(imageData);
+    
       if (imageData) {
         setImagesSelectedCount(imageData?.length);
       }
@@ -855,7 +855,7 @@ console.log(currentLinkField);
     };
 
     setSelectionIndex(index);
-    // console.log(data.templateIndex);
+   
     const template = dataCtx.allTemplates[0];
     if (selectedField?.fieldType === "idField") {
       const data = template[0].layoutParameters;
@@ -955,7 +955,7 @@ console.log(currentLinkField);
       const index = parameters.findIndex((item) =>
         isEqual(item?.Coordinate, formattedSelectedFile)
       );
-      console.log(index);
+    
       if (index === -1) {
         alert("No data found");
       }
@@ -1002,7 +1002,7 @@ console.log(currentLinkField);
       fieldType: selectedField.fieldType,
       name: selectedField.name,
     };
-    console.log(formattedSelectedFile);
+   
     setSelectedCoordinates((prevState) => {
       const copiedState = [...prevState];
       copiedState.splice(index, 1); // Remove the item at the specified index
@@ -1070,7 +1070,6 @@ console.log(currentLinkField);
     };
     delete updatedLayout.Coordinate;
     delete updatedLayout.imageStructureData;
-    console.log(template[0]);
     // Extract and format barcode, image, and printing data
     const barcodeData = template[0].barcodeData;
     const imageData = template[0].imageData;
