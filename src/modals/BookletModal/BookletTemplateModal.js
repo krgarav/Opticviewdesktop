@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Modal,
   Button,
@@ -59,6 +59,7 @@ import ImageUrls from "data/imageData";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import { getUrls } from "helper/url_helper";
+import { debounce } from "lodash";
 
 const BookletTemplateModal = (props) => {
   const [modalShow, setModalShow] = useState(false);
@@ -315,6 +316,14 @@ const BookletTemplateModal = (props) => {
     }
     return true;
   };
+
+  const debouncedClick = debounce(
+    () => {
+      createTemplateHandler();
+    },
+    2000,
+    { leading: true, trailing: false }
+  );
 
   const createTemplateHandler = async () => {
     if (printEnable.id !== "0") {
@@ -2149,7 +2158,7 @@ const BookletTemplateModal = (props) => {
           >
             Close
           </Button>
-          <Button variant="success" onClick={createTemplateHandler}>
+          <Button variant="success" onClick={debouncedClick}>
             Create Template
           </Button>
         </Modal.Footer>

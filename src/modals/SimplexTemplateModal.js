@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Modal,
   Button,
@@ -59,6 +59,7 @@ import { getUrls } from "helper/url_helper";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import { SimplexImageUrl } from "data/imageData";
+import { debounce } from "lodash";
 const SimplexTemplateModal = (props) => {
   const [modalShow, setModalShow] = useState(false);
   const [name, setName] = useState("");
@@ -133,6 +134,7 @@ const SimplexTemplateModal = (props) => {
   const [images, setImages] = useState([]);
   const [baseUrl, setBaseUrl] = useState(null);
   const [showFront, setShowFront] = useState(true);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -292,7 +294,7 @@ const SimplexTemplateModal = (props) => {
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    console.log(file);
+
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -346,6 +348,14 @@ const SimplexTemplateModal = (props) => {
     }
     return true;
   };
+
+  const debouncedClick = debounce(
+    () => {
+      createTemplateHandler();
+    },
+    2000,
+    { leading: true, trailing: false }
+  );
 
   const createTemplateHandler = async () => {
     if (printEnable.id !== "0") {
@@ -2286,7 +2296,7 @@ const SimplexTemplateModal = (props) => {
           >
             Close
           </Button>
-          <Button variant="success" onClick={createTemplateHandler}>
+          <Button variant="success" onClick={debouncedClick}>
             Create Template
           </Button>
         </Modal.Footer>
