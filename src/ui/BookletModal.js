@@ -49,16 +49,19 @@ const BookletModal = (props) => {
         </Modal.Header>
 
         <Modal.Body style={{ overflow: "auto", alignItems: "center" }}>
-          <Row md={12}>
-            <Col md={2}></Col>
-            <Col md={4}>
+          <Row
+            className="g-4"
+            style={{
+              textAlign: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Col xs={12} sm={12} md={6} className="d-md-flex justify-content-md-end gap-4">
               <Jobcard handleJob={handleJob} text={"Simplex"} />
             </Col>
-
-            <Col md={4}>
+            <Col xs={12} sm={12} md={6} className="d-md-flex justify-content-md-start">
               <Jobcard handleJob={handleJob} text={"Booklet"} />
             </Col>
-            <Col md={2}></Col>
           </Row>
         </Modal.Body>
         <Modal.Footer></Modal.Footer>
