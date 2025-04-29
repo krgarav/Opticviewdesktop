@@ -106,7 +106,7 @@ const App = () => {
           <Route path="/admin/*" element={<AdminLayout />} />
           <Route path="/operator/*" element={<Operator />} />
           <Route path="/moderator/*" element={<Moderator />} />
-          <Route path="/auth/*" element={<AuthLayout />} />
+        
 
           <Route path="/design-template" element={<DesignTemplate />} />
           <Route path="/edit" element={<Redirect />} />

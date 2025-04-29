@@ -21,6 +21,7 @@ axiosApi.interceptors.response.use(
     (error) => Promise.reject(error)
 );
 
+
 export async function get(url, config = {}) {
     return await axiosApi
         .get(url, { ...config })
