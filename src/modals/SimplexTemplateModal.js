@@ -134,6 +134,7 @@ const SimplexTemplateModal = (props) => {
   const [images, setImages] = useState([]);
   const [baseUrl, setBaseUrl] = useState(null);
   const [showFront, setShowFront] = useState(true);
+  const [showScanner, setShowScanner] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -2317,25 +2318,6 @@ const SimplexTemplateModal = (props) => {
         </Modal.Header>
         <Modal.Body style={{ height: "65dvh" }}>
           <>
-            {scannerLoading && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  backgroundColor: "rgba(0, 0, 0, 0.2)", // Slightly opaque background
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  zIndex: 999,
-                  pointerEvents: "auto", // Make the overlay not clickable
-                }}
-              >
-                <Spinner />
-              </div>
-            )}
             <div className="container mt-4">
               <style jsx>{`
                 .upload-box {
@@ -2368,7 +2350,9 @@ const SimplexTemplateModal = (props) => {
                 </Col>
                 <Col lg={6} md={6} className="mb-4">
                   <div
-                    onClick={scannerHandler}
+                    onClick={() => {
+                      setShowScanner(true);
+                    }}
                     className="upload-box p-4 text-center border rounded"
                   >
                     <h1>Upload From Scanner</h1>
@@ -2550,6 +2534,69 @@ const SimplexTemplateModal = (props) => {
             Save
           </Button>
         </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={showScanner}
+        size="md"
+        aria-labelledby="modal-custom-navbar"
+        centered
+        dialogClassName="modal-50w"
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header>
+          <Modal.Title id="modal-custom-navbar">Select Scanner</Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ height: "15dvh", overflow: "auto" }}>
+          {scannerLoading && (
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                backgroundColor: "rgba(0, 0, 0, 0.2)", // Slightly opaque background
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                zIndex: 999,
+                pointerEvents: "auto", // Make the overlay not clickable
+              }}
+            >
+              <Spinner />
+            </div>
+          )}
+          <Row>
+            <Col lg={6} md={6} className="mb-4">
+              <div
+                onClick={systemHandler}
+                className="upload-box p-4 text-center border rounded"
+              >
+                <h1 className="fs-3 text-dark">SR 3500H</h1>
+              </div>
+            </Col>
+            <Col lg={6} md={6} className="mb-4">
+              <div
+                onClick={scannerHandler}
+                className="upload-box p-4 text-center border rounded"
+              >
+                <h1>SR 8000H</h1>
+              </div>
+            </Col>
+          </Row>
+        </Modal.Body>
+        {/* <Modal.Footer>
+          <Button
+            variant="warning"
+            onClick={() => {
+              setShowScanner(false);
+            }}
+          >
+            Close
+          </Button>
+        </Modal.Footer> */}
       </Modal>
     </>
   );

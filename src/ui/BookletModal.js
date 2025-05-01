@@ -56,10 +56,20 @@ const BookletModal = (props) => {
               justifyContent: "center",
             }}
           >
-            <Col xs={12} sm={12} md={6} className="d-md-flex justify-content-md-end gap-4">
+            <Col
+              xs={12}
+              sm={12}
+              md={6}
+              className="d-md-flex justify-content-md-end gap-4"
+            >
               <Jobcard handleJob={handleJob} text={"Simplex"} />
             </Col>
-            <Col xs={12} sm={12} md={6} className="d-md-flex justify-content-md-start">
+            <Col
+              xs={12}
+              sm={12}
+              md={6}
+              className="d-md-flex justify-content-md-start"
+            >
               <Jobcard handleJob={handleJob} text={"Booklet"} />
             </Col>
           </Row>
