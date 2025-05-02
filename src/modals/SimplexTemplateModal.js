@@ -543,10 +543,13 @@ const SimplexTemplateModal = (props) => {
     }
   };
 
-  const scannerHandler = async () => {
+  const scanner1Handler = async () => {
     setScannerLoading(true);
+    setShowScanner(false);
     try {
-      const response = await axios.post("http://localhost:5000/GetSampleData");
+      const response = await axios.post(
+        "http://localhost:5000/GetSampleData/1"
+      );
       const { data, images } = response.data;
       const jsonData = data;
       const correctedJson = jsonData
@@ -563,13 +566,48 @@ const SimplexTemplateModal = (props) => {
       const Column = Object.keys(correctedJson[1]).filter(
         (item) => item !== ""
       ).length;
-      setNumberOfLines(Row);
-      setNumberOfFrontSideColumn(Column);
+
+      setNumberOfLines(Row); //setting number of rows in excel
+      setNumberOfFrontSideColumn(Column); //setting number of columns in excel
       setExcelJsonFile(correctedJson);
       setImages(images);
     } catch (error) {
       console.log(error);
+      // toast.error(error.message);
+    } finally {
+      setScannerLoading(false);
+    }
+  };
+  const scanner2Handler = async () => {
+    setScannerLoading(true);
+    setShowScanner(false);
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/GetSampleData/2"
+      );
+      const { data, images } = response.data;
+      const jsonData = data;
+      const correctedJson = jsonData
+        .map((item) => {
+          const filteredItem = Object.fromEntries(
+            Object.entries(item).filter(([key, value]) => key !== "")
+          );
 
+          // Only include the item if it's not empty
+          return Object.keys(filteredItem).length > 0 ? filteredItem : null;
+        })
+        .filter((item) => item !== null); // Remove nulls from the resulting array
+      const Row = correctedJson.length;
+      const Column = Object.keys(correctedJson[1]).filter(
+        (item) => item !== ""
+      ).length;
+
+      setNumberOfLines(Row); //setting number of rows in excel
+      setNumberOfFrontSideColumn(Column); //setting number of columns in excel
+      setExcelJsonFile(correctedJson);
+      setImages(images);
+    } catch (error) {
+      console.log(error);
       // toast.error(error.message);
     } finally {
       setScannerLoading(false);
@@ -2319,6 +2357,25 @@ const SimplexTemplateModal = (props) => {
         </Modal.Header>
         <Modal.Body style={{ height: "65dvh" }}>
           <>
+            {scannerLoading && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "rgba(0, 0, 0, 0.2)", // Slightly opaque background
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  zIndex: 999,
+                  pointerEvents: "auto", // Make the overlay not clickable
+                }}
+              >
+                <Spinner />
+              </div>
+            )}
             <div className="container mt-4">
               <style jsx>{`
                 .upload-box {
@@ -2543,36 +2600,17 @@ const SimplexTemplateModal = (props) => {
         aria-labelledby="modal-custom-navbar"
         centered
         dialogClassName="modal-50w"
-        backdrop="static"
         keyboard={false}
       >
         <Modal.Header>
           <Modal.Title id="modal-custom-navbar">Select Scanner</Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ height: "16dvh", overflow: "auto" }}>
-          {scannerLoading && (
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                backgroundColor: "rgba(0, 0, 0, 0.2)", // Slightly opaque background
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                zIndex: 999,
-                pointerEvents: "auto", // Make the overlay not clickable
-              }}
-            >
-              <Spinner />
-            </div>
-          )}
+     
           <Row>
             <Col lg={6} md={6} className="mb-4">
               <div
-                onClick={systemHandler}
+                onClick={scanner1Handler}
                 className="upload-box p-3 text-center border rounded"
               >
                 <h1 className="fs-3 text-dark">SR 3500H</h1>
@@ -2580,7 +2618,7 @@ const SimplexTemplateModal = (props) => {
             </Col>
             <Col lg={6} md={6} className="mb-4">
               <div
-                onClick={scannerHandler}
+                onClick={scanner2Handler}
                 className="upload-box p-3 text-center border rounded bg-cover "
                 style={{ backgroundImage: `url(${backgroundImage})` }}
               >

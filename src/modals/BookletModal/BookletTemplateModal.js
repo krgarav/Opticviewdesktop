@@ -135,6 +135,7 @@ const BookletTemplateModal = (props) => {
   const [images, setImages] = useState([]);
   const [showFront, setShowFront] = useState(true);
   const [baseUrl, setBaseUrl] = useState(null);
+  const [showScanner, setShowScanner] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
@@ -504,10 +505,48 @@ const BookletTemplateModal = (props) => {
     }
   };
 
-  const scannerHandler = async () => {
+  const scanner1Handler = async () => {
     setScannerLoading(true);
+    setShowScanner(false);
     try {
-      const response = await axios.post("http://localhost:5000/GetSampleData");
+      const response = await axios.post(
+        "http://localhost:5000/GetSampleData/1"
+      );
+      const { data, images } = response.data;
+      const jsonData = data;
+      const correctedJson = jsonData
+        .map((item) => {
+          const filteredItem = Object.fromEntries(
+            Object.entries(item).filter(([key, value]) => key !== "")
+          );
+
+          // Only include the item if it's not empty
+          return Object.keys(filteredItem).length > 0 ? filteredItem : null;
+        })
+        .filter((item) => item !== null); // Remove nulls from the resulting array
+      const Row = correctedJson.length;
+      const Column = Object.keys(correctedJson[1]).filter(
+        (item) => item !== ""
+      ).length;
+
+      setNumberOfLines(Row); //setting number of rows in excel
+      setNumberOfFrontSideColumn(Column); //setting number of columns in excel
+      setExcelJsonFile(correctedJson);
+      setImages(images);
+    } catch (error) {
+      console.log(error);
+      // toast.error(error.message);
+    } finally {
+      setScannerLoading(false);
+    }
+  };
+  const scanner2Handler = async () => {
+    setScannerLoading(true);
+    setShowScanner(false);
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/GetSampleData/2"
+      );
       const { data, images } = response.data;
       const jsonData = data;
       const correctedJson = jsonData
@@ -2230,7 +2269,9 @@ const BookletTemplateModal = (props) => {
                 </Col>
                 <Col lg={6} md={6} className="mb-4">
                   <div
-                    onClick={scannerHandler}
+                    onClick={() => {
+                      setShowScanner(true);
+                    }}
                     className="upload-box p-4 text-center border rounded"
                   >
                     <h1>Upload From Scanner</h1>
@@ -2347,7 +2388,7 @@ const BookletTemplateModal = (props) => {
         aria-labelledby="modal-custom-navbar"
         centered
         dialogClassName="modal-50w"
-        backdrop="static"
+        // backdrop="static"
         keyboard={false}
       >
         <Modal.Header>
@@ -2378,6 +2419,49 @@ const BookletTemplateModal = (props) => {
             Save
           </Button>
         </Modal.Footer>
+      </Modal>
+      <Modal
+        show={showScanner}
+        size="md"
+        aria-labelledby="modal-custom-navbar"
+        centered
+        dialogClassName="modal-50w"
+        keyboard={false}
+      >
+        <Modal.Header>
+          <Modal.Title id="modal-custom-navbar">Select Scanner</Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ height: "16dvh", overflow: "auto" }}>
+          <Row>
+            <Col lg={6} md={6} className="mb-4">
+              <div
+                onClick={scanner1Handler}
+                className="upload-box p-3 text-center border rounded"
+              >
+                <h1 className="fs-3 text-dark">SR 3500H</h1>
+              </div>
+            </Col>
+            <Col lg={6} md={6} className="mb-4">
+              <div
+                onClick={scanner2Handler}
+                className="upload-box p-3 text-center border rounded bg-cover "
+                // style={{ backgroundImage: `url(${backgroundImage})` }}
+              >
+                <h1>SR 8000H</h1>
+              </div>
+            </Col>
+          </Row>
+        </Modal.Body>
+        {/* <Modal.Footer>
+          <Button
+            variant="warning"
+            onClick={() => {
+              setShowScanner(false);
+            }}
+          >
+            Close
+          </Button>
+        </Modal.Footer> */}
       </Modal>
     </>
   );
