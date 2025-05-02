@@ -60,6 +60,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import { SimplexImageUrl } from "data/imageData";
 import { debounce } from "lodash";
+import backgroundImage from "./../assets/img/sr8000.jpg";
 const SimplexTemplateModal = (props) => {
   const [modalShow, setModalShow] = useState(false);
   const [name, setName] = useState("");
@@ -2548,7 +2549,7 @@ const SimplexTemplateModal = (props) => {
         <Modal.Header>
           <Modal.Title id="modal-custom-navbar">Select Scanner</Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{ height: "15dvh", overflow: "auto" }}>
+        <Modal.Body style={{ height: "16dvh", overflow: "auto" }}>
           {scannerLoading && (
             <div
               style={{
@@ -2572,7 +2573,7 @@ const SimplexTemplateModal = (props) => {
             <Col lg={6} md={6} className="mb-4">
               <div
                 onClick={systemHandler}
-                className="upload-box p-4 text-center border rounded"
+                className="upload-box p-3 text-center border rounded"
               >
                 <h1 className="fs-3 text-dark">SR 3500H</h1>
               </div>
@@ -2580,7 +2581,8 @@ const SimplexTemplateModal = (props) => {
             <Col lg={6} md={6} className="mb-4">
               <div
                 onClick={scannerHandler}
-                className="upload-box p-4 text-center border rounded"
+                className="upload-box p-3 text-center border rounded bg-cover "
+                style={{ backgroundImage: `url(${backgroundImage})` }}
               >
                 <h1>SR 8000H</h1>
               </div>
