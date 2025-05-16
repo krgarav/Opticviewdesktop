@@ -1181,7 +1181,7 @@ const DesignTemplate = () => {
           : {};
         return { ...rest, formFieldCoordinates };
       });
-    const { imageCroppingDTO } = template[0];
+    const { imageCroppingDTO, linkedCoordinates } = template[0];
 
     // Assemble the full request data
     const fullRequestData = {
@@ -1193,6 +1193,7 @@ const DesignTemplate = () => {
       skewMarksWindowParameters,
       formFieldWindowParameters,
       imageCroppingDTO: imageCroppingDTO ? imageCroppingDTO : [],
+      linkedCoordinates,
     };
     handleCancel();
     localStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
@@ -1822,9 +1823,15 @@ const DesignTemplate = () => {
                       </div>
                     ))}
                     {linkFields.map((data, index) => {
-                        const border = currentLinkField === index ? "4px dashed red" : "4px dashed rgb(142, 95, 218)";
-                        const boxShadow = currentLinkField === index ? "0 0 5px rgba(255, 0, 0, 0.5)" : "";
-                        return (
+                      const border =
+                        currentLinkField === index
+                          ? "4px dashed red"
+                          : "4px dashed rgb(142, 95, 218)";
+                      const boxShadow =
+                        currentLinkField === index
+                          ? "0 0 5px rgba(255, 0, 0, 0.5)"
+                          : "";
+                      return (
                         <div
                           key={index}
                           ref={(el) => (divRefs.current[index] = el)}

@@ -117,7 +117,7 @@ const DesignTemplate = () => {
   const [sizes, setSizes] = useState({});
   const [baseUrl, setBaseUrl] = useState(null);
   const [trigger, setTrigger] = useState(false);
-console.log("caleed")
+  console.log("caleed");
   const location = useLocation();
   const {
     totalColumns,
@@ -140,7 +140,6 @@ console.log("caleed")
   const divRefs = useRef([]);
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
-  console.log(dataCtx.allTemplates);
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (!dataCtx?.allTemplates) return;
