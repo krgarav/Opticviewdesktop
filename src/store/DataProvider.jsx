@@ -419,12 +419,13 @@ const DataProvider = (props) => {
           const copiedLayout = { ...currentTemplate.layoutParameters };
           delete copiedLayout.Coordinate;
           copiedLayout.idMarksPattern = "000000000000000000000000000";
-          copiedLayout.columnNumber = 0;
-          copiedLayout.columnStart = 0;
-          copiedLayout.columnStep = 0;
-          copiedLayout.rowNumber = 0;
-          copiedLayout.rowStart = 0;
-          copiedLayout.rowStep = 0;
+          copiedLayout.columnNumber = 3;
+          copiedLayout.columnStart = 1;
+          copiedLayout.columnStep = 1;
+          copiedLayout.rowNumber = 1;
+          copiedLayout.rowStart = 1;
+          copiedLayout.rowStep = 1;
+          copiedLayout.ngAction = "0x00000001";
           copiedLayout.layoutCoordinates = {};
           currentTemplate.layoutParameters = copiedLayout;
 
@@ -482,12 +483,14 @@ const DataProvider = (props) => {
           const copiedLayout = { ...currentTemplate.layoutParameters };
           delete copiedLayout.Coordinate;
           copiedLayout.idMarksPattern = "000000000000000000000000000";
-          copiedLayout.columnNumber = 0;
-          copiedLayout.columnStart = 0;
-          copiedLayout.columnStep = 0;
-          copiedLayout.rowNumber = 0;
-          copiedLayout.rowStart = 0;
-          copiedLayout.rowStep = 0;
+          copiedLayout.columnNumber = 3;
+          copiedLayout.columnStart = 1;
+          copiedLayout.columnStep = 1;
+          copiedLayout.rowNumber = 1;
+          copiedLayout.rowStart = 1;
+          copiedLayout.rowStep = 1;
+          copiedLayout.ngAction = "0x00000001";
+          copiedLayout.layoutCoordinates = {};
           currentTemplate.layoutParameters = copiedLayout;
           break;
       }

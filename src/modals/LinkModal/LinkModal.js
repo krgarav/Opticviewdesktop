@@ -23,9 +23,31 @@ const LinkModal = (props) => {
   const dataCtx = useContext(DataContext);
   React.useEffect(() => {
     if (props.selectedCoordinates.length !== 0) {
-      const fields = props.selectedCoordinates.filter((field) => {
-        return field.fieldType === props.fieldType;
-      });
+      const linkedCoordinates = dataCtx.allTemplates[0][0].linkedCoordinates;
+
+      const filteredLinkedCoordinates = linkedCoordinates.filter((coordinate) =>
+        coordinate.fieldType.includes(props.fieldType)
+      );
+
+      const fields = props.selectedCoordinates.filter(
+        (field) => field.fieldType === props.fieldType
+      );
+
+      if (filteredLinkedCoordinates.length !== 0) {
+        const flattened = filteredLinkedCoordinates
+          .map((item) => item.fieldIndexes)
+          .flat();
+
+        // ✅ Assuming flattened indexes are based on `props.selectedCoordinates`
+        const result = fields.filter(
+          (field) =>
+            !flattened.includes(props.selectedCoordinates.indexOf(field))
+        );
+
+        setFields(result);
+        return;
+      }
+
       setFields(fields);
     }
   }, [props.selectedCoordinates, props.fieldType]);

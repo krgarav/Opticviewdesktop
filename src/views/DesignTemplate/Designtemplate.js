@@ -955,6 +955,7 @@ const DesignTemplate = () => {
       setBlankValue(data?.blankValue);
       setNoOfStepInRow(data?.rowStep);
       setNoOfStepInCol(data?.columnStep);
+      setCustomValue(data?.customFieldValue);
     } else if (selectedField?.fieldType === "formField") {
       const parameters = template[0].formFieldWindowParameters;
 
@@ -998,6 +999,7 @@ const DesignTemplate = () => {
       setPrefix(data?.prefix);
       setNoOfStepInRow(data?.rowStep);
       setNoOfStepInCol(data?.columnStep);
+      setCustomValue(data?.customFieldValue);
     } else if (selectedField?.fieldType === "skewMarkField") {
       const parameters = template[0].skewMarksWindowParameters;
       const index = parameters.findIndex((item) =>

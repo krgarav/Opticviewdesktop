@@ -106,7 +106,7 @@ const EditDesignTemplate = () => {
 
     if (template) {
       const imageData = template[0][0]?.imageCroppingDTO;
-    
+
       if (imageData) {
         setImagesSelectedCount(imageData?.length);
       }
@@ -855,7 +855,7 @@ const EditDesignTemplate = () => {
     };
 
     setSelectionIndex(index);
-   
+
     const template = dataCtx.allTemplates[0];
     if (selectedField?.fieldType === "idField") {
       const data = template[0].layoutParameters;
@@ -955,7 +955,7 @@ const EditDesignTemplate = () => {
       const index = parameters.findIndex((item) =>
         isEqual(item?.Coordinate, formattedSelectedFile)
       );
-    
+
       if (index === -1) {
         alert("No data found");
       }
@@ -1002,7 +1002,7 @@ const EditDesignTemplate = () => {
       fieldType: selectedField.fieldType,
       name: selectedField.name,
     };
-   
+
     setSelectedCoordinates((prevState) => {
       const copiedState = [...prevState];
       copiedState.splice(index, 1); // Remove the item at the specified index
@@ -1833,8 +1833,14 @@ const EditDesignTemplate = () => {
                       </div>
                     ))}
                     {linkFields.map((data, index) => {
-                      const border = currentLinkField === index ? "4px dashed red" : "4px dashed rgb(142, 95, 218)";
-                      const boxShadow = currentLinkField === index ? "0 0 5px rgba(255, 0, 0, 0.5)" : "";
+                      const border =
+                        currentLinkField === index
+                          ? "4px dashed red"
+                          : "4px dashed rgb(142, 95, 218)";
+                      const boxShadow =
+                        currentLinkField === index
+                          ? "0 0 5px rgba(255, 0, 0, 0.5)"
+                          : "";
                       return (
                         <div
                           key={index}
@@ -2878,7 +2884,6 @@ const EditDesignTemplate = () => {
         onClose={() => setShowSideBar(false)}
         selectedWindow={selectedCoordinates}
       />
-
       <RightSideBar
         isOpen={showRightSideBar}
         onClose={() => setShowRightSideBar(false)}
