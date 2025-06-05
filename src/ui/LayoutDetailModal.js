@@ -47,6 +47,8 @@ import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
 import CustomTooltip from "components/CustomTooltip";
 import { Carousel } from "react-responsive-carousel";
+import { sideOptionNumber } from "data/helperData";
+import VirtualizedSelect from "components/VirtualSelect";
 
 const LayoutDetailModal = (props) => {
   const [modalShow, setModalShow] = useState(false);
@@ -1528,15 +1530,45 @@ const LayoutDetailModal = (props) => {
                           Start Position:
                         </label>
                         <div className="col-md-10">
-                          <input
+                          {/* <VirtualizedSelect options={sideOptionNumber} /> */}
+                          {/* <input
                             value={startPosition}
                             type="number"
+                            step="0.01"
                             className="form-control"
-                            placeholder="Enter value between 0.00mm and 355.0mm"
+                            placeholder="Enter value between 0.00mm and 355.00mm"
                             onChange={(e) => {
-                              setStartPosition(e.target.value);
+                              const value = parseFloat(
+                                e.target.value.toFixed(2)
+                              );
+
+                              if (!isNaN(value) && value.toFixed(2)) {
+                                if (value < 0.01) {
+                                  setStartPosition(0.01);
+                                } else if (value > 355) {
+                                  setStartPosition(355);
+                                } else {
+                                  setStartPosition(value);
+                                }
+                              } else {
+                                setStartPosition(""); // Optionally clear invalid input
+                              }
+                            }}
+                          /> */}
+
+                          <input
+                            type="range"
+                            min="0.01"
+                            max="355"
+                            step="0.01"
+                            value={startPosition}
+                            className="form-range"
+                            onChange={(e) => {
+                              const value = parseFloat(e.target.value);
+                              setStartPosition(value);
                             }}
                           />
+                          <span>{startPosition} mm</span>
                         </div>
                       </Row>
                       <Row className="mb-3">
@@ -1549,14 +1581,17 @@ const LayoutDetailModal = (props) => {
                         </label>
                         <div className="col-md-10">
                           <input
-                            type="number"
+                            type="range"
+                            min="0.8"
+                            max="92"
+                            step="0.1"
                             value={fontSpace}
-                            className="form-control"
-                            placeholder="Enter value between 0.8mm and 92.0mm"
-                            onChange={(e) => {
-                              setFontSpace(e.target.value);
-                            }}
+                            className="form-range"
+                            onChange={(e) =>
+                              setFontSpace(parseFloat(e.target.value))
+                            }
                           />
+                          <span>{fontSpace} mm</span>
                         </div>
                       </Row>
                       <Row className="mb-3">
@@ -1568,6 +1603,10 @@ const LayoutDetailModal = (props) => {
                           Digit :
                         </label>
                         <div className="col-md-10">
+                          <Select
+                            placeholder="Select The Digits Of Sequence Number"
+                            
+                          />
                           <input
                             type="number"
                             value={printDigit}

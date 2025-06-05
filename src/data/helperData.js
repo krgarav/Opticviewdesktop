@@ -248,3 +248,19 @@ export const sideOption = [
   { id: "1", name: "Front" },
   { id: "2", name: "Back" },
 ];
+
+export const sideOptionNumber = Array.from({ length: 35500 }, (_, i) => {
+  const value = ((i + 1) / 100).toFixed(2);
+  return { id: value, name: value };
+});
+
+export const digitType = [
+  { id: "1", name: "1 Digit" },
+  { id: "2", name: "2 Digit" },
+  { id: "3", name: "3 Digit" },
+  { id: "4", name: "4 Digit" },
+  { id: "5", name: "5 Digit" },
+  { id: "6", name: "6 Digit" },
+  { id: "7", name: "7 Digit" },
+  { id: "8", name: "8 Digit" },
+];
