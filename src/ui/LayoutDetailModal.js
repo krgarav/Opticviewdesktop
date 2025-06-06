@@ -1531,30 +1531,29 @@ const LayoutDetailModal = (props) => {
                         </label>
                         <div className="col-md-10">
                           {/* <VirtualizedSelect options={sideOptionNumber} /> */}
-                          {/* <input
+                          <input
                             value={startPosition}
                             type="number"
                             step="0.01"
                             className="form-control"
                             placeholder="Enter value between 0.00mm and 355.00mm"
                             onChange={(e) => {
-                              const value = parseFloat(
-                                e.target.value.toFixed(2)
-                              );
+                              const value = parseFloat(e.target.value);
 
-                              if (!isNaN(value) && value.toFixed(2)) {
-                                if (value < 0.01) {
-                                  setStartPosition(0.01);
-                                } else if (value > 355) {
-                                  setStartPosition(355);
-                                } else {
-                                  setStartPosition(value);
-                                }
+                              if (e.target.value === "") {
+                                setStartPosition("");
+                              } else if (value < 0.01) {
+                                // If you want to store as string with 2 decimals
+                                setStartPosition(value.toFixed(2));
+                                // Or, if you want to store as number: setStartPosition(parseFloat(value.toFixed(2)));
                               } else {
-                                setStartPosition(""); // Optionally clear invalid input
+                                // Value >= 0.01
+                                setStartPosition(value.toFixed(2));
                               }
+
+                              console.log("Value:", value.toFixed(2));
                             }}
-                          /> */}
+                          />
 
                           <input
                             type="range"
@@ -1603,10 +1602,7 @@ const LayoutDetailModal = (props) => {
                           Digit :
                         </label>
                         <div className="col-md-10">
-                          <Select
-                            placeholder="Select The Digits Of Sequence Number"
-                            
-                          />
+                          <Select placeholder="Select The Digits Of Sequence Number" />
                           <input
                             type="number"
                             value={printDigit}
