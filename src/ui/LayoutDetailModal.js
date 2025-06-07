@@ -49,6 +49,7 @@ import CustomTooltip from "components/CustomTooltip";
 import { Carousel } from "react-responsive-carousel";
 import { sideOptionNumber } from "data/helperData";
 import VirtualizedSelect from "components/VirtualSelect";
+import { digitType } from "data/helperData";
 
 const LayoutDetailModal = (props) => {
   const [modalShow, setModalShow] = useState(false);
@@ -113,8 +114,8 @@ const LayoutDetailModal = (props) => {
   const [printOrientation, setPrintOrientation] = useState();
   const [printMode, setPrintMode] = useState();
   const [printCustom, setPrintCustom] = useState(printCustomOption[0]);
-  const [startPosition, setStartPosition] = useState(null);
-  const [fontSpace, setFontSpace] = useState(null);
+  const [startPosition, setStartPosition] = useState(0.01);
+  const [fontSpace, setFontSpace] = useState(0.8);
   const [printDigit, setPrintDigit] = useState(null);
   const [printStartNumber, setPrintStartNumber] = useState(null);
   const [printCustomValue, setPrintCustomValue] = useState(null);
@@ -122,6 +123,7 @@ const LayoutDetailModal = (props) => {
   const [value, setValue] = React.useState([5, 6]);
   const [images, setImages] = useState([]);
   const [showFront, setShowFront] = useState(true);
+  const [prefix, setPrefix] = useState("0000");
 
   const handleChange = (event, newValue, activeThumb) => {
     const minDistance = 1;
@@ -1529,32 +1531,7 @@ const LayoutDetailModal = (props) => {
                         >
                           Start Position:
                         </label>
-                        <div className="col-md-10">
-                          {/* <VirtualizedSelect options={sideOptionNumber} /> */}
-                          <input
-                            value={startPosition}
-                            type="number"
-                            step="0.01"
-                            className="form-control"
-                            placeholder="Enter value between 0.00mm and 355.00mm"
-                            onChange={(e) => {
-                              const value = parseFloat(e.target.value);
-
-                              if (e.target.value === "") {
-                                setStartPosition("");
-                              } else if (value < 0.01) {
-                                // If you want to store as string with 2 decimals
-                                setStartPosition(value.toFixed(2));
-                                // Or, if you want to store as number: setStartPosition(parseFloat(value.toFixed(2)));
-                              } else {
-                                // Value >= 0.01
-                                setStartPosition(value.toFixed(2));
-                              }
-
-                              console.log("Value:", value.toFixed(2));
-                            }}
-                          />
-
+                        <div className="col-md-10 d-flex flex-row align-items-center gap-3">
                           <input
                             type="range"
                             min="0.01"
@@ -1562,12 +1539,32 @@ const LayoutDetailModal = (props) => {
                             step="0.01"
                             value={startPosition}
                             className="form-range"
+                            style={{ flex: 1 }} // make slider take available space
                             onChange={(e) => {
                               const value = parseFloat(e.target.value);
                               setStartPosition(value);
                             }}
                           />
-                          <span>{startPosition} mm</span>
+
+                          <div className="d-flex align-items-center">
+                            <input
+                              value={startPosition}
+                              type="number"
+                              step="0.01"
+                              className="form-control"
+                              style={{ maxWidth: "150px" }} // control input width
+                              placeholder="Enter value between 0.00mm and 355.00mm"
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value);
+                                if (e.target.value === "") {
+                                  setStartPosition("");
+                                } else {
+                                  setStartPosition(value.toFixed(2));
+                                }
+                              }}
+                            />
+                            <span className="ms-2">mm</span>
+                          </div>
                         </div>
                       </Row>
                       <Row className="mb-3">
@@ -1578,7 +1575,7 @@ const LayoutDetailModal = (props) => {
                         >
                           Font Space:
                         </label>
-                        <div className="col-md-10">
+                        <div className="col-md-10 d-flex flex-row align-items-center gap-3">
                           <input
                             type="range"
                             min="0.8"
@@ -1586,54 +1583,103 @@ const LayoutDetailModal = (props) => {
                             step="0.1"
                             value={fontSpace}
                             className="form-range"
-                            onChange={(e) =>
-                              setFontSpace(parseFloat(e.target.value))
-                            }
-                          />
-                          <span>{fontSpace} mm</span>
-                        </div>
-                      </Row>
-                      <Row className="mb-3">
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-2 col-form-label "
-                          style={{ fontSize: ".9rem" }}
-                        >
-                          Digit :
-                        </label>
-                        <div className="col-md-10">
-                          <Select placeholder="Select The Digits Of Sequence Number" />
-                          <input
-                            type="number"
-                            value={printDigit}
-                            className="form-control"
-                            placeholder="Enter the digits of sequence number (MAX 8digits)"
+                            style={{ flex: 1 }}
                             onChange={(e) => {
-                              setPrintDigit(e.target.value);
+                              const value = parseFloat(e.target.value);
+                              setFontSpace(parseFloat(value.toFixed(1))); // always store as number with 1 decimal
                             }}
                           />
+
+                          <div className="d-flex align-items-center">
+                            <input
+                              type="number"
+                              min="0.8"
+                              max="92"
+                              step="0.1"
+                              value={fontSpace}
+                              className="form-control"
+                              style={{ maxWidth: "120px" }}
+                              placeholder="Enter value between 0.8mm and 92.0mm"
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value);
+                                if (e.target.value === "") {
+                                  setFontSpace(""); // allow empty input
+                                } else {
+                                  setFontSpace(parseFloat(value.toFixed(1)));
+                                }
+                              }}
+                            />
+                            <span className="ms-2">mm</span>
+                          </div>
                         </div>
                       </Row>
-                      <Row className="mb-3">
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-2 col-form-label "
-                          style={{ fontSize: ".85rem" }}
-                        >
-                          Start Number :
-                        </label>
-                        <div className="col-md-10">
-                          <input
-                            type="number"
-                            value={printStartNumber}
-                            className="form-control"
-                            placeholder="Enter the start number for print sequence number"
-                            onChange={(e) => {
-                              setPrintStartNumber(e.target.value);
-                            }}
-                          />
-                        </div>
-                      </Row>
+                      <div
+                        style={{
+                          border: "1px solid #ccc",
+                          margin: "0",
+                          padding: "10px",
+                          borderRadius: "5px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                         <small className="text-red">
+                          Select options for serial numbers
+                        </small>
+                        <Row className="mb-3">
+                          <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label "
+                            style={{ fontSize: ".9rem" }}
+                          >
+                            Digit :
+                          </label>
+                          <div className="col-md-10">
+                            <Select
+                              placeholder="Select The Digits Of Sequence Number"
+                              options={digitType}
+                              getOptionLabel={(option) => option?.name || ""}
+                              getOptionValue={(option) =>
+                                option?.id?.toString() || ""
+                              }
+                              value={printDigit}
+                              onChange={(selectedValue) => {
+                                setPrintDigit(selectedValue);
+                                const id = selectedValue.id;
+                                const zeroes = "0".repeat(parseInt(id));
+                                setPrefix(zeroes);
+                              }}
+                            />
+                          </div>
+                        </Row>
+                        <Row className="mb-3">
+                          <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label "
+                            style={{ fontSize: ".85rem" }}
+                          >
+                            Start Number :
+                          </label>
+                          <div className="col-md-10 d-flex flex-row align-items-center gap-3">
+                            <input
+                              type="number"
+                              value={prefix}
+                              className="form-control"
+                              disabled
+                              
+                            />
+                            <input
+                              type="number"
+                              value={printStartNumber}
+                              className="form-control"
+                              placeholder="Enter the start number for print sequence number"
+                              onChange={(e) => {
+                                setPrintStartNumber(e.target.value);
+                              }}
+                            />
+                          </div>
+                        </Row>
+                       
+                      </div>
                       <Row className="mb-3">
                         <label
                           htmlFor="example-text-input"
