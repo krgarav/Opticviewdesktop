@@ -182,7 +182,7 @@ export const imageTypeData = [
 export const imageColorTypeData = [
   { id: "color", name: "Color (Full Color)" },
   { id: "grayscale", name: "Grayscale (Monochrome)" },
-  { id: "blackandwhite", name: "Black and White (Binary)" },
+  { id: "blackandwhite", name: "Black And White (Binary)" },
 ];
 export const imageResoModeData = [
   { id: "0", name: "600" },
@@ -210,18 +210,18 @@ export const printOptionData = [
 
 export const printOrientationOption = [
   { id: "1", name: "Normal" },
-  { id: "2", name: "180 degree rotation" },
+  { id: "2", name: "180 Degree Rotation" },
 ];
 export const printModeOption = [
-  { id: "1", name: "Print after feed" },
-  { id: "2", name: "Feed and print" },
+  { id: "1", name: "Print After Feed" },
+  { id: "2", name: "Feed And Print" },
 ];
 
 export const printCustomOption = [
   { id: "", name: "Print Blank" },
   { id: "date", name: "Date" },
   { id: "time", name: "Time " },
-  { id: "datetime", name: "Date and Time " },
+  { id: "datetime", name: "Date And Time " },
   { id: "custom", name: "Custom " },
 ];
 

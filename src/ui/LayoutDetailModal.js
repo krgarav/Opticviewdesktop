@@ -124,7 +124,7 @@ const LayoutDetailModal = (props) => {
   const [images, setImages] = useState([]);
   const [showFront, setShowFront] = useState(true);
   const [prefix, setPrefix] = useState("0000");
-
+  const [prefixzeroes, setPrefixZeroes] = useState("0000");
   const handleChange = (event, newValue, activeThumb) => {
     const minDistance = 1;
     if (!Array.isArray(newValue)) {
@@ -1548,6 +1548,7 @@ const LayoutDetailModal = (props) => {
 
                           <div className="d-flex align-items-center">
                             <input
+                              disabled
                               value={startPosition}
                               type="number"
                               step="0.01"
@@ -1592,6 +1593,7 @@ const LayoutDetailModal = (props) => {
 
                           <div className="d-flex align-items-center">
                             <input
+                              disabled
                               type="number"
                               min="0.8"
                               max="92"
@@ -1622,7 +1624,7 @@ const LayoutDetailModal = (props) => {
                           marginBottom: "10px",
                         }}
                       >
-                         <small className="text-red">
+                        <small className="text-red">
                           Select options for serial numbers
                         </small>
                         <Row className="mb-3">
@@ -1646,6 +1648,7 @@ const LayoutDetailModal = (props) => {
                                 setPrintDigit(selectedValue);
                                 const id = selectedValue.id;
                                 const zeroes = "0".repeat(parseInt(id));
+                                setPrefixZeroes(zeroes);
                                 setPrefix(zeroes);
                               }}
                             />
@@ -1659,26 +1662,45 @@ const LayoutDetailModal = (props) => {
                           >
                             Start Number :
                           </label>
-                          <div className="col-md-10 d-flex flex-row align-items-center gap-3">
+                          <div className="col-md-10 d-flex flex-row align-items-center gap-3 w-[20%]">
                             <input
                               type="number"
                               value={prefix}
                               className="form-control"
+                              style={{ width: "20%" }}
                               disabled
-                              
                             />
                             <input
                               type="number"
+                              style={{ width: "80%" }}
                               value={printStartNumber}
-                              className="form-control"
-                              placeholder="Enter the start number for print sequence number"
+                              className="form-control  w-[80%]"
+                              placeholder="Enter The Start Number For Print Sequence Number"
                               onChange={(e) => {
-                                setPrintStartNumber(e.target.value);
+                                const startNumber = e.target.value;
+
+                                if (startNumber.length <= prefixzeroes.length) {
+                                  const num = parseInt(startNumber);
+
+                                  if (!isNaN(num)) {
+                                    // Format number with leading zeroes
+                                    const zeroedNum =
+                                      prefixzeroes.substring(
+                                        0,
+                                        prefixzeroes.length - startNumber.length
+                                      ) + startNumber;
+                                    setPrefix(zeroedNum);
+                                  } else {
+                                    // Empty input → show full prefixzeroes
+                                    setPrefix(prefixzeroes);
+                                  }
+
+                                  setPrintStartNumber(startNumber);
+                                }
                               }}
                             />
                           </div>
                         </Row>
-                       
                       </div>
                       <Row className="mb-3">
                         <label
