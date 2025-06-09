@@ -1413,6 +1413,7 @@ const LayoutDetailModal = (props) => {
                             getOptionValue={(option) =>
                               option?.id?.toString() || ""
                             }
+                             menuPlacement="top"
                             styles={{
                               control: (provided, state) => ({
                                 ...provided,
@@ -1768,6 +1769,7 @@ const LayoutDetailModal = (props) => {
                             getOptionValue={(option) =>
                               option?.id?.toString() || ""
                             }
+                            menuPlacement="top"
                           />
                         </div>
                       </Row>
@@ -1785,7 +1787,7 @@ const LayoutDetailModal = (props) => {
                               type="text"
                               value={printCustomValue}
                               className="form-control"
-                              placeholder="Enter the custom value to be printed"
+                              placeholder="Enter The Custom Value To Be Printed"
                               onChange={(e) => {
                                 setPrintCustomValue(e.target.value);
                               }}

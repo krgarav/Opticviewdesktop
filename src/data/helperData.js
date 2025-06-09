@@ -219,10 +219,10 @@ export const printModeOption = [
 
 export const printCustomOption = [
   { id: "", name: "Print Blank" },
-  { id: "date", name: "Date" },
-  { id: "time", name: "Time " },
-  { id: "datetime", name: "Date And Time " },
-  { id: "custom", name: "Custom " },
+  { id: "date", name: "Date (DD-MM-YYYY)" },
+  { id: "time", name: "Time (HH:MM:SS)" },
+  { id: "datetime", name: "Date And Time (DD-MM-YYYY-HH:MM:SS)" },
+  { id: "custom", name: "Custom" },
 ];
 
 export const sensitivityType = [
