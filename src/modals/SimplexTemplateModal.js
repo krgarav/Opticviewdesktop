@@ -1410,6 +1410,7 @@ const SimplexTemplateModal = (props) => {
                                   : provided.border,
                               }),
                             }}
+                            
                           />
                         </div>
                       </Row>
