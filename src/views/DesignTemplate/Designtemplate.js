@@ -1580,7 +1580,7 @@ const DesignTemplate = () => {
         </Button>
       )}
       <div>
-        <div style={{ height:"72vh", overflow: "auto", width: "100%" }}>
+        <div style={{ height:"74vh", overflow: "auto", width: "100%" }}>
           <Button
             onClick={sendHandler}
             disabled={loading}
@@ -1925,7 +1925,7 @@ const DesignTemplate = () => {
           </div>
         </div>
         <div >
-          <FieldsFooter  selected={selectedCoordinates} />
+          <FieldsFooter  handleEyeClick={handleEyeClick} selected={selectedCoordinates} />
         </div>
       </div>
 
