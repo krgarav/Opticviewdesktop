@@ -29,6 +29,7 @@ import FieldDetails from "modals/FieldDetails";
 import AddLinkIcon from "@mui/icons-material/AddLink";
 import LinkModal from "modals/LinkModal/LinkModal";
 import RightSideBar from "components/RightSideBar/RightSideBar";
+import FieldsFooter from "components/Footers/FieldsFooter";
 
 const DesignTemplate = () => {
   const [selected, setSelected] = useState({});
@@ -1578,234 +1579,219 @@ const DesignTemplate = () => {
           Show Modal
         </Button>
       )}
+      <div>
+        <div style={{ height:"72vh", overflow: "auto", width: "100%" }}>
+          <Button
+            onClick={sendHandler}
+            disabled={loading}
+            style={{
+              position: "fixed",
+              bottom: "50px", // Distance from the bottom of the screen
+              right: "50px", // Distance from the right of the screen
+              borderRadius: "50%",
+              width: "50px", // Width of the button
+              height: "50px", // Height of the button
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "50px", // Remove padding to center the text
+              zIndex: "999",
+              color: "white", // Optional: Set the text color
+              border: "none", // Optional: Remove border if desired
+              cursor: "pointer", // Optional: Change cursor to pointer on hover
+              display: "none",
+            }}
+          >
+            {!loading ? "Save" : "Saving"}
+          </Button>
 
-      <div style={{ overflow: "auto", width: "100%" }}>
-        <Button
-          onClick={sendHandler}
-          disabled={loading}
-          style={{
-            position: "fixed",
-            bottom: "50px", // Distance from the bottom of the screen
-            right: "50px", // Distance from the right of the screen
-            borderRadius: "50%",
-            width: "50px", // Width of the button
-            height: "50px", // Height of the button
-            justifyContent: "center",
-            alignItems: "center",
-            padding: "50px", // Remove padding to center the text
-            zIndex: "999",
-            color: "white", // Optional: Set the text color
-            border: "none", // Optional: Remove border if desired
-            cursor: "pointer", // Optional: Change cursor to pointer on hover
-            display: "none",
-          }}
-        >
-          {!loading ? "Save" : "Saving"}
-        </Button>
-
-        <div className="main-container">
-          <div className="containers">
-            <div className="d-flex">
-              <div style={{ marginRight: "1rem" }}>
-                <div className="top"></div>
-                {Array.from({ length: numRows }).map((_, rowIndex) => (
-                  <div key={rowIndex} className="row">
-                    <div
-                      className={
-                        bubbleType === "circle"
-                          ? "left-nums-circle"
-                          : "left-nums"
-                      }
-                    >
-                      {rowIndex + 1}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div>
-                <div className="top-row">
-                  <div className="corner"></div>
-                  {Array.from({ length: numCols }).map((_, index) => (
-                    <div key={index} className="top-num">
-                      {index + 1}
+          <div className="main-container">
+            <div className="containers">
+              <div className="d-flex">
+                <div style={{ marginRight: "1rem" }}>
+                  <div className="top"></div>
+                  {Array.from({ length: numRows }).map((_, rowIndex) => (
+                    <div key={rowIndex} className="row">
+                      <div
+                        className={
+                          bubbleType === "circle"
+                            ? "left-nums-circle"
+                            : "left-nums"
+                        }
+                      >
+                        {rowIndex + 1}
+                      </div>
                     </div>
                   ))}
                 </div>
-                <div
-                  id="grid-div"
-                  style={{
-                    border: "2px solid black",
-                    paddingTop: "1rem",
-                    paddingRight: "1.2rem",
-                    paddingLeft: "1rem",
-                    overflowY: "auto",
-                    // marginRight: "1rem"
-                    width: "max-content",
-                  }}
-                >
+                <div>
+                  <div className="top-row">
+                    <div className="corner"></div>
+                    {Array.from({ length: numCols }).map((_, index) => (
+                      <div key={index} className="top-num">
+                        {index + 1}
+                      </div>
+                    ))}
+                  </div>
                   <div
-                    className="grid"
-                    ref={imageRef}
-                    onMouseDown={handleMouseDown}
-                    onMouseUp={handleMouseUp}
-                    onMouseMove={handleMouseMove}
+                    id="grid-div"
+                    style={{
+                      border: "2px solid black",
+                      paddingTop: "1rem",
+                      paddingRight: "1.2rem",
+                      paddingLeft: "1rem",
+                      overflowY: "auto",
+                      // marginRight: "1rem"
+                      width: "max-content",
+                    }}
                   >
-                    {Array.from({ length: numRows }).map((_, rowIndex) => {
-                      const result = [...excelJsonFile.map(Object.values)];
+                    <div
+                      className="grid"
+                      ref={imageRef}
+                      onMouseDown={handleMouseDown}
+                      onMouseUp={handleMouseUp}
+                      onMouseMove={handleMouseMove}
+                    >
+                      {Array.from({ length: numRows }).map((_, rowIndex) => {
+                        const result = [...excelJsonFile.map(Object.values)];
 
-                      const templates = dataCtx.allTemplates[0];
-                      // const template = Array.isArray(templates)
-                      //   ? { ...templates[0] }
-                      //   : templates[0];
-                      const numberedJson = templates
-                        ? [
-                            ...templates[0]?.layoutParameters?.numberedExcelJsonFile.map(
-                              Object.values
-                            ),
-                          ]
-                        : [];
+                        const templates = dataCtx.allTemplates[0];
+                        // const template = Array.isArray(templates)
+                        //   ? { ...templates[0] }
+                        //   : templates[0];
+                        const numberedJson = templates
+                          ? [
+                              ...templates[0]?.layoutParameters?.numberedExcelJsonFile.map(
+                                Object.values
+                              ),
+                            ]
+                          : [];
 
-                      return (
-                        <div key={rowIndex} className="row">
-                          <div
-                            className={
-                              bubbleType === "circle"
-                                ? "left-num-circle"
-                                : "left-num"
-                            }
-                          >
-                            <div className="timing-mark "></div>
-                          </div>
-                          {Array.from({ length: numCols }).map(
-                            (_, colIndex) => {
-                              const num =
-                                (numberedJson[rowIndex] &&
-                                  numberedJson[rowIndex][colIndex]) !==
-                                undefined
-                                  ? numberedJson[rowIndex][colIndex]
-                                  : null;
-                              let bgColor =
-                                +result[rowIndex][colIndex] >=
-                                  +templates[0]?.layoutParameters
-                                    ?.iSensitivity &&
-                                result[rowIndex][colIndex] !== undefined
-                                  ? "black"
-                                  : "";
-
-                              if (num || num === 0) {
-                                bgColor = "lightgreen";
+                        return (
+                          <div key={rowIndex} className="row">
+                            <div
+                              className={
+                                bubbleType === "circle"
+                                  ? "left-num-circle"
+                                  : "left-num"
                               }
-                              let fontColor =
-                                rowIndex < result.length &&
-                                colIndex < result[rowIndex].length &&
-                                result[rowIndex][colIndex] != 0 &&
-                                result[rowIndex][colIndex] !== undefined
-                                  ? "lightgray"
-                                  : "black";
-                              if (num || num === 0) {
-                                fontColor = "black";
-                              }
-                              return (
-                                <div
-                                  key={colIndex}
-                                  style={{
-                                    backgroundColor: bgColor,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    fontSize:
-                                      bubbleType === "circle" ? "12px" : "8px",
-                                    color: fontColor,
-                                    userSelect: "none",
-                                  }}
-                                  // style={{
-                                  //     backgroundColor:
-                                  //         result[rowIndex][colIndex] != 0 ? "black" : "",
-                                  // }}
-                                  className={`${bubbleType}
+                            >
+                              <div className="timing-mark "></div>
+                            </div>
+                            {Array.from({ length: numCols }).map(
+                              (_, colIndex) => {
+                                const num =
+                                  (numberedJson[rowIndex] &&
+                                    numberedJson[rowIndex][colIndex]) !==
+                                  undefined
+                                    ? numberedJson[rowIndex][colIndex]
+                                    : null;
+                                let bgColor =
+                                  +result[rowIndex][colIndex] >=
+                                    +templates[0]?.layoutParameters
+                                      ?.iSensitivity &&
+                                  result[rowIndex][colIndex] !== undefined
+                                    ? "black"
+                                    : "";
+
+                                if (num || num === 0) {
+                                  bgColor = "lightgreen";
+                                }
+                                let fontColor =
+                                  rowIndex < result.length &&
+                                  colIndex < result[rowIndex].length &&
+                                  result[rowIndex][colIndex] != 0 &&
+                                  result[rowIndex][colIndex] !== undefined
+                                    ? "lightgray"
+                                    : "black";
+                                if (num || num === 0) {
+                                  fontColor = "black";
+                                }
+                                return (
+                                  <div
+                                    key={colIndex}
+                                    style={{
+                                      backgroundColor: bgColor,
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      fontSize:
+                                        bubbleType === "circle"
+                                          ? "12px"
+                                          : "8px",
+                                      color: fontColor,
+                                      userSelect: "none",
+                                    }}
+                                    // style={{
+                                    //     backgroundColor:
+                                    //         result[rowIndex][colIndex] != 0 ? "black" : "",
+                                    // }}
+                                    className={`${bubbleType}
                                    ${
                                      selected[`${rowIndex},${colIndex}`]
                                        ? "selected"
                                        : ""
                                    }
                                   `}
-                                >
-                                  {numberedJson.length > 0 &&
-                                    numberedJson[rowIndex][colIndex]}
-                                </div>
-                              );
-                            }
-                          )}
-                        </div>
-                      );
-                    })}
+                                  >
+                                    {numberedJson.length > 0 &&
+                                      numberedJson[rowIndex][colIndex]}
+                                  </div>
+                                );
+                              }
+                            )}
+                          </div>
+                        );
+                      })}
 
-                    {selectedCoordinates.map((data, index) => (
-                      <div
-                        key={index}
-                        ref={(el) => (divRefs.current[index] = el)}
-                        className="border-blue-900"
-                        style={{
-                          border: "3px solid #007bff",
-                          position: "absolute",
-                          overflow: "hidden",
-                          left: `${
-                            data.startCol *
-                              (imageRef.current.getBoundingClientRect().width /
-                                numCols) -
-                            4
-                          }px`,
-                          top: `${
-                            data.startRow *
-                              (imageRef.current.getBoundingClientRect().height /
-                                numRows) -
-                            3
-                          }px`,
-                          width: `${
-                            (data.endCol - data.startCol + 1) *
-                            (imageRef.current.getBoundingClientRect().width /
-                              numCols)
-                          }px`,
-                          height: `${
-                            (data.endRow - data.startRow + 1) *
-                            (imageRef.current.getBoundingClientRect().height /
-                              numRows)
-                          }px`,
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                      >
+                      {selectedCoordinates.map((data, index) => (
                         <div
-                          className="d-flex justify-content-between align-items-center bg-dark text-white p-1"
+                          key={index}
+                          ref={(el) => (divRefs.current[index] = el)}
+                          className="border-blue-900"
                           style={{
-                            zIndex: 2,
-                            opacity: 0.6,
-                            fontSize: "12px",
-                            position: "relative",
+                            border: "3px solid #007bff",
+                            position: "absolute",
                             overflow: "hidden",
+                            left: `${
+                              data.startCol *
+                                (imageRef.current.getBoundingClientRect()
+                                  .width /
+                                  numCols) -
+                              4
+                            }px`,
+                            top: `${
+                              data.startRow *
+                                (imageRef.current.getBoundingClientRect()
+                                  .height /
+                                  numRows) -
+                              3
+                            }px`,
+                            width: `${
+                              (data.endCol - data.startCol + 1) *
+                              (imageRef.current.getBoundingClientRect().width /
+                                numCols)
+                            }px`,
+                            height: `${
+                              (data.endRow - data.startRow + 1) *
+                              (imageRef.current.getBoundingClientRect().height /
+                                numRows)
+                            }px`,
                           }}
                           onClick={(e) => e.stopPropagation()}
                         >
-                          {sizes[index] ? (
-                            <span>
-                              <i
-                                className={`fas fa-eye me-2 mr-1 ${classes.eye}`}
-                                onMouseUp={handleIconMouseUp}
-                                onClick={(e) => handleEyeClick(data, index)}
-                                style={{ cursor: "pointer" }}
-                              ></i>
-                              <i
-                                className="fas fa-times text-danger cross-icon ml-1"
-                                onMouseUp={handleIconMouseUp}
-                                onClick={() => handleCrossClick(data, index)}
-                                style={{ cursor: "pointer" }}
-                              ></i>
-                            </span>
-                          ) : (
-                            <>
-                              <span className="user-select-none">
-                                {data.name}
-                              </span>
-                              <span className="d-flex align-items-center user-select-none gap-10">
+                          <div
+                            className="d-flex justify-content-between align-items-center bg-dark text-white p-1"
+                            style={{
+                              zIndex: 2,
+                              opacity: 0.6,
+                              fontSize: "12px",
+                              position: "relative",
+                              overflow: "hidden",
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {sizes[index] ? (
+                              <span>
                                 <i
                                   className={`fas fa-eye me-2 mr-1 ${classes.eye}`}
                                   onMouseUp={handleIconMouseUp}
@@ -1819,98 +1805,127 @@ const DesignTemplate = () => {
                                   style={{ cursor: "pointer" }}
                                 ></i>
                               </span>
-                            </>
-                          )}
+                            ) : (
+                              <>
+                                <span className="user-select-none">
+                                  {data.name}
+                                </span>
+                                <span className="d-flex align-items-center user-select-none gap-10">
+                                  <i
+                                    className={`fas fa-eye me-2 mr-1 ${classes.eye}`}
+                                    onMouseUp={handleIconMouseUp}
+                                    onClick={(e) => handleEyeClick(data, index)}
+                                    style={{ cursor: "pointer" }}
+                                  ></i>
+                                  <i
+                                    className="fas fa-times text-danger cross-icon ml-1"
+                                    onMouseUp={handleIconMouseUp}
+                                    onClick={() =>
+                                      handleCrossClick(data, index)
+                                    }
+                                    style={{ cursor: "pointer" }}
+                                  ></i>
+                                </span>
+                              </>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                    {linkFields.map((data, index) => {
-                      const border =
-                        currentLinkField === index
-                          ? "4px dashed red"
-                          : "4px dashed rgb(142, 95, 218)";
-                      const boxShadow =
-                        currentLinkField === index
-                          ? "0 0 5px rgba(255, 0, 0, 0.5)"
-                          : "";
-                      return (
+                      ))}
+                      {linkFields.map((data, index) => {
+                        const border =
+                          currentLinkField === index
+                            ? "4px dashed red"
+                            : "4px dashed rgb(142, 95, 218)";
+                        const boxShadow =
+                          currentLinkField === index
+                            ? "0 0 5px rgba(255, 0, 0, 0.5)"
+                            : "";
+                        return (
+                          <div
+                            key={index}
+                            ref={(el) => (divRefs.current[index] = el)}
+                            className="border-blue-900"
+                            style={{
+                              border,
+                              boxShadow,
+                              position: "absolute",
+                              overflow: "hidden",
+                              padding: "10px",
+                              left: `${
+                                data.minStartCol *
+                                  (imageRef.current.getBoundingClientRect()
+                                    .width /
+                                    numCols) -
+                                4
+                              }px`,
+                              top: `${
+                                data.minStartRow *
+                                  (imageRef.current.getBoundingClientRect()
+                                    .height /
+                                    numRows) -
+                                3
+                              }px`,
+                              width: `${
+                                (data.maxEndCol - data.minStartCol + 1) *
+                                (imageRef.current.getBoundingClientRect()
+                                  .width /
+                                  numCols)
+                              }px`,
+                              height: `${
+                                (data.maxEndRow - data.minStartRow + 1) *
+                                (imageRef.current.getBoundingClientRect()
+                                  .height /
+                                  numRows +
+                                  0.1)
+                              }px`,
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                          ></div>
+                        );
+                      })}
+                      {selection && (
                         <div
-                          key={index}
-                          ref={(el) => (divRefs.current[index] = el)}
-                          className="border-blue-900"
+                          className="border-green-700"
                           style={{
-                            border,
-                            boxShadow,
+                            border: "2px solid green",
                             position: "absolute",
-                            overflow: "hidden",
-                            padding: "10px",
                             left: `${
-                              data.minStartCol *
+                              selection.startCol *
                                 (imageRef.current.getBoundingClientRect()
                                   .width /
                                   numCols) -
                               4
                             }px`,
                             top: `${
-                              data.minStartRow *
+                              selection.startRow *
                                 (imageRef.current.getBoundingClientRect()
                                   .height /
                                   numRows) -
                               3
                             }px`,
                             width: `${
-                              (data.maxEndCol - data.minStartCol + 1) *
+                              (selection.endCol - selection.startCol + 1) *
                               (imageRef.current.getBoundingClientRect().width /
                                 numCols)
                             }px`,
                             height: `${
-                              (data.maxEndRow - data.minStartRow + 1) *
+                              (selection.endRow - selection.startRow + 1) *
                               (imageRef.current.getBoundingClientRect().height /
-                                numRows +
-                                0.1)
+                                numRows)
                             }px`,
+                            content: "question field",
                           }}
-                          onClick={(e) => e.stopPropagation()}
                         ></div>
-                      );
-                    })}
-                    {selection && (
-                      <div
-                        className="border-green-700"
-                        style={{
-                          border: "2px solid green",
-                          position: "absolute",
-                          left: `${
-                            selection.startCol *
-                              (imageRef.current.getBoundingClientRect().width /
-                                numCols) -
-                            4
-                          }px`,
-                          top: `${
-                            selection.startRow *
-                              (imageRef.current.getBoundingClientRect().height /
-                                numRows) -
-                            3
-                          }px`,
-                          width: `${
-                            (selection.endCol - selection.startCol + 1) *
-                            (imageRef.current.getBoundingClientRect().width /
-                              numCols)
-                          }px`,
-                          height: `${
-                            (selection.endRow - selection.startRow + 1) *
-                            (imageRef.current.getBoundingClientRect().height /
-                              numRows)
-                          }px`,
-                          content: "question field",
-                        }}
-                      ></div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+        <div >
+          <FieldsFooter  selected={selectedCoordinates} />
         </div>
       </div>
 
