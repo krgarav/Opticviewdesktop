@@ -1657,7 +1657,7 @@ const DesignTemplate = () => {
                         const templates = dataCtx.allTemplates[0];
                         // const template = Array.isArray(templates)
                         //   ? { ...templates[0] }
-                        //   : templates[0];
+                        //   : templates[0];  
                         const numberedJson = templates
                           ? [
                               ...templates[0]?.layoutParameters?.numberedExcelJsonFile.map(
@@ -2472,8 +2472,10 @@ const DesignTemplate = () => {
                     className="form-control"
                     value={noOfStepInRow}
                     onChange={(e) => {
+                      if(+e.target.value >= 1){
                       setNoInRow(+endRowInput - +startRowInput + 1);
                       setNoOfStepInRow(e.target.value);
+                    }
                     }}
                     onBlur={(e) => {
                       if (+e.target.value < 1) {
@@ -2580,8 +2582,10 @@ const DesignTemplate = () => {
                     className="form-control"
                     value={noOfStepInCol}
                     onChange={(e) => {
+                      if(+e.target.value >= 1){
                       setNoInCol(+endColInput - +startColInput + 1);
                       setNoOfStepInCol(e.target.value);
+                      }
                     }}
                     onBlur={(e) => {
                       if (+e.target.value < 1) {

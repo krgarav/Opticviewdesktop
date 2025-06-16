@@ -2365,21 +2365,11 @@ const EditDesignTemplate = () => {
                     className="form-control"
                     value={noOfStepInRow}
                     onChange={(e) => {
-                      if (+e.target.value < 1) {
-                        alert("Step in a row should be greater than 0");
-                        return;
+                      if (+e.target.value >= 1) {
+                        setNoInRow(+endRowInput - +startRowInput + 1);
+
+                        setNoOfStepInRow(e.target.value);
                       }
-
-                      setNoInRow(+endRowInput - +startRowInput + 1);
-                      // setNoInRow(
-                      //   calculateTotalRow(
-                      //     startRowInput,
-                      //     endRowInput,
-                      //     e.target.value
-                      //   )
-                      // );
-
-                      setNoOfStepInRow(e.target.value);
                     }}
                     required
                   />
@@ -2491,19 +2481,11 @@ const EditDesignTemplate = () => {
                     className="form-control"
                     value={noOfStepInCol}
                     onChange={(e) => {
-                      if (+e.target.value < 1) {
-                        alert("Step in a column should be greater than 0");
-                        return;
+                      if (+e.target.value >= 1) {
+                        setNoInCol(+endColInput - +startColInput + 1);
+
+                        setNoOfStepInCol(e.target.value);
                       }
-                      setNoInCol(+endColInput - +startColInput + 1);
-                      // setNoInCol(
-                      //   calculateTotalRow(
-                      //     startColInput,
-                      //     endColInput,
-                      //     e.target.value
-                      //   )
-                      // );
-                      setNoOfStepInCol(e.target.value);
                     }}
                     required
                   />
