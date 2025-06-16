@@ -1579,8 +1579,8 @@ const DesignTemplate = () => {
           Show Modal
         </Button>
       )}
-      <div>
-        <div style={{ height:"74vh", overflow: "auto", width: "100%" }}>
+      <div style={{height:"80vh"}}>
+        <div style={{ height:"97%", overflow: "auto", width: "100%" }}>
           <Button
             onClick={sendHandler}
             disabled={loading}
