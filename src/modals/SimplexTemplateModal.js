@@ -70,8 +70,8 @@ const SimplexTemplateModal = (props) => {
   const [numberOfLines, setNumberOfLines] = useState("");
   const [imageSrc, setImageSrc] = useState("");
   const [backImageSrc, setBackImageSrc] = useState("");
-  const [sensitivity, setSensitivity] = useState(5);
-  const [difference, setDifference] = useState(6);
+  const [sensitivity, setSensitivity] = useState(3);
+  const [difference, setDifference] = useState(8);
   const [barCount, setBarCount] = useState(0);
   const [selectedBubble, setSelectedBubble] = useState(null);
   const [reject, setReject] = useState({ id: 1, name: "0", showName: "False" });
@@ -116,7 +116,7 @@ const SimplexTemplateModal = (props) => {
     id: "disable",
     name: "Disable",
   });
-  const [idPresent, setIdPresent] = useState();
+  const [idPresent, setIdPresent] = useState(IdOptionData[1]);
   const [fileModal, setFileModal] = useState(false);
   const [excelJsonFile, setExcelJsonFile] = useState();
   const [excelFile, setExcelFile] = useState("");
@@ -140,6 +140,7 @@ const SimplexTemplateModal = (props) => {
   const [showScanner, setShowScanner] = useState(false);
   const [prefix, setPrefix] = useState("0000");
   const [prefixzeroes, setPrefixZeroes] = useState("0000");
+  const [scanner,setScanner] = useState("scanner1");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -669,7 +670,7 @@ const SimplexTemplateModal = (props) => {
         backdrop="static"
         keyboard={false}
       >
-        <Modal.Body style={{ height: "75dvh", overflow: "auto" }}>
+        <Modal.Body style={{ height: "80dvh", overflow: "auto" }}>
           {selectedUI === "" && (
             <div className="d-flex" style={{ justifyContent: "space-evenly" }}>
               <Jobcard text="SIMPLEX" handleJob={jobHandler} />
@@ -771,7 +772,7 @@ const SimplexTemplateModal = (props) => {
                           className="col-md-2  col-form-label"
                           style={{ fontSize: ".87rem" }}
                         >
-                          Bubble 
+                          Bubble
                         </label>
                         <div className="col-md-4">
                           <Select
@@ -806,8 +807,6 @@ const SimplexTemplateModal = (props) => {
                               This feild is required
                             </span>
                           )}
-                          
-
                         </div>
                         <label
                           htmlFor="bubble-variant-input"
@@ -816,18 +815,15 @@ const SimplexTemplateModal = (props) => {
                         >
                           Scanner
                         </label>
-                         <div className="col-md-4">
+                        <div className="col-md-4">
                           <Select
-                            value={selectedBubble}
+                            value={scanner}
                             placeholder="Select Scanner"
                             onChange={(selectedValue) => {
-                              setSelectedBubble(selectedValue);
-                              settoggle((item) => ({
-                                ...item,
-                                bubbleVariant: false,
-                              }));
+                              setScanner(selectedValue);
+                              
                             }}
-                             styles={{
+                            styles={{
                               control: (provided, state) => ({
                                 ...provided,
                                 border: toggle.bubbleVariant
@@ -849,8 +845,6 @@ const SimplexTemplateModal = (props) => {
                               This feild is required
                             </span>
                           )}
-                          
-
                         </div>
                       </Row>
                       {/* <Row className="mb-3">
@@ -1141,7 +1135,7 @@ const SimplexTemplateModal = (props) => {
                             defaultInputValue=""
                           />
                         </div>
-                         <label
+                        <label
                           htmlFor="example-text-input"
                           className="col-md-2 col-form-label "
                           style={{ fontSize: ".95rem" }}
@@ -1184,8 +1178,6 @@ const SimplexTemplateModal = (props) => {
                           />
                         </div>
                       </Row> */}
-
-                     
 
                       {/* <Row className="mb-3">
                                         <label
@@ -1340,7 +1332,7 @@ const SimplexTemplateModal = (props) => {
                           )}
                         </div> */}
                       </Row>
- {idPresent?.id !== "not present" && (
+                      {idPresent?.id !== "not present" && (
                         <Row className="mb-2">
                           <label
                             htmlFor="example-text-input"
@@ -1352,6 +1344,7 @@ const SimplexTemplateModal = (props) => {
                           <div className="col-md-10">
                             <Select
                               value={windowNgOption}
+                               placeholder="Select Window NG"
                               onChange={(selectedValue) => {
                                 setWindowNgOption(selectedValue);
                                 settoggle((item) => ({
@@ -1374,6 +1367,7 @@ const SimplexTemplateModal = (props) => {
                               getOptionValue={(option) =>
                                 option?.id?.toString() || ""
                               }
+                              menuPlacement="top"
                             />
                             {!size && (
                               <span
@@ -1437,7 +1431,7 @@ const SimplexTemplateModal = (props) => {
                         <div className="col-md-10">
                           <Select
                             value={direction}
-                            placeholder="Select position of sheet"
+                            placeholder="Select Position Of Sheet"
                             onChange={(selectedValue) => {
                               settoggle((item) => ({
                                 ...item,
@@ -1458,7 +1452,7 @@ const SimplexTemplateModal = (props) => {
                                   : provided.border,
                               }),
                             }}
-                            // menuPlacement="top"
+                            menuPlacement="top"
                           />
                         </div>
                       </Row>
@@ -1653,7 +1647,7 @@ const SimplexTemplateModal = (props) => {
                           </div>
                         </div>
                       </Row>
-                     <div
+                      <div
                         style={{
                           border: "1px solid #ccc",
                           margin: "0",

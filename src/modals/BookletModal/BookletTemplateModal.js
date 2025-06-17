@@ -61,6 +61,7 @@ import { Carousel } from "react-responsive-carousel";
 import { getUrls } from "helper/url_helper";
 import { debounce } from "lodash";
 import { digitType } from "data/helperData";
+import { scannerData } from "data/helperData";
 
 const BookletTemplateModal = (props) => {
   const [modalShow, setModalShow] = useState(false);
@@ -69,8 +70,8 @@ const BookletTemplateModal = (props) => {
   const [numberOfLines, setNumberOfLines] = useState("");
   const [imageSrc, setImageSrc] = useState("");
   const [backImageSrc, setBackImageSrc] = useState("");
-  const [sensitivity, setSensitivity] = useState(5);
-  const [difference, setDifference] = useState(6);
+  const [sensitivity, setSensitivity] = useState(3);
+  const [difference, setDifference] = useState(8);
   const [barCount, setBarCount] = useState(0);
   const [selectedBubble, setSelectedBubble] = useState(null);
   const [reject, setReject] = useState({ id: 1, name: "0", showName: "False" });
@@ -115,7 +116,7 @@ const BookletTemplateModal = (props) => {
     id: "disable",
     name: "Disable",
   });
-  const [idPresent, setIdPresent] = useState();
+  const [idPresent, setIdPresent] = useState(IdOptionData[1]);
   const [fileModal, setFileModal] = useState(false);
   const [excelJsonFile, setExcelJsonFile] = useState();
   const [excelFile, setExcelFile] = useState("");
@@ -132,13 +133,14 @@ const BookletTemplateModal = (props) => {
   const [printStartNumber, setPrintStartNumber] = useState(null);
   const [printCustomValue, setPrintCustomValue] = useState(null);
   const [scannerLoading, setScannerLoading] = useState(false);
-  const [value, setValue] = React.useState([5, 6]);
+  const [value, setValue] = React.useState([3, 8]);
   const [images, setImages] = useState([]);
   const [showFront, setShowFront] = useState(true);
   const [baseUrl, setBaseUrl] = useState(null);
   const [showScanner, setShowScanner] = useState(false);
   const [prefix, setPrefix] = useState("0000");
   const [prefixzeroes, setPrefixZeroes] = useState("0000");
+  const [scanner,setScanner] = useState("scanner1");  
   const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
@@ -627,28 +629,8 @@ const BookletTemplateModal = (props) => {
         backdrop="static"
         keyboard={false}
       >
-        <Modal.Header className="d-flex flex-column w-100">
-          <Modal.Title id="modal-custom-navbar" className="mb-2 ">
-            {props.title}
-          </Modal.Title>
-          {selectedUI === "DUPLEX" && (
-            <Nav
-              fill
-              variant="tabs"
-              activeKey={activeTab}
-              onSelect={handleSelect}
-              className="w-100"
-            >
-              <Nav.Item>
-                <Nav.Link eventKey="simplex">Front Side</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="duplex">Back Side</Nav.Link>
-              </Nav.Item>
-            </Nav>
-          )}
-        </Modal.Header>
-        <Modal.Body style={{ height: "65dvh", overflow: "auto" }}>
+        
+        <Modal.Body style={{ height: "80dvh", overflow: "auto" }}>
           {selectedUI === "" && (
             <div className="d-flex" style={{ justifyContent: "space-evenly" }}>
               <Jobcard text="SIMPLEX" handleJob={jobHandler} />
@@ -749,12 +731,12 @@ const BookletTemplateModal = (props) => {
                           className="col-md-2  col-form-label"
                           style={{ fontSize: ".87rem" }}
                         >
-                          Bubble Variant
+                          Bubble
                         </label>
-                        <div className="col-md-10">
+                        <div className="col-md-4">
                           <Select
                             value={selectedBubble}
-                            placeholder="Select bubble"
+                            placeholder="Select Bubble"
                             onChange={(selectedValue) => {
                               setSelectedBubble(selectedValue);
                               settoggle((item) => ({
@@ -771,6 +753,44 @@ const BookletTemplateModal = (props) => {
                               }),
                             }}
                             options={bubbleData}
+                            getOptionLabel={(option) => option?.name || ""}
+                            getOptionValue={(option) =>
+                              option?.id?.toString() || ""
+                            }
+                            components={{ Option, SingleValue }}
+                          />
+                          {!selectedBubble && (
+                            <span
+                              style={{ color: "red", display: spanDisplay }}
+                            >
+                              This feild is required
+                            </span>
+                          )}
+                        </div>
+                        <label
+                          htmlFor="bubble-variant-input"
+                          className="col-md-2  col-form-label"
+                          style={{ fontSize: ".87rem" }}
+                        >
+                          Scanner
+                        </label>
+                        <div className="col-md-4">
+                          <Select
+                            value={scanner}
+                            placeholder="Select Scanner"
+                            onChange={(selectedValue) => {
+                              setScanner(selectedValue);
+                              
+                            }}
+                            styles={{
+                              control: (provided, state) => ({
+                                ...provided,
+                                border: toggle.bubbleVariant
+                                  ? "1px solid red !important"
+                                  : provided.border,
+                              }),
+                            }}
+                            options={scannerData}
                             getOptionLabel={(option) => option?.name || ""}
                             getOptionValue={(option) =>
                               option?.id?.toString() || ""
@@ -962,7 +982,7 @@ const BookletTemplateModal = (props) => {
                         >
                           Image Status
                         </label>
-                        <div className="col-md-10">
+                        <div className="col-md-4">
                           <Select
                             value={imageStatus}
                             onChange={(selectedValue) =>
@@ -976,16 +996,14 @@ const BookletTemplateModal = (props) => {
                             defaultInputValue=""
                           />
                         </div>
-                      </Row>
-                      <Row className="mb-3">
                         <label
                           htmlFor="example-text-input"
                           className="col-md-2 col-form-label "
-                          style={{ fontSize: ".85rem" }}
+                          style={{ fontSize: ".95rem" }}
                         >
                           Printing
                         </label>
-                        <div className="col-md-10">
+                        <div className="col-md-4">
                           <Select
                             value={printEnable}
                             onChange={(selectedValue) => {
@@ -999,6 +1017,7 @@ const BookletTemplateModal = (props) => {
                           />
                         </div>
                       </Row>
+                      
 
                       {idPresent?.id !== "not present" && (
                         <Row className="mb-2">
