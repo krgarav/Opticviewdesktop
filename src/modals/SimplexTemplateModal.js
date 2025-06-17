@@ -668,28 +668,7 @@ const SimplexTemplateModal = (props) => {
         backdrop="static"
         keyboard={false}
       >
-        <Modal.Header className="d-flex flex-column w-100">
-          <Modal.Title id="modal-custom-navbar" className="mb-2 ">
-            {props.title}
-          </Modal.Title>
-          {selectedUI === "DUPLEX" && (
-            <Nav
-              fill
-              variant="tabs"
-              activeKey={activeTab}
-              onSelect={handleSelect}
-              className="w-100"
-            >
-              <Nav.Item>
-                <Nav.Link eventKey="simplex">Front Side</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="duplex">Back Side</Nav.Link>
-              </Nav.Item>
-            </Nav>
-          )}
-        </Modal.Header>
-        <Modal.Body style={{ height: "65dvh", overflow: "auto" }}>
+        <Modal.Body style={{ height: "75dvh", overflow: "auto" }}>
           {selectedUI === "" && (
             <div className="d-flex" style={{ justifyContent: "space-evenly" }}>
               <Jobcard text="SIMPLEX" handleJob={jobHandler} />
