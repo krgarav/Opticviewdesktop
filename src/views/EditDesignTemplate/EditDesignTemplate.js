@@ -1522,7 +1522,7 @@ const EditDesignTemplate = () => {
           Show Modal
         </Button>
       )}
-      <div style={{ height: "80vh" }}>
+      <div style={{ height: "83vh" }}>
         <div style={{ height: "97%", overflow: "auto", width: "100%" }}>
           <div className="main-container">
             <div className="containers">
