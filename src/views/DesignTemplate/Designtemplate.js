@@ -1579,8 +1579,8 @@ const DesignTemplate = () => {
           Show Modal
         </Button>
       )}
-      <div style={{height:"80vh"}}>
-        <div style={{ height:"97%", overflow: "auto", width: "100%" }}>
+      <div style={{ height: "80vh" }}>
+        <div style={{ height: "97%", overflow: "auto", width: "100%" }}>
           <Button
             onClick={sendHandler}
             disabled={loading}
@@ -1657,7 +1657,7 @@ const DesignTemplate = () => {
                         const templates = dataCtx.allTemplates[0];
                         // const template = Array.isArray(templates)
                         //   ? { ...templates[0] }
-                        //   : templates[0];  
+                        //   : templates[0];
                         const numberedJson = templates
                           ? [
                               ...templates[0]?.layoutParameters?.numberedExcelJsonFile.map(
@@ -1924,8 +1924,11 @@ const DesignTemplate = () => {
             </div>
           </div>
         </div>
-        <div style={{ height:"3%"}} >
-          <FieldsFooter  handleEyeClick={handleEyeClick} selected={selectedCoordinates} />
+        <div style={{ height: "3%" }}>
+          <FieldsFooter
+            handleEyeClick={handleEyeClick}
+            selected={selectedCoordinates}
+          />
         </div>
       </div>
 
@@ -2472,16 +2475,27 @@ const DesignTemplate = () => {
                     className="form-control"
                     value={noOfStepInRow}
                     onChange={(e) => {
-                      if(+e.target.value >= 1){
-                      setNoInRow(+endRowInput - +startRowInput + 1);
-                      setNoOfStepInRow(e.target.value);
-                    }
-                    }}
-                    onBlur={(e) => {
-                      if (+e.target.value < 1) {
-                        alert("Step in a row should be greater than 0");
+                      const value = +e.target.value; // Convert input value to number
+                      const totalRows = +endRowInput - +startRowInput + 1;
+
+                      // Step cannot be more than total rows
+                      if (value > totalRows) {
+                        alert("Steps cannot be larger than the combined area.");
+                        setNoOfStepInRow(""); // Reset the input
                         return;
                       }
+
+                      // Step must be at least 1
+                      if (value >= 1) {
+                        setNoInRow(Math.floor(totalRows / value)); // Update total rows in state
+                        setNoOfStepInRow(value); // Update number of steps
+                      }
+                    }}
+                    onBlur={(e) => {
+                      //    if(+e.target.value >= 1){
+                      //   setNoInRow(+endRowInput - +startRowInput + 1);
+                      //   setNoOfStepInRow(e.target.value);
+                      // }
                     }}
                     required
                   />
@@ -2582,9 +2596,18 @@ const DesignTemplate = () => {
                     className="form-control"
                     value={noOfStepInCol}
                     onChange={(e) => {
-                      if(+e.target.value >= 1){
-                      setNoInCol(+endColInput - +startColInput + 1);
-                      setNoOfStepInCol(e.target.value);
+                      const value = +e.target.value; // Convert input to number
+                      const totalCols = +endColInput - +startColInput + 1;
+
+                      if (value > totalCols) {
+                        alert("Steps cannot be larger than the combined area.");
+                        setNoOfStepInCol(""); // Reset invalid input
+                        return;
+                      }
+
+                      if (value >= 1) {
+                        setNoOfStepInCol(value); // Set only valid input
+                        setNoInCol(Math.floor(totalCols / value));
                       }
                     }}
                     onBlur={(e) => {
@@ -2620,10 +2643,10 @@ const DesignTemplate = () => {
                     className="form-control"
                     value={readingDirectionOption}
                     onChange={(e) => {
-                      if (e.target.value === 0 || e.target.value === 2) {
-                        setNumberOfField(Math.ceil(noInRow / noOfStepInRow));
+                      if (e.target.value == 0 || e.target.value ==  2) {
+                        setNumberOfField(Math.ceil(noInRow ));
                       } else {
-                        setNumberOfField(Math.ceil(noInCol / noOfStepInCol));
+                        setNumberOfField(Math.ceil(noInCol));
                       }
                       setReadingDirectionOption(e.target.value);
                     }}
