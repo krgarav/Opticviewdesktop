@@ -62,6 +62,7 @@ import { SimplexImageUrl } from "data/imageData";
 import { debounce } from "lodash";
 import backgroundImage from "./../assets/img/sr8000.jpg";
 import { digitType } from "data/helperData";
+import { scannerData } from "data/helperData";
 const SimplexTemplateModal = (props) => {
   const [modalShow, setModalShow] = useState(false);
   const [name, setName] = useState("");
@@ -132,7 +133,7 @@ const SimplexTemplateModal = (props) => {
   const [printStartNumber, setPrintStartNumber] = useState(null);
   const [printCustomValue, setPrintCustomValue] = useState(null);
   const [scannerLoading, setScannerLoading] = useState(false);
-  const [value, setValue] = React.useState([5, 6]);
+  const [value, setValue] = React.useState([3, 8]);
   const [images, setImages] = useState([]);
   const [baseUrl, setBaseUrl] = useState(null);
   const [showFront, setShowFront] = useState(true);
@@ -770,12 +771,12 @@ const SimplexTemplateModal = (props) => {
                           className="col-md-2  col-form-label"
                           style={{ fontSize: ".87rem" }}
                         >
-                          Bubble Variant
+                          Bubble 
                         </label>
-                        <div className="col-md-10">
+                        <div className="col-md-4">
                           <Select
                             value={selectedBubble}
-                            placeholder="Select bubble"
+                            placeholder="Select Bubble"
                             onChange={(selectedValue) => {
                               setSelectedBubble(selectedValue);
                               settoggle((item) => ({
@@ -805,6 +806,51 @@ const SimplexTemplateModal = (props) => {
                               This feild is required
                             </span>
                           )}
+                          
+
+                        </div>
+                        <label
+                          htmlFor="bubble-variant-input"
+                          className="col-md-2  col-form-label"
+                          style={{ fontSize: ".87rem" }}
+                        >
+                          Scanner
+                        </label>
+                         <div className="col-md-4">
+                          <Select
+                            value={selectedBubble}
+                            placeholder="Select Scanner"
+                            onChange={(selectedValue) => {
+                              setSelectedBubble(selectedValue);
+                              settoggle((item) => ({
+                                ...item,
+                                bubbleVariant: false,
+                              }));
+                            }}
+                             styles={{
+                              control: (provided, state) => ({
+                                ...provided,
+                                border: toggle.bubbleVariant
+                                  ? "1px solid red !important"
+                                  : provided.border,
+                              }),
+                            }}
+                            options={scannerData}
+                            getOptionLabel={(option) => option?.name || ""}
+                            getOptionValue={(option) =>
+                              option?.id?.toString() || ""
+                            }
+                            components={{ Option, SingleValue }}
+                          />
+                          {!selectedBubble && (
+                            <span
+                              style={{ color: "red", display: spanDisplay }}
+                            >
+                              This feild is required
+                            </span>
+                          )}
+                          
+
                         </div>
                       </Row>
                       {/* <Row className="mb-3">
@@ -1081,7 +1127,7 @@ const SimplexTemplateModal = (props) => {
                         >
                           Image Status
                         </label>
-                        <div className="col-md-10">
+                        <div className="col-md-4">
                           <Select
                             value={imageStatus}
                             onChange={(selectedValue) =>
@@ -1095,8 +1141,28 @@ const SimplexTemplateModal = (props) => {
                             defaultInputValue=""
                           />
                         </div>
+                         <label
+                          htmlFor="example-text-input"
+                          className="col-md-2 col-form-label "
+                          style={{ fontSize: ".95rem" }}
+                        >
+                          Printing
+                        </label>
+                        <div className="col-md-4">
+                          <Select
+                            value={printEnable}
+                            onChange={(selectedValue) => {
+                              setPrintEnable(selectedValue);
+                            }}
+                            options={printOptionData}
+                            getOptionLabel={(option) => option?.name || ""}
+                            getOptionValue={(option) =>
+                              option?.id?.toString() || ""
+                            }
+                          />
+                        </div>
                       </Row>
-                      <Row className="mb-3">
+                      {/* <Row className="mb-3">
                         <label
                           htmlFor="example-text-input"
                           className="col-md-2 col-form-label "
@@ -1117,94 +1183,9 @@ const SimplexTemplateModal = (props) => {
                             }
                           />
                         </div>
-                      </Row>
+                      </Row> */}
 
-                      {idPresent?.id !== "not present" && (
-                        <Row className="mb-2">
-                          <label
-                            htmlFor="example-text-input"
-                            className="col-md-2 col-form-label"
-                            style={{ fontSize: ".9rem" }}
-                          >
-                            Window NG
-                          </label>
-                          <div className="col-md-10">
-                            <Select
-                              value={windowNgOption}
-                              onChange={(selectedValue) => {
-                                setWindowNgOption(selectedValue);
-                                settoggle((item) => ({
-                                  ...item,
-                                  windowNgOption: false,
-                                }));
-                              }}
-                              styles={{
-                                control: (provided, state) => ({
-                                  ...provided,
-                                  border: toggle.windowNgOption
-                                    ? "1px solid red !important"
-                                    : provided.border,
-                                }),
-                              }}
-                              options={windowNgData}
-                              getOptionLabel={(option) =>
-                                option?.showName || ""
-                              }
-                              getOptionValue={(option) =>
-                                option?.id?.toString() || ""
-                              }
-                            />
-                            {!size && (
-                              <span
-                                style={{ color: "red", display: spanDisplay }}
-                              >
-                                This feild is required
-                              </span>
-                            )}
-                          </div>
-                          {/* <label
-                            htmlFor="bubble-variant-input"
-                            className="col-md-2 col-form-label  "
-                            style={{ fontSize: ".9rem", textAlign: "right" }}
-                          >
-                            Rejected
-                          </label>
-                          <div className="col-md-3">
-                            <Select
-                              value={reject}
-                              onChange={(selectedValue) => {
-                                setReject(selectedValue);
-                                settoggle((item) => ({
-                                  ...item,
-                                  Rejected: false,
-                                }));
-                              }}
-                              styles={{
-                                control: (provided, state) => ({
-                                  ...provided,
-                                  border: toggle.Rejected
-                                    ? "1px solid red !important"
-                                    : provided.border,
-                                }),
-                              }}
-                              options={rejectData}
-                              getOptionLabel={(option) =>
-                                option?.showName || ""
-                              }
-                              getOptionValue={(option) =>
-                                option?.id?.toString() || ""
-                              }
-                            />
-                            {!selectedBubble && (
-                              <span
-                                style={{ color: "red", display: spanDisplay }}
-                              >
-                                This feild is required
-                              </span>
-                            )}
-                          </div> */}
-                        </Row>
-                      )}
+                     
 
                       {/* <Row className="mb-3">
                                         <label
@@ -1359,7 +1340,92 @@ const SimplexTemplateModal = (props) => {
                           )}
                         </div> */}
                       </Row>
-
+ {idPresent?.id !== "not present" && (
+                        <Row className="mb-2">
+                          <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label"
+                            style={{ fontSize: ".9rem" }}
+                          >
+                            Window NG
+                          </label>
+                          <div className="col-md-10">
+                            <Select
+                              value={windowNgOption}
+                              onChange={(selectedValue) => {
+                                setWindowNgOption(selectedValue);
+                                settoggle((item) => ({
+                                  ...item,
+                                  windowNgOption: false,
+                                }));
+                              }}
+                              styles={{
+                                control: (provided, state) => ({
+                                  ...provided,
+                                  border: toggle.windowNgOption
+                                    ? "1px solid red !important"
+                                    : provided.border,
+                                }),
+                              }}
+                              options={windowNgData}
+                              getOptionLabel={(option) =>
+                                option?.showName || ""
+                              }
+                              getOptionValue={(option) =>
+                                option?.id?.toString() || ""
+                              }
+                            />
+                            {!size && (
+                              <span
+                                style={{ color: "red", display: spanDisplay }}
+                              >
+                                This feild is required
+                              </span>
+                            )}
+                          </div>
+                          {/* <label
+                            htmlFor="bubble-variant-input"
+                            className="col-md-2 col-form-label  "
+                            style={{ fontSize: ".9rem", textAlign: "right" }}
+                          >
+                            Rejected
+                          </label>
+                          <div className="col-md-3">
+                            <Select
+                              value={reject}
+                              onChange={(selectedValue) => {
+                                setReject(selectedValue);
+                                settoggle((item) => ({
+                                  ...item,
+                                  Rejected: false,
+                                }));
+                              }}
+                              styles={{
+                                control: (provided, state) => ({
+                                  ...provided,
+                                  border: toggle.Rejected
+                                    ? "1px solid red !important"
+                                    : provided.border,
+                                }),
+                              }}
+                              options={rejectData}
+                              getOptionLabel={(option) =>
+                                option?.showName || ""
+                              }
+                              getOptionValue={(option) =>
+                                option?.id?.toString() || ""
+                              }
+                            />
+                            {!selectedBubble && (
+                              <span
+                                style={{ color: "red", display: spanDisplay }}
+                              >
+                                This feild is required
+                              </span>
+                            )}
+                          </div> */}
+                        </Row>
+                      )}
                       <Row className="mb-3">
                         <label
                           htmlFor="example-text-input"
@@ -1392,7 +1458,7 @@ const SimplexTemplateModal = (props) => {
                                   : provided.border,
                               }),
                             }}
-                            menuPlacement="top"
+                            // menuPlacement="top"
                           />
                         </div>
                       </Row>

@@ -2,6 +2,8 @@ import { FaLeaf, FaRegCircle } from "react-icons/fa";
 import { MdOutlineRectangle } from "react-icons/md";
 import { LuRectangleHorizontal } from "react-icons/lu";
 import { TbOvalVertical } from "react-icons/tb";
+import { MdOutlineScanner } from "react-icons/md";
+import { MdScanner } from "react-icons/md";
 export const barcodeOptionData = [
   { id: "enable", name: "Enable" },
   { id: "disable", name: "Disable" },
@@ -25,6 +27,13 @@ export const bubbleData = [
   { id: 3, name: "rounded rectangle", icon: <LuRectangleHorizontal /> },
   { id: 4, name: "oval", icon: <TbOvalVertical /> },
 ];
+
+export const scannerData = [
+  { id: 1, name: "SR 3500H", icon: <MdOutlineScanner /> },
+  { id: 2, name: "SR 8000H", icon: <MdScanner /> },
+  
+];
+
 export const timingMethodData = [
   { id: 1, name: "Mark to mark" },
   { id: 2, name: "Direct under" },
