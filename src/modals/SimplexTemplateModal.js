@@ -522,7 +522,7 @@ const SimplexTemplateModal = (props) => {
           printingData: {
             printEnable: +printEnable?.id ?? 0,
             printStartPos: +startPosition ?? 0,
-            printDigit: +printDigit ?? 0,
+            printDigit: +printDigit?.id ?? 0,
             printStartNumber: +printStartNumber ?? 0,
             printOrientation:
               printOrientation?.id === undefined ? 0 : +printOrientation?.id,

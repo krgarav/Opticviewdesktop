@@ -54,6 +54,8 @@ import Slider from "@mui/material/Slider";
 import CustomTooltip from "components/CustomTooltip";
 import { Carousel } from "react-responsive-carousel";
 import { v4 as uuidv4 } from "uuid";
+import { digitType } from "data/helperData";
+
 // const EditTemplateModal = (props) => {
 //   const [modalShow, setModalShow] = useState(false);
 //   const [name, setName] = useState("");
@@ -2559,7 +2561,8 @@ const EditTemplateModal = (props) => {
   const [images, setImages] = useState([]);
   const [baseUrl, setBaseUrl] = useState("http://localhost:5000");
   const [showFront, setShowFront] = useState(true);
-
+const [prefix, setPrefix] = useState("0000");
+  const [prefixzeroes, setPrefixZeroes] = useState("0000");
   const handleChange = (event, newValue, activeThumb) => {
     const minDistance = 1;
     if (!Array.isArray(newValue)) {
@@ -2730,7 +2733,7 @@ const EditTemplateModal = (props) => {
             setPrintEnable(printOptionData[0]);
             setStartPosition(printData.printStartPos);
             setFontSpace(printData.printFontSpace);
-            setPrintDigit(printData.printDigit);
+            setPrintDigit(comparewithId(digitType,printData.printDigit));
             setPrintStartNumber(printData.printStartNumber);
             setPrintOrientation(
               comparewithId(printOrientationOption, printData.printOrientation)
@@ -3999,179 +4002,279 @@ const EditTemplateModal = (props) => {
                     </Row> */}
                     </Tab.Pane>
 
-                    <Tab.Pane eventKey="print">
-                      <Row className="mb-3">
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-2 col-form-label"
-                          style={{ fontSize: ".9rem" }}
-                        >
-                          Start Position:
-                        </label>
-                        <div className="col-md-10">
-                          <input
-                            value={startPosition}
-                            type="number"
-                            className="form-control"
-                            placeholder="Enter value between 0.00mm and 355.0mm"
-                            onChange={(e) => {
-                              setStartPosition(e.target.value);
-                            }}
-                          />
-                        </div>
-                      </Row>
-                      <Row className="mb-3">
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-2 col-form-label "
-                          style={{ fontSize: ".9rem" }}
-                        >
-                          Font Space:
-                        </label>
-                        <div className="col-md-10">
-                          <input
-                            type="number"
-                            value={fontSpace}
-                            className="form-control"
-                            placeholder="Enter value between 0.8mm and 92.0mm"
-                            onChange={(e) => {
-                              setFontSpace(e.target.value);
-                            }}
-                          />
-                        </div>
-                      </Row>
-                      <Row className="mb-3">
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-2 col-form-label "
-                          style={{ fontSize: ".9rem" }}
-                        >
-                          Digit :
-                        </label>
-                        <div className="col-md-10">
-                          <input
-                            type="number"
-                            value={printDigit}
-                            className="form-control"
-                            placeholder="Enter the digits of sequence number (MAX 8digits)"
-                            onChange={(e) => {
-                              setPrintDigit(e.target.value);
-                            }}
-                          />
-                        </div>
-                      </Row>
-                      <Row className="mb-3">
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-2 col-form-label "
-                          style={{ fontSize: ".85rem" }}
-                        >
-                          Start Number :
-                        </label>
-                        <div className="col-md-10">
-                          <input
-                            type="number"
-                            value={printStartNumber}
-                            className="form-control"
-                            placeholder="Enter the start number for print sequence number"
-                            onChange={(e) => {
-                              setPrintStartNumber(e.target.value);
-                            }}
-                          />
-                        </div>
-                      </Row>
-                      <Row className="mb-3">
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-2 "
-                          style={{ fontSize: ".9rem" }}
-                        >
-                          Printing Orientation :
-                        </label>
-                        <div className="col-md-10">
-                          <Select
-                            value={printOrientation}
-                            onChange={(selectedValue) =>
-                              setPrintOrientation(selectedValue)
-                            }
-                            options={printOrientationOption}
-                            getOptionLabel={(option) => option?.name || ""}
-                            getOptionValue={(option) =>
-                              option?.id?.toString() || ""
-                            }
-                            placeholder="Select printing orientation"
-                          />
-                        </div>
-                      </Row>
-                      <Row className="mb-3">
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-2 col-form-label"
-                          style={{ fontSize: ".85rem" }}
-                        >
-                          Printing Mode :
-                        </label>
-                        <div className="col-md-10">
-                          <Select
-                            value={printMode}
-                            onChange={(selectedValue) =>
-                              setPrintMode(selectedValue)
-                            }
-                            placeholder="Select printing mode"
-                            options={printModeOption}
-                            getOptionLabel={(option) => option?.name || ""}
-                            getOptionValue={(option) =>
-                              option?.id?.toString() || ""
-                            }
-                          />
-                        </div>
-                      </Row>
-
-                      <Row className="mb-2">
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-2 col-form-label"
-                          style={{ fontSize: ".9rem" }}
-                        >
-                          Custom :
-                        </label>
-                        <div className="col-md-10">
-                          <Select
-                            value={printCustom}
-                            onChange={(selectedValue) =>
-                              setPrintCustom(selectedValue)
-                            }
-                            options={printCustomOption}
-                            getOptionLabel={(option) => option?.name || ""}
-                            getOptionValue={(option) =>
-                              option?.id?.toString() || ""
-                            }
-                          />
-                        </div>
-                      </Row>
-                      {printCustom.id === "custom" && (
-                        <Row className="mb-2">
-                          <label
-                            htmlFor="example-text-input"
-                            className="col-md-2 col-form-label"
-                            style={{ fontSize: ".8rem" }}
-                          >
-                            Custom Value :
-                          </label>
-                          <div className="col-md-10">
-                            <input
-                              type="text"
-                              value={printCustomValue}
-                              className="form-control"
-                              placeholder="Enter the custom value to be printed"
-                              onChange={(e) => {
-                                setPrintCustomValue(e.target.value);
-                              }}
-                            />
-                          </div>
-                        </Row>
-                      )}
-                    </Tab.Pane>
+                   <Tab.Pane eventKey="print">
+                                         <Row className="mb-3">
+                                           <label
+                                             htmlFor="example-text-input"
+                                             className="col-md-2 col-form-label"
+                                             style={{ fontSize: ".9rem" }}
+                                           >
+                                             Start Position:
+                                           </label>
+                                           <div className="col-md-10 d-flex flex-row align-items-center gap-3">
+                                             <input
+                                               type="range"
+                                               min="0.01"
+                                               max="355"
+                                               step="0.01"
+                                               value={startPosition}
+                                               className="form-range"
+                                               style={{ flex: 1 }} // make slider take available space
+                                               onChange={(e) => {
+                                                 const value = parseFloat(e.target.value);
+                                                 setStartPosition(value);
+                                               }}
+                                             />
+                   
+                                             <div className="d-flex align-items-center">
+                                               <input
+                                                 disabled
+                                                 value={startPosition}
+                                                 type="number"
+                                                 step="0.01"
+                                                 className="form-control"
+                                                 style={{ maxWidth: "150px" }} // control input width
+                                                 placeholder="Enter value between 0.00mm and 355.00mm"
+                                                 onChange={(e) => {
+                                                   const value = parseFloat(e.target.value);
+                                                   if (e.target.value === "") {
+                                                     setStartPosition("");
+                                                   } else {
+                                                     setStartPosition(value.toFixed(2));
+                                                   }
+                                                 }}
+                                               />
+                                               <span className="ms-2">mm</span>
+                                             </div>
+                                           </div>
+                                         </Row>
+                                         <Row className="mb-3">
+                                           <label
+                                             htmlFor="example-text-input"
+                                             className="col-md-2 col-form-label "
+                                             style={{ fontSize: ".9rem" }}
+                                           >
+                                             Font Space:
+                                           </label>
+                                           <div className="col-md-10 d-flex flex-row align-items-center gap-3">
+                                             <input
+                                               type="range"
+                                               min="0.8"
+                                               max="92"
+                                               step="0.1"
+                                               value={fontSpace}
+                                               className="form-range"
+                                               style={{ flex: 1 }}
+                                               onChange={(e) => {
+                                                 const value = parseFloat(e.target.value);
+                                                 setFontSpace(parseFloat(value.toFixed(1))); // always store as number with 1 decimal
+                                               }}
+                                             />
+                   
+                                             <div className="d-flex align-items-center">
+                                               <input
+                                                 disabled
+                                                 type="number"
+                                                 min="0.8"
+                                                 max="92"
+                                                 step="0.1"
+                                                 value={fontSpace}
+                                                 className="form-control"
+                                                 style={{ maxWidth: "120px" }}
+                                                 placeholder="Enter value between 0.8mm and 92.0mm"
+                                                 onChange={(e) => {
+                                                   const value = parseFloat(e.target.value);
+                                                   if (e.target.value === "") {
+                                                     setFontSpace(""); // allow empty input
+                                                   } else {
+                                                     setFontSpace(parseFloat(value.toFixed(1)));
+                                                   }
+                                                 }}
+                                               />
+                                               <span className="ms-2">mm</span>
+                                             </div>
+                                           </div>
+                                         </Row>
+                                         <div
+                                           style={{
+                                             border: "1px solid #ccc",
+                                             margin: "0",
+                                             padding: "10px",
+                                             borderRadius: "5px",
+                                             marginBottom: "10px",
+                                           }}
+                                         >
+                                           <small className="text-red">
+                                             Select options for serial numbers
+                                           </small>
+                                           <Row className="mb-3">
+                                             <label
+                                               htmlFor="example-text-input"
+                                               className="col-md-2 col-form-label "
+                                               style={{ fontSize: ".9rem" }}
+                                             >
+                                               Digit :
+                                             </label>
+                                             <div className="col-md-10">
+                                               <Select
+                                                 placeholder="Select The Digits Of Sequence Number"
+                                                 options={digitType}
+                                                 getOptionLabel={(option) => option?.name || ""}
+                                                 getOptionValue={(option) =>
+                                                   option?.id?.toString() || ""
+                                                 }
+                                                 value={printDigit}
+                                                 onChange={(selectedValue) => {
+                                                   setPrintDigit(selectedValue);
+                                                   const id = selectedValue.id;
+                                                   const zeroes = "0".repeat(parseInt(id));
+                                                   setPrefixZeroes(zeroes);
+                                                   setPrefix(zeroes);
+                                                 }}
+                                               />
+                                             </div>
+                                           </Row>
+                                           <Row className="mb-3">
+                                             <label
+                                               htmlFor="example-text-input"
+                                               className="col-md-2 col-form-label "
+                                               style={{ fontSize: ".85rem" }}
+                                             >
+                                               Start Number :
+                                             </label>
+                                             <div className="col-md-10 d-flex flex-row align-items-center gap-3 w-[20%]">
+                                               <input
+                                                 type="number"
+                                                 value={prefix}
+                                                 className="form-control"
+                                                 style={{ width: "20%" }}
+                                                 disabled
+                                               />
+                                               <input
+                                                 type="number"
+                                                 style={{ width: "80%" }}
+                                                 value={printStartNumber}
+                                                 className="form-control  w-[80%]"
+                                                 placeholder="Enter The Start Number For Print Sequence Number"
+                                                 onChange={(e) => {
+                                                   const startNumber = e.target.value;
+                   
+                                                   if (startNumber.length <= prefixzeroes.length) {
+                                                     const num = parseInt(startNumber);
+                   
+                                                     if (!isNaN(num)) {
+                                                       // Format number with leading zeroes
+                                                       const zeroedNum =
+                                                         prefixzeroes.substring(
+                                                           0,
+                                                           prefixzeroes.length - startNumber.length
+                                                         ) + startNumber;
+                                                       setPrefix(zeroedNum);
+                                                     } else {
+                                                       // Empty input → show full prefixzeroes
+                                                       setPrefix(prefixzeroes);
+                                                     }
+                   
+                                                     setPrintStartNumber(startNumber);
+                                                   }
+                                                 }}
+                                               />
+                                             </div>
+                                           </Row>
+                                         </div>
+                                         <Row className="mb-3">
+                                           <label
+                                             htmlFor="example-text-input"
+                                             className="col-md-2 "
+                                             style={{ fontSize: ".9rem" }}
+                                           >
+                                             Printing Orientation :
+                                           </label>
+                                           <div className="col-md-10">
+                                             <Select
+                                               value={printOrientation}
+                                               onChange={(selectedValue) =>
+                                                 setPrintOrientation(selectedValue)
+                                               }
+                                               options={printOrientationOption}
+                                               getOptionLabel={(option) => option?.name || ""}
+                                               getOptionValue={(option) =>
+                                                 option?.id?.toString() || ""
+                                               }
+                                               placeholder="Select printing orientation"
+                                             />
+                                           </div>
+                                         </Row>
+                                         <Row className="mb-3">
+                                           <label
+                                             htmlFor="example-text-input"
+                                             className="col-md-2 col-form-label"
+                                             style={{ fontSize: ".85rem" }}
+                                           >
+                                             Printing Mode :
+                                           </label>
+                                           <div className="col-md-10">
+                                             <Select
+                                               value={printMode}
+                                               onChange={(selectedValue) =>
+                                                 setPrintMode(selectedValue)
+                                               }
+                                               placeholder="Select printing mode"
+                                               options={printModeOption}
+                                               getOptionLabel={(option) => option?.name || ""}
+                                               getOptionValue={(option) =>
+                                                 option?.id?.toString() || ""
+                                               }
+                                             />
+                                           </div>
+                                         </Row>
+                   
+                                         <Row className="mb-2">
+                                           <label
+                                             htmlFor="example-text-input"
+                                             className="col-md-2 col-form-label"
+                                             style={{ fontSize: ".9rem" }}
+                                           >
+                                             Custom :
+                                           </label>
+                                           <div className="col-md-10">
+                                             <Select
+                                               value={printCustom}
+                                               onChange={(selectedValue) =>
+                                                 setPrintCustom(selectedValue)
+                                               }
+                                               options={printCustomOption}
+                                               getOptionLabel={(option) => option?.name || ""}
+                                               getOptionValue={(option) =>
+                                                 option?.id?.toString() || ""
+                                               }
+                                               menuPlacement="top"
+                                             />
+                                           </div>
+                                         </Row>
+                                         {printCustom.id === "custom" && (
+                                           <Row className="mb-2">
+                                             <label
+                                               htmlFor="example-text-input"
+                                               className="col-md-2 col-form-label"
+                                               style={{ fontSize: ".8rem" }}
+                                             >
+                                               Custom Value :
+                                             </label>
+                                             <div className="col-md-10">
+                                               <input
+                                                 type="text"
+                                                 value={printCustomValue}
+                                                 className="form-control"
+                                                 placeholder="Enter The Custom Value To Be Printed"
+                                                 onChange={(e) => {
+                                                   setPrintCustomValue(e.target.value);
+                                                 }}
+                                               />
+                                             </div>
+                                           </Row>
+                                         )}
+                                       </Tab.Pane>
 
                     <Tab.Pane eventKey="barcode">
                       <Row className="mb-3">

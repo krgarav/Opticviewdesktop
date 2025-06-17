@@ -296,7 +296,7 @@ const LayoutDetailModal = (props) => {
             setPrintEnable(printOptionData[0]);
             setStartPosition(printData.printStartPos);
             setFontSpace(printData.printFontSpace);
-            setPrintDigit(printData.printDigit);
+            setPrintDigit(comparewithId(digitType,printData.printDigit));
             setPrintStartNumber(printData.printStartNumber);
             setPrintOrientation(
               comparewithId(printOrientationOption, printData.printOrientation)
@@ -568,7 +568,7 @@ const LayoutDetailModal = (props) => {
           printingData: {
             printEnable: +printEnable?.id ?? 0,
             printStartPos: +startPosition ?? 0,
-            printDigit: +printDigit ?? 0,
+            printDigit: +printDigit.id ?? 0,
             printStartNumber: +printStartNumber ?? 0,
             printOrientation:
               printOrientation?.id === undefined ? 0 : +printOrientation?.id,

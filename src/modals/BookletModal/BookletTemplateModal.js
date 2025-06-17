@@ -60,6 +60,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import { getUrls } from "helper/url_helper";
 import { debounce } from "lodash";
+import { digitType } from "data/helperData";
 
 const BookletTemplateModal = (props) => {
   const [modalShow, setModalShow] = useState(false);
@@ -136,6 +137,8 @@ const BookletTemplateModal = (props) => {
   const [showFront, setShowFront] = useState(true);
   const [baseUrl, setBaseUrl] = useState(null);
   const [showScanner, setShowScanner] = useState(false);
+  const [prefix, setPrefix] = useState("0000");
+  const [prefixzeroes, setPrefixZeroes] = useState("0000");
   const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
@@ -1391,16 +1394,41 @@ const BookletTemplateModal = (props) => {
                         >
                           Start Position:
                         </label>
-                        <div className="col-md-10">
+                        <div className="col-md-10 d-flex flex-row align-items-center gap-3">
                           <input
+                            type="range"
+                            min="0.01"
+                            max="355"
+                            step="0.01"
                             value={startPosition}
-                            type="number"
-                            className="form-control"
-                            placeholder="Enter value between 0.00mm and 355.0mm"
+                            className="form-range"
+                            style={{ flex: 1 }} // make slider take available space
                             onChange={(e) => {
-                              setStartPosition(e.target.value);
+                              const value = parseFloat(e.target.value);
+                              setStartPosition(value);
                             }}
                           />
+
+                          <div className="d-flex align-items-center">
+                            <input
+                              disabled
+                              value={startPosition}
+                              type="number"
+                              step="0.01"
+                              className="form-control"
+                              style={{ maxWidth: "150px" }} // control input width
+                              placeholder="Enter value between 0.00mm and 355.00mm"
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value);
+                                if (e.target.value === "") {
+                                  setStartPosition("");
+                                } else {
+                                  setStartPosition(value.toFixed(2));
+                                }
+                              }}
+                            />
+                            <span className="ms-2">mm</span>
+                          </div>
                         </div>
                       </Row>
                       <Row className="mb-3">
@@ -1411,58 +1439,132 @@ const BookletTemplateModal = (props) => {
                         >
                           Font Space:
                         </label>
-                        <div className="col-md-10">
+                        <div className="col-md-10 d-flex flex-row align-items-center gap-3">
                           <input
-                            type="number"
+                            type="range"
+                            min="0.8"
+                            max="92"
+                            step="0.1"
                             value={fontSpace}
-                            className="form-control"
-                            placeholder="Enter value between 0.8mm and 92.0mm"
+                            className="form-range"
+                            style={{ flex: 1 }}
                             onChange={(e) => {
-                              setFontSpace(e.target.value);
+                              const value = parseFloat(e.target.value);
+                              setFontSpace(parseFloat(value.toFixed(1))); // always store as number with 1 decimal
                             }}
                           />
+
+                          <div className="d-flex align-items-center">
+                            <input
+                              disabled
+                              type="number"
+                              min="0.8"
+                              max="92"
+                              step="0.1"
+                              value={fontSpace}
+                              className="form-control"
+                              style={{ maxWidth: "120px" }}
+                              placeholder="Enter value between 0.8mm and 92.0mm"
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value);
+                                if (e.target.value === "") {
+                                  setFontSpace(""); // allow empty input
+                                } else {
+                                  setFontSpace(parseFloat(value.toFixed(1)));
+                                }
+                              }}
+                            />
+                            <span className="ms-2">mm</span>
+                          </div>
                         </div>
                       </Row>
-                      <Row className="mb-3">
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-2 col-form-label "
-                          style={{ fontSize: ".9rem" }}
-                        >
-                          Digit :
-                        </label>
-                        <div className="col-md-10">
-                          <input
-                            type="number"
-                            value={printDigit}
-                            className="form-control"
-                            placeholder="Enter the digits of sequence number (MAX 8digits)"
-                            onChange={(e) => {
-                              setPrintDigit(e.target.value);
-                            }}
-                          />
-                        </div>
-                      </Row>
-                      <Row className="mb-3">
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-2 col-form-label "
-                          style={{ fontSize: ".85rem" }}
-                        >
-                          Start Number :
-                        </label>
-                        <div className="col-md-10">
-                          <input
-                            type="number"
-                            value={printStartNumber}
-                            className="form-control"
-                            placeholder="Enter the start number for print sequence number"
-                            onChange={(e) => {
-                              setPrintStartNumber(e.target.value);
-                            }}
-                          />
-                        </div>
-                      </Row>
+                      <div
+                        style={{
+                          border: "1px solid #ccc",
+                          margin: "0",
+                          padding: "10px",
+                          borderRadius: "5px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <small className="text-red">
+                          Select options for serial numbers
+                        </small>
+                        <Row className="mb-3">
+                          <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label "
+                            style={{ fontSize: ".9rem" }}
+                          >
+                            Digit :
+                          </label>
+                          <div className="col-md-10">
+                            <Select
+                              placeholder="Select The Digits Of Sequence Number"
+                              options={digitType}
+                              getOptionLabel={(option) => option?.name || ""}
+                              getOptionValue={(option) =>
+                                option?.id?.toString() || ""
+                              }
+                              value={printDigit}
+                              onChange={(selectedValue) => {
+                                setPrintDigit(selectedValue);
+                                const id = selectedValue.id;
+                                const zeroes = "0".repeat(parseInt(id));
+                                setPrefixZeroes(zeroes);
+                                setPrefix(zeroes);
+                              }}
+                            />
+                          </div>
+                        </Row>
+                        <Row className="mb-3">
+                          <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label "
+                            style={{ fontSize: ".85rem" }}
+                          >
+                            Start Number :
+                          </label>
+                          <div className="col-md-10 d-flex flex-row align-items-center gap-3 w-[20%]">
+                            <input
+                              type="number"
+                              value={prefix}
+                              className="form-control"
+                              style={{ width: "20%" }}
+                              disabled
+                            />
+                            <input
+                              type="number"
+                              style={{ width: "80%" }}
+                              value={printStartNumber}
+                              className="form-control  w-[80%]"
+                              placeholder="Enter The Start Number For Print Sequence Number"
+                              onChange={(e) => {
+                                const startNumber = e.target.value;
+
+                                if (startNumber.length <= prefixzeroes.length) {
+                                  const num = parseInt(startNumber);
+
+                                  if (!isNaN(num)) {
+                                    // Format number with leading zeroes
+                                    const zeroedNum =
+                                      prefixzeroes.substring(
+                                        0,
+                                        prefixzeroes.length - startNumber.length
+                                      ) + startNumber;
+                                    setPrefix(zeroedNum);
+                                  } else {
+                                    // Empty input → show full prefixzeroes
+                                    setPrefix(prefixzeroes);
+                                  }
+
+                                  setPrintStartNumber(startNumber);
+                                }
+                              }}
+                            />
+                          </div>
+                        </Row>
+                      </div>
                       <Row className="mb-3">
                         <label
                           htmlFor="example-text-input"
@@ -1529,6 +1631,7 @@ const BookletTemplateModal = (props) => {
                             getOptionValue={(option) =>
                               option?.id?.toString() || ""
                             }
+                            menuPlacement="top"
                           />
                         </div>
                       </Row>
@@ -1546,7 +1649,7 @@ const BookletTemplateModal = (props) => {
                               type="text"
                               value={printCustomValue}
                               className="form-control"
-                              placeholder="Enter the custom value to be printed"
+                              placeholder="Enter The Custom Value To Be Printed"
                               onChange={(e) => {
                                 setPrintCustomValue(e.target.value);
                               }}
