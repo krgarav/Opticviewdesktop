@@ -27,6 +27,7 @@ import questionNameGenerator from "helper/questionNameGenerator";
 import AddLinkIcon from "@mui/icons-material/AddLink";
 import LinkModal from "modals/LinkModal/LinkModal";
 import RightSideBar from "components/RightSideBar/RightSideBar";
+import FieldsFooter from "components/Footers/FieldsFooter";
 
 const EditDesignTemplate = () => {
   const [selected, setSelected] = useState({});
@@ -1521,8 +1522,9 @@ const EditDesignTemplate = () => {
           Show Modal
         </Button>
       )}
+<div style={{height:"80vh"}}>
 
-      <div style={{ overflow: "auto" }}>
+<div style={{height:"97%", overflow: "auto", width: "100%" }}>
         <div className="main-container">
           <div className="containers">
             <div className="d-flex" style={{ overflow: "auto" }}>
@@ -1921,6 +1923,12 @@ const EditDesignTemplate = () => {
           </div>
         </div>
       </div>
+  <div >
+            <FieldsFooter  handleEyeClick={handleEyeClick} selected={selectedCoordinates} />
+          </div>
+</div>
+      
+
 
       <Modal
         show={modalShow}

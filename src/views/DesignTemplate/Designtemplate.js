@@ -1924,7 +1924,7 @@ const DesignTemplate = () => {
             </div>
           </div>
         </div>
-        <div >
+        <div style={{ height:"3%"}} >
           <FieldsFooter  handleEyeClick={handleEyeClick} selected={selectedCoordinates} />
         </div>
       </div>
@@ -2281,9 +2281,9 @@ const DesignTemplate = () => {
                     >
                       <option value="">Select an option</option>
                       <option value="0x00000001">
-                        Paper ejection to select stacker
+                        Paper Ejection To Select Stacker
                       </option>
-                      <option value="0x00000002">Stop reading</option>
+                      <option value="0x00000002">Stop Reading</option>
                       <option value="0">No Action</option>
                     </select>
                   </div>
@@ -2630,12 +2630,12 @@ const DesignTemplate = () => {
                     defaultValue={""}
                   >
                     <option value="">Select reading direction... </option>
-                    <option value="0">From top to the bottom</option>
+                    <option value="0">From Top To Bottom</option>
 
-                    <option value="2">From bottom to a top</option>
+                    <option value="2">From Bottom To Top</option>
 
-                    <option value="4">From left to right</option>
-                    <option value="5">From right to left</option>
+                    <option value="4">From Left To Right</option>
+                    <option value="5">From Right To Left</option>
                   </select>
                 </div>
                 {selectedFieldType !== "idField" && (
@@ -2659,7 +2659,7 @@ const DesignTemplate = () => {
                         <option value="1">
                           Mask (at the time set window) about a mark{" "}
                         </option>
-                        <option value="2">Fixed mark </option>
+                        <option value="2">Fixed Mark </option>
                         <option value="3">Checkdigits </option>
                         <option value="4">
                           Range checking (ascending order)
