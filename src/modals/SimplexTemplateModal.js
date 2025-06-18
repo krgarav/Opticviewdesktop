@@ -87,7 +87,7 @@ const SimplexTemplateModal = (props) => {
   const [activeKey, setActiveKey] = useState("general");
   const [spanDisplay, setSpanDisplay] = useState("none");
   const dataCtx = useContext(DataContext);
-  const [colorType, setColorType] = useState();
+  const [colorType, setColorType] = useState("grayscale");
   const [encoding, setEncoding] = useState();
   const [rotation, setRotation] = useState();
   const [resolution, setResolution] = useState();
@@ -140,7 +140,7 @@ const SimplexTemplateModal = (props) => {
   const [showScanner, setShowScanner] = useState(false);
   const [prefix, setPrefix] = useState("0000");
   const [prefixzeroes, setPrefixZeroes] = useState("0000");
-  const [scanner,setScanner] = useState(null);
+  const [scanner, setScanner] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -551,12 +551,12 @@ const SimplexTemplateModal = (props) => {
   const scannerHandler = async () => {
     setScannerLoading(true);
     setShowScanner(false);
-    
+
     if (!scanner?.id) {
-    alert("Please select a scanner");
-    setScannerLoading(false); // ✅ Reset loading state if early return
-    return;
-  }
+      alert("Please select a scanner");
+      setScannerLoading(false); // ✅ Reset loading state if early return
+      return;
+    }
     try {
       const response = await axios.post(
         `http://localhost:5000/GetSampleData/${scanner?.id}` // Use the selected scanner's id
@@ -684,7 +684,6 @@ const SimplexTemplateModal = (props) => {
               {/* <DuplexJob/> */}
             </div>
           )}
-          
 
           {(selectedUI === "SIMPLEX" ||
             (activeTab === "simplex" && selectedUI !== "")) && (
@@ -693,11 +692,10 @@ const SimplexTemplateModal = (props) => {
               onSelect={(k) => setActiveKey(k)}
               // style={{display:"flex",flexDirection:"row"}}
             >
-             
-              <Row >
-               <Col sm={2}>
-    <h2>{props.title}</h2>
-  </Col>
+              <Row>
+                <Col sm={2}>
+                  <h2>{props.title}</h2>
+                </Col>
                 <Col sm={8}>
                   {/* Adjusted column span to full width if needed */}
                   <Nav
@@ -833,7 +831,6 @@ const SimplexTemplateModal = (props) => {
                             placeholder="Select Scanner"
                             onChange={(selectedValue) => {
                               setScanner(selectedValue);
-                              
                             }}
                             styles={{
                               control: (provided, state) => ({
@@ -1131,7 +1128,7 @@ const SimplexTemplateModal = (props) => {
                           className="col-md-2 col-form-label  "
                           style={{ fontSize: ".95rem" }}
                         >
-                          Image 
+                          Image
                         </label>
                         <div className="col-md-4">
                           <Select
@@ -2164,29 +2161,68 @@ const SimplexTemplateModal = (props) => {
                     </Tab.Pane>
                     <Tab.Pane eventKey="image">
                       <Form>
-                        <Row className="mb-3">
+                        <Row className="mb-3 align-items-center">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 col-form-label "
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
                             Image Color :
                           </label>
-                          <div className="col-md-9">
-                            <Select
-                              value={colorType}
-                              onChange={(selectedValue) =>
-                                setColorType(selectedValue)
-                              }
-                              options={colorTypeData}
-                              getOptionLabel={(option) => option?.name || ""}
-                              getOptionValue={(option) =>
-                                option?.id?.toString() || ""
-                              }
-                              placeholder="Select color type..."
-                            />
+
+                          <div className="col-md-9 d-flex align-items-center justify-content-between">
+                            <div className="form-check form-check-inline mr-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="colorType"
+                                id="grayscale"
+                                value="grayscale"
+                                checked={colorType === "grayscale"}
+                                onChange={(e) => setColorType(e.target.value)}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="grayscale"
+                              >
+                                Grayscale
+                              </label>
+                            </div>
+
+                            <div className="form-check form-check-inline mr-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="colorType"
+                                id="color"
+                                value="color"
+                                checked={colorType === "color"}
+                                onChange={(e) => setColorType(e.target.value)}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="color"
+                              >
+                                Color
+                              </label>
+                            </div>
+
+                            <div>
+                              <img
+                                src={
+                                  colorType !== "grayscale"
+                                    ? "/colored.webp"
+                                    : "/grayscale.webp"
+                                }
+                                width={100}
+                                height={100}
+                                alt={colorType}
+                                className="rounded shadow"
+                              />
+                            </div>
                           </div>
                         </Row>
+
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
@@ -2507,7 +2543,6 @@ const SimplexTemplateModal = (props) => {
         backdrop="static"
         keyboard={false}
       >
-       
         <Modal.Body style={{ height: "80dvh" }}>
           <>
             {scannerLoading && (
@@ -2682,7 +2717,6 @@ const SimplexTemplateModal = (props) => {
         backdrop="static"
         keyboard={false}
       >
-        
         <Modal.Body style={{ height: "80dvh", overflow: "auto" }}>
           {props.title === "SIMPLEX" && (
             <>
@@ -2712,15 +2746,18 @@ const SimplexTemplateModal = (props) => {
                   multiple
                 />
                 {imageBack && (
-                  <img  className="img-fluid rounded"
-                 
-                                  style={{
-                                    maxHeight: "300px",
-                                    objectFit: "cover",
-                                    width: "100%",
-                                  }} 
-                                  src={imageBack}
-                                   alt="Scanned" width={100} height={100} />
+                  <img
+                    className="img-fluid rounded"
+                    style={{
+                      maxHeight: "300px",
+                      objectFit: "cover",
+                      width: "100%",
+                    }}
+                    src={imageBack}
+                    alt="Scanned"
+                    width={100}
+                    height={100}
+                  />
                 )}
               </Row>
               <Row className="d-flex justify-content-center mt-4">
@@ -2750,8 +2787,6 @@ const SimplexTemplateModal = (props) => {
           </Button>
         </Modal.Footer>
       </Modal>
-
-      
     </>
   );
 };
