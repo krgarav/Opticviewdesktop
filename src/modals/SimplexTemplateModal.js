@@ -730,7 +730,7 @@ const SimplexTemplateModal = (props) => {
                       <Row className="mb-3">
                         <label
                           htmlFor="example-text-input"
-                          className="col-md-2 "
+                          className="col-md-2 col-form-label"
                           style={{ fontSize: ".9rem" }}
                         >
                           Name
@@ -1131,7 +1131,7 @@ const SimplexTemplateModal = (props) => {
                           className="col-md-2 col-form-label  "
                           style={{ fontSize: ".95rem" }}
                         >
-                          Image Status
+                          Image 
                         </label>
                         <div className="col-md-4">
                           <Select
@@ -1351,12 +1351,12 @@ const SimplexTemplateModal = (props) => {
                             className="col-md-2 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
-                            Window NG
+                            Exception
                           </label>
                           <div className="col-md-10">
                             <Select
                               value={windowNgOption}
-                               placeholder="Select Window NG"
+                              placeholder="Select Exception Option"
                               onChange={(selectedValue) => {
                                 setWindowNgOption(selectedValue);
                                 settoggle((item) => ({
@@ -2167,10 +2167,10 @@ const SimplexTemplateModal = (props) => {
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label "
                             style={{ fontSize: ".9rem" }}
                           >
-                            Color Types :
+                            Image Color :
                           </label>
                           <div className="col-md-9">
                             <Select
@@ -2190,10 +2190,10 @@ const SimplexTemplateModal = (props) => {
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
-                            Encoding Option :
+                            Image Type :
                           </label>
                           <div className="col-md-9">
                             <Select
@@ -2213,7 +2213,7 @@ const SimplexTemplateModal = (props) => {
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
                             Rotation :
@@ -2236,7 +2236,7 @@ const SimplexTemplateModal = (props) => {
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label "
                             style={{ fontSize: ".9rem" }}
                           >
                             Resolution :
@@ -2252,7 +2252,7 @@ const SimplexTemplateModal = (props) => {
                               getOptionValue={(option) =>
                                 option?.id?.toString() || ""
                               }
-                              placeholder="Select rotation option..."
+                              placeholder="Select Resolution Option..."
                             />
                             {resolution?.id === "0" && (
                               <span
@@ -2266,7 +2266,7 @@ const SimplexTemplateModal = (props) => {
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
                             Scanning Side :
@@ -2282,14 +2282,14 @@ const SimplexTemplateModal = (props) => {
                               getOptionValue={(option) =>
                                 option?.id?.toString() || ""
                               }
-                              placeholder="Select rotation option..."
+                              placeholder="Select Scanning Side..."
                             />
                           </div>
                         </Row>
                         <Row className="mb-3">
                           <label
-                            htmlFor="example-text-input"
-                            className="col-md-3 "
+                            htmlFor="example-text-input col-form-label"
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
                             Image compression :
@@ -2305,7 +2305,7 @@ const SimplexTemplateModal = (props) => {
                               getOptionValue={(option) =>
                                 option?.id?.toString() || ""
                               }
-                              placeholder="Select rotation option..."
+                              placeholder="Select Compression..."
                             />
                           </div>
                         </Row>

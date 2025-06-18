@@ -137,8 +137,8 @@ export const scanningSideData = [
   { id: "3", name: "Back side only" },
 ];
 export const imageStatusData = [
-  { id: "0", name: "Not Enabled" },
-  { id: "1", name: "Enabled" },
+  { id: "0", name: "Not Enable" },
+  { id: "1", name: "Enable" },
 ];
 
 export const code39OrItfCheckDigitData = [

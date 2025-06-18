@@ -18,3 +18,4 @@ export const fetchProcessData = async () => {
     const urls = await  url.getUrls();
     return get(urls.REFRESH_SCANNER);
   };
+  

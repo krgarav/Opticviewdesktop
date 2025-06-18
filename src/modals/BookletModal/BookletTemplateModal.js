@@ -683,7 +683,7 @@ const BookletTemplateModal = (props) => {
                       <Row className="mb-3">
                         <label
                           htmlFor="example-text-input"
-                          className="col-md-2 "
+                          className="col-md-2 col-form-label"
                           style={{ fontSize: ".9rem" }}
                         >
                           Name
@@ -985,7 +985,7 @@ const BookletTemplateModal = (props) => {
                           className="col-md-2 col-form-label  "
                           style={{ fontSize: ".95rem" }}
                         >
-                          Image Status
+                          Image 
                         </label>
                         <div className="col-md-4">
                           <Select
@@ -1030,7 +1030,7 @@ const BookletTemplateModal = (props) => {
                             className="col-md-2 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
-                            Window NG
+                            Exception
                           </label>
                           <div className="col-md-10">
                             <Select
