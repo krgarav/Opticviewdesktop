@@ -1953,9 +1953,16 @@ const EditDesignTemplate = () => {
             id="contained-modal-title-vcenter"
             style={{ width: "100vw" }}
           >
-            <h2 className="text-center">
+            {modalUpdate&& <h2 className="text-center">
               {!modalUpdate ? "Choose field type" : selectedFieldType}
-            </h2>
+            </h2>}
+            {!selectedFieldType && (
+  <h2 className="text-center">
+    {!modalUpdate
+      ? "Choose field type"
+      : selectedFieldType}
+  </h2>
+)}
             <br />
             {!modalUpdate && (
               <Row className="mb-2">
@@ -2041,7 +2048,7 @@ const EditDesignTemplate = () => {
             )}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{ height: "55vh", overflowX: "auto" }}>
+        <Modal.Body style={{ height: "65vh", overflowX: "auto" }}>
           {selectedFieldType && (
             <>
               {selectedFieldType !== "idField" && (
@@ -2540,38 +2547,7 @@ const EditDesignTemplate = () => {
                   />
                 </div>
               </Row>
-              {selectedFieldType === "formField" && (
-                <Row className="mb-2">
-                  <label
-                    htmlFor="example-text-input"
-                    className="col-md-2  col-form-label"
-                  >
-                    Prefix :
-                  </label>
-                  <div className="col-md-4">
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={prefix}
-                      onChange={(e) => setPrefix(e.target.value)}
-                    />
-                  </div>
-                  <label
-                    htmlFor="example-text-input"
-                    className="col-md-2  col-form-label"
-                  >
-                    Suffix :
-                  </label>
-                  <div className="col-md-4">
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={suffix}
-                      onChange={(e) => setSuffix(e.target.value)}
-                    />
-                  </div>
-                </Row>
-              )}
+              
               <Row className="mb-2">
                 <label htmlFor="example-text-input" className="col-md-2 ">
                   Reading Direction :

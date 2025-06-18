@@ -1940,9 +1940,17 @@ const DesignTemplate = () => {
             id="contained-modal-title-vcenter"
             style={{ width: "100vw" }}
           >
-            <h2 className="text-center">
+           {modalUpdate&& <h2 className="text-center">
               {!modalUpdate ? "Choose field type" : selectedFieldType}
-            </h2>
+            </h2>}
+            {!selectedFieldType && (
+  <h2 className="text-center">
+    {!modalUpdate
+      ? "Choose field type"
+      : selectedFieldType}
+  </h2>
+)}
+
             <br />
             {!modalUpdate && (
               // <Row className="mb-2 d-flex align-items-center" style={{position:"absolute",translate:"transformX(-100px) "}}>
@@ -2149,7 +2157,7 @@ const DesignTemplate = () => {
             )}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{ height: "55vh", overflowX: "auto" }}>
+        <Modal.Body style={{ height: "65vh", overflowX: "auto" }}>
           {selectedFieldType && (
             <>
               {selectedFieldType !== "idField" && (
