@@ -684,15 +684,21 @@ const SimplexTemplateModal = (props) => {
               {/* <DuplexJob/> */}
             </div>
           )}
+          
 
           {(selectedUI === "SIMPLEX" ||
             (activeTab === "simplex" && selectedUI !== "")) && (
             <Tab.Container
               activeKey={activeKey}
               onSelect={(k) => setActiveKey(k)}
+              // style={{display:"flex",flexDirection:"row"}}
             >
-              <Row>
-                <Col sm={12}>
+             
+              <Row >
+               <Col sm={2}>
+    <h2>{props.title}</h2>
+  </Col>
+                <Col sm={8}>
                   {/* Adjusted column span to full width if needed */}
                   <Nav
                     variant="pills"
