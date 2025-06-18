@@ -650,6 +650,7 @@ const BookletTemplateModal = (props) => {
               onSelect={(k) => setActiveKey(k)}
             >
               <Row>
+                
                 <Col sm={12}>
                   {/* Adjusted column span to full width if needed */}
                   <Nav

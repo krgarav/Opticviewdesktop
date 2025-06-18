@@ -568,7 +568,7 @@ const LayoutDetailModal = (props) => {
           printingData: {
             printEnable: +printEnable?.id ?? 0,
             printStartPos: +startPosition ?? 0,
-            printDigit: +printDigit.id ?? 0,
+            printDigit: printDigit?.id ?? 0,
             printStartNumber: +printStartNumber ?? 0,
             printOrientation:
               printOrientation?.id === undefined ? 0 : +printOrientation?.id,
@@ -580,6 +580,9 @@ const LayoutDetailModal = (props) => {
           },
         },
       ];
+      console.log(printDigit)
+      console.log(templateData)
+      // return
       const layoutDataKey = props.layoutData.layoutParameters.key;
       const templateIndex = dataCtx.allTemplates.findIndex(
         (item) => item[0].layoutParameters?.key === layoutDataKey
