@@ -140,7 +140,7 @@ const BookletTemplateModal = (props) => {
   const [showScanner, setShowScanner] = useState(false);
   const [prefix, setPrefix] = useState("0000");
   const [prefixzeroes, setPrefixZeroes] = useState("0000");
-  const [scanner,setScanner] = useState("scanner1");  
+  const [scanner, setScanner] = useState("scanner1");
   const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
@@ -510,12 +510,18 @@ const BookletTemplateModal = (props) => {
     }
   };
 
-  const scanner1Handler = async () => {
+  const scannerHandler = async () => {
     setScannerLoading(true);
     setShowScanner(false);
+
+    if (!scanner?.id) {
+      alert("Please select a scanner");
+      setScannerLoading(false); // ✅ Reset loading state if early return
+      return;
+    }
     try {
       const response = await axios.post(
-        "http://localhost:5000/GetSampleData/1"
+        `http://localhost:5000/GetSampleData/${scanner?.id}` // Use the selected scanner's id
       );
       const { data, images } = response.data;
       const jsonData = data;
@@ -629,7 +635,6 @@ const BookletTemplateModal = (props) => {
         backdrop="static"
         keyboard={false}
       >
-        
         <Modal.Body style={{ height: "80dvh", overflow: "auto" }}>
           {selectedUI === "" && (
             <div className="d-flex" style={{ justifyContent: "space-evenly" }}>
@@ -780,7 +785,6 @@ const BookletTemplateModal = (props) => {
                             placeholder="Select Scanner"
                             onChange={(selectedValue) => {
                               setScanner(selectedValue);
-                              
                             }}
                             styles={{
                               control: (provided, state) => ({
@@ -1017,7 +1021,6 @@ const BookletTemplateModal = (props) => {
                           />
                         </div>
                       </Row>
-                      
 
                       {idPresent?.id !== "not present" && (
                         <Row className="mb-2">
@@ -2335,10 +2338,8 @@ const BookletTemplateModal = (props) => {
         backdrop="static"
         keyboard={false}
       >
-        <Modal.Header>
-          <Modal.Title id="modal-custom-navbar">Select Image</Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ height: "65dvh" }}>
+        
+        <Modal.Body style={{ height: "80dvh" }}>
           <>
             {scannerLoading && (
               <div
@@ -2391,9 +2392,7 @@ const BookletTemplateModal = (props) => {
                 </Col>
                 <Col lg={6} md={6} className="mb-4">
                   <div
-                    onClick={() => {
-                      setShowScanner(true);
-                    }}
+                    onClick={scannerHandler}
                     className="upload-box p-4 text-center border rounded"
                   >
                     <h1>Upload From Scanner</h1>
@@ -2440,7 +2439,7 @@ const BookletTemplateModal = (props) => {
                                   alt={`Front Slide ${index + 1}`}
                                   className="img-fluid rounded"
                                   style={{
-                                    maxHeight: "400px",
+                                    maxHeight: "300px",
                                     objectFit: "cover",
                                     width: "100%",
                                   }}
@@ -2541,49 +2540,6 @@ const BookletTemplateModal = (props) => {
             Save
           </Button>
         </Modal.Footer>
-      </Modal>
-      <Modal
-        show={showScanner}
-        size="md"
-        aria-labelledby="modal-custom-navbar"
-        centered
-        dialogClassName="modal-50w"
-        keyboard={false}
-      >
-        <Modal.Header>
-          <Modal.Title id="modal-custom-navbar">Select Scanner</Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ height: "16dvh", overflow: "auto" }}>
-          <Row>
-            <Col lg={6} md={6} className="mb-4">
-              <div
-                onClick={scanner1Handler}
-                className="upload-box p-3 text-center border rounded"
-              >
-                <h1 className="fs-3 text-dark">SR 3500H</h1>
-              </div>
-            </Col>
-            <Col lg={6} md={6} className="mb-4">
-              <div
-                onClick={scanner2Handler}
-                className="upload-box p-3 text-center border rounded bg-cover "
-                // style={{ backgroundImage: `url(${backgroundImage})` }}
-              >
-                <h1>SR 8000H</h1>
-              </div>
-            </Col>
-          </Row>
-        </Modal.Body>
-        {/* <Modal.Footer>
-          <Button
-            variant="warning"
-            onClick={() => {
-              setShowScanner(false);
-            }}
-          >
-            Close
-          </Button>
-        </Modal.Footer> */}
       </Modal>
     </>
   );
