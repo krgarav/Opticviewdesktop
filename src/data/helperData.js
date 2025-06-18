@@ -63,14 +63,14 @@ export const windowNgData = [
   {
     id: "0x00000001",
     name: "SKDV_ACTION_SELECT(0x00000001)",
-    showName: "Paper ejection to select stacker",
+    showName: "Eject Paper To Stacker",
   },
   {
     id: "0x00000002",
     name: "SKDV_ACTION_STOP(0x00000002)",
-    showName: "Stop reading",
+    showName: "Stop Scanning",
   },
-  { id: "0", name: "SKDV_ACTION_STOP(0x00000002)", showName: "No action" },
+  { id: "0", name: "SKDV_ACTION_STOP(0x00000002)", showName: "No Action" },
 ];
 
 export const faceData = [

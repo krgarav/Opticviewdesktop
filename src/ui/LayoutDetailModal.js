@@ -539,6 +539,7 @@ const LayoutDetailModal = (props) => {
             iDifference: +difference,
             ngAction: windowNgOption?.id,
             dataReadDirection: direction?.id,
+            idStatus: idPresent.id,
             iReject: 1,
             excelJsonFile: excelJsonFile,
             images: images,
@@ -580,9 +581,7 @@ const LayoutDetailModal = (props) => {
           },
         },
       ];
-      console.log(printDigit)
-      console.log(templateData)
-      // return
+     
       const layoutDataKey = props.layoutData.layoutParameters.key;
       const templateIndex = dataCtx.allTemplates.findIndex(
         (item) => item[0].layoutParameters?.key === layoutDataKey
@@ -802,7 +801,7 @@ const LayoutDetailModal = (props) => {
                           className="col-md-2  col-form-label"
                           style={{ fontSize: ".87rem" }}
                         >
-                          Bubble Variant
+                          Bubble
                         </label>
                         <div className="col-md-10">
                           <Select
@@ -1158,7 +1157,7 @@ const LayoutDetailModal = (props) => {
                             className="col-md-2 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
-                            Window NG
+                            Exception
                           </label>
                           <div className="col-md-10">
                             <Select
