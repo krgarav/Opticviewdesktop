@@ -2157,7 +2157,7 @@ const DesignTemplate = () => {
             )}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{ height: "65vh", overflowX: "auto" }}>
+        <Modal.Body style={{ height: "67vh", overflowX: "auto" }}>
           {selectedFieldType && (
             <>
               {selectedFieldType !== "idField" && (
@@ -2188,6 +2188,7 @@ const DesignTemplate = () => {
                   <label
                     htmlFor="example-text-input"
                     className="col-md-2 col-form-label"
+                    style={{ fontSize: "0.8rem" }}
                   >
                     Grid
                   </label>
@@ -2209,7 +2210,7 @@ const DesignTemplate = () => {
                   </div>
                   {multiple !== "allow" && (
                     <>
-                      <label htmlFor="example-text-input" className="col-md-2 ">
+                      <label htmlFor="example-text-input" className="col-md-2 col-form-label "   style={{ fontSize: "0.8rem" }}>
                         Grid Value
                       </label>
                       <div className="col-md-4">
@@ -2232,6 +2233,7 @@ const DesignTemplate = () => {
                   <label
                     htmlFor="example-text-input"
                     className="col-md-2 col-form-label"
+                    style={{ fontSize: "0.8rem" }}
                   >
                     Blanks
                   </label>
@@ -2254,6 +2256,7 @@ const DesignTemplate = () => {
                       <label
                         htmlFor="example-text-input"
                         className="col-md-2 col-form-label"
+                        style={{ fontSize: "0.8rem" }}
                       >
                         Blank Value
                       </label>
@@ -2277,8 +2280,9 @@ const DesignTemplate = () => {
                   <label
                     htmlFor="example-text-input"
                     className="col-md-2 col-form-label"
+                    style={{ fontSize: "0.8rem" }}
                   >
-                    Window NG
+                   Exception
                   </label>
                   <div className="col-md-10">
                     <select
@@ -2289,9 +2293,9 @@ const DesignTemplate = () => {
                     >
                       <option value="">Select an option</option>
                       <option value="0x00000001">
-                        Paper Ejection To Select Stacker
+                        Eject Paper To Stacker
                       </option>
-                      <option value="0x00000002">Stop Reading</option>
+                      <option value="0x00000002">Stop Scanning</option>
                       <option value="0">No Action</option>
                     </select>
                   </div>
@@ -2300,7 +2304,7 @@ const DesignTemplate = () => {
              
               {selectedFieldType === "idField" && (
                 <Row className="mb-2">
-                  <label className="col-md-2 " style={{}}>
+                  <label className="col-md-2 col-form-label "style={{ fontSize: "0.8rem" }}>
                     Set Id Pattern
                   </label>
 
@@ -2316,7 +2320,7 @@ const DesignTemplate = () => {
                       <option value="Col">Col</option>
                     </select>
                   </div>
-                  <label htmlFor="example-select-input" className="col-md-2 ">
+                  <label htmlFor="example-select-input" className="col-md-2  col-form-label" style={{ fontSize: "0.8rem" }}>
                     Id selection
                   </label>
                   <div className="col-md-6">
@@ -2331,7 +2335,7 @@ const DesignTemplate = () => {
               )}
               {selectedFieldType === "skewMarkField" && (
                 <Row className="mb-2">
-                  <label htmlFor="example-select-input" className="col-md-2">
+                  <label htmlFor="example-select-input" className="col-md-2 col-form-label" style={{ fontSize: "0.8rem" }}>
                     Data Rejection
                   </label>
                   <div className="col-md-4">
@@ -2342,11 +2346,12 @@ const DesignTemplate = () => {
                       defaultValue={"none"}
                     >
                       <option value="">Select an option</option>
-                      <option value="use">Use</option>
-                      <option value="not use">Not</option>
+                      <option value="use">Mark as Exception</option>
+<option value="not use">Do Not Mark as Exception</option>
+
                     </select>
                   </div>
-                  <label htmlFor="example-select-input" className="col-md-2">
+                  <label htmlFor="example-select-input" className="col-md-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
                     Field Value
                   </label>
                   <div className="col-md-4">
@@ -2365,6 +2370,7 @@ const DesignTemplate = () => {
                 <label
                   htmlFor="example-select-input"
                   className="col-2 col-form-label"
+                  style={{ fontSize: "0.8rem" }}
                 >
                   Start Row
                 </label>
@@ -2396,6 +2402,8 @@ const DesignTemplate = () => {
                 <label
                   htmlFor="example-select-input"
                   className="col-2 col-form-label"
+                  style={{ fontSize: "0.8rem" }}
+
                 >
                   End Row
                 </label>
@@ -2426,6 +2434,8 @@ const DesignTemplate = () => {
                 <label
                   htmlFor="example-select-input"
                   className="col-2 col-form-label"
+                  style={{ fontSize: "0.8rem" }}
+
                 >
                   Total Row
                 </label>
@@ -2433,8 +2443,9 @@ const DesignTemplate = () => {
                   <input value={numRows} readOnly className="form-control" />
                 </div>
               </Row>
-              <Row className="">
-                <label htmlFor="example-select-input" className="col-2 ">
+              <Row className="mb-2">
+                 
+                <label htmlFor="example-select-input" className="col-2 col-form-label"   style={{ fontSize: "0.8rem" }}  >
                   Step In A Row
                 </label>
                 <div className="col-4">
@@ -2468,7 +2479,7 @@ const DesignTemplate = () => {
                     required
                   />
                 </div>
-                <label htmlFor="example-select-input" className="col-2 ">
+                <label htmlFor="example-select-input" className="col-2  col-form-label"  style={{ fontSize: "0.8rem" }}>
                   Total No In Row
                 </label>
                 <div className="col-4">
@@ -2486,6 +2497,7 @@ const DesignTemplate = () => {
                 <label
                   htmlFor="example-select-input"
                   className="col-2  col-form-label"
+                   style={{ fontSize: "0.8rem" }}
                 >
                   Start Col
                 </label>
@@ -2517,6 +2529,7 @@ const DesignTemplate = () => {
                 <label
                   htmlFor="example-select-input"
                   className="col-2 col-form-label"
+                   style={{ fontSize: "0.8rem" }}
                 >
                   End Col
                 </label>
@@ -2547,6 +2560,7 @@ const DesignTemplate = () => {
                 <label
                   htmlFor="example-select-input"
                   className="col-2 col-form-label"
+                   style={{ fontSize: "0.8rem" }}
                 >
                   Total Column
                 </label>
@@ -2555,7 +2569,7 @@ const DesignTemplate = () => {
                 </div>
               </Row>
               <Row className="mb-2">
-                <label htmlFor="example-select-input" className="col-2 ">
+                <label htmlFor="example-select-input" className="col-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
                   Step In A Column
                 </label>
                 <div className="col-4">
@@ -2582,8 +2596,8 @@ const DesignTemplate = () => {
                     required
                   />
                 </div>
-                <label htmlFor="example-select-input" className="col-2 ">
-                  Total No In Column
+                <label htmlFor="example-select-input" className="col-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
+                  Total No In Col
                 </label>
                 <div className="col-4">
                   <input
@@ -2598,10 +2612,10 @@ const DesignTemplate = () => {
               </Row>
 
               <Row className="mb-2">
-                <label htmlFor="example-text-input" className="col-md-2 ">
-                  Reading Direction :
+                <label htmlFor="example-text-input" className="col-md-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
+                  Read Direction 
                 </label>
-                <div className="col-md-4">
+                <div className="col-md-10">
                   <select
                     className="form-control"
                     value={readingDirectionOption}
@@ -2634,6 +2648,7 @@ const DesignTemplate = () => {
                   <label
                     htmlFor="example-text-input"
                     className="col-md-2 col-form-label "
+                    style={{ fontSize: "0.8rem" }}
                   >
                     Total Fields :
                   </label>
@@ -2649,6 +2664,7 @@ const DesignTemplate = () => {
                   <label
                     htmlFor="example-text-input"
                     className="col-md-2 col-form-label "
+                    style={{ fontSize: "0.8rem" }}
                   >
                     Field Type :
                   </label>

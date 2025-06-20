@@ -87,7 +87,7 @@ const BookletTemplateModal = (props) => {
   const [activeKey, setActiveKey] = useState("general");
   const [spanDisplay, setSpanDisplay] = useState("none");
   const dataCtx = useContext(DataContext);
-  const [colorType, setColorType] = useState();
+  const [colorType, setColorType] = useState("grayscale");
   const [encoding, setEncoding] = useState();
   const [rotation, setRotation] = useState();
   const [resolution, setResolution] = useState();
@@ -181,7 +181,6 @@ const BookletTemplateModal = (props) => {
   const imageModalHandler = () => {
     setImageModal(true);
   };
-
   const resetModalHandler = () => {
     settoggle({});
     // setModalShow(false);
@@ -488,13 +487,13 @@ const BookletTemplateModal = (props) => {
           },
           printingData: {
             printEnable: +printEnable?.id ?? 0,
-            printStartPos: +startPosition ?? 0,
+            printStartPos: +Math.floor(startPosition) ?? 0,
             printDigit: +printDigit ?? 0,
             printStartNumber: +printStartNumber ?? 0,
             printOrientation:
               printOrientation?.id === undefined ? 0 : +printOrientation?.id,
             printFontSize: 0,
-            printFontSpace: +fontSpace ?? 0,
+            printFontSpace: +Math.floor(fontSpace) ?? 0,
             printMode: printMode?.id === undefined ? 0 : +printMode?.id,
             customType: printCustom?.id === undefined ? "" : printCustom?.id,
             customValue: printCustomValue ? printCustomValue : "",
@@ -650,8 +649,10 @@ const BookletTemplateModal = (props) => {
               onSelect={(k) => setActiveKey(k)}
             >
               <Row>
-                
-                <Col sm={12}>
+                <Col sm={2}>
+                                  <h2>{props.title}</h2>
+                                </Col>
+                <Col sm={8}>
                   {/* Adjusted column span to full width if needed */}
                   <Nav
                     variant="pills"

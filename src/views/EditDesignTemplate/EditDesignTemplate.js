@@ -1953,16 +1953,16 @@ const EditDesignTemplate = () => {
             id="contained-modal-title-vcenter"
             style={{ width: "100vw" }}
           >
-            {modalUpdate&& <h2 className="text-center">
-              {!modalUpdate ? "Choose field type" : selectedFieldType}
-            </h2>}
+            {modalUpdate && (
+              <h2 className="text-center">
+                {!modalUpdate ? "Choose field type" : selectedFieldType}
+              </h2>
+            )}
             {!selectedFieldType && (
-  <h2 className="text-center">
-    {!modalUpdate
-      ? "Choose field type"
-      : selectedFieldType}
-  </h2>
-)}
+              <h2 className="text-center">
+                {!modalUpdate ? "Choose field type" : selectedFieldType}
+              </h2>
+            )}
             <br />
             {!modalUpdate && (
               <Row className="mb-2">
@@ -2171,8 +2171,9 @@ const EditDesignTemplate = () => {
                   <label
                     htmlFor="example-text-input"
                     className="col-md-2 col-form-label"
+                    style={{ fontSize: "0.8rem" }}
                   >
-                    Window NG
+                    Exception
                   </label>
                   <div className="col-md-10">
                     <select
@@ -2182,10 +2183,8 @@ const EditDesignTemplate = () => {
                       defaultValue={""}
                     >
                       <option value="">Select an option</option>
-                      <option value="0x00000001">
-                        Paper ejection to select stacker
-                      </option>
-                      <option value="0x00000002">Stop reading</option>
+                      <option value="0x00000001">Eject Paper To Stacker</option>
+                      <option value="0x00000002">Stop Scanning</option>
                       <option value="0">No Action</option>
                     </select>
                   </div>
@@ -2281,8 +2280,8 @@ const EditDesignTemplate = () => {
                       defaultValue={"none"}
                     >
                       <option value="">Select an option</option>
-                      <option value="use">Use</option>
-                      <option value="not use">Not</option>
+                      <option value="use">Mark as Exception</option>
+                      <option value="not use">Do Not Mark as Exception</option>
                     </select>
                   </div>
                   <label
@@ -2547,7 +2546,7 @@ const EditDesignTemplate = () => {
                   />
                 </div>
               </Row>
-              
+
               <Row className="mb-2">
                 <label htmlFor="example-text-input" className="col-md-2 ">
                   Reading Direction :
@@ -2557,8 +2556,8 @@ const EditDesignTemplate = () => {
                     className="form-control"
                     value={readingDirectionOption}
                     onChange={(e) => {
-                      if (e.target.value == 0 || e.target.value ==  2) {
-                        setNumberOfField(Math.ceil(noInRow ));
+                      if (e.target.value == 0 || e.target.value == 2) {
+                        setNumberOfField(Math.ceil(noInRow));
                       } else {
                         setNumberOfField(Math.ceil(noInCol));
                       }
