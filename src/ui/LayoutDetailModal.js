@@ -576,13 +576,13 @@ const LayoutDetailModal = (props) => {
           },
           printingData: {
             printEnable: +printEnable?.id ?? 0,
-            printStartPos: +startPosition ?? 0,
+            printStartPos: +Math.floor(startPosition) ?? 0,
             printDigit: printDigit?.id ?? 0,
             printStartNumber: +printStartNumber ?? 0,
             printOrientation:
               printOrientation?.id === undefined ? 0 : +printOrientation?.id,
             printFontSize: 0,
-            printFontSpace: +fontSpace ?? 0,
+           printFontSpace: +Math.floor(fontSpace) ?? 0,
             printMode: printMode?.id === undefined ? 0 : +printMode?.id,
             customType: printCustom?.id === undefined ? "" : printCustom?.id,
             customValue: printCustomValue ? printCustomValue : "",
