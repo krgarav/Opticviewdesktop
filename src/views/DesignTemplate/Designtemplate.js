@@ -115,7 +115,7 @@ const DesignTemplate = () => {
   const [currentLinkField, setCurrentLinkField] = useState(null);
   const numRows = timingMarks;
   const numCols = totalColumns;
-
+  const inputRef = useRef(null);
   const divRefs = useRef([]);
 
   const { width } = useWindowSize();
@@ -2174,9 +2174,28 @@ const DesignTemplate = () => {
                     <input
                       type="text"
                       className="form-control"
-                      placeholder="Enter Window Name"
+                      placeholder={
+                        selectedFieldType === "questionField"
+                          ? "Enter Question Range (e.g., Q1–Q2)"
+                          : "Enter Window Name"
+                      }
+                      ref={inputRef}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                      onBlur={(e) => {
+                        const value = e.target.value;
+
+                        if (selectedFieldType === "questionField") {
+                          const isValid = /^Q\d+\s*[-–]\s*Q\d+$/i.test(value);
+
+                          if (!isValid && value.trim() !== "") {
+                            toast.warn(
+                              "Invalid format. Please enter in Q1–Q2 format."
+                            );
+                            inputRef.current?.focus();
+                          }
+                        }
+                      }}
                       required
                       style={{ color: "black" }}
                     />
@@ -2203,9 +2222,10 @@ const DesignTemplate = () => {
                         setMultiple(e.target.value);
                       }}
                       defaultValue={""}
-                      
                     >
-                      <option value=""  disabled hidden>Select Grid Option..</option>
+                      <option value="" disabled hidden>
+                        Select Grid Option..
+                      </option>
                       <option value="allow">Allow All</option>
                       <option value="not allow">Allow None</option>
                     </select>
@@ -2253,7 +2273,9 @@ const DesignTemplate = () => {
                       }}
                       defaultValue={""}
                     >
-                      <option value="" disabled hidden >Select Blank Option...</option>
+                      <option value="" disabled hidden>
+                        Select Blank Option...
+                      </option>
                       <option value="allow">Allow All</option>
                       <option value="not allow">Allow None</option>
                     </select>
@@ -2299,7 +2321,9 @@ const DesignTemplate = () => {
                       onChange={handleWindowNgOptionChange}
                       defaultValue={""}
                     >
-                      <option value=""  disabled hidden>Select An Action For Exception Handling...</option>
+                      <option value="" disabled hidden>
+                        Select An Action For Exception Handling...
+                      </option>
                       <option value="0x00000001">Eject Paper To Stacker</option>
                       <option value="0x00000002">Stop Scanning</option>
                       <option value="0">No Action</option>
@@ -2362,7 +2386,9 @@ const DesignTemplate = () => {
                       onChange={handleSkewMarkOptionChange}
                       defaultValue={"none"}
                     >
-                      <option value="">Select an option</option>
+                      <option value="">
+                        Select a Data Rejection Option...
+                      </option>
                       <option value="use">Mark as Exception</option>
                       <option value="not use">Do Not Mark as Exception</option>
                     </select>
@@ -2467,40 +2493,9 @@ const DesignTemplate = () => {
                   className="col-2 col-form-label"
                   style={{ fontSize: "0.8rem" }}
                 >
-                  Step In A Row
+                  Steps In Row
                 </label>
                 <div className="col-4">
-                  {/* <input
-                  
-                   id="step-input"
-                    type="number"
-                    className="form-control"
-                    value={noOfStepInRow}
-                    onChange={(e) => {
-                      const value = +e.target.value; // Convert input value to number
-                      const totalRows = +endRowInput - +startRowInput + 1;
-
-                      // Step cannot be more than total rows
-                      if (value > totalRows) {
-                        alert("Steps cannot be larger than the combined area.");
-                        setNoOfStepInRow(""); // Reset the input
-                        return;
-                      }
-
-                      // Step must be at least 1
-                      if (value >= 1) {
-                        setNoInRow(Math.floor(totalRows / value)); // Update total rows in state
-                        setNoOfStepInRow(value); // Update number of steps
-                      }
-                    }}
-                    onBlur={(e) => {
-                      //    if(+e.target.value >= 1){
-                      //   setNoInRow(+endRowInput - +startRowInput + 1);
-                      //   setNoOfStepInRow(e.target.value);
-                      // }
-                    }}
-                    required
-                  /> */}
                   <BootstrapNumberInput
                     value={noOfStepInRow}
                     setValue={setNoOfStepInRow}
@@ -2609,7 +2604,7 @@ const DesignTemplate = () => {
                   className="col-2 col-form-label"
                   style={{ fontSize: "0.8rem" }}
                 >
-                  Step In A Column
+                  Steps In Column
                 </label>
                 <div className="col-4">
                   <BootstrapNumberInput
@@ -2662,7 +2657,9 @@ const DesignTemplate = () => {
                     }}
                     defaultValue={""}
                   >
-                    <option value=""  disabled hidden>Select Reading Direction... </option>
+                    <option value="" disabled hidden>
+                      Select Reading Direction...{" "}
+                    </option>
                     <option value="0">From Top To Bottom</option>
                     <option value="2">From Bottom To Top</option>
                     <option value="4">From Left To Right</option>
@@ -2679,7 +2676,7 @@ const DesignTemplate = () => {
                     className="col-md-2 col-form-label "
                     style={{ fontSize: "0.8rem" }}
                   >
-                    Total Fields 
+                    Total Fields
                   </label>
                   <div className="col-4 ">
                     <input
@@ -2695,7 +2692,7 @@ const DesignTemplate = () => {
                     className="col-md-2 col-form-label "
                     style={{ fontSize: "0.8rem" }}
                   >
-                    Field Type 
+                    Field Type
                   </label>
                   <div className="col-4 ">
                     <select
@@ -2706,7 +2703,9 @@ const DesignTemplate = () => {
                       }}
                       defaultValue={""}
                     >
-                      <option value="" disabled hidden>Select Field Type... </option>
+                      <option value="" disabled hidden>
+                        Select Field Type...{" "}
+                      </option>
                       <option value="numeric">Numeric </option>
                       <option value="alphabet">Alphabet </option>
                       <option value="binary">Litho Code</option>

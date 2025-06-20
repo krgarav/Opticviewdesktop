@@ -97,6 +97,7 @@ const EditDesignTemplate = () => {
   const [linkFields, setLinkFields] = useState([]);
   const [currentLinkField, setCurrentLinkField] = useState(null);
   const divRefs = useRef([]);
+  const inputRef = useRef(null);
   const numRows = data.timingMarks;
   const numCols = data.totalColumns;
   const { width } = useWindowSize();
@@ -2064,9 +2065,28 @@ const EditDesignTemplate = () => {
                     <input
                       type="text"
                       className="form-control"
-                      placeholder="Enter Window Name"
+                      placeholder={
+                        selectedFieldType === "questionField"
+                          ? "Enter Question Range (e.g., Q1–Q2)"
+                          : "Enter Window Name"
+                      }
+                      ref={inputRef}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                      onBlur={(e) => {
+                        const value = e.target.value;
+
+                        if (selectedFieldType === "questionField") {
+                          const isValid = /^Q\d+\s*[-–]\s*Q\d+$/i.test(value);
+
+                          if (!isValid && value.trim() !== "") {
+                            toast.warn(
+                              "Invalid format. Please enter in Q1–Q2 format."
+                            );
+                            inputRef.current?.focus();
+                          }
+                        }
+                      }}
                       required
                       style={{ color: "black" }}
                     />
@@ -2079,7 +2099,7 @@ const EditDesignTemplate = () => {
                   <label
                     htmlFor="example-text-input"
                     className="col-md-2 col-form-label"
-                     style={{ fontSize: "0.8rem" }}
+                    style={{ fontSize: "0.8rem" }}
                   >
                     Grid
                   </label>
@@ -2094,7 +2114,9 @@ const EditDesignTemplate = () => {
                       }}
                       defaultValue={""}
                     >
-                    <option value=""  disabled hidden>Select Grid Option..</option>
+                      <option value="" disabled hidden>
+                        Select Grid Option..
+                      </option>
                       <option value="allow">Allow All</option>
                       <option value="not allow">Allow None</option>
                     </select>
@@ -2104,14 +2126,14 @@ const EditDesignTemplate = () => {
                       <label
                         htmlFor="example-text-input"
                         className="col-md-2 col-form-label"
-                         style={{ fontSize: "0.8rem" }}
+                        style={{ fontSize: "0.8rem" }}
                       >
                         Grid Value
                       </label>
                       <div className="col-md-4">
                         <input
                           type="text"
-                           maxLength={1}
+                          maxLength={1}
                           className="form-control"
                           placeholder="Character of Multiple"
                           value={multipleValue}
@@ -2129,7 +2151,7 @@ const EditDesignTemplate = () => {
                   <label
                     htmlFor="example-text-input"
                     className="col-md-2 col-form-label"
-                     style={{ fontSize: "0.8rem" }}
+                    style={{ fontSize: "0.8rem" }}
                   >
                     Blanks
                   </label>
@@ -2142,7 +2164,9 @@ const EditDesignTemplate = () => {
                       }}
                       defaultValue={""}
                     >
-                        <option value="" disabled hidden>Select Blank Option...</option>
+                      <option value="" disabled hidden>
+                        Select Blank Option...
+                      </option>
                       <option value="allow">Allow All</option>
                       <option value="not allow">Allow None</option>
                     </select>
@@ -2152,7 +2176,7 @@ const EditDesignTemplate = () => {
                       <label
                         htmlFor="example-text-input"
                         className="col-md-2 col-form-label"
-                         style={{ fontSize: "0.8rem" }}
+                        style={{ fontSize: "0.8rem" }}
                       >
                         Blank Value
                       </label>
@@ -2177,7 +2201,7 @@ const EditDesignTemplate = () => {
                   <label
                     htmlFor="example-text-input"
                     className="col-md-2 col-form-label"
-                     style={{ fontSize: "0.8rem" }}
+                    style={{ fontSize: "0.8rem" }}
                   >
                     Exception
                   </label>
@@ -2188,7 +2212,9 @@ const EditDesignTemplate = () => {
                       onChange={handleWindowNgOptionChange}
                       defaultValue={""}
                     >
-                       <option value=""  disabled hidden>Select An Action For Exception Handling...</option>
+                      <option value="" disabled hidden>
+                        Select An Action For Exception Handling...
+                      </option>
                       <option value="0x00000001">Eject Paper To Stacker</option>
                       <option value="0x00000002">Stop Scanning</option>
                       <option value="0">No Action</option>
@@ -2196,10 +2222,13 @@ const EditDesignTemplate = () => {
                   </div>
                 </Row>
               )}
-             
+
               {selectedFieldType === "idField" && (
                 <Row className="mb-2">
-                  <label className="col-md-2 col-form-label "  style={{ fontSize: "0.8rem" }}>
+                  <label
+                    className="col-md-2 col-form-label "
+                    style={{ fontSize: "0.8rem" }}
+                  >
                     Set Id Pattern
                   </label>
 
@@ -2215,7 +2244,11 @@ const EditDesignTemplate = () => {
                       <option value="Col">Col</option>
                     </select>
                   </div>
-                  <label htmlFor="example-select-input" className="col-md-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
+                  <label
+                    htmlFor="example-select-input"
+                    className="col-md-2 col-form-label"
+                    style={{ fontSize: "0.8rem" }}
+                  >
                     Id selection
                   </label>
                   <div className="col-md-6">
@@ -2230,7 +2263,11 @@ const EditDesignTemplate = () => {
               )}
               {selectedFieldType === "skewMarkField" && (
                 <Row className="mb-2">
-                  <label htmlFor="example-select-input" className="col-md-2"  style={{ fontSize: "0.8rem" }}>
+                  <label
+                    htmlFor="example-select-input"
+                    className="col-md-2 col-form-label"
+                    style={{ fontSize: "0.8rem" }}
+                  >
                     Data Rejection
                   </label>
                   <div className="col-md-4">
@@ -2240,7 +2277,9 @@ const EditDesignTemplate = () => {
                       onChange={handleSkewMarkOptionChange}
                       defaultValue={"none"}
                     >
-                      <option value="">Select an option</option>
+                      <option value="">
+                        Select a Data Rejection Option...
+                      </option>
                       <option value="use">Mark as Exception</option>
                       <option value="not use">Do Not Mark as Exception</option>
                     </select>
@@ -2248,7 +2287,7 @@ const EditDesignTemplate = () => {
                   <label
                     htmlFor="example-select-input"
                     className="col-md-2 col-form-label"
-                     style={{ fontSize: "0.8rem" }}
+                    style={{ fontSize: "0.8rem" }}
                   >
                     Field Value
                   </label>
@@ -2268,7 +2307,7 @@ const EditDesignTemplate = () => {
                 <label
                   htmlFor="example-select-input"
                   className="col-2 col-form-label"
-                   style={{ fontSize: "0.8rem" }}
+                  style={{ fontSize: "0.8rem" }}
                 >
                   Start Row
                 </label>
@@ -2302,7 +2341,7 @@ const EditDesignTemplate = () => {
                 <label
                   htmlFor="example-select-input"
                   className="col-2 col-form-label"
-                   style={{ fontSize: "0.8rem" }}
+                  style={{ fontSize: "0.8rem" }}
                 >
                   End Row
                 </label>
@@ -2336,7 +2375,7 @@ const EditDesignTemplate = () => {
                 <label
                   htmlFor="example-select-input"
                   className="col-2 col-form-label"
-                   style={{ fontSize: "0.8rem" }}
+                  style={{ fontSize: "0.8rem" }}
                 >
                   Total Row
                 </label>
@@ -2344,9 +2383,13 @@ const EditDesignTemplate = () => {
                   <input value={numRows} readOnly className="form-control" />
                 </div>
               </Row>
-              <Row className=""> 
-                <label htmlFor="example-select-input" className="col-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
-                  Step In A Row
+              <Row className="">
+                <label
+                  htmlFor="example-select-input"
+                  className="col-2 col-form-label"
+                  style={{ fontSize: "0.8rem" }}
+                >
+                  Steps In Row
                 </label>
                 <div className="col-4">
                   <BootstrapNumberInput
@@ -2358,7 +2401,11 @@ const EditDesignTemplate = () => {
                     id="step-in-row"
                   />
                 </div>
-                <label htmlFor="example-select-input" className="col-2 col-form-label "  style={{ fontSize: "0.8rem" }}>
+                <label
+                  htmlFor="example-select-input"
+                  className="col-2 col-form-label "
+                  style={{ fontSize: "0.8rem" }}
+                >
                   Total Per Row
                 </label>
                 <div className="col-4">
@@ -2376,7 +2423,7 @@ const EditDesignTemplate = () => {
                 <label
                   htmlFor="example-select-input"
                   className="col-2  col-form-label"
-                   style={{ fontSize: "0.8rem" }}
+                  style={{ fontSize: "0.8rem" }}
                 >
                   Start Col
                 </label>
@@ -2403,13 +2450,12 @@ const EditDesignTemplate = () => {
                     }}
                     className="form-control"
                   />
-                 
                 </div>
 
                 <label
                   htmlFor="example-select-input"
                   className="col-2 col-form-label"
-                   style={{ fontSize: "0.8rem" }}
+                  style={{ fontSize: "0.8rem" }}
                 >
                   End Col
                 </label>
@@ -2440,9 +2486,12 @@ const EditDesignTemplate = () => {
                     }}
                     className="form-control"
                   />
-                  
                 </div>
-                <label htmlFor="example-select-input" className="col-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
+                <label
+                  htmlFor="example-select-input"
+                  className="col-2 col-form-label"
+                  style={{ fontSize: "0.8rem" }}
+                >
                   Total Column
                 </label>
                 <div className="col-2">
@@ -2450,8 +2499,12 @@ const EditDesignTemplate = () => {
                 </div>
               </Row>
               <Row className="mb-2">
-                <label htmlFor="example-select-input" className="col-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
-                  Step In A Column
+                <label
+                  htmlFor="example-select-input"
+                  className="col-2 col-form-label"
+                  style={{ fontSize: "0.8rem" }}
+                >
+                  Steps In Column
                 </label>
                 <div className="col-4">
                   <BootstrapNumberInput
@@ -2463,7 +2516,11 @@ const EditDesignTemplate = () => {
                     id="step-in-col"
                   />
                 </div>
-                <label htmlFor="example-select-input" className="col-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
+                <label
+                  htmlFor="example-select-input"
+                  className="col-2 col-form-label"
+                  style={{ fontSize: "0.8rem" }}
+                >
                   Total Per Column
                 </label>
                 <div className="col-4">
@@ -2479,7 +2536,11 @@ const EditDesignTemplate = () => {
               </Row>
 
               <Row className="mb-2">
-                <label htmlFor="example-text-input" className="col-md-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
+                <label
+                  htmlFor="example-text-input"
+                  className="col-md-2 col-form-label"
+                  style={{ fontSize: "0.8rem" }}
+                >
                   Read Direction
                 </label>
                 <div className="col-10">
@@ -2496,15 +2557,15 @@ const EditDesignTemplate = () => {
                     }}
                     defaultValue={""}
                   >
-                    <option value="" disabled hidden>Select Reading Direction... </option>
+                    <option value="" disabled hidden>
+                      Select Reading Direction...{" "}
+                    </option>
                     <option value="0">From Top To Bottom</option>
                     <option value="2">From Bottom To Top</option>
                     <option value="4">From Left To Right</option>
                     <option value="5">From Right To Left</option>
                   </select>
                 </div>
-
-               
               </Row>
 
               {(selectedFieldType === "questionField" ||
@@ -2515,7 +2576,7 @@ const EditDesignTemplate = () => {
                     className="col-md-2 col-form-label "
                     style={{ fontSize: "0.8rem" }}
                   >
-                    Total Fields 
+                    Total Fields
                   </label>
                   <div className="col-4 ">
                     <input
@@ -2536,9 +2597,9 @@ const EditDesignTemplate = () => {
                   <label
                     htmlFor="example-text-input"
                     className="col-md-2 col-form-label "
-                      style={{ fontSize: "0.8rem" }}
+                    style={{ fontSize: "0.8rem" }}
                   >
-                    Field Type 
+                    Field Type
                   </label>
                   <div className="col-4 ">
                     <select
@@ -2549,7 +2610,9 @@ const EditDesignTemplate = () => {
                       }}
                       defaultValue={""}
                     >
-                      <option value="" disabled hidden>Select field type... </option>
+                      <option value="" disabled hidden>
+                        Select Field Type...{" "}
+                      </option>
                       <option value="numeric">Numeric </option>
                       <option value="alphabet">Alphabet </option>
                       <option value="binary">Litho code</option>
