@@ -30,49 +30,8 @@ import AddLinkIcon from "@mui/icons-material/AddLink";
 import LinkModal from "modals/LinkModal/LinkModal";
 import RightSideBar from "components/RightSideBar/RightSideBar";
 import FieldsFooter from "components/Footers/FieldsFooter";
-function BootstrapNumberInput({ min = 1, max = 99, value, onChange }) {
-  const handleDecrease = () => {
-    if (value > min) {
-      onChange(value - 1);
-    }
-  };
+import BootstrapNumberInput from "ui/BootstrapNumber";
 
-  const handleIncrease = () => {
-    if (value < max) {
-      onChange(value + 1);
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const val = +e.target.value;
-    if (!isNaN(val) && val >= min && val <= max) {
-      onChange(val);
-    }
-  };
-
-  return (
-    <div className="input-group" style={{ width: '160px' }}>
-      <div className="input-group-prepend">
-        <button className="btn btn-outline-secondary" type="button" onClick={handleDecrease}>
-          –
-        </button>
-      </div>
-      <input
-        type="number"
-        className="form-control text-center"
-        value={value}
-        onChange={handleInputChange}
-        min={min}
-        max={max}
-      />
-      <div className="input-group-append">
-        <button className="btn btn-outline-secondary" type="button" onClick={handleIncrease}>
-          +
-        </button>
-      </div>
-    </div>
-  );
-}
 const DesignTemplate = () => {
   const [selected, setSelected] = useState({});
   const [selection, setSelection] = useState(null);
@@ -88,7 +47,7 @@ const DesignTemplate = () => {
   const [minimumMark, setMinimumMark] = useState(1);
   const [maximumMark, setMaximumMark] = useState(1);
   const [noInRow, setNoInRow] = useState();
-  const [noOfStepInRow, setNoOfStepInRow] = useState();
+  const [noOfStepInRow, setNoOfStepInRow] = useState(1);
   const [noInCol, setNoInCol] = useState();
   const [noOfStepInCol, setNoOfStepInCol] = useState();
   const [type, setType] = useState("2");
@@ -613,9 +572,9 @@ const DesignTemplate = () => {
     setWindowNgOption("");
     setReadingDirectionOption("");
     setNoInRow();
-    setNoOfStepInRow();
+    setNoOfStepInRow(1);
     setNoInCol();
-    setNoOfStepInCol();
+    setNoOfStepInCol(1);
     setFieldType();
     setNumberOfField();
     setMultipleValue();
@@ -1240,7 +1199,7 @@ const DesignTemplate = () => {
     handleCancel();
     localStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
   };
-
+console.log(noOfStepInRow)
   const handleImage = (images) => {
     setImagesSelectedCount(images.length);
     if (images.length > 0) {
@@ -2522,7 +2481,15 @@ const DesignTemplate = () => {
                     }}
                     required
                   /> */}
-                   <BootstrapNumberInput  min={1} max={99} />
+                   <BootstrapNumberInput
+                  
+        value={noOfStepInRow}
+        setValue={setNoOfStepInRow}
+        start={+startRowInput}
+        end={+endRowInput}
+        setDerivedValue={setNoInRow}
+        id="step-in-row"
+                   />
                 </div>
                 <label htmlFor="example-step-input" className="col-2  col-form-label"  style={{ fontSize: "0.8rem" }}>
                   Total No In Row
@@ -2619,7 +2586,7 @@ const DesignTemplate = () => {
                   Step In A Column
                 </label>
                 <div className="col-4">
-                  <input
+                  {/* <input
                     type="number"
                     className="form-control"
                     value={noOfStepInCol}
@@ -2640,7 +2607,16 @@ const DesignTemplate = () => {
                     }}
                    
                     required
-                  />
+                  /> */}
+                   <BootstrapNumberInput
+       
+        value={noOfStepInCol}
+        setValue={setNoOfStepInCol}
+        start={startColInput}
+        end={endColInput}
+        setDerivedValue={setNoInCol}
+        id="step-in-col"
+      />
                 </div>
                 <label htmlFor="example-select-input" className="col-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
                   Total No In Col
