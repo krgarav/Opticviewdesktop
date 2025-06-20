@@ -30,7 +30,49 @@ import AddLinkIcon from "@mui/icons-material/AddLink";
 import LinkModal from "modals/LinkModal/LinkModal";
 import RightSideBar from "components/RightSideBar/RightSideBar";
 import FieldsFooter from "components/Footers/FieldsFooter";
+function BootstrapNumberInput({ min = 1, max = 99, value, onChange }) {
+  const handleDecrease = () => {
+    if (value > min) {
+      onChange(value - 1);
+    }
+  };
 
+  const handleIncrease = () => {
+    if (value < max) {
+      onChange(value + 1);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const val = +e.target.value;
+    if (!isNaN(val) && val >= min && val <= max) {
+      onChange(val);
+    }
+  };
+
+  return (
+    <div className="input-group" style={{ width: '160px' }}>
+      <div className="input-group-prepend">
+        <button className="btn btn-outline-secondary" type="button" onClick={handleDecrease}>
+          –
+        </button>
+      </div>
+      <input
+        type="number"
+        className="form-control text-center"
+        value={value}
+        onChange={handleInputChange}
+        min={min}
+        max={max}
+      />
+      <div className="input-group-append">
+        <button className="btn btn-outline-secondary" type="button" onClick={handleIncrease}>
+          +
+        </button>
+      </div>
+    </div>
+  );
+}
 const DesignTemplate = () => {
   const [selected, setSelected] = useState({});
   const [selection, setSelection] = useState(null);
@@ -2445,11 +2487,13 @@ const DesignTemplate = () => {
               </Row>
               <Row className="mb-2">
                  
-                <label htmlFor="example-select-input" className="col-2 col-form-label"   style={{ fontSize: "0.8rem" }}  >
+                <label htmlFor="step-input" className="col-2 col-form-label"   style={{ fontSize: "0.8rem" }}  >
                   Step In A Row
                 </label>
                 <div className="col-4">
-                  <input
+                  {/* <input
+                  
+                   id="step-input"
                     type="number"
                     className="form-control"
                     value={noOfStepInRow}
@@ -2477,13 +2521,15 @@ const DesignTemplate = () => {
                       // }
                     }}
                     required
-                  />
+                  /> */}
+                   <BootstrapNumberInput  min={1} max={99} />
                 </div>
-                <label htmlFor="example-select-input" className="col-2  col-form-label"  style={{ fontSize: "0.8rem" }}>
+                <label htmlFor="example-step-input" className="col-2  col-form-label"  style={{ fontSize: "0.8rem" }}>
                   Total No In Row
                 </label>
                 <div className="col-4">
                   <input
+                   id="step-input"
                     type="number"
                     className="form-control"
                     value={noInRow}
