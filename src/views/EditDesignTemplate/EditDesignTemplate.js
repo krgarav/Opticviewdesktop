@@ -28,6 +28,7 @@ import AddLinkIcon from "@mui/icons-material/AddLink";
 import LinkModal from "modals/LinkModal/LinkModal";
 import RightSideBar from "components/RightSideBar/RightSideBar";
 import FieldsFooter from "components/Footers/FieldsFooter";
+import BootstrapNumberInput from "ui/BootstrapNumber";
 
 const EditDesignTemplate = () => {
   const [selected, setSelected] = useState({});
@@ -41,17 +42,16 @@ const EditDesignTemplate = () => {
   const [skewoption, setSkewOption] = useState("none");
   const [windowNgOption, setWindowNgOption] = useState("");
   const [readingDirectionOption, setReadingDirectionOption] = useState("");
-  const [minimumMark, setMinimumMark] = useState();
-  const [maximumMark, setMaximumMark] = useState();
+  const [minimumMark, setMinimumMark] = useState(1);
+  const [maximumMark, setMaximumMark] = useState(1);
   const [noInRow, setNoInRow] = useState();
-  const [noOfStepInRow, setNoOfStepInRow] = useState();
+  const [noOfStepInRow, setNoOfStepInRow] = useState(1);
   const [noInCol, setNoInCol] = useState();
-  const [noOfStepInCol, setNoOfStepInCol] = useState();
-  const [type, setType] = useState("");
+  const [noOfStepInCol, setNoOfStepInCol] = useState(1);
+  const [type, setType] = useState("2");
   const [selectedFieldType, setSelectedFieldType] = useState(false);
   const [fieldType, setFieldType] = useState();
   const [numberOfField, setNumberOfField] = useState();
-  const [loading, setLoading] = useState(false);
   const dataCtx = useContext(DataContext);
   const [selectedCol, setSelectedCol] = useState([]);
   const [options, setOptions] = useState([]);
@@ -482,13 +482,13 @@ const EditDesignTemplate = () => {
     setSkewOption("none");
     setWindowNgOption("");
     setReadingDirectionOption("");
-    setMinimumMark();
-    setMaximumMark();
+    setMinimumMark(1);
+    setMaximumMark(1);
     setNoInRow();
-    setNoOfStepInRow();
+    setNoOfStepInRow(1);
     setNoInCol();
-    setNoOfStepInCol();
-    setType();
+    setNoOfStepInCol(1);
+    setType("2");
     setFieldType();
     setNumberOfField();
     setMultipleValue();
@@ -2056,9 +2056,9 @@ const EditDesignTemplate = () => {
                   <label
                     htmlFor="example-text-input"
                     className="col-md-2 col-form-label "
-                    style={{ fontSize: "1rem" }}
+                    style={{ fontSize: "0.8rem" }}
                   >
-                    Name
+                    Window Name
                   </label>
                   <div className="col-md-10">
                     <input
@@ -2079,6 +2079,7 @@ const EditDesignTemplate = () => {
                   <label
                     htmlFor="example-text-input"
                     className="col-md-2 col-form-label"
+                     style={{ fontSize: "0.8rem" }}
                   >
                     Grid
                   </label>
@@ -2093,7 +2094,7 @@ const EditDesignTemplate = () => {
                       }}
                       defaultValue={""}
                     >
-                      <option value="">Select an option</option>
+                    <option value=""  disabled hidden>Select Grid Option..</option>
                       <option value="allow">Allow All</option>
                       <option value="not allow">Allow None</option>
                     </select>
@@ -2103,12 +2104,14 @@ const EditDesignTemplate = () => {
                       <label
                         htmlFor="example-text-input"
                         className="col-md-2 col-form-label"
+                         style={{ fontSize: "0.8rem" }}
                       >
                         Grid Value
                       </label>
                       <div className="col-md-4">
                         <input
                           type="text"
+                           maxLength={1}
                           className="form-control"
                           placeholder="Character of Multiple"
                           value={multipleValue}
@@ -2126,6 +2129,7 @@ const EditDesignTemplate = () => {
                   <label
                     htmlFor="example-text-input"
                     className="col-md-2 col-form-label"
+                     style={{ fontSize: "0.8rem" }}
                   >
                     Blanks
                   </label>
@@ -2138,7 +2142,7 @@ const EditDesignTemplate = () => {
                       }}
                       defaultValue={""}
                     >
-                      <option value="">Select an option</option>
+                        <option value="" disabled hidden>Select Blank Option...</option>
                       <option value="allow">Allow All</option>
                       <option value="not allow">Allow None</option>
                     </select>
@@ -2148,12 +2152,14 @@ const EditDesignTemplate = () => {
                       <label
                         htmlFor="example-text-input"
                         className="col-md-2 col-form-label"
+                         style={{ fontSize: "0.8rem" }}
                       >
                         Blank Value
                       </label>
                       <div className="col-md-4">
                         <input
                           type="text"
+                          maxLength={1}
                           className="form-control"
                           placeholder="Character of Blank"
                           value={blankValue}
@@ -2171,7 +2177,7 @@ const EditDesignTemplate = () => {
                   <label
                     htmlFor="example-text-input"
                     className="col-md-2 col-form-label"
-                    style={{ fontSize: "0.8rem" }}
+                     style={{ fontSize: "0.8rem" }}
                   >
                     Exception
                   </label>
@@ -2182,7 +2188,7 @@ const EditDesignTemplate = () => {
                       onChange={handleWindowNgOptionChange}
                       defaultValue={""}
                     >
-                      <option value="">Select an option</option>
+                       <option value=""  disabled hidden>Select An Action For Exception Handling...</option>
                       <option value="0x00000001">Eject Paper To Stacker</option>
                       <option value="0x00000002">Stop Scanning</option>
                       <option value="0">No Action</option>
@@ -2190,55 +2196,10 @@ const EditDesignTemplate = () => {
                   </div>
                 </Row>
               )}
-              {selectedFieldType !== "idField" &&
-                selectedFieldType !== "skewMarkField" && (
-                  <Row>
-                    <label htmlFor="example-select-input" className="col-md-2">
-                      Minimum Mark
-                    </label>
-                    <div className="col-md-4">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Enter the minimum mark"
-                        value={minimumMark}
-                        onChange={(e) => {
-                          // Allow only numeric input (including empty input)
-                          const numericValue = e.target.value.replace(
-                            /[^0-9]/g,
-                            ""
-                          );
-                          setMinimumMark(numericValue);
-                        }}
-                        min={0}
-                        required
-                      />
-                    </div>
-                    <label htmlFor="example-select-input" className="col-md-2 ">
-                      Maximum Mark
-                    </label>
-                    <div className="col-md-4">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Enter the maximum mark"
-                        value={maximumMark}
-                        onChange={(e) => {
-                          // Allow only numeric input (including empty input)
-                          const numericValue = e.target.value.replace(
-                            /[^0-9]/g,
-                            ""
-                          );
-                          setMaximumMark(numericValue);
-                        }}
-                        required
-                      />
-                    </div>
-                  </Row>
-                )}
+             
               {selectedFieldType === "idField" && (
                 <Row className="mb-2">
-                  <label className="col-md-2 " style={{}}>
+                  <label className="col-md-2 col-form-label "  style={{ fontSize: "0.8rem" }}>
                     Set Id Pattern
                   </label>
 
@@ -2254,7 +2215,7 @@ const EditDesignTemplate = () => {
                       <option value="Col">Col</option>
                     </select>
                   </div>
-                  <label htmlFor="example-select-input" className="col-md-2 ">
+                  <label htmlFor="example-select-input" className="col-md-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
                     Id selection
                   </label>
                   <div className="col-md-6">
@@ -2269,7 +2230,7 @@ const EditDesignTemplate = () => {
               )}
               {selectedFieldType === "skewMarkField" && (
                 <Row className="mb-2">
-                  <label htmlFor="example-select-input" className="col-md-2">
+                  <label htmlFor="example-select-input" className="col-md-2"  style={{ fontSize: "0.8rem" }}>
                     Data Rejection
                   </label>
                   <div className="col-md-4">
@@ -2287,6 +2248,7 @@ const EditDesignTemplate = () => {
                   <label
                     htmlFor="example-select-input"
                     className="col-md-2 col-form-label"
+                     style={{ fontSize: "0.8rem" }}
                   >
                     Field Value
                   </label>
@@ -2306,6 +2268,7 @@ const EditDesignTemplate = () => {
                 <label
                   htmlFor="example-select-input"
                   className="col-2 col-form-label"
+                   style={{ fontSize: "0.8rem" }}
                 >
                   Start Row
                 </label>
@@ -2339,6 +2302,7 @@ const EditDesignTemplate = () => {
                 <label
                   htmlFor="example-select-input"
                   className="col-2 col-form-label"
+                   style={{ fontSize: "0.8rem" }}
                 >
                   End Row
                 </label>
@@ -2372,6 +2336,7 @@ const EditDesignTemplate = () => {
                 <label
                   htmlFor="example-select-input"
                   className="col-2 col-form-label"
+                   style={{ fontSize: "0.8rem" }}
                 >
                   Total Row
                 </label>
@@ -2379,37 +2344,22 @@ const EditDesignTemplate = () => {
                   <input value={numRows} readOnly className="form-control" />
                 </div>
               </Row>
-              <Row className="">
-                <label htmlFor="example-select-input" className="col-2 ">
+              <Row className=""> 
+                <label htmlFor="example-select-input" className="col-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
                   Step In A Row
                 </label>
                 <div className="col-4">
-                  <input
-                    type="number"
-                    className="form-control"
+                  <BootstrapNumberInput
                     value={noOfStepInRow}
-                    onChange={(e) => {
-                      const value = +e.target.value; // Convert input value to number
-                      const totalRows = +endRowInput - +startRowInput + 1;
-
-                      // Step cannot be more than total rows
-                      if (value > totalRows) {
-                        alert("Steps cannot be larger than the combined area.");
-                        setNoOfStepInRow(""); // Reset the input
-                        return;
-                      }
-
-                      // Step must be at least 1
-                      if (value >= 1) {
-                        setNoInRow(Math.floor(totalRows / value)); // Update total rows in state
-                        setNoOfStepInRow(value); // Update number of steps
-                      }
-                    }}
-                    required
+                    setValue={setNoOfStepInRow}
+                    start={+startRowInput}
+                    end={+endRowInput}
+                    setDerivedValue={setNoInRow}
+                    id="step-in-row"
                   />
                 </div>
-                <label htmlFor="example-select-input" className="col-2 ">
-                  Total No In Row
+                <label htmlFor="example-select-input" className="col-2 col-form-label "  style={{ fontSize: "0.8rem" }}>
+                  Total Per Row
                 </label>
                 <div className="col-4">
                   <input
@@ -2426,6 +2376,7 @@ const EditDesignTemplate = () => {
                 <label
                   htmlFor="example-select-input"
                   className="col-2  col-form-label"
+                   style={{ fontSize: "0.8rem" }}
                 >
                   Start Col
                 </label>
@@ -2452,16 +2403,13 @@ const EditDesignTemplate = () => {
                     }}
                     className="form-control"
                   />
-                  {/* <input
-                value={selection?.startCol}
-                readOnly
-                className="form-control"
-              /> */}
+                 
                 </div>
 
                 <label
                   htmlFor="example-select-input"
                   className="col-2 col-form-label"
+                   style={{ fontSize: "0.8rem" }}
                 >
                   End Col
                 </label>
@@ -2492,13 +2440,9 @@ const EditDesignTemplate = () => {
                     }}
                     className="form-control"
                   />
-                  {/* <input
-                value={selection?.endCol}
-                readOnly
-                className="form-control"
-              /> */}
+                  
                 </div>
-                <label htmlFor="example-select-input" className="col-2 ">
+                <label htmlFor="example-select-input" className="col-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
                   Total Column
                 </label>
                 <div className="col-2">
@@ -2506,34 +2450,21 @@ const EditDesignTemplate = () => {
                 </div>
               </Row>
               <Row className="mb-2">
-                <label htmlFor="example-select-input" className="col-2 ">
+                <label htmlFor="example-select-input" className="col-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
                   Step In A Column
                 </label>
                 <div className="col-4">
-                  <input
-                    type="number"
-                    className="form-control"
+                  <BootstrapNumberInput
                     value={noOfStepInCol}
-                    onChange={(e) => {
-                      const value = +e.target.value; // Convert input to number
-                      const totalCols = +endColInput - +startColInput + 1;
-
-                      if (value > totalCols) {
-                        alert("Steps cannot be larger than the combined area.");
-                        setNoOfStepInCol(""); // Reset invalid input
-                        return;
-                      }
-
-                      if (value >= 1) {
-                        setNoOfStepInCol(value); // Set only valid input
-                        setNoInCol(Math.floor(totalCols / value));
-                      }
-                    }}
-                    required
+                    setValue={setNoOfStepInCol}
+                    start={startColInput}
+                    end={endColInput}
+                    setDerivedValue={setNoInCol}
+                    id="step-in-col"
                   />
                 </div>
-                <label htmlFor="example-select-input" className="col-2 ">
-                  Total No In Column
+                <label htmlFor="example-select-input" className="col-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
+                  Total Per Column
                 </label>
                 <div className="col-4">
                   <input
@@ -2548,10 +2479,10 @@ const EditDesignTemplate = () => {
               </Row>
 
               <Row className="mb-2">
-                <label htmlFor="example-text-input" className="col-md-2 ">
-                  Reading Direction :
+                <label htmlFor="example-text-input" className="col-md-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
+                  Read Direction
                 </label>
-                <div className="col-4">
+                <div className="col-10">
                   <select
                     className="form-control"
                     value={readingDirectionOption}
@@ -2565,54 +2496,15 @@ const EditDesignTemplate = () => {
                     }}
                     defaultValue={""}
                   >
-                    <option value="">Select reading direction... </option>
-
-                    <option value="0">From top to the bottom</option>
-
-                    <option value="2">From bottom to a top</option>
-
-                    <option value="4">From left to right</option>
-                    <option value="5">From right to left</option>
+                    <option value="" disabled hidden>Select Reading Direction... </option>
+                    <option value="0">From Top To Bottom</option>
+                    <option value="2">From Bottom To Top</option>
+                    <option value="4">From Left To Right</option>
+                    <option value="5">From Right To Left</option>
                   </select>
                 </div>
 
-                {selectedFieldType !== "idField" && (
-                  <>
-                    <label
-                      htmlFor="example-text-input"
-                      className="col-md-2 col-form-label"
-                    >
-                      Type :
-                    </label>
-                    <div className="col-md-4">
-                      <select
-                        className="form-control"
-                        value={type}
-                        onChange={(e) => {
-                          setType(e.target.value);
-                        }}
-                        defaultValue={""}
-                      >
-                        <option value="">Select reading direction... </option>
-                        <option value="1">
-                          Mask (at the time set window) about a mark{" "}
-                        </option>
-                        <option value="2">Fixed mark </option>
-                        <option value="3">Checkdigits </option>
-                        <option value="4">
-                          Range checking (ascending order)
-                        </option>
-                        <option value="5">
-                          Range checking (descending order)
-                        </option>
-                        <option value="6">Range checking (not order) </option>
-                        <option value="7">
-                          Mask setting(common to partition)
-                        </option>
-                      </select>
-                    </div>
-                  </>
-                )}
+               
               </Row>
 
               {(selectedFieldType === "questionField" ||
@@ -2621,8 +2513,9 @@ const EditDesignTemplate = () => {
                   <label
                     htmlFor="example-text-input"
                     className="col-md-2 col-form-label "
+                    style={{ fontSize: "0.8rem" }}
                   >
-                    Total Fields :
+                    Total Fields 
                   </label>
                   <div className="col-4 ">
                     <input
@@ -2643,8 +2536,9 @@ const EditDesignTemplate = () => {
                   <label
                     htmlFor="example-text-input"
                     className="col-md-2 col-form-label "
+                      style={{ fontSize: "0.8rem" }}
                   >
-                    Field Type :
+                    Field Type 
                   </label>
                   <div className="col-4 ">
                     <select
@@ -2655,7 +2549,7 @@ const EditDesignTemplate = () => {
                       }}
                       defaultValue={""}
                     >
-                      <option value="">Select field type... </option>
+                      <option value="" disabled hidden>Select field type... </option>
                       <option value="numeric">Numeric </option>
                       <option value="alphabet">Alphabet </option>
                       <option value="binary">Litho code</option>

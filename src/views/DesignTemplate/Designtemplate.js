@@ -1199,7 +1199,7 @@ const DesignTemplate = () => {
     handleCancel();
     localStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
   };
-console.log(noOfStepInRow)
+  console.log(noOfStepInRow);
   const handleImage = (images) => {
     setImagesSelectedCount(images.length);
     if (images.length > 0) {
@@ -1941,16 +1941,16 @@ console.log(noOfStepInRow)
             id="contained-modal-title-vcenter"
             style={{ width: "100vw" }}
           >
-           {modalUpdate&& <h2 className="text-center">
-              {!modalUpdate ? "Choose field type" : selectedFieldType}
-            </h2>}
+            {modalUpdate && (
+              <h2 className="text-center">
+                {!modalUpdate ? "Choose field type" : selectedFieldType}
+              </h2>
+            )}
             {!selectedFieldType && (
-  <h2 className="text-center">
-    {!modalUpdate
-      ? "Choose field type"
-      : selectedFieldType}
-  </h2>
-)}
+              <h2 className="text-center">
+                {!modalUpdate ? "Choose field type" : selectedFieldType}
+              </h2>
+            )}
 
             <br />
             {!modalUpdate && (
@@ -2203,20 +2203,26 @@ console.log(noOfStepInRow)
                         setMultiple(e.target.value);
                       }}
                       defaultValue={""}
+                      
                     >
-                      <option value="">Select an option</option>
+                      <option value=""  disabled hidden>Select Grid Option..</option>
                       <option value="allow">Allow All</option>
                       <option value="not allow">Allow None</option>
                     </select>
                   </div>
                   {multiple !== "allow" && (
                     <>
-                      <label htmlFor="example-text-input" className="col-md-2 col-form-label "   style={{ fontSize: "0.8rem" }}>
+                      <label
+                        htmlFor="example-text-input"
+                        className="col-md-2 col-form-label "
+                        style={{ fontSize: "0.8rem" }}
+                      >
                         Grid Value
                       </label>
                       <div className="col-md-4">
                         <input
                           type="text"
+                          maxLength={1}
                           className="form-control"
                           placeholder="Character of Multiple"
                           value={multipleValue}
@@ -2247,7 +2253,7 @@ console.log(noOfStepInRow)
                       }}
                       defaultValue={""}
                     >
-                      <option value="">Select an option</option>
+                      <option value="" disabled hidden >Select Blank Option...</option>
                       <option value="allow">Allow All</option>
                       <option value="not allow">Allow None</option>
                     </select>
@@ -2264,6 +2270,7 @@ console.log(noOfStepInRow)
                       <div className="col-md-4">
                         <input
                           type="text"
+                          maxLength={1}
                           className="form-control"
                           placeholder="Character of Blank"
                           value={blankValue}
@@ -2283,7 +2290,7 @@ console.log(noOfStepInRow)
                     className="col-md-2 col-form-label"
                     style={{ fontSize: "0.8rem" }}
                   >
-                   Exception
+                    Exception
                   </label>
                   <div className="col-md-10">
                     <select
@@ -2292,20 +2299,21 @@ console.log(noOfStepInRow)
                       onChange={handleWindowNgOptionChange}
                       defaultValue={""}
                     >
-                      <option value="">Select an option</option>
-                      <option value="0x00000001">
-                        Eject Paper To Stacker
-                      </option>
+                      <option value=""  disabled hidden>Select An Action For Exception Handling...</option>
+                      <option value="0x00000001">Eject Paper To Stacker</option>
                       <option value="0x00000002">Stop Scanning</option>
                       <option value="0">No Action</option>
                     </select>
                   </div>
                 </Row>
               )}
-             
+
               {selectedFieldType === "idField" && (
                 <Row className="mb-2">
-                  <label className="col-md-2 col-form-label "style={{ fontSize: "0.8rem" }}>
+                  <label
+                    className="col-md-2 col-form-label "
+                    style={{ fontSize: "0.8rem" }}
+                  >
                     Set Id Pattern
                   </label>
 
@@ -2321,7 +2329,11 @@ console.log(noOfStepInRow)
                       <option value="Col">Col</option>
                     </select>
                   </div>
-                  <label htmlFor="example-select-input" className="col-md-2  col-form-label" style={{ fontSize: "0.8rem" }}>
+                  <label
+                    htmlFor="example-select-input"
+                    className="col-md-2  col-form-label"
+                    style={{ fontSize: "0.8rem" }}
+                  >
                     Id selection
                   </label>
                   <div className="col-md-6">
@@ -2336,7 +2348,11 @@ console.log(noOfStepInRow)
               )}
               {selectedFieldType === "skewMarkField" && (
                 <Row className="mb-2">
-                  <label htmlFor="example-select-input" className="col-md-2 col-form-label" style={{ fontSize: "0.8rem" }}>
+                  <label
+                    htmlFor="example-select-input"
+                    className="col-md-2 col-form-label"
+                    style={{ fontSize: "0.8rem" }}
+                  >
                     Data Rejection
                   </label>
                   <div className="col-md-4">
@@ -2348,11 +2364,14 @@ console.log(noOfStepInRow)
                     >
                       <option value="">Select an option</option>
                       <option value="use">Mark as Exception</option>
-<option value="not use">Do Not Mark as Exception</option>
-
+                      <option value="not use">Do Not Mark as Exception</option>
                     </select>
                   </div>
-                  <label htmlFor="example-select-input" className="col-md-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
+                  <label
+                    htmlFor="example-select-input"
+                    className="col-md-2 col-form-label"
+                    style={{ fontSize: "0.8rem" }}
+                  >
                     Field Value
                   </label>
                   <div className="col-md-4">
@@ -2404,7 +2423,6 @@ console.log(noOfStepInRow)
                   htmlFor="example-select-input"
                   className="col-2 col-form-label"
                   style={{ fontSize: "0.8rem" }}
-
                 >
                   End Row
                 </label>
@@ -2436,7 +2454,6 @@ console.log(noOfStepInRow)
                   htmlFor="example-select-input"
                   className="col-2 col-form-label"
                   style={{ fontSize: "0.8rem" }}
-
                 >
                   Total Row
                 </label>
@@ -2445,8 +2462,11 @@ console.log(noOfStepInRow)
                 </div>
               </Row>
               <Row className="mb-2">
-                 
-                <label htmlFor="step-input" className="col-2 col-form-label"   style={{ fontSize: "0.8rem" }}  >
+                <label
+                  htmlFor="step-input"
+                  className="col-2 col-form-label"
+                  style={{ fontSize: "0.8rem" }}
+                >
                   Step In A Row
                 </label>
                 <div className="col-4">
@@ -2481,27 +2501,29 @@ console.log(noOfStepInRow)
                     }}
                     required
                   /> */}
-                   <BootstrapNumberInput
-                  
-        value={noOfStepInRow}
-        setValue={setNoOfStepInRow}
-        start={+startRowInput}
-        end={+endRowInput}
-        setDerivedValue={setNoInRow}
-        id="step-in-row"
-                   />
+                  <BootstrapNumberInput
+                    value={noOfStepInRow}
+                    setValue={setNoOfStepInRow}
+                    start={+startRowInput}
+                    end={+endRowInput}
+                    setDerivedValue={setNoInRow}
+                    id="step-in-row"
+                  />
                 </div>
-                <label htmlFor="example-step-input" className="col-2  col-form-label"  style={{ fontSize: "0.8rem" }}>
-                  Total No In Row
+                <label
+                  htmlFor="example-step-input"
+                  className="col-2  col-form-label"
+                  style={{ fontSize: "0.8rem" }}
+                >
+                  Total Per Row
                 </label>
                 <div className="col-4">
                   <input
-                   id="step-input"
+                    id="step-input"
                     type="number"
                     className="form-control"
                     value={noInRow}
                     onChange={(e) => setNoInRow(e.target.value)}
-                    // required
                     disabled
                   />
                 </div>
@@ -2510,7 +2532,7 @@ console.log(noOfStepInRow)
                 <label
                   htmlFor="example-select-input"
                   className="col-2  col-form-label"
-                   style={{ fontSize: "0.8rem" }}
+                  style={{ fontSize: "0.8rem" }}
                 >
                   Start Col
                 </label>
@@ -2542,7 +2564,7 @@ console.log(noOfStepInRow)
                 <label
                   htmlFor="example-select-input"
                   className="col-2 col-form-label"
-                   style={{ fontSize: "0.8rem" }}
+                  style={{ fontSize: "0.8rem" }}
                 >
                   End Col
                 </label>
@@ -2573,7 +2595,7 @@ console.log(noOfStepInRow)
                 <label
                   htmlFor="example-select-input"
                   className="col-2 col-form-label"
-                   style={{ fontSize: "0.8rem" }}
+                  style={{ fontSize: "0.8rem" }}
                 >
                   Total Column
                 </label>
@@ -2582,44 +2604,29 @@ console.log(noOfStepInRow)
                 </div>
               </Row>
               <Row className="mb-2">
-                <label htmlFor="example-select-input" className="col-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
+                <label
+                  htmlFor="example-select-input"
+                  className="col-2 col-form-label"
+                  style={{ fontSize: "0.8rem" }}
+                >
                   Step In A Column
                 </label>
                 <div className="col-4">
-                  {/* <input
-                    type="number"
-                    className="form-control"
+                  <BootstrapNumberInput
                     value={noOfStepInCol}
-                    onChange={(e) => {
-                      const value = +e.target.value; // Convert input to number
-                      const totalCols = +endColInput - +startColInput + 1;
-
-                      if (value > totalCols) {
-                        alert("Steps cannot be larger than the combined area.");
-                        setNoOfStepInCol(""); // Reset invalid input
-                        return;
-                      }
-
-                      if (value >= 1) {
-                        setNoOfStepInCol(value); // Set only valid input
-                        setNoInCol(Math.floor(totalCols / value));
-                      }
-                    }}
-                   
-                    required
-                  /> */}
-                   <BootstrapNumberInput
-       
-        value={noOfStepInCol}
-        setValue={setNoOfStepInCol}
-        start={startColInput}
-        end={endColInput}
-        setDerivedValue={setNoInCol}
-        id="step-in-col"
-      />
+                    setValue={setNoOfStepInCol}
+                    start={startColInput}
+                    end={endColInput}
+                    setDerivedValue={setNoInCol}
+                    id="step-in-col"
+                  />
                 </div>
-                <label htmlFor="example-select-input" className="col-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
-                  Total No In Col
+                <label
+                  htmlFor="example-select-input"
+                  className="col-2 col-form-label"
+                  style={{ fontSize: "0.8rem" }}
+                >
+                  Total Per Column
                 </label>
                 <div className="col-4">
                   <input
@@ -2634,16 +2641,20 @@ console.log(noOfStepInRow)
               </Row>
 
               <Row className="mb-2">
-                <label htmlFor="example-text-input" className="col-md-2 col-form-label"  style={{ fontSize: "0.8rem" }}>
-                  Read Direction 
+                <label
+                  htmlFor="example-text-input"
+                  className="col-md-2 col-form-label"
+                  style={{ fontSize: "0.8rem" }}
+                >
+                  Read Direction
                 </label>
                 <div className="col-md-10">
                   <select
                     className="form-control"
                     value={readingDirectionOption}
                     onChange={(e) => {
-                      if (e.target.value == 0 || e.target.value ==  2) {
-                        setNumberOfField(Math.ceil(noInRow ));
+                      if (e.target.value == 0 || e.target.value == 2) {
+                        setNumberOfField(Math.ceil(noInRow));
                       } else {
                         setNumberOfField(Math.ceil(noInCol));
                       }
@@ -2651,18 +2662,14 @@ console.log(noOfStepInRow)
                     }}
                     defaultValue={""}
                   >
-                    <option value="">Select reading direction... </option>
+                    <option value=""  disabled hidden>Select Reading Direction... </option>
                     <option value="0">From Top To Bottom</option>
-
                     <option value="2">From Bottom To Top</option>
-
                     <option value="4">From Left To Right</option>
                     <option value="5">From Right To Left</option>
                   </select>
                 </div>
-               
               </Row>
-              
 
               {(selectedFieldType === "questionField" ||
                 selectedFieldType === "formField") && (
@@ -2672,7 +2679,7 @@ console.log(noOfStepInRow)
                     className="col-md-2 col-form-label "
                     style={{ fontSize: "0.8rem" }}
                   >
-                    Total Fields :
+                    Total Fields 
                   </label>
                   <div className="col-4 ">
                     <input
@@ -2688,7 +2695,7 @@ console.log(noOfStepInRow)
                     className="col-md-2 col-form-label "
                     style={{ fontSize: "0.8rem" }}
                   >
-                    Field Type :
+                    Field Type 
                   </label>
                   <div className="col-4 ">
                     <select
@@ -2699,7 +2706,7 @@ console.log(noOfStepInRow)
                       }}
                       defaultValue={""}
                     >
-                      <option value="">Select field type... </option>
+                      <option value="" disabled hidden>Select Field Type... </option>
                       <option value="numeric">Numeric </option>
                       <option value="alphabet">Alphabet </option>
                       <option value="binary">Litho Code</option>
