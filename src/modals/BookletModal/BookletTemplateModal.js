@@ -1410,95 +1410,80 @@ const BookletTemplateModal = (props) => {
                     </Tab.Pane>
 
                     <Tab.Pane eventKey="print">
-                      <Row className="mb-3">
+                                         <Row className="mb-3">
                         <label
-                          htmlFor="example-text-input"
+                          htmlFor="start-position"
                           className="col-md-2 col-form-label"
                           style={{ fontSize: ".9rem" }}
                         >
                           Start Position:
                         </label>
-                        <div className="col-md-10 d-flex flex-row align-items-center gap-3">
+                      
+                        <div className="col-md-10 d-flex align-items-center gap-3">
+                          {/* Slider */}
                           <input
                             type="range"
+                            id="start-position"
                             min="0.01"
                             max="355"
                             step="0.01"
                             value={startPosition}
-                            className="form-range"
-                            style={{ flex: 1 }} // make slider take available space
+                            className="form-range flex-grow-1"
                             onChange={(e) => {
                               const value = parseFloat(e.target.value);
                               setStartPosition(value);
                             }}
                           />
-
-                          <div className="d-flex align-items-center">
+                      
+                          {/* Display input with 'mm' unit using input group */}
+                          <div className="input-group" style={{ maxWidth: "160px" }}>
                             <input
+                              type="text"
+                              className="form-control text-end"
+                              value={startPosition !== "" ? parseFloat(startPosition).toFixed(2) : ""}
                               disabled
-                              value={startPosition}
-                              type="number"
-                              step="0.01"
-                              className="form-control"
-                              style={{ maxWidth: "150px" }} // control input width
-                              placeholder="Enter value between 0.00mm and 355.00mm"
-                              onChange={(e) => {
-                                const value = parseFloat(e.target.value);
-                                if (e.target.value === "") {
-                                  setStartPosition("");
-                                } else {
-                                  setStartPosition(value.toFixed(2));
-                                }
-                              }}
                             />
-                            <span className="ms-2">mm</span>
+                            <div className="input-group-append">
+                              <span className="input-group-text">mm</span>
+                            </div>
                           </div>
                         </div>
                       </Row>
-                      <Row className="mb-3">
+                      
+                                            <Row className="mb-3">
                         <label
-                          htmlFor="example-text-input"
-                          className="col-md-2 col-form-label "
+                          htmlFor="font-space"
+                          className="col-md-2 col-form-label"
                           style={{ fontSize: ".9rem" }}
                         >
                           Font Space:
                         </label>
-                        <div className="col-md-10 d-flex flex-row align-items-center gap-3">
+                      
+                        <div className="col-md-10 d-flex align-items-center gap-3">
+                          {/* Range Slider */}
                           <input
                             type="range"
+                            id="font-space"
                             min="0.8"
                             max="92"
                             step="0.1"
                             value={fontSpace}
-                            className="form-range"
-                            style={{ flex: 1 }}
+                            className="form-range flex-grow-1"
                             onChange={(e) => {
                               const value = parseFloat(e.target.value);
-                              setFontSpace(parseFloat(value.toFixed(1))); // always store as number with 1 decimal
+                              setFontSpace(parseFloat(value.toFixed(1)));
                             }}
                           />
-
-                          <div className="d-flex align-items-center">
+                      
+                          {/* Read-only value with mm label */}
+                          <div className="input-group" style={{ maxWidth: "160px" }}>
                             <input
+                              type="text"
+                              className="form-control text-end"
+                              value={fontSpace !== "" ? fontSpace.toFixed(1) : ""}
                               disabled
-                              type="number"
-                              min="0.8"
-                              max="92"
-                              step="0.1"
-                              value={fontSpace}
-                              className="form-control"
-                              style={{ maxWidth: "120px" }}
-                              placeholder="Enter value between 0.8mm and 92.0mm"
-                              onChange={(e) => {
-                                const value = parseFloat(e.target.value);
-                                if (e.target.value === "") {
-                                  setFontSpace(""); // allow empty input
-                                } else {
-                                  setFontSpace(parseFloat(value.toFixed(1)));
-                                }
-                              }}
                             />
-                            <span className="ms-2">mm</span>
+                            <span className="input-group-text">mm</span>
                           </div>
                         </div>
                       </Row>

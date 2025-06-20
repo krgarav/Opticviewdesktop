@@ -50,6 +50,7 @@ import { Carousel } from "react-responsive-carousel";
 import { sideOptionNumber } from "data/helperData";
 import VirtualizedSelect from "components/VirtualSelect";
 import { digitType } from "data/helperData";
+import { scannerData } from "data/helperData";
 
 const LayoutDetailModal = (props) => {
   const [modalShow, setModalShow] = useState(false);
@@ -125,6 +126,7 @@ const LayoutDetailModal = (props) => {
   const [showFront, setShowFront] = useState(true);
   const [prefix, setPrefix] = useState("0000");
   const [prefixzeroes, setPrefixZeroes] = useState("0000");
+   const [scanner, setScanner] = useState(null);
   const handleChange = (event, newValue, activeThumb) => {
     const minDistance = 1;
     if (!Array.isArray(newValue)) {
@@ -231,11 +233,13 @@ const LayoutDetailModal = (props) => {
         const printData = layoutData?.printingData;
         const barcodeData = layoutData?.barcodeData;
         const imageData = layoutData?.imageData;
+        console.log(layout)
         if (layout) {
           setName(layout.layoutName);
           setImages(layout.images);
           setNumberOfLines(layout.timingMarks);
           setNumberOfFrontSideColumn(layout.totalColumns);
+          setScanner(comparewithId(scannerData, layout.scannerType));
           if (layout.idStatus === "not present") {
             // id is not present
             const idOption = IdOptionData[1];
@@ -522,7 +526,10 @@ const LayoutDetailModal = (props) => {
       toast.error("Please Select Page Position");
       return;
     }
-
+  if (!scanner) {
+        toast.error("Please Select Scanner");
+        return;
+      }
     try {
       const templateData = [
         {
@@ -543,6 +550,7 @@ const LayoutDetailModal = (props) => {
             iReject: 1,
             excelJsonFile: excelJsonFile,
             images: images,
+             scannerType: scanner?.id ,
           },
           barcodeData: {
             barcodeSide: 0,
@@ -678,27 +686,7 @@ const LayoutDetailModal = (props) => {
         backdrop="static"
         keyboard={false}
       >
-        <Modal.Header className="d-flex flex-column w-100">
-          <Modal.Title id="modal-custom-navbar" className="mb-2 ">
-            {props.title}
-          </Modal.Title>
-          {selectedUI === "DUPLEX" && (
-            <Nav
-              fill
-              variant="tabs"
-              activeKey={activeTab}
-              onSelect={handleSelect}
-              className="w-100"
-            >
-              <Nav.Item>
-                <Nav.Link eventKey="simplex">Front Side</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="duplex">Back Side</Nav.Link>
-              </Nav.Item>
-            </Nav>
-          )}
-        </Modal.Header>
+       
         <Modal.Body style={{ height: "65dvh", overflow: "auto" }}>
           {selectedUI === "" && (
             <div className="d-flex" style={{ justifyContent: "space-evenly" }}>
@@ -795,7 +783,7 @@ const LayoutDetailModal = (props) => {
                           )}
                         </div>
                       </Row>
-                      <Row className="mb-3">
+                        <Row className="mb-3">
                         <label
                           htmlFor="bubble-variant-input"
                           className="col-md-2  col-form-label"
@@ -803,10 +791,10 @@ const LayoutDetailModal = (props) => {
                         >
                           Bubble
                         </label>
-                        <div className="col-md-10">
+                        <div className="col-md-4">
                           <Select
                             value={selectedBubble}
-                            placeholder="Select bubble"
+                            placeholder="Select Bubble"
                             onChange={(selectedValue) => {
                               setSelectedBubble(selectedValue);
                               settoggle((item) => ({
@@ -823,6 +811,43 @@ const LayoutDetailModal = (props) => {
                               }),
                             }}
                             options={bubbleData}
+                            getOptionLabel={(option) => option?.name || ""}
+                            getOptionValue={(option) =>
+                              option?.id?.toString() || ""
+                            }
+                            components={{ Option, SingleValue }}
+                          />
+                          {!selectedBubble && (
+                            <span
+                              style={{ color: "red", display: spanDisplay }}
+                            >
+                              This feild is required
+                            </span>
+                          )}
+                        </div>
+                        <label
+                          htmlFor="bubble-variant-input"
+                          className="col-md-2  col-form-label"
+                          style={{ fontSize: ".87rem" }}
+                        >
+                          Scanner
+                        </label>
+                        <div className="col-md-4">
+                          <Select
+                            value={scanner}
+                            placeholder="Select Scanner"
+                            onChange={(selectedValue) => {
+                              setScanner(selectedValue);
+                            }}
+                            styles={{
+                              control: (provided, state) => ({
+                                ...provided,
+                                border: toggle.bubbleVariant
+                                  ? "1px solid red !important"
+                                  : provided.border,
+                              }),
+                            }}
+                            options={scannerData}
                             getOptionLabel={(option) => option?.name || ""}
                             getOptionValue={(option) =>
                               option?.id?.toString() || ""
@@ -1110,9 +1135,9 @@ const LayoutDetailModal = (props) => {
                           className="col-md-2 col-form-label  "
                           style={{ fontSize: ".95rem" }}
                         >
-                          Image Status
+                          Image
                         </label>
-                        <div className="col-md-10">
+                        <div className="col-md-4">
                           <Select
                             value={imageStatus}
                             onChange={(selectedValue) =>
@@ -1126,16 +1151,14 @@ const LayoutDetailModal = (props) => {
                             defaultInputValue=""
                           />
                         </div>
-                      </Row>
-                      <Row className="mb-3">
                         <label
                           htmlFor="example-text-input"
                           className="col-md-2 col-form-label "
-                          style={{ fontSize: ".85rem" }}
+                          style={{ fontSize: ".95rem" }}
                         >
                           Printing
                         </label>
-                        <div className="col-md-10">
+                        <div className="col-md-4">
                           <Select
                             value={printEnable}
                             onChange={(selectedValue) => {
@@ -1149,6 +1172,7 @@ const LayoutDetailModal = (props) => {
                           />
                         </div>
                       </Row>
+                      
 
                       {idPresent?.id !== "not present" && (
                         <Row className="mb-2">
@@ -1526,98 +1550,84 @@ const LayoutDetailModal = (props) => {
                     </Tab.Pane>
 
                     <Tab.Pane eventKey="print">
-                      <Row className="mb-3">
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-2 col-form-label"
-                          style={{ fontSize: ".9rem" }}
-                        >
-                          Start Position:
-                        </label>
-                        <div className="col-md-10 d-flex flex-row align-items-center gap-3">
-                          <input
-                            type="range"
-                            min="0.01"
-                            max="355"
-                            step="0.01"
-                            value={startPosition}
-                            className="form-range"
-                            style={{ flex: 1 }} // make slider take available space
-                            onChange={(e) => {
-                              const value = parseFloat(e.target.value);
-                              setStartPosition(value);
-                            }}
-                          />
+                     <Row className="mb-3">
+  <label
+    htmlFor="start-position"
+    className="col-md-2 col-form-label"
+    style={{ fontSize: ".9rem" }}
+  >
+    Start Position:
+  </label>
 
-                          <div className="d-flex align-items-center">
-                            <input
-                              disabled
-                              value={startPosition}
-                              type="number"
-                              step="0.01"
-                              className="form-control"
-                              style={{ maxWidth: "150px" }} // control input width
-                              placeholder="Enter value between 0.00mm and 355.00mm"
-                              onChange={(e) => {
-                                const value = parseFloat(e.target.value);
-                                if (e.target.value === "") {
-                                  setStartPosition("");
-                                } else {
-                                  setStartPosition(value.toFixed(2));
-                                }
-                              }}
-                            />
-                            <span className="ms-2">mm</span>
-                          </div>
-                        </div>
-                      </Row>
-                      <Row className="mb-3">
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-2 col-form-label "
-                          style={{ fontSize: ".9rem" }}
-                        >
-                          Font Space:
-                        </label>
-                        <div className="col-md-10 d-flex flex-row align-items-center gap-3">
-                          <input
-                            type="range"
-                            min="0.8"
-                            max="92"
-                            step="0.1"
-                            value={fontSpace}
-                            className="form-range"
-                            style={{ flex: 1 }}
-                            onChange={(e) => {
-                              const value = parseFloat(e.target.value);
-                              setFontSpace(parseFloat(value.toFixed(1))); // always store as number with 1 decimal
-                            }}
-                          />
+  <div className="col-md-10 d-flex align-items-center gap-3">
+    {/* Slider */}
+    <input
+      type="range"
+      id="start-position"
+      min="0.01"
+      max="355"
+      step="0.01"
+      value={startPosition}
+      className="form-range flex-grow-1"
+      onChange={(e) => {
+        const value = parseFloat(e.target.value);
+        setStartPosition(value);
+      }}
+    />
 
-                          <div className="d-flex align-items-center">
-                            <input
-                              disabled
-                              type="number"
-                              min="0.8"
-                              max="92"
-                              step="0.1"
-                              value={fontSpace}
-                              className="form-control"
-                              style={{ maxWidth: "120px" }}
-                              placeholder="Enter value between 0.8mm and 92.0mm"
-                              onChange={(e) => {
-                                const value = parseFloat(e.target.value);
-                                if (e.target.value === "") {
-                                  setFontSpace(""); // allow empty input
-                                } else {
-                                  setFontSpace(parseFloat(value.toFixed(1)));
-                                }
-                              }}
-                            />
-                            <span className="ms-2">mm</span>
-                          </div>
-                        </div>
-                      </Row>
+    {/* Display input with 'mm' unit using input group */}
+    <div className="input-group" style={{ maxWidth: "160px" }}>
+      <input
+        type="text"
+        className="form-control text-end"
+        value={startPosition !== "" ? parseFloat(startPosition).toFixed(2) : ""}
+        disabled
+      />
+      <div className="input-group-append">
+        <span className="input-group-text">mm</span>
+      </div>
+    </div>
+  </div>
+</Row>
+
+                      <Row className="mb-3">
+  <label
+    htmlFor="font-space"
+    className="col-md-2 col-form-label"
+    style={{ fontSize: ".9rem" }}
+  >
+    Font Space:
+  </label>
+
+  <div className="col-md-10 d-flex align-items-center gap-3">
+    {/* Range Slider */}
+    <input
+      type="range"
+      id="font-space"
+      min="0.8"
+      max="92"
+      step="0.1"
+      value={fontSpace}
+      className="form-range flex-grow-1"
+      onChange={(e) => {
+        const value = parseFloat(e.target.value);
+        setFontSpace(parseFloat(value.toFixed(1)));
+      }}
+    />
+
+    {/* Read-only value with mm label */}
+    <div className="input-group" style={{ maxWidth: "160px" }}>
+      <input
+        type="text"
+        className="form-control text-end"
+        value={fontSpace !== "" ? fontSpace.toFixed(1) : ""}
+        disabled
+      />
+      <span className="input-group-text">mm</span>
+    </div>
+  </div>
+</Row>
+
                       <div
                         style={{
                           border: "1px solid #ccc",
@@ -1724,7 +1734,7 @@ const LayoutDetailModal = (props) => {
                             getOptionValue={(option) =>
                               option?.id?.toString() || ""
                             }
-                            placeholder="Select printing orientation"
+                            placeholder="Select Printing Orientation"
                           />
                         </div>
                       </Row>
@@ -1742,7 +1752,7 @@ const LayoutDetailModal = (props) => {
                             onChange={(selectedValue) =>
                               setPrintMode(selectedValue)
                             }
-                            placeholder="Select printing mode"
+                            placeholder="Select Printing Mode"
                             options={printModeOption}
                             getOptionLabel={(option) => option?.name || ""}
                             getOptionValue={(option) =>

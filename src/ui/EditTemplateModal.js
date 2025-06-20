@@ -55,6 +55,7 @@ import CustomTooltip from "components/CustomTooltip";
 import { Carousel } from "react-responsive-carousel";
 import { v4 as uuidv4 } from "uuid";
 import { digitType } from "data/helperData";
+import { scannerData } from "data/helperData";
 
 // const EditTemplateModal = (props) => {
 //   const [modalShow, setModalShow] = useState(false);
@@ -2494,8 +2495,8 @@ const EditTemplateModal = (props) => {
   const [numberOfLines, setNumberOfLines] = useState("");
   const [imageSrc, setImageSrc] = useState("");
   const [backImageSrc, setBackImageSrc] = useState("");
-  const [sensitivity, setSensitivity] = useState(5);
-  const [difference, setDifference] = useState(6);
+  const [sensitivity, setSensitivity] = useState(3);
+  const [difference, setDifference] = useState(8);
   const [barCount, setBarCount] = useState(0);
   const [selectedBubble, setSelectedBubble] = useState(null);
   const [reject, setReject] = useState({ id: 1, name: "0", showName: "False" });
@@ -2511,7 +2512,7 @@ const EditTemplateModal = (props) => {
   const [activeKey, setActiveKey] = useState("general");
   const [spanDisplay, setSpanDisplay] = useState("none");
   const dataCtx = useContext(DataContext);
-  const [colorType, setColorType] = useState();
+  const [colorType, setColorType] = useState("grayscale");
   const [encoding, setEncoding] = useState();
   const [rotation, setRotation] = useState();
   const [resolution, setResolution] = useState();
@@ -2551,18 +2552,19 @@ const EditTemplateModal = (props) => {
   const [printOrientation, setPrintOrientation] = useState();
   const [printMode, setPrintMode] = useState();
   const [printCustom, setPrintCustom] = useState(printCustomOption[0]);
-  const [startPosition, setStartPosition] = useState(null);
-  const [fontSpace, setFontSpace] = useState(null);
+  const [startPosition, setStartPosition] = useState(0.01);
+  const [fontSpace, setFontSpace] = useState(0.8);
   const [printDigit, setPrintDigit] = useState(null);
   const [printStartNumber, setPrintStartNumber] = useState(null);
   const [printCustomValue, setPrintCustomValue] = useState(null);
   const [scannerLoading, setScannerLoading] = useState(false);
-  const [value, setValue] = React.useState([5, 6]);
+  const [value, setValue] = React.useState([3, 8]);
   const [images, setImages] = useState([]);
   const [baseUrl, setBaseUrl] = useState("http://localhost:5000");
   const [showFront, setShowFront] = useState(true);
 const [prefix, setPrefix] = useState("0000");
   const [prefixzeroes, setPrefixZeroes] = useState("0000");
+   const [scanner, setScanner] = useState(null);
   const handleChange = (event, newValue, activeThumb) => {
     const minDistance = 1;
     if (!Array.isArray(newValue)) {
@@ -2673,6 +2675,7 @@ const [prefix, setPrefix] = useState("0000");
           setName(layout.layoutName);
           setNumberOfLines(layout.timingMarks);
           setNumberOfFrontSideColumn(layout.totalColumns);
+           setScanner(comparewithId(scannerData, layout.scannerType));
           if (layout.idStatus === "not present") {
             // id is not present
             const idOption = IdOptionData[1];
@@ -2899,7 +2902,7 @@ const [prefix, setPrefix] = useState("0000");
       difference.length == 0 ||
       !direction ||
       !selectedBubble ||
-      !face
+      !face || !scanner
     ) {
       settoggle((prevData) => ({
         ...prevData,
@@ -2981,6 +2984,10 @@ const [prefix, setPrefix] = useState("0000");
         toast.error("Columns can not be empty");
         return;
       }
+        if (!scanner) {
+              toast.error("Please Select Scanner");
+              return;
+            }
       return;
     }
     const templateData5 = JSON.parse(
@@ -3017,6 +3024,7 @@ const [prefix, setPrefix] = useState("0000");
             excelJsonFile: excelJsonFile,
             images: images,
             numberedExcelJsonFile: templateData5.numberedExcelJsonFile,
+             scannerType: scanner?.id ,
           },
           barcodeData: {
             barcodeSide: 0,
@@ -3156,27 +3164,7 @@ const [prefix, setPrefix] = useState("0000");
         backdrop="static"
         keyboard={false}
       >
-        <Modal.Header className="d-flex flex-column w-100">
-          <Modal.Title id="modal-custom-navbar" className="mb-2 ">
-            {props.title}
-          </Modal.Title>
-          {selectedUI === "DUPLEX" && (
-            <Nav
-              fill
-              variant="tabs"
-              activeKey={activeTab}
-              onSelect={handleSelect}
-              className="w-100"
-            >
-              <Nav.Item>
-                <Nav.Link eventKey="simplex">Front Side</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="duplex">Back Side</Nav.Link>
-              </Nav.Item>
-            </Nav>
-          )}
-        </Modal.Header>
+        
         <Modal.Body style={{ height: "65dvh", overflow: "auto" }}>
           {selectedUI === "" && (
             <div className="d-flex" style={{ justifyContent: "space-evenly" }}>
@@ -3273,18 +3261,18 @@ const [prefix, setPrefix] = useState("0000");
                           )}
                         </div>
                       </Row>
-                      <Row className="mb-3">
+                        <Row className="mb-3">
                         <label
                           htmlFor="bubble-variant-input"
                           className="col-md-2  col-form-label"
                           style={{ fontSize: ".87rem" }}
                         >
-                          Bubble Variant
+                          Bubble
                         </label>
-                        <div className="col-md-10">
+                        <div className="col-md-4">
                           <Select
                             value={selectedBubble}
-                            placeholder="Select bubble"
+                            placeholder="Select Bubble"
                             onChange={(selectedValue) => {
                               setSelectedBubble(selectedValue);
                               settoggle((item) => ({
@@ -3301,6 +3289,43 @@ const [prefix, setPrefix] = useState("0000");
                               }),
                             }}
                             options={bubbleData}
+                            getOptionLabel={(option) => option?.name || ""}
+                            getOptionValue={(option) =>
+                              option?.id?.toString() || ""
+                            }
+                            components={{ Option, SingleValue }}
+                          />
+                          {!selectedBubble && (
+                            <span
+                              style={{ color: "red", display: spanDisplay }}
+                            >
+                              This feild is required
+                            </span>
+                          )}
+                        </div>
+                        <label
+                          htmlFor="bubble-variant-input"
+                          className="col-md-2  col-form-label"
+                          style={{ fontSize: ".87rem" }}
+                        >
+                          Scanner
+                        </label>
+                        <div className="col-md-4">
+                          <Select
+                            value={scanner}
+                            placeholder="Select Scanner"
+                            onChange={(selectedValue) => {
+                              setScanner(selectedValue);
+                            }}
+                            styles={{
+                              control: (provided, state) => ({
+                                ...provided,
+                                border: toggle.bubbleVariant
+                                  ? "1px solid red !important"
+                                  : provided.border,
+                              }),
+                            }}
+                            options={scannerData}
                             getOptionLabel={(option) => option?.name || ""}
                             getOptionValue={(option) =>
                               option?.id?.toString() || ""
@@ -3582,15 +3607,15 @@ const [prefix, setPrefix] = useState("0000");
                           )}
                         </div>
                       </Row>
-                      <Row className="mb-3">
+                     <Row className="mb-3">
                         <label
                           htmlFor="example-text-input"
                           className="col-md-2 col-form-label  "
                           style={{ fontSize: ".95rem" }}
                         >
-                          Image Status
+                          Image
                         </label>
-                        <div className="col-md-10">
+                        <div className="col-md-4">
                           <Select
                             value={imageStatus}
                             onChange={(selectedValue) =>
@@ -3604,16 +3629,14 @@ const [prefix, setPrefix] = useState("0000");
                             defaultInputValue=""
                           />
                         </div>
-                      </Row>
-                      <Row className="mb-3">
                         <label
                           htmlFor="example-text-input"
                           className="col-md-2 col-form-label "
-                          style={{ fontSize: ".85rem" }}
+                          style={{ fontSize: ".95rem" }}
                         >
                           Printing
                         </label>
-                        <div className="col-md-10">
+                        <div className="col-md-4">
                           <Select
                             value={printEnable}
                             onChange={(selectedValue) => {
@@ -3627,19 +3650,21 @@ const [prefix, setPrefix] = useState("0000");
                           />
                         </div>
                       </Row>
+                      
 
                       {idPresent?.id !== "not present" && (
-                        <Row className="mb-2">
+                       <Row className="mb-2">
                           <label
                             htmlFor="example-text-input"
                             className="col-md-2 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
-                            Window NG
+                            Exception
                           </label>
                           <div className="col-md-10">
                             <Select
                               value={windowNgOption}
+                              placeholder="Select an Action For Exception Handling..."
                               onChange={(selectedValue) => {
                                 setWindowNgOption(selectedValue);
                                 settoggle((item) => ({
@@ -3662,6 +3687,7 @@ const [prefix, setPrefix] = useState("0000");
                               getOptionValue={(option) =>
                                 option?.id?.toString() || ""
                               }
+                              menuPlacement="top"
                             />
                             {!size && (
                               <span
@@ -4003,95 +4029,80 @@ const [prefix, setPrefix] = useState("0000");
                     </Tab.Pane>
 
                    <Tab.Pane eventKey="print">
-                                         <Row className="mb-3">
+                                                            <Row className="mb-3">
                                            <label
-                                             htmlFor="example-text-input"
+                                             htmlFor="start-position"
                                              className="col-md-2 col-form-label"
                                              style={{ fontSize: ".9rem" }}
                                            >
                                              Start Position:
                                            </label>
-                                           <div className="col-md-10 d-flex flex-row align-items-center gap-3">
+                                         
+                                           <div className="col-md-10 d-flex align-items-center gap-3">
+                                             {/* Slider */}
                                              <input
                                                type="range"
+                                               id="start-position"
                                                min="0.01"
                                                max="355"
                                                step="0.01"
                                                value={startPosition}
-                                               className="form-range"
-                                               style={{ flex: 1 }} // make slider take available space
+                                               className="form-range flex-grow-1"
                                                onChange={(e) => {
                                                  const value = parseFloat(e.target.value);
                                                  setStartPosition(value);
                                                }}
                                              />
-                   
-                                             <div className="d-flex align-items-center">
+                                         
+                                             {/* Display input with 'mm' unit using input group */}
+                                             <div className="input-group" style={{ maxWidth: "160px" }}>
                                                <input
+                                                 type="text"
+                                                 className="form-control text-end"
+                                                 value={startPosition !== "" ? parseFloat(startPosition).toFixed(2) : ""}
                                                  disabled
-                                                 value={startPosition}
-                                                 type="number"
-                                                 step="0.01"
-                                                 className="form-control"
-                                                 style={{ maxWidth: "150px" }} // control input width
-                                                 placeholder="Enter value between 0.00mm and 355.00mm"
-                                                 onChange={(e) => {
-                                                   const value = parseFloat(e.target.value);
-                                                   if (e.target.value === "") {
-                                                     setStartPosition("");
-                                                   } else {
-                                                     setStartPosition(value.toFixed(2));
-                                                   }
-                                                 }}
                                                />
-                                               <span className="ms-2">mm</span>
+                                               <div className="input-group-append">
+                                                 <span className="input-group-text">mm</span>
+                                               </div>
                                              </div>
                                            </div>
                                          </Row>
-                                         <Row className="mb-3">
+                                         
+                                                               <Row className="mb-3">
                                            <label
-                                             htmlFor="example-text-input"
-                                             className="col-md-2 col-form-label "
+                                             htmlFor="font-space"
+                                             className="col-md-2 col-form-label"
                                              style={{ fontSize: ".9rem" }}
                                            >
                                              Font Space:
                                            </label>
-                                           <div className="col-md-10 d-flex flex-row align-items-center gap-3">
+                                         
+                                           <div className="col-md-10 d-flex align-items-center gap-3">
+                                             {/* Range Slider */}
                                              <input
                                                type="range"
+                                               id="font-space"
                                                min="0.8"
                                                max="92"
                                                step="0.1"
                                                value={fontSpace}
-                                               className="form-range"
-                                               style={{ flex: 1 }}
+                                               className="form-range flex-grow-1"
                                                onChange={(e) => {
                                                  const value = parseFloat(e.target.value);
-                                                 setFontSpace(parseFloat(value.toFixed(1))); // always store as number with 1 decimal
+                                                 setFontSpace(parseFloat(value.toFixed(1)));
                                                }}
                                              />
-                   
-                                             <div className="d-flex align-items-center">
+                                         
+                                             {/* Read-only value with mm label */}
+                                             <div className="input-group" style={{ maxWidth: "160px" }}>
                                                <input
+                                                 type="text"
+                                                 className="form-control text-end"
+                                                 value={fontSpace !== "" ? fontSpace.toFixed(1) : ""}
                                                  disabled
-                                                 type="number"
-                                                 min="0.8"
-                                                 max="92"
-                                                 step="0.1"
-                                                 value={fontSpace}
-                                                 className="form-control"
-                                                 style={{ maxWidth: "120px" }}
-                                                 placeholder="Enter value between 0.8mm and 92.0mm"
-                                                 onChange={(e) => {
-                                                   const value = parseFloat(e.target.value);
-                                                   if (e.target.value === "") {
-                                                     setFontSpace(""); // allow empty input
-                                                   } else {
-                                                     setFontSpace(parseFloat(value.toFixed(1)));
-                                                   }
-                                                 }}
                                                />
-                                               <span className="ms-2">mm</span>
+                                               <span className="input-group-text">mm</span>
                                              </div>
                                            </div>
                                          </Row>
@@ -4598,38 +4609,77 @@ const [prefix, setPrefix] = useState("0000");
                         )}
                       </>
                     </Tab.Pane>
-                    <Tab.Pane eventKey="image">
+                     <Tab.Pane eventKey="image">
                       <Form>
-                        <Row className="mb-3">
+                        <Row className="mb-3 align-items-center">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
-                            Color Types :
+                            Image Color :
                           </label>
-                          <div className="col-md-9">
-                            <Select
-                              value={colorType}
-                              onChange={(selectedValue) =>
-                                setColorType(selectedValue)
-                              }
-                              options={colorTypeData}
-                              getOptionLabel={(option) => option?.name || ""}
-                              getOptionValue={(option) =>
-                                option?.id?.toString() || ""
-                              }
-                              placeholder="Select color type..."
-                            />
+
+                          <div className="col-md-9 d-flex align-items-center justify-content-between">
+                            <div className="form-check form-check-inline mr-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="colorType"
+                                id="grayscale"
+                                value="grayscale"
+                                checked={colorType === "grayscale"}
+                                onChange={(e) => setColorType(e.target.value)}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="grayscale"
+                              >
+                                Grayscale
+                              </label>
+                            </div>
+
+                            <div className="form-check form-check-inline mr-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="colorType"
+                                id="color"
+                                value="color"
+                                checked={colorType === "color"}
+                                onChange={(e) => setColorType(e.target.value)}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="color"
+                              >
+                                Color
+                              </label>
+                            </div>
+
+                            <div>
+                              <img
+                                src={
+                                  colorType !== "grayscale"
+                                    ? "/colored.webp"
+                                    : "/grayscale.webp"
+                                }
+                                width={100}
+                                height={100}
+                                alt={colorType}
+                                className="rounded shadow"
+                              />
+                            </div>
                           </div>
                         </Row>
+
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
-                            Encoding Option :
+                            Image Type :
                           </label>
                           <div className="col-md-9">
                             <Select
@@ -4642,14 +4692,14 @@ const [prefix, setPrefix] = useState("0000");
                               getOptionValue={(option) =>
                                 option?.id?.toString() || ""
                               }
-                              placeholder="Select an encoding option..."
+                              placeholder="Select Image Type..."
                             />
                           </div>
                         </Row>
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
                             Rotation :
@@ -4665,14 +4715,14 @@ const [prefix, setPrefix] = useState("0000");
                               getOptionValue={(option) =>
                                 option?.id?.toString() || ""
                               }
-                              placeholder="Select rotation option..."
+                              placeholder="Select Rotation Option..."
                             />
                           </div>
                         </Row>
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label "
                             style={{ fontSize: ".9rem" }}
                           >
                             Resolution :
@@ -4688,7 +4738,7 @@ const [prefix, setPrefix] = useState("0000");
                               getOptionValue={(option) =>
                                 option?.id?.toString() || ""
                               }
-                              placeholder="Select rotation option..."
+                              placeholder="Select Resolution Option..."
                             />
                             {resolution?.id === "0" && (
                               <span
@@ -4702,7 +4752,7 @@ const [prefix, setPrefix] = useState("0000");
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
                             Scanning Side :
@@ -4718,14 +4768,14 @@ const [prefix, setPrefix] = useState("0000");
                               getOptionValue={(option) =>
                                 option?.id?.toString() || ""
                               }
-                              placeholder="Select rotation option..."
+                              placeholder="Select Scanning Side..."
                             />
                           </div>
                         </Row>
                         <Row className="mb-3">
                           <label
-                            htmlFor="example-text-input"
-                            className="col-md-3 "
+                            htmlFor="example-text-input col-form-label"
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
                             Image compression :
@@ -4741,7 +4791,7 @@ const [prefix, setPrefix] = useState("0000");
                               getOptionValue={(option) =>
                                 option?.id?.toString() || ""
                               }
-                              placeholder="Select rotation option..."
+                              placeholder="Select Compression..."
                             />
                           </div>
                         </Row>
