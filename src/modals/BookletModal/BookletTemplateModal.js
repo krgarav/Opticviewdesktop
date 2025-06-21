@@ -127,8 +127,8 @@ const BookletTemplateModal = (props) => {
   const [printOrientation, setPrintOrientation] = useState();
   const [printMode, setPrintMode] = useState();
   const [printCustom, setPrintCustom] = useState({ id: "date", name: "Date" });
-  const [startPosition, setStartPosition] = useState(null);
-  const [fontSpace, setFontSpace] = useState(null);
+  const [startPosition, setStartPosition] = useState(0.01);
+  const [fontSpace, setFontSpace] = useState(0.8);
   const [printDigit, setPrintDigit] = useState(null);
   const [printStartNumber, setPrintStartNumber] = useState(null);
   const [printCustomValue, setPrintCustomValue] = useState(null);
