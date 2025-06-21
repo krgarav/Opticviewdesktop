@@ -2131,38 +2131,77 @@ const LayoutDetailModal = (props) => {
                         )}
                       </>
                     </Tab.Pane>
-                    <Tab.Pane eventKey="image">
+                   <Tab.Pane eventKey="image">
                       <Form>
-                        <Row className="mb-3">
+                        <Row className="mb-3 align-items-center">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
-                            Color Types :
+                            Image Color :
                           </label>
-                          <div className="col-md-9">
-                            <Select
-                              value={colorType}
-                              onChange={(selectedValue) =>
-                                setColorType(selectedValue)
-                              }
-                              options={colorTypeData}
-                              getOptionLabel={(option) => option?.name || ""}
-                              getOptionValue={(option) =>
-                                option?.id?.toString() || ""
-                              }
-                              placeholder="Select color type..."
-                            />
+
+                          <div className="col-md-9 d-flex align-items-center justify-content-between">
+                            <div className="form-check form-check-inline mr-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="colorType"
+                                id="grayscale"
+                                value="grayscale"
+                                checked={colorType === "grayscale"}
+                                onChange={(e) => setColorType(e.target.value)}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="grayscale"
+                              >
+                                Grayscale
+                              </label>
+                            </div>
+
+                            <div className="form-check form-check-inline mr-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="colorType"
+                                id="color"
+                                value="color"
+                                checked={colorType === "color"}
+                                onChange={(e) => setColorType(e.target.value)}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="color"
+                              >
+                                Color
+                              </label>
+                            </div>
+
+                            <div>
+                              <img
+                                src={
+                                  colorType !== "grayscale"
+                                    ? "/colored.webp"
+                                    : "/grayscale.webp"
+                                }
+                                width={100}
+                                height={100}
+                                alt={colorType}
+                                className="rounded shadow"
+                              />
+                            </div>
                           </div>
                         </Row>
+
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
-                            Encoding Option :
+                            Image Type :
                           </label>
                           <div className="col-md-9">
                             <Select
@@ -2182,7 +2221,7 @@ const LayoutDetailModal = (props) => {
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
                             Rotation :
@@ -2205,7 +2244,7 @@ const LayoutDetailModal = (props) => {
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label "
                             style={{ fontSize: ".9rem" }}
                           >
                             Resolution :
@@ -2221,7 +2260,7 @@ const LayoutDetailModal = (props) => {
                               getOptionValue={(option) =>
                                 option?.id?.toString() || ""
                               }
-                              placeholder="Select rotation option..."
+                              placeholder="Select Resolution Option..."
                             />
                             {resolution?.id === "0" && (
                               <span
@@ -2235,7 +2274,7 @@ const LayoutDetailModal = (props) => {
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
                             Scanning Side :
@@ -2251,14 +2290,14 @@ const LayoutDetailModal = (props) => {
                               getOptionValue={(option) =>
                                 option?.id?.toString() || ""
                               }
-                              placeholder="Select rotation option..."
+                              placeholder="Select Scanning Side..."
                             />
                           </div>
                         </Row>
                         <Row className="mb-3">
                           <label
-                            htmlFor="example-text-input"
-                            className="col-md-3 "
+                            htmlFor="example-text-input col-form-label"
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
                             Image compression :
@@ -2274,7 +2313,7 @@ const LayoutDetailModal = (props) => {
                               getOptionValue={(option) =>
                                 option?.id?.toString() || ""
                               }
-                              placeholder="Select rotation option..."
+                              placeholder="Select Compression..."
                             />
                           </div>
                         </Row>
