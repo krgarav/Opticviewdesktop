@@ -104,6 +104,18 @@ const EditDesignTemplate = () => {
   const isWideScreen = width >= 994;
 
   useEffect(() => {
+    if (modalShow) {
+      if (startRowInput && endRowInput && modalShow) {
+        const total = +endRowInput - +startRowInput + 1;
+        setNoInRow(total);
+      }
+      if (startColInput && endColInput && modalShow) {
+        const total = +endColInput - +startColInput + 1;
+        setNoInCol(total);
+      }
+    }
+  }, [modalShow]);
+  useEffect(() => {
     const template = dataCtx.allTemplates;
 
     if (template) {
@@ -2397,7 +2409,7 @@ const EditDesignTemplate = () => {
                     setValue={setNoOfStepInRow}
                     start={+startRowInput}
                     end={+endRowInput}
-                    setDerivedValue={setNoInRow}
+                    // setDerivedValue={setNoInRow}
                     id="step-in-row"
                   />
                 </div>
@@ -2512,7 +2524,7 @@ const EditDesignTemplate = () => {
                     setValue={setNoOfStepInCol}
                     start={startColInput}
                     end={endColInput}
-                    setDerivedValue={setNoInCol}
+                    // setDerivedValue={setNoInCol}
                     id="step-in-col"
                   />
                 </div>
@@ -2549,9 +2561,19 @@ const EditDesignTemplate = () => {
                     value={readingDirectionOption}
                     onChange={(e) => {
                       if (e.target.value == 0 || e.target.value == 2) {
-                        setNumberOfField(Math.ceil(noInRow));
+                        const sum = (+endRowInput - +startRowInput) / noInRow;
+                        console.log(sum);
+                        setNumberOfField(
+                          Math.ceil(
+                            (+endRowInput - +startRowInput+ 1) / noOfStepInRow
+                          )
+                        );
                       } else {
-                        setNumberOfField(Math.ceil(noInCol));
+                        setNumberOfField(
+                          Math.ceil(
+                            (+endColInput - +startColInput+ 1) / noOfStepInCol
+                          )
+                        );
                       }
                       setReadingDirectionOption(e.target.value);
                     }}

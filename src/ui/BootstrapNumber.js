@@ -19,7 +19,7 @@ function BootstrapNumberInput({
     }
 
     if (newValue >= 1) {
-      setDerivedValue(Math.floor(total / newValue));
+      // setDerivedValue(Math.ceil(total / newValue));
       setValue(newValue);
     }
   };
@@ -37,12 +37,7 @@ function BootstrapNumberInput({
     validateAndUpdate(newValue);
   };
 
-  const handleInputChange = (e) => {
-    const val = +e.target.value;
-    if (!isNaN(val)) {
-      validateAndUpdate(val);
-    }
-  };
+
 
   return (
     <div className="form-group mb-2">
