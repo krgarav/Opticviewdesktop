@@ -313,7 +313,7 @@ const LayoutDetailModal = (props) => {
           }
           setImageStatus(comparewithId(imageStatusData, imageData.imageEnable));
           if (imageData?.imageEnable) {
-            setColorType(comparewithId(colorTypeData, imageData.imageColor));
+            setColorType( imageData.imageColor===1?"grayscale":"color");
             setEncoding(comparewithId(encodingOptionData, imageData.imageType));
             setRotation(
               comparewithId(rotationOptionData, imageData.imageRotation)
@@ -321,7 +321,8 @@ const LayoutDetailModal = (props) => {
             setResolution(
               comparewithId(resolutionOptionData, imageData.imageResolution)
             );
-            // setScanningSide(comparewithId(scanningSideData,imageData))
+            setScanningSide(comparewithId(scanningSideData,imageData.imageScanningSide))
+          setImageParams(comparewithId(imageParamsData,imageData.imageCompression))
           }
           setExcelJsonFile(layout.excelJsonFile);
         }
@@ -567,12 +568,14 @@ const LayoutDetailModal = (props) => {
           },
           imageData: {
             imageEnable: imageStatus ? +imageStatus?.id : 0,
-            imageColor: colorType ? +colorType?.id : 0,
+            imageColor: colorType==="grayscale"?1:0 ,
             imageType: encoding ? +encoding?.id : 0,
             imageParam: 0,
             imageRotation: rotation ? +rotation?.id : 0,
             imageResoMode: 1,
             imageResolution: resolution ? +resolution?.id : 1,
+             imageScanningSide : scannningSide? +scannningSide?.id :0,
+            imageCompression : imageParams?+imageParams?.id:0
           },
           printingData: {
             printEnable: +printEnable?.id ?? 0,

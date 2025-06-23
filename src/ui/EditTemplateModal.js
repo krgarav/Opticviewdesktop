@@ -2749,7 +2749,7 @@ const [prefix, setPrefix] = useState("0000");
           }
           setImageStatus(comparewithId(imageStatusData, imageData.imageEnable));
           if (imageData?.imageEnable) {
-            setColorType(comparewithId(colorTypeData, imageData.imageColor));
+            setColorType( imageData.imageColor===1?"grayscale":"color");
             setEncoding(comparewithId(encodingOptionData, imageData.imageType));
             setRotation(
               comparewithId(rotationOptionData, imageData.imageRotation)
@@ -2757,7 +2757,8 @@ const [prefix, setPrefix] = useState("0000");
             setResolution(
               comparewithId(resolutionOptionData, imageData.imageResolution)
             );
-            // setScanningSide(comparewithId(scanningSideData,imageData))
+             setScanningSide(comparewithId(scanningSideData,imageData.imageScanningSide))
+                      setImageParams(comparewithId(imageParamsData,imageData.imageCompression))
           }
           setExcelJsonFile(layout.excelJsonFile);
         }
@@ -3041,17 +3042,19 @@ const [prefix, setPrefix] = useState("0000");
           },
           imageData: {
             imageEnable: imageStatus ? +imageStatus?.id : 0,
-            imageColor: colorType ? +colorType?.id : 0,
+            mageColor: colorType==="grayscale"?1:0 ,
             imageType: encoding ? +encoding?.id : 0,
             imageParam: 0,
             imageRotation: rotation ? +rotation?.id : 0,
             imageResoMode: 1,
             imageResolution: resolution ? +resolution?.id : 1,
+             imageScanningSide : scannningSide? +scannningSide?.id :0,
+            imageCompression : imageParams?+imageParams?.id:0
           },
           printingData: {
             printEnable: +printEnable?.id ?? 0,
            printStartPos: +Math.floor(startPosition) ?? 0,
-            printDigit: +printDigit ?? 0,
+            printDigit: +printDigit?.id ?? 0,
             printStartNumber: +printStartNumber ?? 0,
             printOrientation:
               printOrientation?.id === undefined ? 0 : +printOrientation?.id,
@@ -3065,7 +3068,7 @@ const [prefix, setPrefix] = useState("0000");
       ];
 
 
-      
+     
       const datatemp = dataCtx.allTemplates[0][0];
       const temp = { ...datatemp, ...templateData[0] };
     

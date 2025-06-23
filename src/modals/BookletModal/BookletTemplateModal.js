@@ -476,19 +476,21 @@ const BookletTemplateModal = (props) => {
             readFrom:
               barcodeCategory?.id === undefined ? "" : barcodeCategory?.id,
           },
-          imageData: {
+         imageData: {
             imageEnable: imageStatus ? +imageStatus?.id : 0,
-            imageColor: colorType ? +colorType?.id : 0,
+            imageColor: colorType==="grayscale"?1:0 ,
             imageType: encoding ? +encoding?.id : 0,
             imageParam: 0,
             imageRotation: rotation ? +rotation?.id : 0,
             imageResoMode: 1,
             imageResolution: resolution ? +resolution?.id : 1,
+            imageScanningSide : scannningSide? +scannningSide?.id :0,
+            imageCompression : imageParams?+imageParams?.id:0
           },
           printingData: {
             printEnable: +printEnable?.id ?? 0,
             printStartPos: +Math.floor(startPosition) ?? 0,
-            printDigit: +printDigit ?? 0,
+            printDigit: printDigit?.id ?? 0,
             printStartNumber: +printStartNumber ?? 0,
             printOrientation:
               printOrientation?.id === undefined ? 0 : +printOrientation?.id,
