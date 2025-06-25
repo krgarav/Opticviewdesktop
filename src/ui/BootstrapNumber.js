@@ -18,6 +18,7 @@ function BootstrapNumberInput({
       return;
     }
 
+    
     if (newValue >= 1) {
       // setDerivedValue(Math.ceil(total / newValue));
       setValue(newValue);

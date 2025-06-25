@@ -591,7 +591,10 @@ const LayoutDetailModal = (props) => {
             customType: printCustom?.id === undefined ? "" : printCustom?.id,
             customValue: printCustomValue ? printCustomValue : "",
           },
-          formFieldWindowParameters: currentTemplate.formFieldWindowParameters
+          questionsWindowParameters : currentTemplate?.questionsWindowParameters??[],
+          formFieldWindowParameters : currentTemplate?.formFieldWindowParameters??[],
+          skewMarksWindowParameters : currentTemplate?.skewMarksWindowParameters??[]
+
         },
       ];
      
@@ -599,9 +602,9 @@ const LayoutDetailModal = (props) => {
       const templateIndex = dataCtx.allTemplates.findIndex(
         (item) => item[0].layoutParameters?.key === layoutDataKey
       );
-      console.log(dataCtx.allTemplates)
-console.log(templateData)
-      return 
+      // console.log(dataCtx.allTemplates)
+// console.log(templateData)
+//       return 
       dataCtx.updateLayoutParameter(templateIndex, templateData[0]);
       // localStorage.setItem("Template", JSON.stringify(templateData));
       props.onHide();
@@ -609,7 +612,7 @@ console.log(templateData)
       console.error("Error uploading file: ", error);
     }
   };
-
+console.log(dataCtx.allTemplates)
   const scannerHandler = async () => {
     setScannerLoading(true);
     try {

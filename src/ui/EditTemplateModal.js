@@ -3002,6 +3002,7 @@ const [prefix, setPrefix] = useState("0000");
           return acc;
         }, {});
       });
+       const currentTemplate = dataCtx.allTemplates[0][0]
       const templateData = [
         {
           layoutParameters: {
@@ -3064,9 +3065,24 @@ const [prefix, setPrefix] = useState("0000");
             customType: printCustom?.id === undefined ? "" : printCustom?.id,
             customValue: printCustomValue ? printCustomValue : "",
           },
+          questionsWindowParameters: (currentTemplate?.questionsWindowParameters ?? []).map((field) => ({
+      ...field,
+      iSensitivity: +sensitivity,
+      iDifference: +difference,
+    })),
+    formFieldWindowParameters: (currentTemplate?.formFieldWindowParameters ?? []).map((field) => ({
+      ...field,
+      iSensitivity: +sensitivity,
+      iDifference: +difference,
+    })),
+    skewMarksWindowParameters: (currentTemplate?.skewMarksWindowParameters ?? []).map((field) => ({
+      ...field,
+      iSensitivity: +sensitivity,
+      iDifference: +difference,
+    })),
+
         },
       ];
-
 
      
       const datatemp = dataCtx.allTemplates[0][0];

@@ -597,8 +597,8 @@ console.log(dataField)
       // Clone the previous state
       const copiedData = [...prevState.allTemplates];
       const currentTemplate = copiedData[templateIndex][0];
-const iDifference = currentTemplate.layoutParameters.iDifference
-const iSensitivity = currentTemplate.layoutParameters.iSensitivity
+const iDifference = layoutParameters.iDifference
+const iSensitivity = layoutParameters.iSensitivity
 
       // Update the fields in the current template
       currentTemplate.layoutParameters = {
@@ -617,11 +617,23 @@ const iSensitivity = currentTemplate.layoutParameters.iSensitivity
         ...currentTemplate.barcodeData,
         ...barcodeData, // Assuming you want to merge with existing barcodeData
       };
+      const skewFields =  currentTemplate.skewMarksWindowParameters??[]
+skewFields.forEach((field) => {
+  field.iSensitivity = iSensitivity;
+  field.iDifference = iDifference;
+});
     const formFields = currentTemplate.formFieldWindowParameters?? [];
 formFields.forEach((field) => {
   field.iSensitivity = iSensitivity;
   field.iDifference = iDifference;
 });
+ const questionFields = currentTemplate.questionsWindowParameters?? [];
+questionFields.forEach((field) => {
+  field.iSensitivity = iSensitivity;
+  field.iDifference = iDifference;
+});
+
+
       // Return the new state
       return {
         ...prevState,
