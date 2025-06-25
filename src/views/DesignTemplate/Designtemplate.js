@@ -31,7 +31,7 @@ import LinkModal from "modals/LinkModal/LinkModal";
 import RightSideBar from "components/RightSideBar/RightSideBar";
 import FieldsFooter from "components/Footers/FieldsFooter";
 import BootstrapNumberInput from "ui/BootstrapNumber";
-
+import Draggable from "react-draggable";
 const DesignTemplate = () => {
   const [selected, setSelected] = useState({});
   const [selection, setSelection] = useState(null);
@@ -98,6 +98,7 @@ const DesignTemplate = () => {
   const [skewFieldValue, setSkewFieldValue] = useState(null);
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkFields, setLinkFields] = useState([]);
+    const [disabled, setDisabled] = React.useState(false);
   const location = useLocation();
   const {
     totalColumns,
@@ -1948,7 +1949,10 @@ const DesignTemplate = () => {
         aria-labelledby="contained-modal-title-vcenter"
         centered
       >
-        <Modal.Header>
+
+       
+        <Modal.Header  onMouseOver={() => setDisabled(false)}
+            onMouseOut={() => setDisabled(true)}>
           <Modal.Title
             id="contained-modal-title-vcenter"
             style={{ width: "100vw" }}
@@ -2832,6 +2836,7 @@ const DesignTemplate = () => {
             </Button>
           </div>
         </Modal.Footer>
+        
       </Modal>
 
       <Modal

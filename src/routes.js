@@ -14,6 +14,7 @@ import FolderStructure from "views/FolderStructure";
 import AdminJobQueue from "views/AdminJobQueue";
 import AppManagement from "views/AppManagement";
 import About from "views/About";
+import Test2 from "views/test2";
 
 var routes = [
 
@@ -21,7 +22,7 @@ var routes = [
     path: "/index",
     name: "Dashboard",
     icon: "ni ni-tv-2 text-primary",
-    component: <Index />,
+    component: <Test2 />,
     layout: "/admin",
   },
   {
