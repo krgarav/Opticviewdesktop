@@ -532,6 +532,7 @@ const LayoutDetailModal = (props) => {
         return;
       }
     try {
+      const currentTemplate = dataCtx.allTemplates[0][0]
       const templateData = [
         {
           layoutParameters: {
@@ -590,6 +591,7 @@ const LayoutDetailModal = (props) => {
             customType: printCustom?.id === undefined ? "" : printCustom?.id,
             customValue: printCustomValue ? printCustomValue : "",
           },
+          formFieldWindowParameters: currentTemplate.formFieldWindowParameters
         },
       ];
      
@@ -597,9 +599,11 @@ const LayoutDetailModal = (props) => {
       const templateIndex = dataCtx.allTemplates.findIndex(
         (item) => item[0].layoutParameters?.key === layoutDataKey
       );
-
+      console.log(dataCtx.allTemplates)
+console.log(templateData)
+      return 
       dataCtx.updateLayoutParameter(templateIndex, templateData[0]);
-      localStorage.setItem("Template", JSON.stringify(templateData));
+      // localStorage.setItem("Template", JSON.stringify(templateData));
       props.onHide();
     } catch (error) {
       console.error("Error uploading file: ", error);

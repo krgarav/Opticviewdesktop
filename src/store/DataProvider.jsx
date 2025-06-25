@@ -589,7 +589,7 @@ const DataProvider = (props) => {
         console.warn("Invalid templateIndex:", templateIndex);
         return prevState; // or handle the error as needed
       }
-
+console.log(dataField)
       // Destructure dataField
       const { layoutParameters, imageData, printingData, barcodeData } =
         dataField;
@@ -597,6 +597,8 @@ const DataProvider = (props) => {
       // Clone the previous state
       const copiedData = [...prevState.allTemplates];
       const currentTemplate = copiedData[templateIndex][0];
+const iDifference = currentTemplate.layoutParameters.iDifference
+const iSensitivity = currentTemplate.layoutParameters.iSensitivity
 
       // Update the fields in the current template
       currentTemplate.layoutParameters = {
@@ -615,7 +617,11 @@ const DataProvider = (props) => {
         ...currentTemplate.barcodeData,
         ...barcodeData, // Assuming you want to merge with existing barcodeData
       };
-
+    const formFields = currentTemplate.formFieldWindowParameters?? [];
+formFields.forEach((field) => {
+  field.iSensitivity = iSensitivity;
+  field.iDifference = iDifference;
+});
       // Return the new state
       return {
         ...prevState,
