@@ -29,6 +29,7 @@ import LinkModal from "modals/LinkModal/LinkModal";
 import RightSideBar from "components/RightSideBar/RightSideBar";
 import FieldsFooter from "components/Footers/FieldsFooter";
 import BootstrapNumberInput from "ui/BootstrapNumber";
+import ExcelLikeTable from "components/ExcellLike";
 
 const EditDesignTemplate = () => {
   const [selected, setSelected] = useState({});
@@ -481,8 +482,10 @@ const EditDesignTemplate = () => {
 
   const handleMouseUp = () => {
     if (dragStart && selection) {
+      // console.log(selection)
       setDragStart(null);
       setModalShow(true);
+      setShowCopy(true);
       setSelectedFieldType(null);
     }
   };
@@ -1591,9 +1594,6 @@ const EditDesignTemplate = () => {
                       onMouseDown={handleMouseDown}
                       onMouseUp={handleMouseUp}
                       onMouseMove={handleMouseMove}
-                      // onTouchStart={handleMouseDown}
-                      // onTouchEnd={handleMouseUp}
-                      // onTouchMove={handleMouseMove}
                     >
                       {Array.from({ length: numRows }).map((_, rowIndex) => {
                         const result = [
@@ -1631,9 +1631,6 @@ const EditDesignTemplate = () => {
                                     ? numberedJson[rowIndex][colIndex]
                                     : null;
                                 const value = result[rowIndex][colIndex];
-
-                                // Initialize bgColor
-
                                 let bgColor =
                                   +result[rowIndex][colIndex] >=
                                     +data.iSensitivity &&
@@ -1643,21 +1640,6 @@ const EditDesignTemplate = () => {
                                 if (num || num === 0) {
                                   bgColor = "lightgreen";
                                 }
-                                // Calculate bgColor based on shades
-                                // if (
-                                //   value !== undefined &&
-                                //   value >= sensitivity &&
-                                //   value !== 0
-                                // ) {
-                                //   const maxValue = Math.max(...result.flat()); // Calculate maxValue dynamically
-                                //   const shadeIndex = Math.min(
-                                //     Math.floor((value / maxValue) * 15),
-                                //     15
-                                //   ); // Map value to shades
-                                //   bgColor = shades[shadeIndex];
-                                // } else if (num || num === 0) {
-                                //   bgColor = "lightgreen"; // Override to lightgreen if num exists
-                                // }
 
                                 // Font color logic
                                 let fontColor =
@@ -1701,61 +1683,6 @@ const EditDesignTemplate = () => {
                                 );
                               }
                             )}
-                            {/* {Array.from({ length: numCols }).map(
-                            (_, colIndex) => {
-                              const num =
-                                (numberedJson[rowIndex] &&
-                                  numberedJson[rowIndex][colIndex]) !==
-                                  undefined
-                                  ? numberedJson[rowIndex][colIndex]
-                                  : null;
-                              let bgColor =
-                                result[rowIndex][colIndex] != 0 &&  result[rowIndex][colIndex] >= sensitivity &&
-                                  result[rowIndex][colIndex] !== undefined
-                                  ? "black"
-                                  : "";
-                              if (num || num === 0) {
-                                bgColor = "lightgreen";
-                              }
-                              let fontColor =
-                                rowIndex < result.length &&
-                                  colIndex < result[rowIndex].length &&
-                                  result[rowIndex][colIndex] != 0 &&
-                                  result[rowIndex][colIndex] !== undefined
-                                  ? "lightgray"
-                                  : "black";
-                              if (num || num === 0) {
-                                fontColor = "black";
-                              }
-                              return (
-                                <div
-                                  key={colIndex}
-                                  style={{
-                                    backgroundColor: bgColor,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    fontSize:
-                                      data.bubbleType === "circle"
-                                        ? "12px"
-                                        : "8px",
-                                    color: fontColor,
-                                    userSelect: "none",
-                                  }}
-                                  className={`${data.bubbleType} ${selected[`${rowIndex},${colIndex}`]
-                                    ? "selected"
-                                    : ""
-                                    }`}
-                                >
-                                  {(numberedJson[rowIndex] &&
-                                    numberedJson[rowIndex][colIndex]) !==
-                                    undefined
-                                    ? numberedJson[rowIndex][colIndex]
-                                    : null}
-                                </div>
-                              );
-                            }
-                          )} */}
                           </div>
                         );
                       })}
@@ -1946,7 +1873,7 @@ const EditDesignTemplate = () => {
           </div>
         </div>
         <div>
-          <FieldsFooter
+          <ExcelLikeTable
             handleEyeClick={handleEyeClick}
             selected={selectedCoordinates}
           />
@@ -2565,13 +2492,13 @@ const EditDesignTemplate = () => {
                         console.log(sum);
                         setNumberOfField(
                           Math.ceil(
-                            (+endRowInput - +startRowInput+ 1) / noOfStepInRow
+                            (+endRowInput - +startRowInput + 1) / noOfStepInRow
                           )
                         );
                       } else {
                         setNumberOfField(
                           Math.ceil(
-                            (+endColInput - +startColInput+ 1) / noOfStepInCol
+                            (+endColInput - +startColInput + 1) / noOfStepInCol
                           )
                         );
                       }

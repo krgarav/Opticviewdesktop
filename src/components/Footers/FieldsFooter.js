@@ -11,6 +11,7 @@ const FieldsFooter = (props) => {
     }
   }, [props.selected]);
   const handleFieldClick = (item, index) => {
+    console.log(item, index);
     props.handleEyeClick(item, index);
   };
 

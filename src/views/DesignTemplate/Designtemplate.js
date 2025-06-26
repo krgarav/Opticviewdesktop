@@ -890,6 +890,7 @@ const DesignTemplate = () => {
   };
 
   const handleEyeClick = (selectedField, index) => {
+  
     setSelectedField(selectedField);
     setSelection(() => ({
       startRow: selectedField.startRow,
