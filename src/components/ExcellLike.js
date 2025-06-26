@@ -43,9 +43,9 @@ export default function ExcelLikeTable(props) {
   const handleFieldClick = (item, colIndex, rowIndex) => {
     setSelectedCell({ row: rowIndex, col: colIndex });
     console.log(item, colIndex);
-    const currentItem = props.selected[colIndex]
+    const currentItem = props.selected[colIndex];
     // console.log(currentItem,colIndex)
-     props.handleEyeClick(currentItem,colIndex);
+    props.handleEyeClick(currentItem, colIndex);
   };
 
   // Generate Excel-style column headers: A, B, ..., Z, AA, AB, ...
@@ -60,90 +60,99 @@ export default function ExcelLikeTable(props) {
   });
 
   return (
-  
-      <div style={{ overflowX: "auto" }}>
-        <table
-          className="table-bordered mb-0 text-center"
-          style={{ tableLayout: "fixed", borderCollapse: "collapse" }}
-        >
-          <thead>
-            <tr>
-              <th style={{ width: "50px", minWidth: "50px" }}></th>
-              {columnHeaders.map((header, index) => (
-                <th
-                  key={index}
+    <div style={{ overflowX: "auto" }}>
+      <table
+        className="table-bordered mb-0 text-center"
+        style={{ tableLayout: "fixed", borderCollapse: "collapse" }}
+      >
+        <thead>
+          <tr>
+            <th style={{ width: "50px", minWidth: "50px" }}></th>
+            {columnHeaders.map((header, index) => (
+              <th
+                key={index}
+                style={{
+                  width: "100px",
+                  minWidth: "100px",
+                  maxWidth: "100px",
+                  textAlign: "center",
+                  verticalAlign: "middle",
+                  backgroundColor:
+                    selectedCell.col === index ? "#A0A0A0" : "#E0E0E0",
+                  color: selectedCell.col === index ? "white" : "black", // Highlight selected header
+                }}
+              >
+                {header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((row, rowIndex) => (
+            <tr key={rowIndex} style={{ height: "40px" }}>
+              <th
+                style={{
+                  width: "50px",
+                  minWidth: "50px",
+                  maxWidth: "50px",
+                  verticalAlign: "middle",
+                  textAlign: "center",
+                  backgroundColor: "#E0E0E0",
+                  color: "black",
+                  position: "sticky",
+                  left: "0",
+                  zIndex: "2",
+                }}
+              >
+                {rowIndex + 1}
+              </th>
+              {row.map((cell, colIndex) => (
+                <td
+                  key={colIndex}
                   style={{
                     width: "100px",
                     minWidth: "100px",
                     maxWidth: "100px",
-                    textAlign: "center",
-                    verticalAlign: "middle",
+                    height: "40px",
+                    padding: "0",
+                    boxSizing: "border-box",
+                    overflow: "hidden",
                     backgroundColor:
-                      selectedCell.col === index ? "#D6EAF8" : "", // Highlight selected header
+      selectedCell.row === rowIndex && selectedCell.col === colIndex
+        ? "#AED6F1"
+        : "#F8F9F9",
+    transition: "background-color 0.2s ease", // Smooth hover transition
                   }}
+                  onClick={() => handleFieldClick(cell, colIndex, rowIndex)}
+                
+   
                 >
-                  {header}
-                </th>
+                  <div
+                    className="text-center"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      padding: "4px",
+                      boxSizing: "border-box",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                     
+                    }}
+                     
+                  >
+                    {cell}
+                  </div>
+                </td>
               ))}
             </tr>
-          </thead>
-          <tbody>
-            {data.map((row, rowIndex) => (
-              <tr key={rowIndex} style={{ height: "40px" }}>
-                <th
-                  style={{
-                    width: "50px",
-                    minWidth: "50px",
-                    maxWidth: "50px",
-                    verticalAlign: "middle",
-                    textAlign: "center",
-                  }}
-                >
-                  {rowIndex + 1}
-                </th>
-                {row.map((cell, colIndex) => (
-                  <td
-                    key={colIndex}
-                    style={{
-                      width: "100px",
-                      minWidth: "100px",
-                      maxWidth: "100px",
-                      height: "40px",
-                      padding: "0",
-                      boxSizing: "border-box",
-                      overflow: "hidden",
-                      backgroundColor:
-                        selectedCell.row === rowIndex && selectedCell.col === colIndex
-                          ? "#AED6F1" // Highlight selected cell
-                          : "",
-                    }}
-                    onClick={() => handleFieldClick(cell, colIndex, rowIndex)}
-                  >
-                    <div
-                      className="text-center"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        padding: "4px",
-                        boxSizing: "border-box",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {cell}
-                    </div>
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-   
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
