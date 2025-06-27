@@ -487,34 +487,35 @@ const EditDesignTemplate = () => {
     });
   };
 
-  const handleMouseUp = (e) => {
-    // e.preventDefault()
-    const filteredCoordinates = selectedCoordinates.filter((coord) => {
-      const isFullyInside =
-        coord.startRow >= selection.startRow &&
-        coord.endRow <= selection.endRow &&
-        coord.startCol >= selection.startCol &&
-        coord.endCol <= selection.endCol;
+ const handleMouseUp = (e) => {
+  // e.preventDefault();
 
-      return isFullyInside;
-    });
+  const filteredCoordinates = selectedCoordinates.filter((coord) => {
+    const isFullyInside =
+      coord.startRow >= selection.startRow &&
+      coord.endRow <= selection.endRow &&
+      coord.startCol >= selection.startCol &&
+      coord.endCol <= selection.endCol;
 
-    if (e.ctrlKey || e.metaKey) {
-      // ctrlKey for Windows, metaKey for Mac (Command key)
-      // console.log(filteredCoordinates)
-      handleFillData(filteredCoordinates[0]);
-      setGroupCopy(true);
-      setFilteredSelectedCoordinate(filteredCoordinates);
-      return;
-    }
-    if (dragStart && selection) {
-      console.log(selection);
-      setDragStart(null);
-      setModalShow(true);
+    return isFullyInside;
+  });
 
-      setSelectedFieldType(null);
-    }
-  };
+  if (dragStart && selection &&!(e.ctrlKey || e.metaKey)) {
+    // Handle selection via drag
+    setDragStart(null);
+    setModalShow(true);
+    setSelectedFieldType(null);
+  } else if ((e.ctrlKey || e.metaKey) && filteredCoordinates.length > 0) {
+    // Handle copy with Ctrl/Cmd key
+    handleFillData(filteredCoordinates[0]);
+    setGroupCopy(true);
+    setFilteredSelectedCoordinate(filteredCoordinates);
+  } else if (e.ctrlKey || e.metaKey) {
+    // Ctrl/Cmd pressed but no valid selection
+    toast.error("Selected window cannot be copied.");
+  }
+};
+
 
   const handleCancel = () => {
     setDragStart(null);
@@ -1022,7 +1023,7 @@ const EditDesignTemplate = () => {
       setSkewFieldValue(data?.skewFieldValue);
     }
   };
-  const handleFillData = (selectedField, index) => {
+  const handleFillData = (selectedField) => {
     setSelectedField(selectedField);
     setSelection(() => ({
       startRow: selectedField.startRow,
@@ -1664,10 +1665,10 @@ const EditDesignTemplate = () => {
               },
               windowName: updatedName,
               columnStart: +newField.startCol,
-              columnNumber: +field.columnNumber,
+              columnNumber: +noInCol,
               columnStep: +noOfStepInCol,
               rowStart: +newField.startRow + 1,
-              rowNumber: +field.rowNumber,
+              rowNumber: +noInRow,
               rowStep: +noOfStepInRow,
               iDirection: +readingDirectionOption,
               iFace: +layoutData.iFace ?? 0,
