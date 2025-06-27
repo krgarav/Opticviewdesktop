@@ -378,7 +378,8 @@ const SimplexTemplateModal = (props) => {
       difference.length == 0 ||
       !direction ||
       !selectedBubble ||
-      !face||!scanner
+      !face ||
+      !scanner
     ) {
       settoggle((prevData) => ({
         ...prevData,
@@ -460,11 +461,11 @@ const SimplexTemplateModal = (props) => {
         toast.error("Columns can not be empty");
         return;
       }
-       if (!scanner) {
+      if (!scanner) {
         toast.error("Please Select Scanner");
         return;
       }
-      
+
       return;
     }
 
@@ -499,7 +500,7 @@ const SimplexTemplateModal = (props) => {
             excelJsonFile: excelJsonFile,
             images: images,
             numberedExcelJsonFile: emptyExcelJsonFile,
-            scannerType: scanner?.id ,
+            scannerType: scanner?.id,
           },
           barcodeData: {
             barcodeSide: 0,
@@ -516,31 +517,30 @@ const SimplexTemplateModal = (props) => {
           },
           imageData: {
             imageEnable: imageStatus ? +imageStatus?.id : 0,
-            imageColor: colorType==="grayscale"?1:0 ,
+            imageColor: colorType === "grayscale" ? 1 : 0,
             imageType: encoding ? +encoding?.id : 0,
             imageParam: 0,
             imageRotation: rotation ? +rotation?.id : 0,
             imageResoMode: 1,
             imageResolution: resolution ? +resolution?.id : 1,
-            imageScanningSide : scannningSide? +scannningSide?.id :0,
-            imageCompression : imageParams?+imageParams?.id:0
+            imageScanningSide: scannningSide ? +scannningSide?.id : 0,
+            imageCompression: imageParams ? +imageParams?.id : 0,
           },
           printingData: {
-            printEnable: +printEnable?.id ?? 0,
-            printStartPos: +Math.floor(startPosition) ?? 0,
-            printDigit: +printDigit?.id ?? 0,
-            printStartNumber: +printStartNumber ?? 0,
-            printOrientation:
-              printOrientation?.id === undefined ? 0 : +printOrientation?.id,
+            printEnable: +(printEnable?.id ?? 0),
+            printStartPos: +(startPosition ?? 0),
+            printDigit: +(printDigit?.id ?? 0),
+            printStartNumber: +(printStartNumber ?? 0),
+            printOrientation: +(printOrientation?.id ?? 0),
             printFontSize: 0,
-            printFontSpace: +Math.floor(fontSpace) ?? 0,
-            printMode: printMode?.id === undefined ? 0 : +printMode?.id,
+            printFontSpace: +(fontSpace ?? 0),
+            printMode: +(printMode?.id ?? 0),
             customType: printCustom?.id === undefined ? "" : printCustom?.id,
             customValue: printCustomValue ? printCustomValue : "",
           },
         },
       ];
-    
+
       localStorage.setItem("Template", JSON.stringify(templateData));
 
       dataCtx.setNewTemplates([templateData]);
@@ -1568,7 +1568,7 @@ const SimplexTemplateModal = (props) => {
                     </Tab.Pane>
 
                     <Tab.Pane eventKey="print">
-                                         <Row className="mb-3">
+                      <Row className="mb-3">
                         <label
                           htmlFor="start-position"
                           className="col-md-2 col-form-label"
@@ -1576,7 +1576,7 @@ const SimplexTemplateModal = (props) => {
                         >
                           Start Position:
                         </label>
-                      
+
                         <div className="col-md-10 d-flex align-items-center gap-3">
                           {/* Slider */}
                           <input
@@ -1592,13 +1592,20 @@ const SimplexTemplateModal = (props) => {
                               setStartPosition(value);
                             }}
                           />
-                      
+
                           {/* Display input with 'mm' unit using input group */}
-                          <div className="input-group" style={{ maxWidth: "160px" }}>
+                          <div
+                            className="input-group"
+                            style={{ maxWidth: "160px" }}
+                          >
                             <input
                               type="text"
                               className="form-control text-end"
-                              value={startPosition !== "" ? parseFloat(startPosition).toFixed(2) : ""}
+                              value={
+                                startPosition !== ""
+                                  ? parseFloat(startPosition).toFixed(2)
+                                  : ""
+                              }
                               disabled
                             />
                             <div className="input-group-append">
@@ -1607,8 +1614,8 @@ const SimplexTemplateModal = (props) => {
                           </div>
                         </div>
                       </Row>
-                      
-                                            <Row className="mb-3">
+
+                      <Row className="mb-3">
                         <label
                           htmlFor="font-space"
                           className="col-md-2 col-form-label"
@@ -1616,7 +1623,7 @@ const SimplexTemplateModal = (props) => {
                         >
                           Font Space:
                         </label>
-                      
+
                         <div className="col-md-10 d-flex align-items-center gap-3">
                           {/* Range Slider */}
                           <input
@@ -1632,13 +1639,18 @@ const SimplexTemplateModal = (props) => {
                               setFontSpace(parseFloat(value.toFixed(1)));
                             }}
                           />
-                      
+
                           {/* Read-only value with mm label */}
-                          <div className="input-group" style={{ maxWidth: "160px" }}>
+                          <div
+                            className="input-group"
+                            style={{ maxWidth: "160px" }}
+                          >
                             <input
                               type="text"
                               className="form-control text-end"
-                              value={fontSpace !== "" ? fontSpace.toFixed(1) : ""}
+                              value={
+                                fontSpace !== "" ? fontSpace.toFixed(1) : ""
+                              }
                               disabled
                             />
                             <span className="input-group-text">mm</span>

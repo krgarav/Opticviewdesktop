@@ -32,6 +32,7 @@ import RightSideBar from "components/RightSideBar/RightSideBar";
 import FieldsFooter from "components/Footers/FieldsFooter";
 import BootstrapNumberInput from "ui/BootstrapNumber";
 import Draggable from "react-draggable";
+import ExcelLikeTable from "components/ExcellLike";
 const DesignTemplate = () => {
   const [selected, setSelected] = useState({});
   const [selection, setSelection] = useState(null);
@@ -98,7 +99,7 @@ const DesignTemplate = () => {
   const [skewFieldValue, setSkewFieldValue] = useState(null);
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkFields, setLinkFields] = useState([]);
-    const [disabled, setDisabled] = React.useState(false);
+  const [disabled, setDisabled] = React.useState(false);
   const location = useLocation();
   const {
     totalColumns,
@@ -890,7 +891,6 @@ const DesignTemplate = () => {
   };
 
   const handleEyeClick = (selectedField, index) => {
-  
     setSelectedField(selectedField);
     setSelection(() => ({
       startRow: selectedField.startRow,
@@ -1213,7 +1213,6 @@ const DesignTemplate = () => {
     handleCancel();
     localStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
   };
-  console.log(noOfStepInRow);
   const handleImage = (images) => {
     setImagesSelectedCount(images.length);
     if (images.length > 0) {
@@ -1591,8 +1590,8 @@ const DesignTemplate = () => {
           Show Modal
         </Button>
       )}
-      <div style={{ height: "83vh" }}>
-        <div style={{ height: "97%", overflow: "auto", width: "100%" }}>
+      <div style={{ height: "85dvh" }}>
+        <div style={{ height: "94%", overflow: "auto", width: "100%" }}>
           <Button
             onClick={sendHandler}
             disabled={loading}
@@ -1936,8 +1935,8 @@ const DesignTemplate = () => {
             </div>
           </div>
         </div>
-        <div style={{ height: "3%" }}>
-          <FieldsFooter
+        <div style={{ height: "6%" }}>
+          <ExcelLikeTable
             handleEyeClick={handleEyeClick}
             selected={selectedCoordinates}
           />
@@ -1950,10 +1949,10 @@ const DesignTemplate = () => {
         aria-labelledby="contained-modal-title-vcenter"
         centered
       >
-
-       
-        <Modal.Header  onMouseOver={() => setDisabled(false)}
-            onMouseOut={() => setDisabled(true)}>
+        <Modal.Header
+          onMouseOver={() => setDisabled(false)}
+          onMouseOut={() => setDisabled(true)}
+        >
           <Modal.Title
             id="contained-modal-title-vcenter"
             style={{ width: "100vw" }}
@@ -2670,13 +2669,13 @@ const DesignTemplate = () => {
                         console.log(sum);
                         setNumberOfField(
                           Math.ceil(
-                            (+endRowInput - +startRowInput+ 1) / noOfStepInRow
+                            (+endRowInput - +startRowInput + 1) / noOfStepInRow
                           )
                         );
                       } else {
                         setNumberOfField(
                           Math.ceil(
-                            (+endColInput - +startColInput+ 1) / noOfStepInCol
+                            (+endColInput - +startColInput + 1) / noOfStepInCol
                           )
                         );
                       }
@@ -2837,7 +2836,6 @@ const DesignTemplate = () => {
             </Button>
           </div>
         </Modal.Footer>
-        
       </Modal>
 
       <Modal

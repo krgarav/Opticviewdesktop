@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
+import _ from "lodash";
+import { toast } from "react-toastify";
 
 export default function ExcelLikeTable(props) {
   const [data, setData] = useState([[]]);
   const [fields, setFields] = useState([]);
   const [selectedCell, setSelectedCell] = useState({ row: null, col: null }); // Track selected cell
+  const [hoveredCell, setHoveredCell] = useState({ row: null, col: null });
 
   useEffect(() => {
     if (Array.isArray(props.selected)) {
@@ -35,17 +38,59 @@ export default function ExcelLikeTable(props) {
             return item.name;
         }
       });
+      // Pad the row with empty cells if less than desired length
+      const desiredLength = 20;
+      while (newRow.length < desiredLength) {
+        newRow.push(""); // Fill with empty strings
+      }
 
       setData([newRow]);
     }
   }, [props.selected]);
 
   const handleFieldClick = (item, colIndex, rowIndex) => {
-    setSelectedCell({ row: rowIndex, col: colIndex });
-    console.log(item, colIndex);
-    const currentItem = props.selected[colIndex];
-    // console.log(currentItem,colIndex)
-    props.handleEyeClick(currentItem, colIndex);
+    const matchedField = findFieldDetails(item);
+
+    if (matchedField) {
+      console.log("Matched Field:", matchedField);
+      setSelectedCell({ row: rowIndex, col: colIndex });
+      console.log(item, colIndex);
+      const indexOfField = fields.findIndex((field) =>
+        _.isEqual(field, matchedField)
+      );
+      props.handleEyeClick(matchedField, indexOfField);
+    } else {
+      toast.warning("Selected field not found");
+      console.log("No matching field found.");
+    }
+  };
+
+  const findFieldDetails = (cellValue) => {
+    for (const field of fields) {
+      // Assume fieldData is the first array you provided
+      if (field.fieldType === "formField") {
+        if (field.name === cellValue) {
+          return field; // Direct match
+        }
+      } else if (field.fieldType === "questionField") {
+        const [start, end] = field.name.split("-");
+        const prefix = start.replace(/\d+$/, "");
+        const startNum = parseInt(start.match(/\d+/)[0]);
+        const endNum = parseInt(end.match(/\d+/)[0]);
+
+        // Generate all names in range
+        const generatedQuestions = [];
+        for (let i = startNum; i <= endNum; i++) {
+          generatedQuestions.push(`${prefix}${i}`);
+        }
+
+        if (generatedQuestions.includes(cellValue)) {
+          return field; // Found in generated range
+        }
+      }
+    }
+
+    return null; // No match found
   };
 
   // Generate Excel-style column headers: A, B, ..., Z, AA, AB, ...
@@ -60,7 +105,7 @@ export default function ExcelLikeTable(props) {
   });
 
   return (
-    <div style={{ overflowX: "auto" }}>
+    <div style={{ overflowX: "auto" }} className="border border-dark border-bottom-0">
       <table
         className="table-bordered mb-0 text-center"
         style={{ tableLayout: "fixed", borderCollapse: "collapse" }}
@@ -89,7 +134,7 @@ export default function ExcelLikeTable(props) {
         </thead>
         <tbody>
           {data.map((row, rowIndex) => (
-            <tr key={rowIndex} style={{ height: "40px" }}>
+            <tr key={rowIndex} style={{ height: "45px" }}>
               <th
                 style={{
                   width: "50px",
@@ -118,14 +163,20 @@ export default function ExcelLikeTable(props) {
                     boxSizing: "border-box",
                     overflow: "hidden",
                     backgroundColor:
-      selectedCell.row === rowIndex && selectedCell.col === colIndex
-        ? "#AED6F1"
-        : "#F8F9F9",
-    transition: "background-color 0.2s ease", // Smooth hover transition
+                      selectedCell.row === rowIndex &&
+                      selectedCell.col === colIndex
+                        ? "#A5D6A7" // Selected
+                        : hoveredCell.row === rowIndex &&
+                          hoveredCell.col === colIndex
+                        ? "#A5D6A7" // Hovered
+                        : "#C8E6C9", // Default
+                    transition: "background-color 0.2s ease", // Smooth hover transition
                   }}
                   onClick={() => handleFieldClick(cell, colIndex, rowIndex)}
-                
-   
+                  onMouseEnter={() =>
+                    setHoveredCell({ row: rowIndex, col: colIndex })
+                  }
+                  onMouseLeave={() => setHoveredCell({ row: -1, col: -1 })}
                 >
                   <div
                     className="text-center"
@@ -141,9 +192,7 @@ export default function ExcelLikeTable(props) {
                       alignItems: "center",
                       justifyContent: "center",
                       cursor: "pointer",
-                     
                     }}
-                     
                   >
                     {cell}
                   </div>

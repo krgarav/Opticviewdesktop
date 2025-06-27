@@ -126,7 +126,7 @@ const LayoutDetailModal = (props) => {
   const [showFront, setShowFront] = useState(true);
   const [prefix, setPrefix] = useState("0000");
   const [prefixzeroes, setPrefixZeroes] = useState("0000");
-   const [scanner, setScanner] = useState(null);
+  const [scanner, setScanner] = useState(null);
   const handleChange = (event, newValue, activeThumb) => {
     const minDistance = 1;
     if (!Array.isArray(newValue)) {
@@ -233,7 +233,7 @@ const LayoutDetailModal = (props) => {
         const printData = layoutData?.printingData;
         const barcodeData = layoutData?.barcodeData;
         const imageData = layoutData?.imageData;
-        console.log(layout)
+        console.log(layout);
         if (layout) {
           setName(layout.layoutName);
           setImages(layout.images);
@@ -300,7 +300,7 @@ const LayoutDetailModal = (props) => {
             setPrintEnable(printOptionData[0]);
             setStartPosition(printData.printStartPos);
             setFontSpace(printData.printFontSpace);
-            setPrintDigit(comparewithId(digitType,printData.printDigit));
+            setPrintDigit(comparewithId(digitType, printData.printDigit));
             setPrintStartNumber(printData.printStartNumber);
             setPrintOrientation(
               comparewithId(printOrientationOption, printData.printOrientation)
@@ -313,7 +313,7 @@ const LayoutDetailModal = (props) => {
           }
           setImageStatus(comparewithId(imageStatusData, imageData.imageEnable));
           if (imageData?.imageEnable) {
-            setColorType( imageData.imageColor===1?"grayscale":"color");
+            setColorType(imageData.imageColor === 1 ? "grayscale" : "color");
             setEncoding(comparewithId(encodingOptionData, imageData.imageType));
             setRotation(
               comparewithId(rotationOptionData, imageData.imageRotation)
@@ -321,8 +321,12 @@ const LayoutDetailModal = (props) => {
             setResolution(
               comparewithId(resolutionOptionData, imageData.imageResolution)
             );
-            setScanningSide(comparewithId(scanningSideData,imageData.imageScanningSide))
-          setImageParams(comparewithId(imageParamsData,imageData.imageCompression))
+            setScanningSide(
+              comparewithId(scanningSideData, imageData.imageScanningSide)
+            );
+            setImageParams(
+              comparewithId(imageParamsData, imageData.imageCompression)
+            );
           }
           setExcelJsonFile(layout.excelJsonFile);
         }
@@ -527,12 +531,12 @@ const LayoutDetailModal = (props) => {
       toast.error("Please Select Page Position");
       return;
     }
-  if (!scanner) {
-        toast.error("Please Select Scanner");
-        return;
-      }
+    if (!scanner) {
+      toast.error("Please Select Scanner");
+      return;
+    }
     try {
-      const currentTemplate = dataCtx.allTemplates[0][0]
+      const currentTemplate = dataCtx.allTemplates[0][0];
       const templateData = [
         {
           layoutParameters: {
@@ -552,7 +556,7 @@ const LayoutDetailModal = (props) => {
             iReject: 1,
             excelJsonFile: excelJsonFile,
             images: images,
-             scannerType: scanner?.id ,
+            scannerType: scanner?.id,
           },
           barcodeData: {
             barcodeSide: 0,
@@ -569,42 +573,43 @@ const LayoutDetailModal = (props) => {
           },
           imageData: {
             imageEnable: imageStatus ? +imageStatus?.id : 0,
-            imageColor: colorType==="grayscale"?1:0 ,
+            imageColor: colorType === "grayscale" ? 1 : 0,
             imageType: encoding ? +encoding?.id : 0,
             imageParam: 0,
             imageRotation: rotation ? +rotation?.id : 0,
             imageResoMode: 1,
             imageResolution: resolution ? +resolution?.id : 1,
-             imageScanningSide : scannningSide? +scannningSide?.id :0,
-            imageCompression : imageParams?+imageParams?.id:0
+            imageScanningSide: scannningSide ? +scannningSide?.id : 0,
+            imageCompression: imageParams ? +imageParams?.id : 0,
           },
           printingData: {
-            printEnable: +printEnable?.id ?? 0,
-            printStartPos: +Math.floor(startPosition) ?? 0,
-            printDigit: printDigit?.id ?? 0,
-            printStartNumber: +printStartNumber ?? 0,
-            printOrientation:
-              printOrientation?.id === undefined ? 0 : +printOrientation?.id,
+            printEnable: +(printEnable?.id ?? 0),
+            printStartPos: +(startPosition ?? 0),
+            printDigit: +(printDigit?.id ?? 0),
+            printStartNumber: +(printStartNumber ?? 0),
+            printOrientation: +(printOrientation?.id ?? 0),
             printFontSize: 0,
-           printFontSpace: +Math.floor(fontSpace) ?? 0,
-            printMode: printMode?.id === undefined ? 0 : +printMode?.id,
+            printFontSpace: +(fontSpace ?? 0),
+            printMode: +(printMode?.id ?? 0),
             customType: printCustom?.id === undefined ? "" : printCustom?.id,
             customValue: printCustomValue ? printCustomValue : "",
           },
-          questionsWindowParameters : currentTemplate?.questionsWindowParameters??[],
-          formFieldWindowParameters : currentTemplate?.formFieldWindowParameters??[],
-          skewMarksWindowParameters : currentTemplate?.skewMarksWindowParameters??[]
-
+          questionsWindowParameters:
+            currentTemplate?.questionsWindowParameters ?? [],
+          formFieldWindowParameters:
+            currentTemplate?.formFieldWindowParameters ?? [],
+          skewMarksWindowParameters:
+            currentTemplate?.skewMarksWindowParameters ?? [],
         },
       ];
-     
+
       const layoutDataKey = props.layoutData.layoutParameters.key;
       const templateIndex = dataCtx.allTemplates.findIndex(
         (item) => item[0].layoutParameters?.key === layoutDataKey
       );
       // console.log(dataCtx.allTemplates)
-// console.log(templateData)
-//       return 
+      // console.log(templateData)
+      //       return
       dataCtx.updateLayoutParameter(templateIndex, templateData[0]);
       // localStorage.setItem("Template", JSON.stringify(templateData));
       props.onHide();
@@ -612,7 +617,7 @@ const LayoutDetailModal = (props) => {
       console.error("Error uploading file: ", error);
     }
   };
-console.log(dataCtx.allTemplates)
+  console.log(dataCtx.allTemplates);
   const scannerHandler = async () => {
     setScannerLoading(true);
     try {
@@ -696,7 +701,6 @@ console.log(dataCtx.allTemplates)
         backdrop="static"
         keyboard={false}
       >
-       
         <Modal.Body style={{ height: "65dvh", overflow: "auto" }}>
           {selectedUI === "" && (
             <div className="d-flex" style={{ justifyContent: "space-evenly" }}>
@@ -793,7 +797,7 @@ console.log(dataCtx.allTemplates)
                           )}
                         </div>
                       </Row>
-                        <Row className="mb-3">
+                      <Row className="mb-3">
                         <label
                           htmlFor="bubble-variant-input"
                           className="col-md-2  col-form-label"
@@ -1182,7 +1186,6 @@ console.log(dataCtx.allTemplates)
                           />
                         </div>
                       </Row>
-                      
 
                       {idPresent?.id !== "not present" && (
                         <Row className="mb-2">
@@ -1449,7 +1452,7 @@ console.log(dataCtx.allTemplates)
                             getOptionValue={(option) =>
                               option?.id?.toString() || ""
                             }
-                             menuPlacement="top"
+                            menuPlacement="top"
                             styles={{
                               control: (provided, state) => ({
                                 ...provided,
@@ -1560,83 +1563,95 @@ console.log(dataCtx.allTemplates)
                     </Tab.Pane>
 
                     <Tab.Pane eventKey="print">
-                     <Row className="mb-3">
-  <label
-    htmlFor="start-position"
-    className="col-md-2 col-form-label"
-    style={{ fontSize: ".9rem" }}
-  >
-    Start Position:
-  </label>
+                      <Row className="mb-3">
+                        <label
+                          htmlFor="start-position"
+                          className="col-md-2 col-form-label"
+                          style={{ fontSize: ".9rem" }}
+                        >
+                          Start Position:
+                        </label>
 
-  <div className="col-md-10 d-flex align-items-center gap-3">
-    {/* Slider */}
-    <input
-      type="range"
-      id="start-position"
-      min="0.01"
-      max="355"
-      step="0.01"
-      value={startPosition}
-      className="form-range flex-grow-1"
-      onChange={(e) => {
-        const value = parseFloat(e.target.value);
-        setStartPosition(value);
-      }}
-    />
+                        <div className="col-md-10 d-flex align-items-center gap-3">
+                          {/* Slider */}
+                          <input
+                            type="range"
+                            id="start-position"
+                            min="0.01"
+                            max="355"
+                            step="0.01"
+                            value={startPosition}
+                            className="form-range flex-grow-1"
+                            onChange={(e) => {
+                              const value = parseFloat(e.target.value);
+                              setStartPosition(value);
+                            }}
+                          />
 
-    {/* Display input with 'mm' unit using input group */}
-    <div className="input-group" style={{ maxWidth: "160px" }}>
-      <input
-        type="text"
-        className="form-control text-end"
-        value={startPosition !== "" ? parseFloat(startPosition).toFixed(2) : ""}
-        disabled
-      />
-      <div className="input-group-append">
-        <span className="input-group-text">mm</span>
-      </div>
-    </div>
-  </div>
-</Row>
+                          {/* Display input with 'mm' unit using input group */}
+                          <div
+                            className="input-group"
+                            style={{ maxWidth: "160px" }}
+                          >
+                            <input
+                              type="text"
+                              className="form-control text-end"
+                              value={
+                                startPosition !== ""
+                                  ? parseFloat(startPosition).toFixed(2)
+                                  : ""
+                              }
+                              disabled
+                            />
+                            <div className="input-group-append">
+                              <span className="input-group-text">mm</span>
+                            </div>
+                          </div>
+                        </div>
+                      </Row>
 
                       <Row className="mb-3">
-  <label
-    htmlFor="font-space"
-    className="col-md-2 col-form-label"
-    style={{ fontSize: ".9rem" }}
-  >
-    Font Space:
-  </label>
+                        <label
+                          htmlFor="font-space"
+                          className="col-md-2 col-form-label"
+                          style={{ fontSize: ".9rem" }}
+                        >
+                          Font Space:
+                        </label>
 
-  <div className="col-md-10 d-flex align-items-center gap-3">
-    {/* Range Slider */}
-    <input
-      type="range"
-      id="font-space"
-      min="0.8"
-      max="92"
-      step="0.1"
-      value={fontSpace}
-      className="form-range flex-grow-1"
-      onChange={(e) => {
-        const value = parseFloat(e.target.value);
-        setFontSpace(parseFloat(value.toFixed(1)));
-      }}
-    />
+                        <div className="col-md-10 d-flex align-items-center gap-3">
+                          {/* Range Slider */}
+                          <input
+                            type="range"
+                            id="font-space"
+                            min="0.8"
+                            max="92"
+                            step="0.1"
+                            value={fontSpace}
+                            className="form-range flex-grow-1"
+                            onChange={(e) => {
+                              const value = parseFloat(e.target.value);
+                              setFontSpace(parseFloat(value.toFixed(1)));
+                            }}
+                          />
 
-    {/* Read-only value with mm label */}
-    <div className="input-group" style={{ maxWidth: "160px" }}>
-      <input
-        type="text"
-        className="form-control text-end"
-        value={fontSpace !== "" ? fontSpace.toFixed(1) : ""}
-        disabled
-      />
-      <span className="input-group-text">mm</span>
-    </div>
-  </div>
-</Row>
+                          {/* Read-only value with mm label */}
+                          <div
+                            className="input-group"
+                            style={{ maxWidth: "160px" }}
+                          >
+                            <input
+                              type="text"
+                              className="form-control text-end"
+                              value={
+                                fontSpace !== "" ? fontSpace.toFixed(1) : ""
+                              }
+                              disabled
+                            />
+                            <span className="input-group-text">mm</span>
+                          </div>
+                        </div>
+                      </Row>
 
                       <div
                         style={{
@@ -2141,7 +2156,7 @@ console.log(dataCtx.allTemplates)
                         )}
                       </>
                     </Tab.Pane>
-                   <Tab.Pane eventKey="image">
+                    <Tab.Pane eventKey="image">
                       <Form>
                         <Row className="mb-3 align-items-center">
                           <label
