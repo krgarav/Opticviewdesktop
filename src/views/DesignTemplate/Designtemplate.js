@@ -29,10 +29,10 @@ import FieldDetails from "modals/FieldDetails";
 import AddLinkIcon from "@mui/icons-material/AddLink";
 import LinkModal from "modals/LinkModal/LinkModal";
 import RightSideBar from "components/RightSideBar/RightSideBar";
-import FieldsFooter from "components/Footers/FieldsFooter";
 import BootstrapNumberInput from "ui/BootstrapNumber";
 import Draggable from "react-draggable";
 import ExcelLikeTable from "components/ExcellLike";
+
 const DesignTemplate = () => {
   const [selected, setSelected] = useState({});
   const [selection, setSelection] = useState(null);
@@ -1926,31 +1926,8 @@ const DesignTemplate = () => {
           Show Modal
         </Button>
       )}
-      <div style={{ height: "85dvh" }}>
+      <div style={{ height: "80%" }}>
         <div style={{ height: "97%", overflow: "auto", width: "100%" }}>
-          <Button
-            onClick={sendHandler}
-            disabled={loading}
-            style={{
-              position: "fixed",
-              bottom: "50px", // Distance from the bottom of the screen
-              right: "50px", // Distance from the right of the screen
-              borderRadius: "50%",
-              width: "50px", // Width of the button
-              height: "50px", // Height of the button
-              justifyContent: "center",
-              alignItems: "center",
-              padding: "50px", // Remove padding to center the text
-              zIndex: "999",
-              color: "white", // Optional: Set the text color
-              border: "none", // Optional: Remove border if desired
-              cursor: "pointer", // Optional: Change cursor to pointer on hover
-              display: "none",
-            }}
-          >
-            {!loading ? "Save" : "Saving"}
-          </Button>
-
           <div className="main-container">
             <div className="containers">
               <div className="d-flex">
@@ -2271,7 +2248,7 @@ const DesignTemplate = () => {
             </div>
           </div>
         </div>
-        <div style={{ height: "3%" }}>
+        <div style={{ position:"sticky", bottom:0, marginTop : "10px",zIndex:"9999"}}>
           <ExcelLikeTable
             handleEyeClick={handleEyeClick}
             selected={selectedCoordinates}

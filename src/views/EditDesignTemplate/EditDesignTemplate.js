@@ -1851,7 +1851,7 @@ const EditDesignTemplate = () => {
           Show Modal
         </Button>
       )}
-      <div style={{ height: "84vh" }}>
+      <div style={{ height: "80%" }}>
         <div style={{ height: "97%", overflow: "auto", width: "100%" }}>
           <div className="main-container">
             <div className="containers">
@@ -2185,7 +2185,7 @@ const EditDesignTemplate = () => {
             </div>
           </div>
         </div>
-        <div>
+         <div style={{ position:"sticky", bottom:0,marginTop : "10px" , zIndex:"9999"}}>
           <ExcelLikeTable
             handleEyeClick={handleEyeClick}
             selected={selectedCoordinates}

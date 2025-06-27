@@ -387,78 +387,7 @@ const DesignTemplate = () => {
     }
   }, []); // Run only once on component mount
 
-  // *************************For Fetching the details and setting the coordinate******************
-  // useEffect(() => {
-  //   const fetchDetails = async () => {
-  //     try {
-  //       // Fetch layout data by template ID
-  //       const response = await getLayoutDataById(templateId);
-  //       console.log(response);
-  //       setLayoutFieldData(response);
-  //       if (response) {
-  //         // Extract data from the response
-  //         const formFieldData = response?.formFieldWindowParameters ?? [];
-  //         const questionField = response?.questionsWindowParameters ?? [];
-  //         const skewField = response?.skewMarksWindowParameters ?? [];
-  //         const idField = response?.layoutParameters ?? {};
-
-  //         // Map and restructure data for coordinates
-  //         const coordinateOfFormData = formFieldData.map((item) => ({
-  //           ...item.formFieldCoordinates,
-  //           name: item.windowName,
-  //         }));
-
-  //         const coordinateOfQuestionField = questionField.map((item) => ({
-  //           ...item.questionWindowCoordinates,
-  //           name: item.windowName,
-  //         }));
-
-  //         const coordinateOfSkewField = skewField.map((item) => ({
-  //           ...item.layoutWindowCoordinates,
-  //           name: item.windowName,
-  //         }));
-
-  //         const coordinateOfIdField = idField.layoutCoordinates ?? [];
-
-  //         // Combine all coordinates into a single array
-  //         const allCoordinates = [
-  //           ...coordinateOfFormData,
-  //           ...coordinateOfQuestionField,
-  //           ...coordinateOfSkewField,
-  //           coordinateOfIdField,
-  //         ];
-
-  //         // Format the coordinates for the state update
-  //         const newSelectedFields = allCoordinates.map((item) => {
-  //           const {
-  //             start: startRow,
-  //             left: startCol,
-  //             end: endRow,
-  //             right: endCol,
-  //             name,
-  //           } = item;
-  //           return { startRow, startCol, endRow, endCol, name };
-  //         });
-
-  //         // Update state with the formatted coordinates and image data
-  //         setSelectedCoordinates(newSelectedFields);
-  //         setPosition(idField?.imageCoordinates);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching layout data:", error);
-  //     }
-  //   };
-
-  //   // Call the fetch details function
-  //   fetchDetails();
-  // }, [templateId]);
-  // *****************************************************************************************
-  // useEffect(() => {
-  //   if (layoutFieldData) {
-  //     dataCtx.addFieldToTemplate(layoutFieldData, templateIndex);
-  //     console.log("called");
-  //   }
-  // }, [layoutFieldData]);
+ 
   useEffect(() => {
     const template = dataCtx.allTemplates.find((item) => {
       return item[0].layoutParameters?.key ?? "" === templateIndex;
@@ -503,23 +432,7 @@ const DesignTemplate = () => {
     }
   }, [options, selectedCol]);
 
-  // useEffect(() => {
-  //   const handleKeyPress = (event) => {
-  //     if (modalShow) return; // Ignore keyboard events when modal is shown
-  //     if (event.altKey && event.shiftKey) {
-  //       // Toggle z-index when Alt + Enter is pressed
-  //       const imgDiv = document.getElementById("imagecontainer");
-  //       imgDiv.style.zIndex = imgDiv.style.zIndex === "999" ? "-1" : "999";
-  //     }
-  //   };
-
-  //   window.addEventListener("keydown", handleKeyPress);
-
-  //   // Cleanup event listener on component unmount
-  //   return () => {
-  //     window.removeEventListener("keydown", handleKeyPress);
-  //   };
-  // }, [modalShow]);
+  
 
   const handleMouseDown = (e) => {
     const boundingRect = imageRef.current.getBoundingClientRect();
@@ -535,20 +448,6 @@ const DesignTemplate = () => {
 
     setDragStart({ row, col });
   };
-  // const handleMouseMove = (e) => {
-  //     if (!e.buttons || !dragStart) return;
-  //     const boundingRect = imageRef.current.getBoundingClientRect();
-  //     const col = Math.floor((e.clientX - boundingRect.left) / (boundingRect.width / numCols));
-  //     const row = Math.floor((e.clientY - boundingRect.top) / (boundingRect.height / numRows));
-  //     setSelection({
-  //         startRow: Math.min(dragStart.row, row),
-  //         startCol: Math.min(dragStart.col, col),
-  //         endRow: Math.max(dragStart.row, row),
-  //         endCol: Math.max(dragStart.col, col),
-  //     });
-
-  //     console.log(selection);
-  // };
 
   const handleMouseMove = (e) => {
     if (!e.buttons || !dragStart) return;
@@ -950,7 +849,6 @@ const DesignTemplate = () => {
       sendHandler();
     }, 500);
   };
-  console.log(dataCtx.allTemplates);
   const handleSkewMarkOptionChange = (event) => {
     setSkewOption(event.target.value);
   };

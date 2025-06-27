@@ -52,16 +52,14 @@ export default function ExcelLikeTable(props) {
     const matchedField = findFieldDetails(item);
 
     if (matchedField) {
-      console.log("Matched Field:", matchedField);
       setSelectedCell({ row: rowIndex, col: colIndex });
-      console.log(item, colIndex);
+
       const indexOfField = fields.findIndex((field) =>
         _.isEqual(field, matchedField)
       );
       props.handleEyeClick(matchedField, indexOfField);
     } else {
       toast.warning("Selected field not found");
-      console.log("No matching field found.");
     }
   };
 
@@ -105,7 +103,10 @@ export default function ExcelLikeTable(props) {
   });
 
   return (
-    <div style={{ overflowX: "auto" }} className="border border-dark border-bottom-0">
+    <div
+      style={{ overflowX: "auto" }}
+      className="border border-dark border-bottom-0"
+    >
       <table
         className="table-bordered mb-0 text-center"
         style={{ tableLayout: "fixed", borderCollapse: "collapse" }}
