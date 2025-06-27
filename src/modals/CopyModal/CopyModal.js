@@ -20,7 +20,12 @@ const CopyModal = (props) => {
   };
 
   const saveRegion = () => {
-    props.saveRegion(pitchValue, value,copiedNumber);
+    if(props.type==="simpleCopy"){
+
+      props.saveRegion(pitchValue, value,copiedNumber);
+    }else{
+      props.saveGroupRegion(pitchValue, value,copiedNumber);
+    }
   };
   return (
     <Modal

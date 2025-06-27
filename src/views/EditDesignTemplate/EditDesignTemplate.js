@@ -97,6 +97,10 @@ const EditDesignTemplate = () => {
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkFields, setLinkFields] = useState([]);
   const [currentLinkField, setCurrentLinkField] = useState(null);
+  const [groupCopy, setGroupCopy] = useState(false);
+  const [filteredSelectedCoordinate, setFilteredSelectedCoordinate] = useState(
+    []
+  );
   const divRefs = useRef([]);
   const inputRef = useRef(null);
   const numRows = data.timingMarks;
@@ -359,8 +363,10 @@ const EditDesignTemplate = () => {
             .filter(Boolean); // Removes null entries
 
           console.log(idField);
-          let coordinateOfIdField = idField?.layoutCoordinates?idField?.layoutCoordinates:{}
-            
+          let coordinateOfIdField = idField?.layoutCoordinates
+            ? idField?.layoutCoordinates
+            : {};
+
           console.log(coordinateOfIdField);
           if (
             coordinateOfIdField["Start Row"] === 0 &&
@@ -369,14 +375,16 @@ const EditDesignTemplate = () => {
             coordinateOfIdField = {};
           }
           // Combine all coordinates into a single array, conditionally including the ID field's coordinates
-         
+
           const allCoordinates = [
             ...coordinateOfFormData,
             ...coordinateOfQuestionField,
             ...coordinateOfSkewField,
-            ...(Object.keys(coordinateOfIdField).length > 0 ? [coordinateOfIdField] : []),
+            ...(Object.keys(coordinateOfIdField).length > 0
+              ? [coordinateOfIdField]
+              : []),
           ];
-          console.log(allCoordinates);
+
           // Format the coordinates for the state update
           const newSelectedFields = allCoordinates.map((item) => {
             const {
@@ -479,12 +487,31 @@ const EditDesignTemplate = () => {
     });
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e) => {
+    // e.preventDefault()
+    const filteredCoordinates = selectedCoordinates.filter((coord) => {
+      const isFullyInside =
+        coord.startRow >= selection.startRow &&
+        coord.endRow <= selection.endRow &&
+        coord.startCol >= selection.startCol &&
+        coord.endCol <= selection.endCol;
+
+      return isFullyInside;
+    });
+
+    if (e.ctrlKey || e.metaKey) {
+      // ctrlKey for Windows, metaKey for Mac (Command key)
+      // console.log(filteredCoordinates)
+      handleFillData(filteredCoordinates[0])
+      setGroupCopy(true);
+      setFilteredSelectedCoordinate(filteredCoordinates);
+      return;
+    }
     if (dragStart && selection) {
-      // console.log(selection)
+      console.log(selection);
       setDragStart(null);
       setModalShow(true);
-      setShowCopy(true);
+
       setSelectedFieldType(null);
     }
   };
@@ -893,9 +920,6 @@ const EditDesignTemplate = () => {
       setModalShow(true);
       setIdNumber(data?.idMarksPattern);
     } else if (selectedField?.fieldType === "questionField") {
-      // const data = template[0].questionsWindowParameters.filter((item) => {
-      //     return isEqual(item.Coordinate, formattedSelectedFile);
-      // })[0];
       const parameters = template[0].questionsWindowParameters;
       const index = parameters.findIndex((item) =>
         isEqual(item?.Coordinate, formattedSelectedFile)
@@ -936,7 +960,6 @@ const EditDesignTemplate = () => {
         alert("No data found");
       }
       const data = parameters[index];
-
       // Get the matched object
       setCoordinateIndex(index);
       setModalUpdate(true);
@@ -956,7 +979,6 @@ const EditDesignTemplate = () => {
       setEndColInput(formattedSelectedFile["End Col"]);
       setReadingDirectionOption((data?.iDirection).toString());
       setType(data?.iType);
-      // setOption(data?.iOption);
       setNumberOfField(data?.totalNumberOfFields);
       setFieldType(data?.numericOrAlphabets);
       setMultiple(data?.multipleAllow);
@@ -985,7 +1007,6 @@ const EditDesignTemplate = () => {
       setNoInCol(data?.columnNumber);
       setReadingDirectionOption((data?.iDirection).toString());
       setType(data?.iType);
-      // setOption(data?.iOption);
       setCoordinateIndex(index);
       setModalUpdate(true);
       setModalShow(true);
@@ -1001,7 +1022,144 @@ const EditDesignTemplate = () => {
       setSkewFieldValue(data?.skewFieldValue);
     }
   };
+ const handleFillData = (selectedField, index) => {
+    setSelectedField(selectedField);
+    setSelection(() => ({
+      startRow: selectedField.startRow,
+      startCol: selectedField.startCol,
+      endRow: selectedField.endRow,
+      endCol: selectedField.endCol,
+    }));
+    const formattedSelectedFile = {
+      "End Col": selectedField.endCol,
+      "End Row": selectedField.endRow + 1,
+      "Start Col": selectedField.startCol,
+      "Start Row": selectedField.startRow + 1,
+      fieldType: selectedField.fieldType,
+      name: selectedField.name,
+    };
 
+   
+
+    const template = dataCtx.allTemplates[0];
+    if (selectedField?.fieldType === "idField") {
+      const data = template[0].layoutParameters;
+      setSelectedFieldType("idField");
+      setWindowNgOption(data?.ngAction);
+      setMinimumMark(data?.minimumMark);
+      setMaximumMark(data?.maximumMark);
+      setNoInRow(data?.rowNumber);
+      setNoInCol(data?.columnNumber);
+      setNoOfStepInRow(data?.rowStep);
+      setNoOfStepInCol(data?.columnStep);
+      setStartRowInput(formattedSelectedFile["Start Row"]);
+      setEndRowInput(formattedSelectedFile["End Row"]);
+      setStartColInput(formattedSelectedFile["Start Col"]);
+      setEndColInput(formattedSelectedFile["End Col"]);
+      setReadingDirectionOption(data?.iDirection);
+     
+      setModalUpdate(true);
+      setModalShow(true);
+      setIdNumber(data?.idMarksPattern);
+    } else if (selectedField?.fieldType === "questionField") {
+      const parameters = template[0].questionsWindowParameters;
+      const index = parameters.findIndex((item) =>
+        isEqual(item?.Coordinate, formattedSelectedFile)
+      );
+      const data = parameters[index];
+    
+      setName(data?.windowName);
+      setSelectedFieldType("questionField");
+      setWindowNgOption(data?.ngAction);
+      setMinimumMark(data?.iMaximumMarks);
+      setMaximumMark(data?.iMinimumMarks);
+      setNoInRow(data?.rowNumber);
+      setNoInCol(data?.columnNumber);
+      setStartRowInput(formattedSelectedFile["Start Row"]);
+      setEndRowInput(formattedSelectedFile["End Row"]);
+      setStartColInput(formattedSelectedFile["Start Col"]);
+      setEndColInput(formattedSelectedFile["End Col"]);
+      setReadingDirectionOption((data?.iDirection).toString());
+      setType(data?.iType);
+      setNumberOfField(data?.totalNumberOfFields);
+      setFieldType(data?.numericOrAlphabets);
+      setMultiple(data?.multipleAllow);
+      setMultipleValue(data?.multipleValue);
+      setBlank(data?.blankAllow);
+      setBlankValue(data?.blankValue);
+      setNoOfStepInRow(data?.rowStep);
+      setNoOfStepInCol(data?.columnStep);
+      setCustomValue(data?.customFieldValue);
+    } else if (selectedField?.fieldType === "formField") {
+      const parameters = template[0].formFieldWindowParameters;
+      const index = parameters.findIndex((item) =>
+        isEqual(item?.Coordinate, formattedSelectedFile)
+      );
+
+      if (index === -1) {
+        alert("No data found");
+      }
+      const data = parameters[index];
+      // Get the matched object
+     
+      setSelectedFieldType("formField");
+      setName(data?.windowName);
+      setWindowNgOption(data?.ngAction);
+      setMinimumMark(data?.iMaximumMarks);
+      setNoOfStepInRow(data?.rowStep);
+      setNoOfStepInCol(data?.columnStep);
+      setMaximumMark(data?.iMinimumMarks);
+      setNoInRow(data?.rowNumber);
+      setNoInCol(data?.columnNumber);
+      setStartRowInput(formattedSelectedFile["Start Row"] - 2);
+      setEndRowInput(formattedSelectedFile["End Row"] - 2);
+      setStartColInput(formattedSelectedFile["Start Col"]);
+      setEndColInput(formattedSelectedFile["End Col"]);
+      setReadingDirectionOption((data?.iDirection).toString());
+      setType(data?.iType);
+      setNumberOfField(data?.totalNumberOfFields);
+      setFieldType(data?.numericOrAlphabets);
+      setMultiple(data?.multipleAllow);
+      setMultipleValue(data?.multipleValue);
+      setBlank(data?.blankAllow);
+      setBlankValue(data?.blankValue);
+      setCustomValue(data?.customFieldValue);
+      setSuffix(data?.suffix);
+      setPrefix(data?.prefix);
+    } else if (selectedField?.fieldType === "skewMarkField") {
+      const parameters = template[0].skewMarksWindowParameters;
+      const index = parameters.findIndex((item) =>
+        isEqual(item?.Coordinate, formattedSelectedFile)
+      );
+
+      if (index === -1) {
+        alert("No data found");
+      }
+      const data = parameters[index];
+      setName(data?.windowName);
+      setMinimumMark(data?.iMaximumMarks);
+      setNoOfStepInRow(data?.rowStep);
+      setNoOfStepInCol(data?.columnStep);
+      setMaximumMark(data?.iMinimumMarks);
+      setNoInRow(data?.rowNumber);
+      setNoInCol(data?.columnNumber);
+      setReadingDirectionOption((data?.iDirection).toString());
+      setType(data?.iType);
+      setCoordinateIndex(index);
+      setModalUpdate(true);
+      setModalShow(true);
+      setSelectedFieldType("skewMarkField");
+      setStartRowInput(formattedSelectedFile["Start Row"]);
+      setEndRowInput(formattedSelectedFile["End Row"]);
+      setStartColInput(formattedSelectedFile["Start Col"]);
+      setEndColInput(formattedSelectedFile["End Col"]);
+      setNoOfStepInRow(data?.rowStep);
+      setNoOfStepInCol(data?.columnStep);
+      setWindowNgOption(data?.ngAction);
+      setSkewOption(data?.dataRejection);
+      setSkewFieldValue(data?.skewFieldValue);
+    }
+  };
   const handleCrossClick = (selectedField, index) => {
     const response = window.confirm(
       "Are you sure you want to delete the selected field ?"
@@ -1387,49 +1545,206 @@ const EditDesignTemplate = () => {
           };
         }
 
-        // const updatedName =
-        //   selectedField.fieldType === "questionField"
-        //     ? questionNameGenerator(selectedField.name, i + 1)
-        //     : selectedField.name;
-        // const newData = {
-        //   Coordinate: {
-        //     "Start Row": newObject?.startRow + 1,
-        //     "Start Col": newObject?.startCol,
-        //     "End Row": newObject?.endRow + 1,
-        //     "End Col": newObject?.endCol,
-        //     name: updatedName,
-        //     fieldType: selectedField.fieldType,
-        //   },
-        //   windowName: updatedName,
-        //   imageStructureData: position,
-        //   columnStart: +newObject?.startCol,
-        //   columnNumber: +noInCol,
-        //   columnStep: +noOfStepInCol,
-        //   rowStart: +newObject?.startRow + 1,
-        //   rowNumber: +noInRow,
-        //   rowStep: +noOfStepInRow,
-        //   iDirection: +readingDirectionOption,
-        //   idMarksPattern: idNumber.toString(),
-        //   iFace: +layoutData.iFace ?? 0,
-        //   iSensitivity: +layoutData.iSensitivity ?? 3,
-        //   iDifference: +layoutData.iDifference ?? 5,
-        //   iOption: selectedFieldType === "formField" ? 1 : 0,
-        //   iMinimumMarks: +minimumMark,
-        //   iMaximumMarks: +maximumMark,
-        //   iType: type,
-        //   ngAction: windowNgOption,
-        //   totalNumberOfFields: numberOfField,
-        //   numericOrAlphabets: fieldType,
-        //   multipleAllow: multiple,
-        //   multipleValue: multipleValue ? multipleValue : "",
-        //   blankAllow: blank,
-        //   blankValue: blankValue ? blankValue : "",
-        //   customFieldValue: customValue ? customValue : "",
-        // };
         dataCtx.modifyAllTemplate(0, newData, selectedField.fieldType);
       }
 
       setSelectedCoordinates((prev) => [...prev, ...newCoordinates]);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const saveGroupRegion = (pitchValue, value, copiedNumber) => {
+    try {
+      if (filteredSelectedCoordinate.length === 0) {
+        toast.error("Cannot copy the selected fields.");
+        return;
+      }
+
+      if (!value) {
+        alert("Please select Position.");
+        return;
+      }
+
+      if (!pitchValue) {
+        alert("Pitch value cannot be blank.");
+        return;
+      }
+
+      if (!copiedNumber || copiedNumber < 1) {
+        alert("Please select a valid number of copies.");
+        return;
+      }
+
+      const MIN_COL = 1;
+      const MAX_COL = numCols;
+      const MIN_ROW = 1;
+      const MAX_ROW = numRows;
+
+      // Calculate group boundary
+      const maxEndCol = Math.max(
+        ...filteredSelectedCoordinate.map((f) => f.endCol)
+      );
+      const minStartCol = Math.min(
+        ...filteredSelectedCoordinate.map((f) => f.startCol)
+      );
+      const maxEndRow = Math.max(
+        ...filteredSelectedCoordinate.map((f) => f.endRow)
+      );
+      const minStartRow = Math.min(
+        ...filteredSelectedCoordinate.map((f) => f.startRow)
+      );
+
+      const groupWidth = maxEndCol - minStartCol + 1;
+      const groupHeight = maxEndRow - minStartRow + 1;
+
+      for (let i = 1; i <= copiedNumber; i++) {
+        let rowShift = 0;
+        let colShift = 0;
+
+        // Calculate shift based on direction
+        switch (value) {
+          case "end": // Right
+            colShift = i * (groupWidth + Number(pitchValue));
+            break;
+          case "start": // Left
+            colShift = -i * (groupWidth + Number(pitchValue));
+            break;
+          case "bottom": // Down
+            rowShift = i * (groupHeight + Number(pitchValue));
+            break;
+          case "top": // Up
+            rowShift = -i * (groupHeight + Number(pitchValue));
+            break;
+          default:
+            alert("Invalid direction.");
+            return;
+        }
+
+        filteredSelectedCoordinate.forEach((field) => {
+          if (field.fieldType === "idField") {
+            return; // Skip idFields
+          }
+
+          let newField = { ...field };
+
+          newField.startRow = field.startRow + rowShift;
+          newField.endRow = field.endRow + rowShift;
+          newField.startCol = field.startCol + colShift;
+          newField.endCol = field.endCol + colShift;
+
+          // Boundary checks
+          if (
+            newField.startCol < MIN_COL ||
+            newField.endCol > MAX_COL ||
+            newField.startRow < MIN_ROW ||
+            newField.endRow > MAX_ROW
+          ) {
+            alert("Out of bound Error: Field exceeds grid limit.");
+            return;
+          }
+
+          let newData = {};
+          const layoutData = layoutFieldData.layoutParameters;
+          let updatedName = field.name;
+
+          if (field.fieldType === "questionField") {
+            updatedName = questionNameGenerator(field.name, i);
+          }
+console.log(field)
+          if (
+            field.fieldType === "questionField" ||
+            field.fieldType === "formField"
+          ) {
+            newData = {
+              Coordinate: {
+                "Start Row": newField.startRow + 1,
+                "Start Col": newField.startCol,
+                "End Row": newField.endRow + 1,
+                "End Col": newField.endCol,
+                name: updatedName,
+                fieldType: field.fieldType,
+              },
+              windowName: updatedName,
+              columnStart: +newField.startCol,
+              columnNumber: +field.columnNumber,
+              columnStep: +noOfStepInCol,
+              rowStart: +newField.startRow + 1,
+              rowNumber: +field.rowNumber,
+              rowStep: +noOfStepInRow,
+              iDirection: +readingDirectionOption,
+              iFace: +layoutData.iFace ?? 0,
+              iSensitivity: +layoutData.iSensitivity ?? 3,
+              iDifference: +layoutData.iDifference ?? 5,
+              iOption: field.fieldType === "formField" ? 1 : 0,
+              iMinimumMarks: +minimumMark,
+              iMaximumMarks: +maximumMark,
+              iType: type,
+              ngAction: windowNgOption,
+              totalNumberOfFields: numberOfField,
+              numericOrAlphabets: fieldType,
+              multipleAllow: multiple,
+              multipleValue: multipleValue ? multipleValue : "",
+              blankAllow: blank,
+              blankValue: blankValue ? blankValue : "",
+              customFieldValue: customValue ? customValue : "",
+              prefix: field.fieldType === "formField" ? prefix : "",
+              suffix: field.fieldType === "formField" ? suffix : "",
+            };
+          } else if (field.fieldType === "skewMarkField") {
+            newData = {
+              Coordinate: {
+                "Start Row": newField.startRow + 1,
+                "Start Col": newField.startCol,
+                "End Row": newField.endRow + 1,
+                "End Col": newField.endCol,
+                name: updatedName,
+                fieldType: field.fieldType,
+              },
+              windowName: updatedName,
+              columnStart: +newField.startCol,
+              columnNumber: +noInCol,
+              columnStep: +noOfStepInCol,
+              rowStart: +newField.startRow + 1,
+              rowNumber: +noInRow,
+              rowStep: +noOfStepInRow,
+              iDirection: +readingDirectionOption,
+              iFace: +layoutData.iFace ?? 0,
+              iSensitivity: +layoutData.iSensitivity ?? 3,
+              iDifference: +layoutData.iDifference ?? 5,
+              iOption: field.fieldType === "formField" ? 1 : 0,
+              iMinimumMarks: 1,
+              iMaximumMarks: 1,
+              iType: type,
+              ngAction: windowNgOption,
+              skewMark: +skewoption,
+              dataRejection: skewoption,
+              skewFieldValue: skewFieldValue,
+            };
+          } else {
+            newData = {
+              Coordinate: {
+                "Start Row": newField.startRow + 1,
+                "Start Col": newField.startCol,
+                "End Row": newField.endRow + 1,
+                "End Col": newField.endCol,
+                name: updatedName,
+                fieldType: field.fieldType,
+              },
+              columnStart: +newField.startCol,
+              columnNumber: +noInCol,
+              columnStep: +noOfStepInCol,
+              rowStart: +newField.startRow + 1,
+              rowNumber: +noInRow,
+              rowStep: +noOfStepInRow,
+              iDirection: +readingDirectionOption,
+              idMarksPattern: idNumber.toString(),
+            };
+          }
+
+          dataCtx.modifyAllTemplate(0, newData, field.fieldType);
+          setSelectedCoordinates((prev) => [...prev, newField]);
+        });
+      }
     } catch (err) {
       console.log(err);
     }
@@ -2727,10 +3042,22 @@ const EditDesignTemplate = () => {
       {showCopy && (
         <CopyModal
           show={showCopy}
+          type="simpleCopy"
           onHide={() => {
             setShowCopy(false);
           }}
           saveRegion={saveRegion}
+        />
+      )}
+
+      {groupCopy && (
+        <CopyModal
+          show={groupCopy}
+          type="groupCopy"
+          onHide={() => {
+            setGroupCopy(false);
+          }}
+          saveGroupRegion={saveGroupRegion}
         />
       )}
       {showFieldDetails && (
