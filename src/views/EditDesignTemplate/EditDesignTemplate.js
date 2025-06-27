@@ -502,7 +502,7 @@ const EditDesignTemplate = () => {
     if (e.ctrlKey || e.metaKey) {
       // ctrlKey for Windows, metaKey for Mac (Command key)
       // console.log(filteredCoordinates)
-      handleFillData(filteredCoordinates[0])
+      handleFillData(filteredCoordinates[0]);
       setGroupCopy(true);
       setFilteredSelectedCoordinate(filteredCoordinates);
       return;
@@ -1022,7 +1022,7 @@ const EditDesignTemplate = () => {
       setSkewFieldValue(data?.skewFieldValue);
     }
   };
- const handleFillData = (selectedField, index) => {
+  const handleFillData = (selectedField, index) => {
     setSelectedField(selectedField);
     setSelection(() => ({
       startRow: selectedField.startRow,
@@ -1038,8 +1038,6 @@ const EditDesignTemplate = () => {
       fieldType: selectedField.fieldType,
       name: selectedField.name,
     };
-
-   
 
     const template = dataCtx.allTemplates[0];
     if (selectedField?.fieldType === "idField") {
@@ -1057,7 +1055,7 @@ const EditDesignTemplate = () => {
       setStartColInput(formattedSelectedFile["Start Col"]);
       setEndColInput(formattedSelectedFile["End Col"]);
       setReadingDirectionOption(data?.iDirection);
-     
+
       setModalUpdate(true);
       setModalShow(true);
       setIdNumber(data?.idMarksPattern);
@@ -1067,7 +1065,7 @@ const EditDesignTemplate = () => {
         isEqual(item?.Coordinate, formattedSelectedFile)
       );
       const data = parameters[index];
-    
+
       setName(data?.windowName);
       setSelectedFieldType("questionField");
       setWindowNgOption(data?.ngAction);
@@ -1101,7 +1099,7 @@ const EditDesignTemplate = () => {
       }
       const data = parameters[index];
       // Get the matched object
-     
+
       setSelectedFieldType("formField");
       setName(data?.windowName);
       setWindowNgOption(data?.ngAction);
@@ -1650,7 +1648,7 @@ const EditDesignTemplate = () => {
           if (field.fieldType === "questionField") {
             updatedName = questionNameGenerator(field.name, i);
           }
-console.log(field)
+          console.log(field);
           if (
             field.fieldType === "questionField" ||
             field.fieldType === "formField"
