@@ -361,7 +361,7 @@ const EditDesignTemplate = () => {
           console.log(idField);
           let coordinateOfIdField =
             Object.keys(idField.layoutCoordinates).length > 0
-              ? [idField.layoutCoordinates]
+              ? idField.layoutCoordinates
               : [];
           console.log(coordinateOfIdField);
           if (
