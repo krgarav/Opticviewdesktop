@@ -15,7 +15,22 @@ const Redirect = () => {
   return (
     <>
       {!showApp ? (
-        <TextLoader message={"Loading Tempate , Please wait..."} /> // Show loader
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+            pointerEvents: "auto", // Make the overlay not clickable
+          }}
+        >
+          <TextLoader message={"Loading Tempate , Please wait..."} />
+        </div>
       ) : (
         <EditDesignTemplate /> // Show main component after 2 seconds
       )}
