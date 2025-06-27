@@ -2671,6 +2671,7 @@ const EditTemplateModal = (props) => {
         const printData = layoutData?.printingData;
         const barcodeData = layoutData?.barcodeData;
         const imageData = layoutData?.imageData;
+        console.log(layout)
         if (layout) {
           setName(layout.layoutName);
           setNumberOfLines(layout.timingMarks);

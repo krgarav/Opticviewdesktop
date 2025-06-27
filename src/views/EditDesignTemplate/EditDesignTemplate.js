@@ -359,23 +359,22 @@ const EditDesignTemplate = () => {
             .filter(Boolean); // Removes null entries
 
           console.log(idField);
-          let coordinateOfIdField =
-            Object.keys(idField.layoutCoordinates).length > 0
-              ? idField.layoutCoordinates
-              : [];
+          let coordinateOfIdField = idField?.layoutCoordinates?idField?.layoutCoordinates:{}
+            
           console.log(coordinateOfIdField);
           if (
             coordinateOfIdField["Start Row"] === 0 &&
             coordinateOfIdField["Start Col"] === 0
           ) {
-            coordinateOfIdField = [];
+            coordinateOfIdField = {};
           }
           // Combine all coordinates into a single array, conditionally including the ID field's coordinates
+         
           const allCoordinates = [
             ...coordinateOfFormData,
             ...coordinateOfQuestionField,
             ...coordinateOfSkewField,
-            ...coordinateOfIdField,
+            ...(Object.keys(coordinateOfIdField).length > 0 ? [coordinateOfIdField] : []),
           ];
           console.log(allCoordinates);
           // Format the coordinates for the state update
