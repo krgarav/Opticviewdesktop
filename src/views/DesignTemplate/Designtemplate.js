@@ -1491,32 +1491,11 @@ const DesignTemplate = () => {
       <div style={{ position: "sticky", top: 0, zIndex: 99 }}>
         <SmallHeader />
       </div>
-      {loading && (
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.8)", // Slightly opaque background
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 9999,
-            pointerEvents: "auto", // Make the overlay not clickable
-          }}
-        >
-          <div style={{ height: "50%" }}>
-            <TextLoader message={"Saving, Please wait..."} />
-          </div>
-        </div>
-      )}
 
       <div
         style={{
           position: isWideScreen ? "fixed" : "absolute",
-          top: "30px",
+          top: "15px",
           left: isWideScreen ? "50%" : "10%",
           transform: isWideScreen ? "translateX(-50%)" : "none",
           zIndex: "999",
@@ -1591,7 +1570,7 @@ const DesignTemplate = () => {
         </Button>
       )}
       <div style={{ height: "85dvh" }}>
-        <div style={{ height: "94%", overflow: "auto", width: "100%" }}>
+        <div style={{ height: "97%", overflow: "auto", width: "100%" }}>
           <Button
             onClick={sendHandler}
             disabled={loading}
@@ -1935,7 +1914,7 @@ const DesignTemplate = () => {
             </div>
           </div>
         </div>
-        <div style={{ height: "6%" }}>
+        <div style={{ height: "3%" }}>
           <ExcelLikeTable
             handleEyeClick={handleEyeClick}
             selected={selectedCoordinates}

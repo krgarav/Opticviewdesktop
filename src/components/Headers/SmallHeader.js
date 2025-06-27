@@ -22,7 +22,7 @@ import { Card, CardBody, CardTitle, Container, Row, Col } from "reactstrap";
 const SmallHeader = (props) => {
   return (
     <>
-      <div className="header bg-gradient-info pb-4 pt-6 pt-md-6">
+      <div className="header bg-gradient-info pb-4 pt-4 pt-md-5">
         <Container fluid>
           <div className="header-body">{/* Card stats */}</div>
         </Container>

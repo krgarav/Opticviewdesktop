@@ -1446,7 +1446,7 @@ const EditDesignTemplate = () => {
       <div
         style={{
           position: isWideScreen ? "fixed" : "absolute",
-          top: "20px",
+          top: "5px",
           padding: "10px",
           zIndex: "999",
         }}
@@ -1466,7 +1466,7 @@ const EditDesignTemplate = () => {
       <div
         style={{
           position: isWideScreen ? "fixed" : "absolute",
-          top: "30px",
+          top: "15px",
           left: isWideScreen ? "50%" : "10%",
           transform: isWideScreen ? "translateX(-50%)" : "none",
           zIndex: "999",
@@ -1538,7 +1538,7 @@ const EditDesignTemplate = () => {
           Show Modal
         </Button>
       )}
-      <div style={{ height: "83vh" }}>
+      <div style={{ height: "84vh" }}>
         <div style={{ height: "97%", overflow: "auto", width: "100%" }}>
           <div className="main-container">
             <div className="containers">
