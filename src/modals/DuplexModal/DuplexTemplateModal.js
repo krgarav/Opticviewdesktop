@@ -2073,7 +2073,7 @@ const DuplexTemplateModal = (props) => {
                             />
                           </div>
                         </Row>
-                        <Row className="mb-3">
+                        {/* <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
                             className="col-md-3 "
@@ -2095,7 +2095,7 @@ const DuplexTemplateModal = (props) => {
                               placeholder="Select rotation option..."
                             />
                           </div>
-                        </Row>
+                        </Row> */}
                       </Form>
                     </Tab.Pane>
                   </Tab.Content>

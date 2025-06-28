@@ -2323,7 +2323,7 @@ const SimplexTemplateModal = (props) => {
                             />
                           </div>
                         </Row>
-                        <Row className="mb-3">
+                        {/* <Row className="mb-3">
                           <label
                             htmlFor="example-text-input col-form-label"
                             className="col-md-3 col-form-label"
@@ -2345,7 +2345,7 @@ const SimplexTemplateModal = (props) => {
                               placeholder="Select Compression..."
                             />
                           </div>
-                        </Row>
+                        </Row> */}
                       </Form>
                     </Tab.Pane>
                   </Tab.Content>

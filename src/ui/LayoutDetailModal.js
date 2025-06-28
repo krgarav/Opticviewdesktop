@@ -81,7 +81,7 @@ const LayoutDetailModal = (props) => {
   const [rotation, setRotation] = useState();
   const [resolution, setResolution] = useState();
   const [scannningSide, setScanningSide] = useState();
-  const [imageParams, setImageParams] = useState();
+  const [imageParams, setImageParams] = useState(0);
   const [imageStatus, setImageStatus] = useState(imageStatusData[0]);
   const [barcodeType, setBarcodeType] = useState({});
   const [barcodeCategory, setBarcodeCategory] = useState({});
@@ -2319,7 +2319,7 @@ const LayoutDetailModal = (props) => {
                             />
                           </div>
                         </Row>
-                        <Row className="mb-3">
+                        {/* <Row className="mb-3">
                           <label
                             htmlFor="example-text-input col-form-label"
                             className="col-md-3 col-form-label"
@@ -2341,7 +2341,7 @@ const LayoutDetailModal = (props) => {
                               placeholder="Select Compression..."
                             />
                           </div>
-                        </Row>
+                        </Row> */}
                       </Form>
                     </Tab.Pane>
                   </Tab.Content>
