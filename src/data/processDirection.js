@@ -10,10 +10,7 @@ const processDirection = (
   stepInCol,
   customValue
 ) => {
-  console.log( startRow,
-  endRow,
-  startCol,
-  endCol)
+  
   if (type === "numeric") {
     let counter = 0;
     switch (direction) {

@@ -34,7 +34,7 @@ const TableRow = ({
   useEffect(() => {
     setFields(fieldData);
   }, [fieldData]);
-  console.log(fieldData);
+  
 
   useEffect(() => {
     if (typeof handleSort === "function") {
@@ -85,12 +85,11 @@ const TableRow = ({
 
   return fields?.map((item, i) => {
     const isAnimating = animatingIndex === i;
-   const slno = serialOffset + (isAnimating ? (direction === "up" ? i + 1 : i - 1) : i + 1);
-    
-    const uniqueId = `${item.name}-${slno-1}`;
-    console.log( typeof uniqueId)
-    console.log(uniqueId)
-    console.log(selectedItems)
+    const slno =
+      serialOffset +
+      (isAnimating ? (direction === "up" ? i + 1 : i - 1) : i + 1);
+
+    const uniqueId = `${item.name}-${slno - 1}`;
     const isSelected = selectedItems.includes(uniqueId);
     return (
       <tr
@@ -111,13 +110,13 @@ const TableRow = ({
         }}
       >
         <td onClick={(e) => e.stopPropagation()}>
-        <input
-          type="checkbox"
-          checked={isSelected}
-          onChange={() => handleCheckboxChange(uniqueId,item)}
-        />
-      </td>
-        <td> { slno}</td> {/* Serial number */}
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={() => handleCheckboxChange(uniqueId, item)}
+          />
+        </td>
+        <td> {slno}</td> {/* Serial number */}
         <td>{item.name}</td>
         <td>{item.fieldType}</td>
         <td>

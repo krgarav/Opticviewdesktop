@@ -208,7 +208,7 @@ const DesignTemplate = () => {
   useEffect(() => {
     const template = dataCtx.allTemplates[0];
     if (template) {
-      console.log(template);
+     
       localStorage.setItem("Template", JSON.stringify(template));
     }
   }, [dataCtx.allTemplates]);
@@ -309,7 +309,7 @@ const DesignTemplate = () => {
           const index = parameters.findIndex((param) =>
             isEqual(param.Coordinate, formattedSelectedFile)
           );
-          console.log(index);
+         
           // Get the matched object
           const data2 = index !== -1 ? parameters[index] : null;
 
@@ -349,7 +349,7 @@ const DesignTemplate = () => {
               stepInCol,
               customValue
             );
-            console.log(data);
+            
             const copiedObject = deepcopy(localData[0]);
             delete copiedObject.layoutParameters.numberedExcelJsonFile;
             copiedObject.layoutParameters = {
@@ -389,7 +389,7 @@ const DesignTemplate = () => {
         ...coordinateOfSkewField,
         ...coordinateOfIdField,
       ];
-      console.log(allCoordinates);
+
       // Map each coordinate to a new format
       const newSelectedFields = allCoordinates?.map((item) => {
         const {
@@ -492,7 +492,7 @@ const DesignTemplate = () => {
   // }, [layoutFieldData]);
   useEffect(() => {
     const template = dataCtx.allTemplates[0];
-    console.log(template);
+    
     if (template) {
       setLayoutFieldData(template[0]);
     }

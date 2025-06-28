@@ -26,31 +26,31 @@ const FieldDetails = (props) => {
   const [idField, setIdField] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
 
- // Example: Selecting All
-const handleSelectAll = (e) => {
-  const allCurrentFields = [
-    ...formField,
-    ...questionField,
-    ...skewField,
-    ...idField,
-  ];
+  // Example: Selecting All
+  const handleSelectAll = (e) => {
+    const allCurrentFields = [
+      ...formField,
+      ...questionField,
+      ...skewField,
+      ...idField,
+    ];
+    console.log(allCurrentFields);
+    if (e.target.checked) {
+      const allIds = allCurrentFields.map((item, i) => `${item.name}-${i}`);
+      setSelectedItems(allIds);
+    } else {
+      setSelectedItems([]);
+    }
+  };
 
-  if (e.target.checked) {
-    const allIds = allCurrentFields.map((item, i) => `${item.name}-${i}`);
-    setSelectedItems(allIds);
-  } else {
-    setSelectedItems([]);
-  }
-};
-
- const handleCheckboxChange = (id,item) => {
-  console.log(item)
-  if (selectedItems.includes(id)) {
-    setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
-  } else {
-    setSelectedItems([...selectedItems, id]);
-  }
-};
+  const handleCheckboxChange = (id, item) => {
+    console.log(item);
+    if (selectedItems.includes(id)) {
+      setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
+    } else {
+      setSelectedItems([...selectedItems, id]);
+    }
+  };
 
   const isAllSelected = () => {
     const allCurrentFields = [
@@ -89,7 +89,7 @@ const handleSelectAll = (e) => {
       // Update the state with selected fields
       setFields(selectedFields);
     }
-  }, [dataCtx]);
+  }, [dataCtx, props.selected]);
 
   const moveUp = (index) => {
     if (index > 0) {
@@ -393,9 +393,28 @@ const handleSelectAll = (e) => {
     toast.success("Saved the positions!!");
     props.onHide();
   };
-  const handleDelete =()=>{
-console.log(selectedItems)
-  }
+  const handleDelete = () => {
+    const result = window.confirm(
+      "Are you certain you want to delete the selected fields?"
+    );
+    if (!result) {
+      return;
+    }
+    const allCurrentFields = [
+      ...formField,
+      ...questionField,
+      ...skewField,
+      ...idField,
+    ];
+    const indexes = selectedItems.map((item) =>
+      parseInt(item.split("-").pop(), 10)
+    );
+    const matchedItems = allCurrentFields.filter((_, idx) =>
+      indexes.includes(idx)
+    );
+    dataCtx.deleteMultipleFields(matchedItems);
+    toast.success("Selected fields deleted successfully.");
+  };
   return (
     <Modal
       show={props.show}
@@ -449,9 +468,9 @@ console.log(selectedItems)
               handleSort={handleSort}
               editHandler={(item, i) => props.editHandler(item, i)}
               deleteHander={(item, i) => props.deleteHandler(item, i)}
-               selectedItems={selectedItems}
-  handleCheckboxChange={handleCheckboxChange}
-  serialOffset={0}
+              selectedItems={selectedItems}
+              handleCheckboxChange={handleCheckboxChange}
+              serialOffset={0}
             />
 
             <TableRow
@@ -460,10 +479,9 @@ console.log(selectedItems)
               handleSort={handleSort}
               editHandler={(item, i) => props.editHandler(item, i)}
               deleteHander={(item, i) => props.deleteHandler(item, i)}
-               selectedItems={selectedItems}
-  handleCheckboxChange={handleCheckboxChange}
-   serialOffset={formField.length} 
-   
+              selectedItems={selectedItems}
+              handleCheckboxChange={handleCheckboxChange}
+              serialOffset={formField.length}
             />
 
             <TableRow
@@ -472,9 +490,9 @@ console.log(selectedItems)
               handleSort={handleSort}
               editHandler={(item, i) => props.editHandler(item, i)}
               deleteHander={(item, i) => props.deleteHandler(item, i)}
-               selectedItems={selectedItems}
-  handleCheckboxChange={handleCheckboxChange}
-   serialOffset={formField.length + questionField.length}
+              selectedItems={selectedItems}
+              handleCheckboxChange={handleCheckboxChange}
+              serialOffset={formField.length + questionField.length}
             />
             <TableRow
               type="idField"
@@ -482,48 +500,49 @@ console.log(selectedItems)
               handleSort={handleSort}
               editHandler={(item, i) => props.editHandler(item, i)}
               deleteHander={(item, i) => props.deleteHandler(item, i)}
-               selectedItems={selectedItems}
-  handleCheckboxChange={handleCheckboxChange}
-    serialOffset={formField.length + questionField.length + skewField.length}
+              selectedItems={selectedItems}
+              handleCheckboxChange={handleCheckboxChange}
+              serialOffset={
+                formField.length + questionField.length + skewField.length
+              }
             />
 
             {/* {props.fieldsLoading ? placeHolderJobs : LoadedTemplates} */}
           </tbody>
         </Table>
       </Modal.Body>
-     <Modal.Footer className="d-flex justify-content-between">
-  {/* Left Side: Delete Button */}
-  <Button
-    type="button"
-    variant="outline-danger"
-    className="waves-effect waves-light d-flex align-items-center"
-    onClick={handleDelete}
-  >
-    <DeleteIcon className="me-2" /> Delete
-  </Button>
+      <Modal.Footer className="d-flex justify-content-between">
+        {/* Left Side: Delete Button */}
+        <Button
+          type="button"
+          variant="outline-danger"
+          className="waves-effect waves-light d-flex align-items-center"
+          onClick={handleDelete}
+        >
+          <DeleteIcon className="me-2" /> Delete
+        </Button>
 
-  {/* Right Side: Cancel and Save Buttons */}
-  <div>
-    <Button
-      type="button"
-      variant="danger"
-      onClick={props.onHide}
-      className="waves-effect waves-light me-2"
-    >
-      Cancel
-    </Button>
+        {/* Right Side: Cancel and Save Buttons */}
+        <div>
+          <Button
+            type="button"
+            variant="danger"
+            onClick={props.onHide}
+            className="waves-effect waves-light me-2"
+          >
+            Cancel
+          </Button>
 
-    <Button
-      type="button"
-      variant="success"
-      className="waves-effect waves-light"
-      onClick={handleSave}
-    >
-      Save
-    </Button>
-  </div>
-</Modal.Footer>
-
+          <Button
+            type="button"
+            variant="success"
+            className="waves-effect waves-light"
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        </div>
+      </Modal.Footer>
     </Modal>
   );
 };

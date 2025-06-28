@@ -4,6 +4,7 @@ import { isEqual } from "lodash";
 import convertToCamelCase from "services/lowerLetter";
 import StructureData from "services/dataSrtucture";
 import _ from "lodash";
+import resetJson from "data/resetJson";
 const initialData = {
   allTemplates: [],
   backendIP: "localhost",
@@ -833,6 +834,84 @@ const DataProvider = (props) => {
       };
     });
   };
+  const deleteMultipleFieldsHandler = (selectedFields) => {
+    console.log(selectedFields);
+
+    const selectedFieldMapped = selectedFields.map((item) => {
+      return {
+        "End Col": item.endCol,
+        "End Row": item.endRow + 1,
+        "Start Col": item.startCol,
+        "Start Row": item.startRow + 1,
+        fieldType: item.fieldType,
+        name: item.name,
+      };
+    });
+
+    setDataState((item) => {
+      const copiedData = [...item.allTemplates];
+      // return console.log(copiedData)
+      // Loop through each selected field
+
+      selectedFieldMapped.forEach((selectedFieldData) => {
+        const fieldType = selectedFieldData.fieldType;
+
+        // Find the current template by UUID
+        const currentTemplate = copiedData[0][0];
+
+        if (!currentTemplate) return; // Skip if no template found
+        resetJson(
+          currentTemplate.layoutParameters.numberedExcelJsonFile,
+          selectedFieldData["Start Row"] - 1,
+          selectedFieldData["End Row"] - 1,
+          selectedFieldData["Start Col"],
+          selectedFieldData["End Col"]
+        );
+        switch (fieldType) {
+          case "skewMarkField":
+            currentTemplate.skewMarksWindowParameters =
+              currentTemplate.skewMarksWindowParameters.filter(
+                (item) => !isEqual(item.Coordinate, selectedFieldData)
+              );
+            break;
+
+          case "formField":
+            currentTemplate.formFieldWindowParameters =
+              currentTemplate.formFieldWindowParameters.filter(
+                (item) => !isEqual(item.Coordinate, selectedFieldData)
+              );
+            break;
+
+          case "questionField":
+            currentTemplate.questionsWindowParameters =
+              currentTemplate.questionsWindowParameters.filter(
+                (item) => !isEqual(item.Coordinate, selectedFieldData)
+              );
+            break;
+
+          default:
+            const copiedLayout = { ...currentTemplate.layoutParameters };
+            delete copiedLayout.Coordinate;
+            copiedLayout.idMarksPattern = "000000000000000000000000000";
+            copiedLayout.columnNumber = 3;
+            copiedLayout.columnStart = 1;
+            copiedLayout.columnStep = 1;
+            copiedLayout.rowNumber = 1;
+            copiedLayout.rowStart = 1;
+            copiedLayout.rowStep = 1;
+            copiedLayout.ngAction = "0x00000001";
+            copiedLayout.layoutCoordinates = {};
+            currentTemplate.layoutParameters = copiedLayout;
+            break;
+        }
+      });
+
+      return {
+        ...item,
+        allTemplates: copiedData,
+      };
+    });
+  };
 
   const dataContext = {
     allTemplates: dataState.allTemplates,
@@ -857,6 +936,7 @@ const DataProvider = (props) => {
     changeIndexTemplate: changeIndexTemplateHandler,
     linkField: linkFieldHandler,
     deleteLinkField: deleteLinkFieldHandler,
+    deleteMultipleFields: deleteMultipleFieldsHandler,
   };
 
   return (
