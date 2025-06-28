@@ -32,6 +32,7 @@ import RightSideBar from "components/RightSideBar/RightSideBar";
 import BootstrapNumberInput from "ui/BootstrapNumber";
 import Draggable from "react-draggable";
 import ExcelLikeTable from "components/ExcellLike";
+import groupQuestionNameGenerator from "helper/groupQuestionGenerator";
 
 const DesignTemplate = () => {
   const [selected, setSelected] = useState({});
@@ -1642,202 +1643,216 @@ const DesignTemplate = () => {
     }
   };
 
-  const saveGroupRegion = (pitchValue, value, copiedNumber) => {
-      try {
-        if (filteredSelectedCoordinate.length === 0) {
-          toast.error("Cannot copy the selected fields.");
-          return;
-        }
-  
-        if (!value) {
-          alert("Please select Position.");
-          return;
-        }
-  
-        if (!pitchValue) {
-          alert("Pitch value cannot be blank.");
-          return;
-        }
-  
-        if (!copiedNumber || copiedNumber < 1) {
-          alert("Please select a valid number of copies.");
-          return;
-        }
-  
-        const MIN_COL = 1;
-        const MAX_COL = numCols;
-        const MIN_ROW = 1;
-        const MAX_ROW = numRows;
-  
-        // Calculate group boundary
-        const maxEndCol = Math.max(
-          ...filteredSelectedCoordinate.map((f) => f.endCol)
-        );
-        const minStartCol = Math.min(
-          ...filteredSelectedCoordinate.map((f) => f.startCol)
-        );
-        const maxEndRow = Math.max(
-          ...filteredSelectedCoordinate.map((f) => f.endRow)
-        );
-        const minStartRow = Math.min(
-          ...filteredSelectedCoordinate.map((f) => f.startRow)
-        );
-  
-        const groupWidth = maxEndCol - minStartCol + 1;
-        const groupHeight = maxEndRow - minStartRow + 1;
-  
-        for (let i = 1; i <= copiedNumber; i++) {
-          let rowShift = 0;
-          let colShift = 0;
-  
-          // Calculate shift based on direction
-          switch (value) {
-            case "end": // Right
-              colShift = i * (groupWidth + Number(pitchValue));
-              break;
-            case "start": // Left
-              colShift = -i * (groupWidth + Number(pitchValue));
-              break;
-            case "bottom": // Down
-              rowShift = i * (groupHeight + Number(pitchValue));
-              break;
-            case "top": // Up
-              rowShift = -i * (groupHeight + Number(pitchValue));
-              break;
-            default:
-              alert("Invalid direction.");
-              return;
-          }
-  
-          filteredSelectedCoordinate.forEach((field) => {
-            if (field.fieldType === "idField") {
-              return; // Skip idFields
-            }
-  
-            let newField = { ...field };
-  
-            newField.startRow = field.startRow + rowShift;
-            newField.endRow = field.endRow + rowShift;
-            newField.startCol = field.startCol + colShift;
-            newField.endCol = field.endCol + colShift;
-  
-            // Boundary checks
-            if (
-              newField.startCol < MIN_COL ||
-              newField.endCol > MAX_COL ||
-              newField.startRow < MIN_ROW ||
-              newField.endRow > MAX_ROW
-            ) {
-              alert("Out of bound Error: Field exceeds grid limit.");
-              return;
-            }
-  
-            let newData = {};
-            const layoutData = layoutFieldData.layoutParameters;
-            let updatedName = field.name;
-  
-            if (field.fieldType === "questionField") {
-              updatedName = questionNameGenerator(field.name, i);
-            }
-            console.log(field);
-            if (
-              field.fieldType === "questionField" ||
-              field.fieldType === "formField"
-            ) {
-              newData = {
-                Coordinate: {
-                  "Start Row": newField.startRow + 1,
-                  "Start Col": newField.startCol,
-                  "End Row": newField.endRow + 1,
-                  "End Col": newField.endCol,
-                  name: updatedName,
-                  fieldType: field.fieldType,
-                },
-                windowName: updatedName,
-                columnStart: +newField.startCol,
-                columnNumber: +noInCol,
-                columnStep: +noOfStepInCol,
-                rowStart: +newField.startRow + 1,
-                rowNumber: +noInRow,
-                rowStep: +noOfStepInRow,
-                iDirection: +readingDirectionOption,
-                iFace: +layoutData.iFace ?? 0,
-                iSensitivity: +layoutData.iSensitivity ?? 3,
-                iDifference: +layoutData.iDifference ?? 5,
-                iOption: field.fieldType === "formField" ? 1 : 0,
-                iMinimumMarks: +minimumMark,
-                iMaximumMarks: +maximumMark,
-                iType: type,
-                ngAction: windowNgOption,
-                totalNumberOfFields: numberOfField,
-                numericOrAlphabets: fieldType,
-                multipleAllow: multiple,
-                multipleValue: multipleValue ? multipleValue : "",
-                blankAllow: blank,
-                blankValue: blankValue ? blankValue : "",
-                customFieldValue: customValue ? customValue : "",
-                prefix: field.fieldType === "formField" ? prefix : "",
-                suffix: field.fieldType === "formField" ? suffix : "",
-              };
-            } else if (field.fieldType === "skewMarkField") {
-              newData = {
-                Coordinate: {
-                  "Start Row": newField.startRow + 1,
-                  "Start Col": newField.startCol,
-                  "End Row": newField.endRow + 1,
-                  "End Col": newField.endCol,
-                  name: updatedName,
-                  fieldType: field.fieldType,
-                },
-                windowName: updatedName,
-                columnStart: +newField.startCol,
-                columnNumber: +noInCol,
-                columnStep: +noOfStepInCol,
-                rowStart: +newField.startRow + 1,
-                rowNumber: +noInRow,
-                rowStep: +noOfStepInRow,
-                iDirection: +readingDirectionOption,
-                iFace: +layoutData.iFace ?? 0,
-                iSensitivity: +layoutData.iSensitivity ?? 3,
-                iDifference: +layoutData.iDifference ?? 5,
-                iOption: field.fieldType === "formField" ? 1 : 0,
-                iMinimumMarks: 1,
-                iMaximumMarks: 1,
-                iType: type,
-                ngAction: windowNgOption,
-                skewMark: +skewoption,
-                dataRejection: skewoption,
-                skewFieldValue: skewFieldValue,
-              };
-            } else {
-              newData = {
-                Coordinate: {
-                  "Start Row": newField.startRow + 1,
-                  "Start Col": newField.startCol,
-                  "End Row": newField.endRow + 1,
-                  "End Col": newField.endCol,
-                  name: updatedName,
-                  fieldType: field.fieldType,
-                },
-                columnStart: +newField.startCol,
-                columnNumber: +noInCol,
-                columnStep: +noOfStepInCol,
-                rowStart: +newField.startRow + 1,
-                rowNumber: +noInRow,
-                rowStep: +noOfStepInRow,
-                iDirection: +readingDirectionOption,
-                idMarksPattern: idNumber.toString(),
-              };
-            }
-  
-            dataCtx.modifyAllTemplate(0, newData, field.fieldType);
-            setSelectedCoordinates((prev) => [...prev, newField]);
-          });
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
+ const saveGroupRegion = (pitchValue, value, copiedNumber) => {
+   try {
+     if (filteredSelectedCoordinate.length === 0) {
+       toast.error("Cannot copy the selected fields.");
+       return;
+     }
+ 
+     if (!value) {
+       alert("Please select Position.");
+       return;
+     }
+ 
+     if (!pitchValue) {
+       alert("Pitch value cannot be blank.");
+       return;
+     }
+ 
+     if (!copiedNumber || copiedNumber < 1) {
+       alert("Please select a valid number of copies.");
+       return;
+     }
+ 
+     const MIN_COL = 1;
+     const MAX_COL = numCols;
+     const MIN_ROW = 1;
+     const MAX_ROW = numRows;
+ 
+     // Calculate group boundary
+     const maxEndCol = Math.max(...filteredSelectedCoordinate.map((f) => f.endCol));
+     const minStartCol = Math.min(...filteredSelectedCoordinate.map((f) => f.startCol));
+     const maxEndRow = Math.max(...filteredSelectedCoordinate.map((f) => f.endRow));
+     const minStartRow = Math.min(...filteredSelectedCoordinate.map((f) => f.startRow));
+ 
+     const groupWidth = maxEndCol - minStartCol + 1;
+     const groupHeight = maxEndRow - minStartRow + 1;
+ 
+     // Get the highest ending question number in the current selection
+     let maxQuestionNumber = 0;
+ 
+     filteredSelectedCoordinate.forEach((field) => {
+       if (field.fieldType === "questionField") {
+         const parts = field.name.split("-");
+         const endPart = parts[1]?.match(/\d+/g);
+         if (endPart) {
+           const numberPart = parseInt(endPart[0], 10);
+           if (numberPart > maxQuestionNumber) {
+             maxQuestionNumber = numberPart;
+           }
+         }
+       }
+     });
+ 
+     let runningQuestionNumber = maxQuestionNumber + 1; // Start from the next available question number
+ 
+     for (let i = 1; i <= copiedNumber; i++) {
+       let rowShift = 0;
+       let colShift = 0;
+ 
+       // Calculate shift based on direction
+       switch (value) {
+         case "end": // Right
+           colShift = i * (groupWidth + Number(pitchValue));
+           break;
+         case "start": // Left
+           colShift = -i * (groupWidth + Number(pitchValue));
+           break;
+         case "bottom": // Down
+           rowShift = i * (groupHeight + Number(pitchValue));
+           break;
+         case "top": // Up
+           rowShift = -i * (groupHeight + Number(pitchValue));
+           break;
+         default:
+           alert("Invalid direction.");
+           return;
+       }
+ 
+       let currentGroupEndNumber = runningQuestionNumber;
+ 
+       filteredSelectedCoordinate.forEach((field) => {
+         if (field.fieldType === "idField") return; // Skip idFields
+ 
+         let newField = { ...field };
+         newField.startRow = field.startRow + rowShift;
+         newField.endRow = field.endRow + rowShift;
+         newField.startCol = field.startCol + colShift;
+         newField.endCol = field.endCol + colShift;
+ 
+         // Boundary checks
+         if (
+           newField.startCol < MIN_COL ||
+           newField.endCol > MAX_COL ||
+           newField.startRow < MIN_ROW ||
+           newField.endRow > MAX_ROW
+         ) {
+           alert("Out of bound Error: Field exceeds grid limit.");
+           return;
+         }
+ 
+         let newData = {};
+         const layoutData = layoutFieldData.layoutParameters;
+         let updatedName = field.name;
+ 
+         if (field.fieldType === "questionField") {
+           updatedName = groupQuestionNameGenerator(field.name, runningQuestionNumber);
+ 
+           // Update runningQuestionNumber to the next available number
+           const parts = updatedName.split("-");
+           const endPart = parts[1]?.match(/\d+/g);
+           if (endPart) {
+             runningQuestionNumber = parseInt(endPart[0], 10) + 1;
+           }
+         }
+ 
+         if (field.fieldType === "questionField" || field.fieldType === "formField") {
+           newData = {
+             Coordinate: {
+               "Start Row": newField.startRow + 1,
+               "Start Col": newField.startCol,
+               "End Row": newField.endRow + 1,
+               "End Col": newField.endCol,
+               name: updatedName,
+               fieldType: field.fieldType,
+             },
+             windowName: updatedName,
+             columnStart: +newField.startCol,
+             columnNumber: +noInCol,
+             columnStep: +noOfStepInCol,
+             rowStart: +newField.startRow + 1,
+             rowNumber: +noInRow,
+             rowStep: +noOfStepInRow,
+             iDirection: +readingDirectionOption,
+             iFace: +layoutData.iFace ?? 0,
+             iSensitivity: +layoutData.iSensitivity ?? 3,
+             iDifference: +layoutData.iDifference ?? 5,
+             iOption: field.fieldType === "formField" ? 1 : 0,
+             iMinimumMarks: +minimumMark,
+             iMaximumMarks: +maximumMark,
+             iType: type,
+             ngAction: windowNgOption,
+             totalNumberOfFields: numberOfField,
+             numericOrAlphabets: fieldType,
+             multipleAllow: multiple,
+             multipleValue: multipleValue ? multipleValue : "",
+             blankAllow: blank,
+             blankValue: blankValue ? blankValue : "",
+             customFieldValue: customValue ? customValue : "",
+             prefix: field.fieldType === "formField" ? prefix : "",
+             suffix: field.fieldType === "formField" ? suffix : "",
+           };
+         } else if (field.fieldType === "skewMarkField") {
+           newData = {
+             Coordinate: {
+               "Start Row": newField.startRow + 1,
+               "Start Col": newField.startCol,
+               "End Row": newField.endRow + 1,
+               "End Col": newField.endCol,
+               name: updatedName,
+               fieldType: field.fieldType,
+             },
+             windowName: updatedName,
+             columnStart: +newField.startCol,
+             columnNumber: +noInCol,
+             columnStep: +noOfStepInCol,
+             rowStart: +newField.startRow + 1,
+             rowNumber: +noInRow,
+             rowStep: +noOfStepInRow,
+             iDirection: +readingDirectionOption,
+             iFace: +layoutData.iFace ?? 0,
+             iSensitivity: +layoutData.iSensitivity ?? 3,
+             iDifference: +layoutData.iDifference ?? 5,
+             iOption: field.fieldType === "formField" ? 1 : 0,
+             iMinimumMarks: 1,
+             iMaximumMarks: 1,
+             iType: type,
+             ngAction: windowNgOption,
+             skewMark: +skewoption,
+             dataRejection: skewoption,
+             skewFieldValue: skewFieldValue,
+           };
+         } else {
+           newData = {
+             Coordinate: {
+               "Start Row": newField.startRow + 1,
+               "Start Col": newField.startCol,
+               "End Row": newField.endRow + 1,
+               "End Col": newField.endCol,
+               name: updatedName,
+               fieldType: field.fieldType,
+             },
+             columnStart: +newField.startCol,
+             columnNumber: +noInCol,
+             columnStep: +noOfStepInCol,
+             rowStart: +newField.startRow + 1,
+             rowNumber: +noInRow,
+             rowStep: +noOfStepInRow,
+             iDirection: +readingDirectionOption,
+             idMarksPattern: idNumber.toString(),
+           };
+         }
+ 
+         dataCtx.modifyAllTemplate(0, newData, field.fieldType);
+         setSelectedCoordinates((prev) => [...prev, newField]);
+       });
+     }
+   } catch (err) {
+     toast.error("Something went wrong");
+     console.log(err);
+   }
+ };
 
   if (dataCtx.allTemplates.length === 0) {
     return <div>Loading</div>;
