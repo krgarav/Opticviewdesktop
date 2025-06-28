@@ -7,19 +7,17 @@ export default function ExcelLikeTable(props) {
   const [fields, setFields] = useState([]);
   const [selectedCell, setSelectedCell] = useState({ row: null, col: null }); // Track selected cell
   const [hoveredCell, setHoveredCell] = useState({ row: null, col: null });
-
+  const [draggedCell, setDraggedCell] = useState({ row: null, col: null });
   useEffect(() => {
     if (Array.isArray(props.selected)) {
       setFields(props.selected);
 
-      // Dynamically build the row
       const newRow = props.selected.flatMap((item) => {
         switch (item.fieldType) {
           case "formField":
-            return item.name;
+            return [{ cellValue: item.name, cellType: item.fieldType }];
 
           case "questionField":
-            // Example: "q1-q5" should generate ["q1", "q2", "q3", "q4", "q5"]
             const [start, end] = item.name.split("-");
             const prefix = start.replace(/\d+$/, "");
             const startNum = parseInt(start.match(/\d+/)[0]);
@@ -27,24 +25,28 @@ export default function ExcelLikeTable(props) {
 
             const generatedQuestions = [];
             for (let i = startNum; i <= endNum; i++) {
-              generatedQuestions.push(`${prefix}${i}`);
+              generatedQuestions.push({
+                cellValue: `${prefix}${i}`,
+                cellType: item.fieldType,
+              });
             }
             return generatedQuestions;
 
           case "skewField":
-            return item.name;
+            return [{ cellValue: item.name, cellType: item.fieldType }];
 
           default:
-            return item.name;
+            return [{ cellValue: item.name, cellType: item.fieldType }];
         }
       });
+
       // Pad the row with empty cells if less than desired length
       const desiredLength = 20;
       while (newRow.length < desiredLength) {
-        newRow.push(""); // Fill with empty strings
+        newRow.push({ cellValue: "", cellType: "" }); // Empty object for empty cells
       }
 
-      setData([newRow]);
+      setData([newRow]); // Each row is now an array of cell objects
     }
   }, [props.selected]);
 
@@ -91,16 +93,40 @@ export default function ExcelLikeTable(props) {
     return null; // No match found
   };
 
-  // Generate Excel-style column headers: A, B, ..., Z, AA, AB, ...
-  const columnHeaders = data[0].map((_, index) => {
-    let result = "";
-    let n = index;
-    while (n >= 0) {
-      result = String.fromCharCode((n % 26) + 65) + result;
-      n = Math.floor(n / 26) - 1;
+  const handleDragStart = (cell, rowIndex, colIndex) => {
+    setDraggedCell({ cell, rowIndex, colIndex });
+  };
+
+  const handleDrop = (targetRow, targetCol) => {
+    if (draggedCell && data[targetRow][targetCol].cellType === "formField") {
+      const newData = [...data];
+      // Swap cells
+      const temp = newData[targetRow][targetCol];
+      newData[targetRow][targetCol] = draggedCell.cell;
+      newData[draggedCell.rowIndex][draggedCell.colIndex] = temp;
+
+      setData(newData);
+      setDraggedCell(null);
     }
-    return result;
-  });
+  };
+
+  const handleDragOver = (e, targetRow, targetCol) => {
+    // Allow drop only on formField cells
+    if (data[targetRow][targetCol].cellType === "formField") {
+      e.preventDefault();
+    }
+  };
+  // Generate Excel-style column headers: A, B, ..., Z, AA, AB, ...
+  const columnHeaders =
+    data[0]?.map((_, index) => {
+      let result = "";
+      let n = index;
+      while (n >= 0) {
+        result = String.fromCharCode((n % 26) + 65) + result;
+        n = Math.floor(n / 26) - 1;
+      }
+      return result;
+    }) || [];
 
   return (
     <div
@@ -155,6 +181,10 @@ export default function ExcelLikeTable(props) {
               {row.map((cell, colIndex) => (
                 <td
                   key={colIndex}
+                  draggable
+                  onDragStart={() => handleDragStart(cell, rowIndex, colIndex)}
+                  onDragOver={(e) => handleDragOver(e, rowIndex, colIndex)}
+                  onDrop={() => handleDrop(rowIndex, colIndex)}
                   style={{
                     width: "100px",
                     minWidth: "100px",
@@ -170,8 +200,13 @@ export default function ExcelLikeTable(props) {
                         : hoveredCell.row === rowIndex &&
                           hoveredCell.col === colIndex
                         ? "#A5D6A7" // Hovered
+                        : cell.cellType === "formField"
+                        ? "#FFF176" // Yellow for formField
+                        : cell.cellType === "questionField"
+                        ? "#FFB74D" // Orange for questionField
                         : "#C8E6C9", // Default
-                    transition: "background-color 0.2s ease", // Smooth hover transition
+                    transition: "background-color 0.2s ease",
+                    cursor: "grab",
                   }}
                   onClick={() => handleFieldClick(cell, colIndex, rowIndex)}
                   onMouseEnter={() =>
@@ -192,10 +227,9 @@ export default function ExcelLikeTable(props) {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      cursor: "pointer",
                     }}
                   >
-                    {cell}
+                    {cell.cellValue}
                   </div>
                 </td>
               ))}
