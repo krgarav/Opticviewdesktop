@@ -2088,6 +2088,7 @@ const DesignTemplate = () => {
                         <div
                           key={index}
                           ref={(el) => (divRefs.current[index] = el)}
+                           onClick={(e) => handleEyeClick(data, index)}
                           className="border-blue-900"
                           style={{
                             border: "3px solid #007bff",
@@ -2118,58 +2119,9 @@ const DesignTemplate = () => {
                                 numRows)
                             }px`,
                           }}
-                          onClick={(e) => e.stopPropagation()}
+                         
                         >
-                          <div
-                            className="d-flex justify-content-between align-items-center bg-dark text-white p-1"
-                            style={{
-                              zIndex: 2,
-                              opacity: 0.6,
-                              fontSize: "12px",
-                              position: "relative",
-                              overflow: "hidden",
-                            }}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            {sizes[index] ? (
-                              <span>
-                                <i
-                                  className={`fas fa-eye me-2 mr-1 ${classes.eye}`}
-                                  onMouseUp={handleIconMouseUp}
-                                  onClick={(e) => handleEyeClick(data, index)}
-                                  style={{ cursor: "pointer" }}
-                                ></i>
-                                <i
-                                  className="fas fa-times text-danger cross-icon ml-1"
-                                  onMouseUp={handleIconMouseUp}
-                                  onClick={() => handleCrossClick(data, index)}
-                                  style={{ cursor: "pointer" }}
-                                ></i>
-                              </span>
-                            ) : (
-                              <>
-                                <span className="user-select-none">
-                                  {data.name}
-                                </span>
-                                <span className="d-flex align-items-center user-select-none gap-10">
-                                  <i
-                                    className={`fas fa-eye me-2 mr-1 ${classes.eye}`}
-                                    onMouseUp={handleIconMouseUp}
-                                    onClick={(e) => handleEyeClick(data, index)}
-                                    style={{ cursor: "pointer" }}
-                                  ></i>
-                                  <i
-                                    className="fas fa-times text-danger cross-icon ml-1"
-                                    onMouseUp={handleIconMouseUp}
-                                    onClick={() =>
-                                      handleCrossClick(data, index)
-                                    }
-                                    style={{ cursor: "pointer" }}
-                                  ></i>
-                                </span>
-                              </>
-                            )}
-                          </div>
+                          
                         </div>
                       ))}
                       {linkFields.map((data, index) => {
