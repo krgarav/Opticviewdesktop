@@ -575,7 +575,6 @@ const DesignTemplate = () => {
   };
 
   const handleMouseUp = (e) => {
-   
     if (!selection) {
       return;
     }
@@ -703,7 +702,7 @@ const DesignTemplate = () => {
   };
 
   const handleSave = () => {
-    console.log(minimumMark)
+    console.log(minimumMark);
     if (
       selectedFieldType === "formField" ||
       selectedFieldType === "questionField"
@@ -2088,7 +2087,7 @@ const DesignTemplate = () => {
                         <div
                           key={index}
                           ref={(el) => (divRefs.current[index] = el)}
-                           onClick={(e) => handleEyeClick(data, index)}
+                          onClick={(e) => handleEyeClick(data, index)}
                           className="border-blue-900"
                           style={{
                             border: "3px solid #007bff",
@@ -2119,10 +2118,7 @@ const DesignTemplate = () => {
                                 numRows)
                             }px`,
                           }}
-                         
-                        >
-                          
-                        </div>
+                        ></div>
                       ))}
                       {linkFields.map((data, index) => {
                         const border =
@@ -2246,20 +2242,21 @@ const DesignTemplate = () => {
             id="contained-modal-title-vcenter"
             style={{ width: "100vw" }}
           >
-            {modalUpdate&&
-            <h2 className="text-center">
-  {!modalUpdate
-    ? "Choose field type"
-    : selectedFieldType === "formField"
-    ? "Form Properties"
-    : selectedFieldType === "questionField"
-    ? "Question Properties"
-    : selectedFieldType === "skewMarkField"
-    ? "Skew Properties"
-    : selectedFieldType === "idField"
-    ? "ID Properties"
-    : ""}
-</h2>}
+            {modalUpdate && (
+              <h2 className="text-center">
+                {!modalUpdate
+                  ? "Choose field type"
+                  : selectedFieldType === "formField"
+                  ? "Form Properties"
+                  : selectedFieldType === "questionField"
+                  ? "Question Properties"
+                  : selectedFieldType === "skewMarkField"
+                  ? "Skew Properties"
+                  : selectedFieldType === "idField"
+                  ? "ID Properties"
+                  : ""}
+              </h2>
+            )}
             {!selectedFieldType && (
               <h2 className="text-center">
                 {!modalUpdate ? "Choose field type" : selectedFieldType}
@@ -3217,6 +3214,7 @@ const DesignTemplate = () => {
           }}
           selected={selectedCoordinates}
           editHandler={(item, i) => handleEyeClick(item, i)}
+          deleteHandler={(item, i) => handleCrossClick(item, i)}
         />
       )}
 
