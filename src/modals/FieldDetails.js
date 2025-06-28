@@ -328,28 +328,7 @@ const FieldDetails = (props) => {
     );
   });
 
-  const placeHolderJobs = new Array(8).fill(null).map((_, index) => (
-    <tr key={index}>
-      <td>
-        <Placeholder width="20%" height="1.5em" />
-      </td>
-      <td>
-        <Placeholder width="60%" height="1.5em" />
-      </td>
-      <td>
-        <Placeholder width="60%" height="1.5em" />
-      </td>
-      <td>
-        <Placeholder width="60%" height="1.5em" />
-      </td>
-      <td>
-        <Placeholder width="60%" height="1.5em" />
-      </td>
-      <td>
-        <Placeholder width="15%" height="1.5em" />
-      </td>
-    </tr>
-  ));
+  
 
   const handleSort = useCallback((type, sortedFields) => {
     if (type === "questionField") {
@@ -366,10 +345,9 @@ const FieldDetails = (props) => {
       setIdField(sortedFields);
     }
   }, []);
-  console.log(skewField);
   const handleFormSort = useCallback((sortedFields) => {}, []);
   const handleSave = () => {
-    console.log(formField);
+    
     dataCtx.changeIndexTemplate(questionField, "questionField");
     dataCtx.changeIndexTemplate(skewField, "skewMarkField");
     dataCtx.changeIndexTemplate(formField, "formField");

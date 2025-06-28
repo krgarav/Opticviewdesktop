@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import _ from "lodash";
 import { toast } from "react-toastify";
+import DataContext from "store/DataContext";
 
 export default function ExcelLikeTable(props) {
   const [data, setData] = useState([[]]);
@@ -8,6 +9,7 @@ export default function ExcelLikeTable(props) {
   const [selectedCell, setSelectedCell] = useState({ row: null, col: null }); // Track selected cell
   const [hoveredCell, setHoveredCell] = useState({ row: null, col: null });
   const [draggedCell, setDraggedCell] = useState({ row: null, col: null });
+  const dataCtx = useContext(DataContext);
   useEffect(() => {
     if (Array.isArray(props.selected)) {
       setFields(props.selected);
@@ -104,7 +106,18 @@ export default function ExcelLikeTable(props) {
       const temp = newData[targetRow][targetCol];
       newData[targetRow][targetCol] = draggedCell.cell;
       newData[draggedCell.rowIndex][draggedCell.colIndex] = temp;
+      console.log(newData);
+      const filteredFormfield = newData[0].filter((item) => {
+        return item.cellType === "formField";
+      });
 
+      const formDetails = filteredFormfield.map((item) => {
+        return findFieldDetails(item.cellValue);
+      });
+      if (formDetails.length > 0) {
+        dataCtx.changeIndexTemplate(formDetails, "formField");
+      }
+      
       setData(newData);
       setDraggedCell(null);
     }
