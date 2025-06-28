@@ -63,12 +63,12 @@ export const windowNgData = [
   {
     id: "0x00000001",
     name: "SKDV_ACTION_SELECT(0x00000001)",
-    showName: "Eject Paper To Stacker",
+    showName: "Use Rejector",
   },
   {
     id: "0x00000002",
     name: "SKDV_ACTION_STOP(0x00000002)",
-    showName: "Stop Scanning",
+    showName: "Do Not Use Rejector",
   },
   { id: "0", name: "SKDV_ACTION_STOP(0x00000002)", showName: "No Action" },
 ];
