@@ -121,27 +121,18 @@ const LayoutDetailModal = (props) => {
   const [printStartNumber, setPrintStartNumber] = useState(null);
   const [printCustomValue, setPrintCustomValue] = useState(null);
   const [scannerLoading, setScannerLoading] = useState(false);
-  const [value, setValue] = React.useState([5, 6]);
+  const [value, setValue] = React.useState(1);
   const [images, setImages] = useState([]);
   const [showFront, setShowFront] = useState(true);
   const [prefix, setPrefix] = useState("0000");
   const [prefixzeroes, setPrefixZeroes] = useState("0000");
   const [scanner, setScanner] = useState(null);
-  const handleChange = (event, newValue, activeThumb) => {
+  const handleChange = ( newValue) => {
     const minDistance = 1;
-    if (!Array.isArray(newValue)) {
-      return;
-    }
-
-    if (activeThumb === 0) {
-      setValue([Math.min(newValue[0], value[1] - minDistance), value[1]]);
-      setSensitivity(newValue[0]);
-      setDifference(newValue[1]);
-    } else {
-      setValue([value[0], Math.max(newValue[1], value[0] + minDistance)]);
-      setSensitivity(newValue[0]);
-      setDifference(newValue[1]);
-    }
+   
+  setValue(newValue);
+      setSensitivity(newValue);
+    
   };
   const navigate = useNavigate();
 
@@ -291,7 +282,7 @@ const LayoutDetailModal = (props) => {
           setSelectedBubble(comparewithName(bubbleData, layout.bubbleType));
           setSensitivity(layout.iSensitivity);
           setDifference(layout.iDifference);
-          setValue([layout.iSensitivity, layout.iDifference]);
+          setValue(layout.iSensitivity);
           // const file = base64ToFile(layout.templateImagePath, "image.jpg");
           // setImageFile(file);
           setImage(layout.templateImagePath);
@@ -1335,7 +1326,7 @@ const LayoutDetailModal = (props) => {
                                 alignSelf: "center",
                               }}
                             >
-                              <Slider
+                              {/* <Slider
                                 getAriaLabel={() => "Sensitivity range"}
                                 value={value}
                                 onChange={handleChange}
@@ -1353,12 +1344,30 @@ const LayoutDetailModal = (props) => {
                                     />
                                   ),
                                 }}
-                              />
+                              /> */}
+                              <Slider
+  getAriaLabel={() => "Sensitivity range"}
+  value={value} // should be a single number
+  onChange={(event, newValue) => handleChange(newValue)} // handle as a number
+  valueLabelDisplay="auto"
+  min={1}
+  max={16}
+  size="large"
+  color="PRIMARY"
+  slots={{
+    ValueLabel: (props) => (
+      <CustomTooltip
+        {...props}
+        shade={getShadeFromValue(value)} // Pass the shade based on the value
+      />
+    ),
+  }}
+/>
                             </Box>
                           </div>
 
                           <input
-                            value={`${sensitivity} - ${difference}`}
+                            value={`${sensitivity}`}
                             onChange={(e) => setSensitivity(e.target.value)}
                             style={{
                               width: "100%",
