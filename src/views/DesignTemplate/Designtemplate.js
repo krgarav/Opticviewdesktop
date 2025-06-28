@@ -120,6 +120,7 @@ const DesignTemplate = () => {
   const [filteredSelectedCoordinate, setFilteredSelectedCoordinate] = useState(
     []
   );
+  const [oldCoordinates, setOldCoordinates] = useState(null);
   const numRows = timingMarks;
   const numCols = totalColumns;
   const inputRef = useRef(null);
@@ -307,7 +308,7 @@ const DesignTemplate = () => {
           const index = parameters.findIndex((param) =>
             isEqual(param.Coordinate, formattedSelectedFile)
           );
-
+          console.log(index);
           // Get the matched object
           const data2 = index !== -1 ? parameters[index] : null;
 
@@ -347,19 +348,18 @@ const DesignTemplate = () => {
               stepInCol,
               customValue
             );
+            console.log(data);
             const copiedObject = deepcopy(localData[0]);
             delete copiedObject.layoutParameters.numberedExcelJsonFile;
             copiedObject.layoutParameters = {
               ...copiedObject.layoutParameters,
               numberedExcelJsonFile: data,
             };
-            // dataCtx.replaceTemplate([copiedObject])
-            // localStorage.setItem("Template", JSON.stringify([copiedObject]));
           }
         }
       }
     });
-  }, [selectedCoordinates, dataCtx]);
+  }, [selectedCoordinates, dataCtx, modalUpdate]);
 
   useEffect(() => {
     const arr = dataCtx.allTemplates[0];
@@ -533,21 +533,6 @@ const DesignTemplate = () => {
     setDragStart({ row, col });
   };
 
-  // const handleMouseMove = (e) => {
-  //     if (!e.buttons || !dragStart) return;
-  //     const boundingRect = imageRef.current.getBoundingClientRect();
-  //     const col = Math.floor((e.clientX - boundingRect.left) / (boundingRect.width / numCols));
-  //     const row = Math.floor((e.clientY - boundingRect.top) / (boundingRect.height / numRows));
-  //     setSelection({
-  //         startRow: Math.min(dragStart.row, row),
-  //         startCol: Math.min(dragStart.col, col),
-  //         endRow: Math.max(dragStart.row, row),
-  //         endCol: Math.max(dragStart.col, col),
-  //     });
-
-  //     console.log(selection);
-  // };
-
   const handleMouseMove = (e) => {
     if (!e.buttons || !dragStart) return;
     const boundingRect = imageRef.current.getBoundingClientRect();
@@ -702,7 +687,6 @@ const DesignTemplate = () => {
   };
 
   const handleSave = () => {
-    console.log(minimumMark);
     if (
       selectedFieldType === "formField" ||
       selectedFieldType === "questionField"
@@ -821,6 +805,16 @@ const DesignTemplate = () => {
         blankValue: blankValue ? blankValue : "",
         customFieldValue: customValue ? customValue : "",
       };
+      const template = dataCtx.allTemplates.find((item) => {
+        return item[0].layoutParameters?.key ?? "" === templateIndex;
+      });
+      resetJson(
+        template[0].layoutParameters.numberedExcelJsonFile,
+        oldCoordinates["Start Row"] - 1,
+        oldCoordinates["End Row"] - 1,
+        oldCoordinates["Start Col"],
+        oldCoordinates["End Col"]
+      );
     }
 
     setModalShow(false);
@@ -935,6 +929,7 @@ const DesignTemplate = () => {
       fieldType: selectedField.fieldType,
       name: selectedField.name,
     };
+    setOldCoordinates({ ...formattedSelectedFile });
     setSelectionIndex(index);
     const template = dataCtx.allTemplates.find((item) => {
       return item[0].layoutParameters?.key ?? "" === templateIndex;
@@ -2735,7 +2730,7 @@ const DesignTemplate = () => {
                   <input
                     id="startRow"
                     type="number"
-                    disabled={modalUpdate}
+                    // disabled={modalUpdate}
                     value={startRowInput}
                     onBlur={(e) => {
                       const newValue = e.target.valueAsNumber;
@@ -2767,7 +2762,7 @@ const DesignTemplate = () => {
                   <input
                     type="number"
                     value={endRowInput}
-                    disabled={modalUpdate}
+                    // disabled={modalUpdate}
                     onBlur={(e) => {
                       const newValue = e.target.valueAsNumber;
                       if (newValue > 0) {
@@ -2846,7 +2841,7 @@ const DesignTemplate = () => {
                   <input
                     type="number"
                     value={startColInput}
-                    disabled={modalUpdate}
+                    // disabled={modalUpdate}
                     onBlur={(e) => {
                       const newValue = e.target.valueAsNumber;
                       if (newValue > 0) {
@@ -2878,7 +2873,7 @@ const DesignTemplate = () => {
                   <input
                     type="number"
                     value={endColInput}
-                    disabled={modalUpdate}
+                    // disabled={modalUpdate}
                     onBlur={(e) => {
                       const newValue = e.target.valueAsNumber;
                       if (newValue > 0) {
