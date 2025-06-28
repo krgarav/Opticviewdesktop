@@ -24,6 +24,7 @@ const TableRow = ({
   editHandler = () => {},
   deleteHander = () => {},
   handleCheckboxChange,
+  serialOffset = 0,
 }) => {
   const [direction, setDirection] = useState(null);
   const [fields, setFields] = useState(fieldData);
@@ -84,18 +85,12 @@ const TableRow = ({
 
   return fields?.map((item, i) => {
     const isAnimating = animatingIndex === i;
-    const slno = isAnimating ? (direction === "up" ? i + 1 : i - 1) : i + 1;
-    let fieldValue = type === "formField" ? "FF" : "QF";
-    if (type === "formField") {
-      fieldValue = "Fm_F";
-    } else if (type === "questionField") {
-      fieldValue = "Qn_F";
-    } else if (type === "skewField") {
-      fieldValue = "Sk_F";
-    } else {
-      fieldValue = "Id_F";
-    }
-    const uniqueId = `${item.name}-${i}`;
+   const slno = serialOffset + (isAnimating ? (direction === "up" ? i + 1 : i - 1) : i + 1);
+    
+    const uniqueId = `${item.name}-${slno-1}`;
+    console.log( typeof uniqueId)
+    console.log(uniqueId)
+    console.log(selectedItems)
     const isSelected = selectedItems.includes(uniqueId);
     return (
       <tr
@@ -119,10 +114,10 @@ const TableRow = ({
         <input
           type="checkbox"
           checked={isSelected}
-          onChange={() => handleCheckboxChange(uniqueId)}
+          onChange={() => handleCheckboxChange(uniqueId,item)}
         />
       </td>
-        <td> {fieldValue + slno}</td> {/* Serial number */}
+        <td> { slno}</td> {/* Serial number */}
         <td>{item.name}</td>
         <td>{item.fieldType}</td>
         <td>

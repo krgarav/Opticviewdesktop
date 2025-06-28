@@ -43,7 +43,8 @@ const handleSelectAll = (e) => {
   }
 };
 
- const handleCheckboxChange = (id) => {
+ const handleCheckboxChange = (id,item) => {
+  console.log(item)
   if (selectedItems.includes(id)) {
     setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
   } else {
@@ -450,6 +451,7 @@ console.log(selectedItems)
               deleteHander={(item, i) => props.deleteHandler(item, i)}
                selectedItems={selectedItems}
   handleCheckboxChange={handleCheckboxChange}
+  serialOffset={0}
             />
 
             <TableRow
@@ -460,6 +462,8 @@ console.log(selectedItems)
               deleteHander={(item, i) => props.deleteHandler(item, i)}
                selectedItems={selectedItems}
   handleCheckboxChange={handleCheckboxChange}
+   serialOffset={formField.length} 
+   
             />
 
             <TableRow
@@ -470,6 +474,7 @@ console.log(selectedItems)
               deleteHander={(item, i) => props.deleteHandler(item, i)}
                selectedItems={selectedItems}
   handleCheckboxChange={handleCheckboxChange}
+   serialOffset={formField.length + questionField.length}
             />
             <TableRow
               type="idField"
@@ -479,6 +484,7 @@ console.log(selectedItems)
               deleteHander={(item, i) => props.deleteHandler(item, i)}
                selectedItems={selectedItems}
   handleCheckboxChange={handleCheckboxChange}
+    serialOffset={formField.length + questionField.length + skewField.length}
             />
 
             {/* {props.fieldsLoading ? placeHolderJobs : LoadedTemplates} */}
