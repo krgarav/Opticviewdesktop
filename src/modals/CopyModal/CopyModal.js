@@ -89,7 +89,7 @@ const CopyModal = (props) => {
                     <FormControlLabel
                       value="start"
                       control={<Radio />}
-                      label="Start"
+                      label="Left"
                       labelPlacement="start"
                     />
 
@@ -100,7 +100,7 @@ const CopyModal = (props) => {
                     <FormControlLabel
                       value="end"
                       control={<Radio />}
-                      label="End"
+                      label="Right"
                       labelPlacement="end"
                     />
                   </Grid>

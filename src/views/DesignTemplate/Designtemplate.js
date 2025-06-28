@@ -125,6 +125,7 @@ const DesignTemplate = () => {
   const numCols = totalColumns;
   const inputRef = useRef(null);
   const divRefs = useRef([]);
+  const [highlightField , setHighlightField] = useState(false)
 
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
@@ -616,6 +617,7 @@ const DesignTemplate = () => {
     setPrefix("");
     setSuffix("");
     setName("");
+    setHighlightField(false)
   };
 
   const validateFormField = () => {
@@ -915,6 +917,7 @@ const DesignTemplate = () => {
 
   const handleEyeClick = (selectedField, index) => {
     setSelectedField(selectedField);
+    setHighlightField(true)
     setSelection(() => ({
       startRow: selectedField.startRow,
       startCol: selectedField.startCol,
@@ -2171,7 +2174,7 @@ const DesignTemplate = () => {
                         <div
                           className="border-green-700"
                           style={{
-                            border: "2px solid green",
+                            border:!highlightField? "2px solid green":"2px solid red",
                             position: "absolute",
                             left: `${
                               selection.startCol *

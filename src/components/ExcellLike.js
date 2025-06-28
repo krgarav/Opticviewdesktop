@@ -53,7 +53,8 @@ export default function ExcelLikeTable(props) {
   }, [props.selected]);
 
   const handleFieldClick = (item, colIndex, rowIndex) => {
-    const matchedField = findFieldDetails(item);
+
+    const matchedField = findFieldDetails(item.cellValue);
 
     if (matchedField) {
       setSelectedCell({ row: rowIndex, col: colIndex });

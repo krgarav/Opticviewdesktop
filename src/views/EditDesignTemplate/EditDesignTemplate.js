@@ -102,6 +102,8 @@ const EditDesignTemplate = () => {
   const [filteredSelectedCoordinate, setFilteredSelectedCoordinate] = useState(
     []
   );
+  const [highlightField, setHighlightField] = useState(false);
+
   const divRefs = useRef([]);
   const inputRef = useRef(null);
   const numRows = data.timingMarks;
@@ -548,6 +550,7 @@ const EditDesignTemplate = () => {
     setPrefix("");
     setSuffix("");
     setName("");
+    setHighlightField(false);
   };
   const validateFormField = () => {
     const errors = {
@@ -2017,7 +2020,7 @@ const EditDesignTemplate = () => {
                         <div
                           key={index}
                           ref={(el) => (divRefs.current[index] = el)}
-                         onClick={(e) => handleEyeClick(data, index)}
+                          onClick={(e) => handleEyeClick(data, index)}
                           className="border-blue-900"
                           style={{
                             //  backgroundColor:"red",
@@ -2163,7 +2166,10 @@ const EditDesignTemplate = () => {
                         <div
                           className="border-green-700"
                           style={{
-                            border: "2px solid green",
+                            border: !highlightField
+                              ? "2px solid green"
+                              : "2px solid red",
+
                             position: "absolute",
                             left: `${
                               selection.startCol *
