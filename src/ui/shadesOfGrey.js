@@ -1,6 +1,6 @@
 import React from "react";
 
-const ShadesOfGrey = ({ width, height }) => {
+const ShadesOfGrey = ({ width, height, type }) => {
   // Generate shades of grey
   const shades = Array.from({ length: 16 }, (_, i) => {
     let a = i + 1;
@@ -10,18 +10,31 @@ const ShadesOfGrey = ({ width, height }) => {
 
   return (
     <div style={{ display: "flex", width: "100%" }}>
-      {shades.map((shade, index) => (
-        <div
-          key={index}
-          style={{
-            backgroundColor: shade,
-            width: width || "20px",
-            height: height || "20px",
-            marginLeft: "0",
-            padding: "0",
-          }}
-        ></div>
-      ))}
+      {type === "reverse"
+        ? shades.reverse().map((shade, index) => (
+            <div
+              key={index}
+              style={{
+                backgroundColor: shade,
+                width: width || "20px",
+                height: height || "20px",
+                marginLeft: "0",
+                padding: "0",
+              }}
+            ></div>
+          ))
+        : shades.map((shade, index) => (
+            <div
+              key={index}
+              style={{
+                backgroundColor: shade,
+                width: width || "20px",
+                height: height || "20px",
+                marginLeft: "0",
+                padding: "0",
+              }}
+            ></div>
+          ))}
     </div>
   );
 };

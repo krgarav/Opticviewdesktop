@@ -589,7 +589,7 @@ const DataProvider = (props) => {
         console.warn("Invalid templateIndex:", templateIndex);
         return prevState; // or handle the error as needed
       }
-console.log(dataField)
+      console.log(dataField);
       // Destructure dataField
       const { layoutParameters, imageData, printingData, barcodeData } =
         dataField;
@@ -597,8 +597,8 @@ console.log(dataField)
       // Clone the previous state
       const copiedData = [...prevState.allTemplates];
       const currentTemplate = copiedData[templateIndex][0];
-const iDifference = layoutParameters.iDifference
-const iSensitivity = layoutParameters.iSensitivity
+      const iDifference = layoutParameters.iDifference;
+      const iSensitivity = layoutParameters.iSensitivity;
 
       // Update the fields in the current template
       currentTemplate.layoutParameters = {
@@ -617,22 +617,21 @@ const iSensitivity = layoutParameters.iSensitivity
         ...currentTemplate.barcodeData,
         ...barcodeData, // Assuming you want to merge with existing barcodeData
       };
-      const skewFields =  currentTemplate.skewMarksWindowParameters??[]
-skewFields.forEach((field) => {
-  field.iSensitivity = iSensitivity;
-  field.iDifference = iDifference;
-});
-    const formFields = currentTemplate.formFieldWindowParameters?? [];
-formFields.forEach((field) => {
-  field.iSensitivity = iSensitivity;
-  field.iDifference = iDifference;
-});
- const questionFields = currentTemplate.questionsWindowParameters?? [];
-questionFields.forEach((field) => {
-  field.iSensitivity = iSensitivity;
-  field.iDifference = iDifference;
-});
-
+      const skewFields = currentTemplate.skewMarksWindowParameters ?? [];
+      skewFields.forEach((field) => {
+        field.iSensitivity = iSensitivity;
+        field.iDifference = iDifference;
+      });
+      const formFields = currentTemplate.formFieldWindowParameters ?? [];
+      formFields.forEach((field) => {
+        field.iSensitivity = iSensitivity;
+        field.iDifference = iDifference;
+      });
+      const questionFields = currentTemplate.questionsWindowParameters ?? [];
+      questionFields.forEach((field) => {
+        field.iSensitivity = iSensitivity;
+        field.iDifference = iDifference;
+      });
 
       // Return the new state
       return {

@@ -127,12 +127,11 @@ const LayoutDetailModal = (props) => {
   const [prefix, setPrefix] = useState("0000");
   const [prefixzeroes, setPrefixZeroes] = useState("0000");
   const [scanner, setScanner] = useState(null);
-  const handleChange = ( newValue) => {
+  const handleChange = (newValue) => {
     const minDistance = 1;
-   
-  setValue(newValue);
-      setSensitivity(newValue);
-    
+
+    setValue(newValue);
+    setSensitivity(newValue);
   };
   const navigate = useNavigate();
 
@@ -1317,7 +1316,93 @@ const LayoutDetailModal = (props) => {
                                 overflow: "hidden",
                               }}
                             >
-                              <ShadesOfGrey />
+                              <ShadesOfGrey type="reverse" />
+                            </div>
+                            <Box
+                              sx={{
+                                width: "94%",
+                                justifyContent: "center",
+                                alignSelf: "center",
+                              }}
+                            >
+                              <Slider
+                                getAriaLabel={() => "Sensitivity range"}
+                                value={value}
+                                onChange={(event, newValue) =>
+                                  handleChange(newValue)
+                                }
+                                valueLabelDisplay="auto"
+                                min={1}
+                                max={16}
+                                step={1}
+                                scale={(x) => 17 - x} // This reverses the displayed value
+                                size="large"
+                                color="PRIMARY"
+                                track="inverted" // Optional: shows the fill from right to left
+                                slots={{
+                                  ValueLabel: (props) => (
+                                    <CustomTooltip
+                                      {...props}
+                                      shade={getShadeFromValue(value)}
+                                    />
+                                  ),
+                                }}
+                              />
+                            </Box>
+                          </div>
+
+                          <input
+                            value={`${sensitivity}`}
+                            onChange={(e) => setSensitivity(e.target.value)}
+                            style={{
+                              width: "100%",
+                              padding: "2px",
+                              textAlign: "center",
+                            }}
+                            className="form-control"
+                            type="text"
+                            disabled
+                          />
+
+                          {!sensitivity && (
+                            <span
+                              style={{ color: "red", display: spanDisplay }}
+                            >
+                              This feild is required
+                            </span>
+                          )}
+                        </div>
+                      </Row>
+                      <Row className="mb-3">
+                        <label
+                          htmlFor="example-text-input"
+                          className="col-md-2 col-form-label  "
+                          style={{ fontSize: ".9rem" }}
+                        >
+                          Density
+                        </label>
+                        <div
+                          className="col-md-10"
+                          style={{
+                            display: "flex",
+                            gap: "5px",
+                            width: "100%",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              width: "100%",
+                            }}
+                          >
+                            <div
+                              style={{
+                                borderRadius: "6px",
+                                overflow: "hidden",
+                              }}
+                            >
+                              <ShadesOfGrey type="normal" />
                             </div>
                             <Box
                               sx={{
@@ -1346,29 +1431,30 @@ const LayoutDetailModal = (props) => {
                                 }}
                               /> */}
                               <Slider
-  getAriaLabel={() => "Sensitivity range"}
-  value={value} // should be a single number
-  onChange={(event, newValue) => handleChange(newValue)} // handle as a number
-  valueLabelDisplay="auto"
-  min={1}
-  max={16}
-  size="large"
-  color="PRIMARY"
-  slots={{
-    ValueLabel: (props) => (
-      <CustomTooltip
-        {...props}
-        shade={getShadeFromValue(value)} // Pass the shade based on the value
-      />
-    ),
-  }}
-/>
+                                getAriaLabel={() => "Sensitivity range"}
+                                value={difference} // should be a single number
+                                onChange={(event, newValue) =>
+                                  setDifference(newValue)
+                                } // handle as a number
+                                valueLabelDisplay="auto"
+                                min={1}
+                                max={16}
+                                size="large"
+                                color="PRIMARY"
+                                slots={{
+                                  ValueLabel: (props) => (
+                                    <CustomTooltip
+                                      {...props}
+                                      shade={getShadeFromValue(value)} // Pass the shade based on the value
+                                    />
+                                  ),
+                                }}
+                              />
                             </Box>
                           </div>
 
                           <input
-                            value={`${sensitivity}`}
-                            onChange={(e) => setSensitivity(e.target.value)}
+                            value={`${difference}`}
                             style={{
                               width: "100%",
                               padding: "2px",
