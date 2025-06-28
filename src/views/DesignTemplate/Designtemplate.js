@@ -810,13 +810,14 @@ const DesignTemplate = () => {
       const template = dataCtx.allTemplates.find((item) => {
         return item[0].layoutParameters?.key ?? "" === templateIndex;
       });
+      if(modalUpdate){
       resetJson(
         template[0].layoutParameters.numberedExcelJsonFile,
         oldCoordinates["Start Row"] - 1,
         oldCoordinates["End Row"] - 1,
         oldCoordinates["Start Col"],
         oldCoordinates["End Col"]
-      );
+      );}
     }
 
     setModalShow(false);

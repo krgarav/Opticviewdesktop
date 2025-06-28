@@ -14,6 +14,7 @@ import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import IconButton from "@mui/material/IconButton";
 import TableRow from "components/TableRow";
 import { toast } from "react-toastify";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const FieldDetails = (props) => {
   const [fields, setFields] = useState([]);
@@ -23,6 +24,45 @@ const FieldDetails = (props) => {
   const [skewField, setSkewField] = useState([]);
   const [formField, setFormField] = useState([]);
   const [idField, setIdField] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]);
+
+ // Example: Selecting All
+const handleSelectAll = (e) => {
+  const allCurrentFields = [
+    ...formField,
+    ...questionField,
+    ...skewField,
+    ...idField,
+  ];
+
+  if (e.target.checked) {
+    const allIds = allCurrentFields.map((item, i) => `${item.name}-${i}`);
+    setSelectedItems(allIds);
+  } else {
+    setSelectedItems([]);
+  }
+};
+
+ const handleCheckboxChange = (id) => {
+  if (selectedItems.includes(id)) {
+    setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
+  } else {
+    setSelectedItems([...selectedItems, id]);
+  }
+};
+
+  const isAllSelected = () => {
+    const allCurrentFields = [
+      ...formField,
+      ...questionField,
+      ...skewField,
+      ...idField,
+    ];
+    return (
+      allCurrentFields.length > 0 &&
+      selectedItems.length === allCurrentFields.length
+    );
+  };
 
   const dataCtx = useContext(DataContext);
 
@@ -328,8 +368,6 @@ const FieldDetails = (props) => {
     );
   });
 
-  
-
   const handleSort = useCallback((type, sortedFields) => {
     if (type === "questionField") {
       setQuestionFields(sortedFields);
@@ -347,7 +385,6 @@ const FieldDetails = (props) => {
   }, []);
   const handleFormSort = useCallback((sortedFields) => {}, []);
   const handleSave = () => {
-    
     dataCtx.changeIndexTemplate(questionField, "questionField");
     dataCtx.changeIndexTemplate(skewField, "skewMarkField");
     dataCtx.changeIndexTemplate(formField, "formField");
@@ -355,7 +392,9 @@ const FieldDetails = (props) => {
     toast.success("Saved the positions!!");
     props.onHide();
   };
-  console.log(dataCtx.allTemplates);
+  const handleDelete =()=>{
+console.log(selectedItems)
+  }
   return (
     <Modal
       show={props.show}
@@ -388,6 +427,13 @@ const FieldDetails = (props) => {
             }}
           >
             <tr>
+              <th scope="col">
+                <input
+                  type="checkbox"
+                  checked={isAllSelected()}
+                  onChange={handleSelectAll}
+                />
+              </th>
               <th scope="col">SL no.</th>
               <th scope="col">Field Name</th>
               <th scope="col">Field Type</th>
@@ -402,6 +448,8 @@ const FieldDetails = (props) => {
               handleSort={handleSort}
               editHandler={(item, i) => props.editHandler(item, i)}
               deleteHander={(item, i) => props.deleteHandler(item, i)}
+               selectedItems={selectedItems}
+  handleCheckboxChange={handleCheckboxChange}
             />
 
             <TableRow
@@ -410,6 +458,8 @@ const FieldDetails = (props) => {
               handleSort={handleSort}
               editHandler={(item, i) => props.editHandler(item, i)}
               deleteHander={(item, i) => props.deleteHandler(item, i)}
+               selectedItems={selectedItems}
+  handleCheckboxChange={handleCheckboxChange}
             />
 
             <TableRow
@@ -418,6 +468,8 @@ const FieldDetails = (props) => {
               handleSort={handleSort}
               editHandler={(item, i) => props.editHandler(item, i)}
               deleteHander={(item, i) => props.deleteHandler(item, i)}
+               selectedItems={selectedItems}
+  handleCheckboxChange={handleCheckboxChange}
             />
             <TableRow
               type="idField"
@@ -425,30 +477,47 @@ const FieldDetails = (props) => {
               handleSort={handleSort}
               editHandler={(item, i) => props.editHandler(item, i)}
               deleteHander={(item, i) => props.deleteHandler(item, i)}
+               selectedItems={selectedItems}
+  handleCheckboxChange={handleCheckboxChange}
             />
 
             {/* {props.fieldsLoading ? placeHolderJobs : LoadedTemplates} */}
           </tbody>
         </Table>
       </Modal.Body>
-      <Modal.Footer>
-        <Button
-          type="button"
-          variant="danger"
-          onClick={props.onHide}
-          className="waves-effect waves-light"
-        >
-          Cancel
-        </Button>
-        <Button
-          type="button"
-          variant="success"
-          className="waves-effect waves-light"
-          onClick={handleSave}
-        >
-          Save
-        </Button>
-      </Modal.Footer>
+     <Modal.Footer className="d-flex justify-content-between">
+  {/* Left Side: Delete Button */}
+  <Button
+    type="button"
+    variant="outline-danger"
+    className="waves-effect waves-light d-flex align-items-center"
+    onClick={handleDelete}
+  >
+    <DeleteIcon className="me-2" /> Delete
+  </Button>
+
+  {/* Right Side: Cancel and Save Buttons */}
+  <div>
+    <Button
+      type="button"
+      variant="danger"
+      onClick={props.onHide}
+      className="waves-effect waves-light me-2"
+    >
+      Cancel
+    </Button>
+
+    <Button
+      type="button"
+      variant="success"
+      className="waves-effect waves-light"
+      onClick={handleSave}
+    >
+      Save
+    </Button>
+  </div>
+</Modal.Footer>
+
     </Modal>
   );
 };
