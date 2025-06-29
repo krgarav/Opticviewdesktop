@@ -31,6 +31,7 @@ import RightSideBar from "components/RightSideBar/RightSideBar";
 import FieldsFooter from "components/Footers/FieldsFooter";
 import BootstrapNumberInput from "ui/BootstrapNumber";
 import ExcelLikeTable from "components/ExcellLike";
+import CustomDraggableModal from "views/test";
 
 const EditDesignTemplate = () => {
   const [selected, setSelected] = useState({});
@@ -2221,18 +2222,18 @@ const EditDesignTemplate = () => {
         </div>
       </div>
 
-      <Modal
+      <CustomDraggableModal
         show={modalShow}
         size="lg"
-        aria-labelledby="contained-modal-title-vcenter"
-        autoFocus={true}
-        enforceFocus={true}
-        centered
+        // aria-labelledby="contained-modal-title-vcenter"
+        // autoFocus={true}
+        // enforceFocus={true}
+        // centered
       >
-        <Modal.Header>
-          <Modal.Title
-            id="contained-modal-title-vcenter"
-            style={{ width: "100vw" }}
+        <CustomDraggableModal.Header >
+          <div
+          
+            style={{ width: "100%"  }}
           >
             {modalUpdate && (
               <h2 className="text-center">
@@ -2256,7 +2257,7 @@ const EditDesignTemplate = () => {
             )}
             <br />
             {!modalUpdate && (
-              <Row className="mb-2">
+              <Row className="mb-2" style={{width:"100%"}}>
                 <label
                   htmlFor="example-text-input"
                   className="col-md-2 col-form-label"
@@ -2337,9 +2338,9 @@ const EditDesignTemplate = () => {
                 </Col>
               </Row>
             )}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ height: "65vh", overflowX: "auto" }}>
+          </div>
+        </CustomDraggableModal.Header>
+        <CustomDraggableModal.Body style={{ height: "65vh", overflowX: "auto" }}>
           {selectedFieldType && (
             <>
               {selectedFieldType !== "idField" && (
@@ -2944,8 +2945,8 @@ const EditDesignTemplate = () => {
                 )}
             </>
           )}
-        </Modal.Body>
-        <Modal.Footer
+        </CustomDraggableModal.Body>
+        <CustomDraggableModal.Footer
           style={{ display: "flex", justifyContent: "space-between" }}
         >
           <Button
@@ -3016,8 +3017,8 @@ const EditDesignTemplate = () => {
               {!modalUpdate ? "Save" : "Update"}
             </Button>
           </div>
-        </Modal.Footer>
-      </Modal>
+        </CustomDraggableModal.Footer>
+      </CustomDraggableModal>
 
       <Modal
         show={imageModalShow}

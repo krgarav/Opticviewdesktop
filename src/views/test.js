@@ -55,7 +55,7 @@ const CustomDraggableModal = ({ show, onClose, children, size = "md" }) => {
 
 // Header Subcomponent
 CustomDraggableModal.Header = ({ children, onClose }) => (
-  <div
+ <div
     className="custom-modal-header"
     style={{
       padding: "10px",
@@ -69,7 +69,7 @@ CustomDraggableModal.Header = ({ children, onClose }) => (
       alignItems: "center",
     }}
   >
-    <h4 style={{ margin: 0 }}>{children}</h4>
+    <div style={{ width: '100%' }}>{children}</div> {/* Render as a block */}
     <button
       onClick={onClose}
       style={{

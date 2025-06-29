@@ -3049,7 +3049,7 @@ const EditTemplateModal = (props) => {
           },
           imageData: {
             imageEnable: imageStatus ? +imageStatus?.id : 0,
-            mageColor: colorType === "grayscale" ? 1 : 0,
+            imageColor: colorType === "grayscale" ? 1 : 0,
             imageType: encoding ? +encoding?.id : 0,
             imageParam: 0,
             imageRotation: rotation ? +rotation?.id : 0,
