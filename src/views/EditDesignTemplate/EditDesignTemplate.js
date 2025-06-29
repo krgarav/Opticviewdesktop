@@ -890,6 +890,7 @@ const EditDesignTemplate = () => {
   };
   const handleEyeClick = (selectedField, index) => {
     setSelectedField(selectedField);
+    setHighlightField(true)
     setSelection(() => ({
       startRow: selectedField.startRow,
       startCol: selectedField.startCol,
