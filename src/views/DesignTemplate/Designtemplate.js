@@ -34,6 +34,7 @@ import Draggable from "react-draggable";
 import ExcelLikeTable from "components/ExcellLike";
 import groupQuestionNameGenerator from "helper/groupQuestionGenerator";
 import CustomDraggableModal from "views/test";
+import skewQuestionNameGenerator from "helper/skewQuestionNameGenerator";
 
 const DesignTemplate = () => {
   const [selected, setSelected] = useState({});
@@ -1540,8 +1541,8 @@ const DesignTemplate = () => {
           };
         } else if (selectedField.fieldType === "skewMarkField") {
           const updatedName =
-            selectedField.fieldType === "questionField"
-              ? questionNameGenerator(selectedField.name, i + 1)
+            selectedField.fieldType === "skewMarkField"
+              ?  skewQuestionNameGenerator (selectedField.name, i + 1)
               : selectedField.name;
           newData = {
             Coordinate: {

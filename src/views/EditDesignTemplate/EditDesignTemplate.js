@@ -32,6 +32,7 @@ import FieldsFooter from "components/Footers/FieldsFooter";
 import BootstrapNumberInput from "ui/BootstrapNumber";
 import ExcelLikeTable from "components/ExcellLike";
 import CustomDraggableModal from "views/test";
+import skewQuestionNameGenerator from "helper/skewQuestionNameGenerator";
 
 const EditDesignTemplate = () => {
   const [selected, setSelected] = useState({});
@@ -1491,10 +1492,10 @@ const EditDesignTemplate = () => {
             suffix: selectedFieldType === "formField" ? suffix : "",
           };
         } else if (selectedField.fieldType === "skewMarkField") {
-          const updatedName =
-            selectedField.fieldType === "questionField"
-              ? questionNameGenerator(selectedField.name, i + 1)
-              : selectedField.name;
+           const updatedName =
+                     selectedField.fieldType === "skewMarkField"
+                       ?  skewQuestionNameGenerator (selectedField.name, i + 1)
+                       : selectedField.name;
           newData = {
             Coordinate: {
               "Start Row": newObject?.startRow + 1,
