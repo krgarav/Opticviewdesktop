@@ -60,6 +60,7 @@
     "pako": "^2.1.0",
     "papaparse": "^5.4.1",
     "rc-tree": "^5.8.8",
+    "re-resizable": "^6.11.2",
     "react": "18.2.0",
     "react-bootstrap": "^2.10.4",
     "react-chartjs-2": "2.11.2",

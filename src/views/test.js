@@ -1,7 +1,8 @@
 import React from "react";
 import Draggable from "react-draggable";
-
+import { Resizable } from "re-resizable";
 // Parent Modal Component
+
 const CustomDraggableModal = ({ show, onClose, children, size = "md" }) => {
   if (!show) return null;
 
@@ -28,26 +29,40 @@ const CustomDraggableModal = ({ show, onClose, children, size = "md" }) => {
         zIndex: 1000,
       }}
     >
-      <Draggable handle=".custom-modal-header" bounds="parent">
-        <div
+      {/* Make the entire modal draggable */}
+      <Draggable bounds="parent">
+        {/* Make the modal resizable */}
+        {/* <Resizable
+          defaultSize={{ width: modalWidth, height: 'auto' }}
+          minWidth={300}
+          minHeight={200}
           style={{
             background: "white",
             borderRadius: "8px",
-            width: modalWidth,
             boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
             position: "relative",
             display: "flex",
             flexDirection: "column",
             cursor: "default",
           }}
-        >
+          enable={{
+            top: true,
+            right: true,
+            bottom: true,
+            left: true,
+            topRight: true,
+            bottomRight: true,
+            bottomLeft: true,
+            topLeft: true,
+          }}
+        > */}
           {React.Children.map(children, (child) => {
             if (child.type === CustomDraggableModal.Header) {
               return React.cloneElement(child, { onClose });
             }
             return child;
           })}
-        </div>
+        {/* </Resizable> */}
       </Draggable>
     </div>
   );

@@ -2340,7 +2340,7 @@ const EditDesignTemplate = () => {
             )}
           </div>
         </CustomDraggableModal.Header>
-        <CustomDraggableModal.Body style={{ height: "65vh", overflowX: "auto" }}>
+        <CustomDraggableModal.Body >
           {selectedFieldType && (
             <>
               {selectedFieldType !== "idField" && (
