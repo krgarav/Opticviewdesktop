@@ -2225,13 +2225,7 @@ const EditDesignTemplate = () => {
       <CustomDraggableModal
         show={modalShow}
         size="lg"
-        // onClose={() => {
-        //   setModalShow(false);
-        // }}
-        // aria-labelledby="contained-modal-title-vcenter"
-        // autoFocus={true}
-        // enforceFocus={true}
-        // centered
+        onClose={()=>{handleCancel()}}
       >
         <CustomDraggableModal.Header>
           <div style={{ width: "100%" }}>
@@ -2274,6 +2268,7 @@ const EditDesignTemplate = () => {
                     checked={selectedFieldType === "formField"}
                     onChange={handleRadioChange}
                     className=" field-label"
+                     style={{ accentColor: 'black' }}
                   />
                 </Col>
                 <Col md={2} className="d-flex align-items-center">
@@ -2288,6 +2283,7 @@ const EditDesignTemplate = () => {
                     checked={selectedFieldType === "questionField"}
                     onChange={handleRadioChange}
                     className=" field-label"
+                     style={{ accentColor: 'black' }}
                   />
                 </Col>
                 <Col md={3} className="d-flex align-items-center ">
@@ -2305,6 +2301,7 @@ const EditDesignTemplate = () => {
                     checked={selectedFieldType === "skewMarkField"}
                     onChange={handleRadioChange}
                     className=" field-label mt-0.9"
+                     style={{ accentColor: 'black' }}
                   />
                 </Col>
                 <Col md={2} className="d-flex align-items-center mt-1">
@@ -2325,6 +2322,7 @@ const EditDesignTemplate = () => {
                         onChange={handleRadioChange}
                         className="field-label align-items-center"
                         disabled={idSelectionCount > 0}
+                         style={{ accentColor: 'black' }}
                       />
                     </div>
                     {idSelectionCount > 0 && (

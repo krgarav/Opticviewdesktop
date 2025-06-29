@@ -33,6 +33,7 @@ import BootstrapNumberInput from "ui/BootstrapNumber";
 import Draggable from "react-draggable";
 import ExcelLikeTable from "components/ExcellLike";
 import groupQuestionNameGenerator from "helper/groupQuestionGenerator";
+import CustomDraggableModal from "views/test";
 
 const DesignTemplate = () => {
   const [selected, setSelected] = useState({});
@@ -2227,20 +2228,14 @@ const DesignTemplate = () => {
         </div>
       </div>
 
-      <Modal
+       <CustomDraggableModal
         show={modalShow}
         size="lg"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
+        onClose={()=>{handleCancel()}}
+        
       >
-        <Modal.Header
-          onMouseOver={() => setDisabled(false)}
-          onMouseOut={() => setDisabled(true)}
-        >
-          <Modal.Title
-            id="contained-modal-title-vcenter"
-            style={{ width: "100vw" }}
-          >
+        <CustomDraggableModal.Header>
+          <div style={{ width: "100%" }}>
             {modalUpdate && (
               <h2 className="text-center">
                 {!modalUpdate
@@ -2261,123 +2256,16 @@ const DesignTemplate = () => {
                 {!modalUpdate ? "Choose field type" : selectedFieldType}
               </h2>
             )}
-
             <br />
             {!modalUpdate && (
-              // <Row className="mb-2 d-flex align-items-center" style={{position:"absolute",translate:"transformX(-100px) "}}>
-              //   <Col
-              //     xs={12}
-              //     sm={4}
-              //     md={3}
-              //     // className="d-flex align-items-center"
-              //     style={{ display: "flex", justifyContent: "center" }}
-              //   >
-              //     <label htmlFor="formField" className="mr-2 mb-0 field-label">
-              //       Form:
-              //     </label>
-              //     <input
-              //       id="formField"
-              //       type="radio"
-              //       name="fieldType"
-              //       value="formField"
-              //       checked={selectedFieldType === "formField"}
-              //       onChange={handleRadioChange}
-              //       className="field-label mt-1"
-              //     />
-              //   </Col>
-              //   <Col
-              //     xs={12}
-              //     sm={4}
-              //     md={3}
-              //     className="d-flex align-items-center"
-              //   >
-              //     <label htmlFor="fieldType" className="mr-2 mb-0 field-label">
-              //       Question:
-              //     </label>
-              //     <input
-              //       id="fieldType"
-              //       type="radio"
-              //       name="fieldType"
-              //       value="questionField"
-              //       checked={selectedFieldType === "questionField"}
-              //       onChange={handleRadioChange}
-              //       className="field-label mt-1"
-              //     />
-              //   </Col>
-              //   <Col
-              //     xs={12}
-              //     sm={4}
-              //     md={3}
-              //     className="d-flex align-items-center"
-              //   >
-              //     <label
-              //       htmlFor="skewMarkField"
-              //       className="mr-2 mb-0 col-form-label"
-              //     >
-              //       Skew Mark:
-              //     </label>
-              //     <input
-              //       id="skewMarkField"
-              //       type="radio"
-              //       name="fieldType"
-              //       value="skewMarkField"
-              //       checked={selectedFieldType === "skewMarkField"}
-              //       onChange={handleRadioChange}
-              //       className="field-label mt-1"
-              //     />
-              //   </Col>
-              //   <Col
-              //     xs={12}
-              //     sm={6}
-              //     md={3}
-              //     className="d-flex align-items-center"
-              //   >
-              //     <div style={{ display: "flex", flexDirection: "column" }}>
-              //       <div>
-              //         <label
-              //           htmlFor="idField"
-              //           className="mr-2 mb-0 field-label"
-              //         >
-              //           ID Mark:
-              //         </label>
-              //         <input
-              //           id="idField"
-              //           type="radio"
-              //           name="fieldType"
-              //           value="idField"
-              //           checked={selectedFieldType === "idField"}
-              //           onChange={handleRadioChange}
-              //           className="field-label mt-1"
-              //           disabled={idSelectionCount > 0}
-              //         />
-              //       </div>
-              //       {idSelectionCount > 0 && (
-              //         <div>
-              //           <small style={{ color: "orangered" }}>
-              //             already selected
-              //           </small>
-              //         </div>
-              //       )}
-              //     </div>
-              //   </Col>
-              // </Row>
-              <Row
-                className="mb-2 d-flex align-items-center"
-                style={{
-                  // position: "relative",
-                  // left: "55%",
-                  // transform: !selectedFieldType ? "translate(-50%, 300%)" : "translate(-50%, -50%)",
-                  transition: "all 0.5s ease-in-out",
-                }}
-              >
-                <Col
-                  xs={12}
-                  sm={4}
-                  md={3}
-                  style={{ display: "flex", justifyContent: "center" }}
-                >
+              <Row className="mb-2" style={{ width: "100%" }}>
+                <label
+                  htmlFor="example-text-input"
+                  className="col-md-2 col-form-label"
+                ></label>
+                <Col md={2} className="d-flex align-items-center">
                   <label htmlFor="formField" className="mr-2 mb-0 field-label">
-                    Form:
+                    Form :{" "}
                   </label>
                   <input
                     id="formField"
@@ -2386,17 +2274,13 @@ const DesignTemplate = () => {
                     value="formField"
                     checked={selectedFieldType === "formField"}
                     onChange={handleRadioChange}
-                    className="field-label mt-1"
+                    className=" field-label"
+                    style={{ accentColor: 'black' }}
                   />
                 </Col>
-                <Col
-                  xs={12}
-                  sm={4}
-                  md={3}
-                  className="d-flex align-items-center"
-                >
+                <Col md={2} className="d-flex align-items-center">
                   <label htmlFor="fieldType" className="mr-2 mb-0 field-label">
-                    Question:
+                    Question :{" "}
                   </label>
                   <input
                     id="fieldType"
@@ -2405,18 +2289,14 @@ const DesignTemplate = () => {
                     value="questionField"
                     checked={selectedFieldType === "questionField"}
                     onChange={handleRadioChange}
-                    className="field-label mt-1"
+                    className=" field-label"
+                     style={{ accentColor: 'black' }}
                   />
                 </Col>
-                <Col
-                  xs={12}
-                  sm={4}
-                  md={3}
-                  className="d-flex align-items-center"
-                >
+                <Col md={3} className="d-flex align-items-center ">
                   <label
                     htmlFor="skewMarkField"
-                    className="mr-2 mb-0 col-form-label"
+                    className="mr-2 mb-0 field-label"
                   >
                     Skew Mark:
                   </label>
@@ -2427,22 +2307,18 @@ const DesignTemplate = () => {
                     value="skewMarkField"
                     checked={selectedFieldType === "skewMarkField"}
                     onChange={handleRadioChange}
-                    className="field-label mt-1"
+                    className=" field-label mt-0.9"
+                     style={{ accentColor: 'black' }}
                   />
                 </Col>
-                <Col
-                  xs={12}
-                  sm={6}
-                  md={3}
-                  className="d-flex align-items-center"
-                >
+                <Col md={2} className="d-flex align-items-center mt-1">
                   <div style={{ display: "flex", flexDirection: "column" }}>
-                    <div>
+                    <div className="d-flex align-items-center mt-2">
                       <label
                         htmlFor="idField"
                         className="mr-2 mb-0 field-label"
                       >
-                        ID Mark:
+                        ID Mark :
                       </label>
                       <input
                         id="idField"
@@ -2451,8 +2327,9 @@ const DesignTemplate = () => {
                         value="idField"
                         checked={selectedFieldType === "idField"}
                         onChange={handleRadioChange}
-                        className="field-label mt-1"
+                        className="field-label align-items-center"
                         disabled={idSelectionCount > 0}
+                         style={{ accentColor: 'black' }}
                       />
                     </div>
                     {idSelectionCount > 0 && (
@@ -2466,9 +2343,9 @@ const DesignTemplate = () => {
                 </Col>
               </Row>
             )}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ height: "67vh", overflowX: "auto" }}>
+          </div>
+        </CustomDraggableModal.Header>
+        <CustomDraggableModal.Body>
           {selectedFieldType && (
             <>
               {selectedFieldType !== "idField" && (
@@ -2544,7 +2421,7 @@ const DesignTemplate = () => {
                     <>
                       <label
                         htmlFor="example-text-input"
-                        className="col-md-2 col-form-label "
+                        className="col-md-2 col-form-label"
                         style={{ fontSize: "0.8rem" }}
                       >
                         Grid Value
@@ -2665,7 +2542,7 @@ const DesignTemplate = () => {
                   </div>
                   <label
                     htmlFor="example-select-input"
-                    className="col-md-2  col-form-label"
+                    className="col-md-2 col-form-label"
                     style={{ fontSize: "0.8rem" }}
                   >
                     Id selection
@@ -2733,8 +2610,8 @@ const DesignTemplate = () => {
                 <div className="col-2 ">
                   <input
                     id="startRow"
-                    type="number"
-                    // disabled={modalUpdate}
+                    type="text"
+                    disabled={modalUpdate}
                     value={startRowInput}
                     onBlur={(e) => {
                       const newValue = e.target.valueAsNumber;
@@ -2748,9 +2625,11 @@ const DesignTemplate = () => {
                       }
                     }}
                     onChange={(e) => {
-                      setStartRowInput(
-                        e.target.valueAsNumber >= 0 ? e.target.value : ""
+                      const numericValue = e.target.value.replace(
+                        /[^0-9]/g,
+                        ""
                       );
+                      setStartRowInput(numericValue >= 0 ? numericValue : "");
                     }}
                     className="form-control"
                   />
@@ -2764,9 +2643,9 @@ const DesignTemplate = () => {
                 </label>
                 <div className="col-2">
                   <input
-                    type="number"
+                    type="text"
                     value={endRowInput}
-                    // disabled={modalUpdate}
+                    disabled={modalUpdate}
                     onBlur={(e) => {
                       const newValue = e.target.valueAsNumber;
                       if (newValue > 0) {
@@ -2779,9 +2658,12 @@ const DesignTemplate = () => {
                       }
                     }}
                     onChange={(e) => {
-                      setEndRowInput(
-                        e.target.valueAsNumber >= 0 ? e.target.value : ""
+                      // Allow only numeric input (including empty input)
+                      const numericValue = e.target.value.replace(
+                        /[^0-9]/g,
+                        ""
                       );
+                      setEndRowInput(numericValue >= 0 ? numericValue : "");
                     }}
                     className="form-control"
                   />
@@ -2797,9 +2679,9 @@ const DesignTemplate = () => {
                   <input value={numRows} readOnly className="form-control" />
                 </div>
               </Row>
-              <Row className="mb-2">
+              <Row className="">
                 <label
-                  htmlFor="step-input"
+                  htmlFor="example-select-input"
                   className="col-2 col-form-label"
                   style={{ fontSize: "0.8rem" }}
                 >
@@ -2816,19 +2698,19 @@ const DesignTemplate = () => {
                   />
                 </div>
                 <label
-                  htmlFor="example-step-input"
-                  className="col-2  col-form-label"
+                  htmlFor="example-select-input"
+                  className="col-2 col-form-label "
                   style={{ fontSize: "0.8rem" }}
                 >
                   Total Per Row
                 </label>
                 <div className="col-4">
                   <input
-                    id="step-input"
                     type="number"
                     className="form-control"
                     value={noInRow}
                     onChange={(e) => setNoInRow(e.target.value)}
+                    // required
                     disabled
                   />
                 </div>
@@ -2843,9 +2725,9 @@ const DesignTemplate = () => {
                 </label>
                 <div className="col-2">
                   <input
-                    type="number"
+                    type="text"
                     value={startColInput}
-                    // disabled={modalUpdate}
+                    disabled={modalUpdate}
                     onBlur={(e) => {
                       const newValue = e.target.valueAsNumber;
                       if (newValue > 0) {
@@ -2875,9 +2757,9 @@ const DesignTemplate = () => {
                 </label>
                 <div className="col-2">
                   <input
-                    type="number"
+                    type="text"
                     value={endColInput}
-                    // disabled={modalUpdate}
+                    disabled={modalUpdate}
                     onBlur={(e) => {
                       const newValue = e.target.valueAsNumber;
                       if (newValue > 0) {
@@ -2890,9 +2772,13 @@ const DesignTemplate = () => {
                       }
                     }}
                     onChange={(e) => {
-                      setEndColInput(
-                        e.target.valueAsNumber >= 0 ? e.target.value : ""
+                      // Allow only numeric input (including empty input)
+                      const numericValue = e.target.value.replace(
+                        /[^0-9]/g,
+                        ""
                       );
+                      setMaximumMark(numericValue);
+                      setEndColInput(numericValue >= 0 ? numericValue : "");
                     }}
                     className="form-control"
                   />
@@ -2953,7 +2839,7 @@ const DesignTemplate = () => {
                 >
                   Read Direction
                 </label>
-                <div className="col-md-10">
+                <div className="col-10">
                   <select
                     className="form-control"
                     value={readingDirectionOption}
@@ -2973,7 +2859,6 @@ const DesignTemplate = () => {
                           )
                         );
                       }
-
                       setReadingDirectionOption(e.target.value);
                     }}
                     defaultValue={""}
@@ -3001,10 +2886,17 @@ const DesignTemplate = () => {
                   </label>
                   <div className="col-4 ">
                     <input
-                      type="number"
+                      type="text"
                       className="form-control"
                       value={numberOfField}
-                      onChange={(e) => setNumberOfField(e.target.value)}
+                      onChange={(e) => {
+                        // Allow only numeric input (including empty input)
+                        const numericValue = e.target.value.replace(
+                          /[^0-9]/g,
+                          ""
+                        );
+                        setNumberOfField(numericValue);
+                      }}
                       required
                     />
                   </div>
@@ -3029,7 +2921,7 @@ const DesignTemplate = () => {
                       </option>
                       <option value="numeric">Numeric </option>
                       <option value="alphabet">Alphabet </option>
-                      <option value="binary">Litho Code</option>
+                      <option value="binary">Litho code</option>
                       <option value="custom">Custom </option>
                     </select>
                   </div>
@@ -3058,8 +2950,8 @@ const DesignTemplate = () => {
                 )}
             </>
           )}
-        </Modal.Body>
-        <Modal.Footer
+        </CustomDraggableModal.Body>
+        <CustomDraggableModal.Footer
           style={{ display: "flex", justifyContent: "space-between" }}
         >
           <Button
@@ -3098,6 +2990,7 @@ const DesignTemplate = () => {
                   <AddLinkIcon />
                 </IconButton>
               </Tooltip>
+
               <Tooltip
                 title="Copy Field"
                 placement="top"
@@ -3129,8 +3022,8 @@ const DesignTemplate = () => {
               {!modalUpdate ? "Save" : "Update"}
             </Button>
           </div>
-        </Modal.Footer>
-      </Modal>
+        </CustomDraggableModal.Footer>
+      </CustomDraggableModal>
 
       <Modal
         show={imageModalShow}
