@@ -2593,201 +2593,225 @@ const EditDesignTemplate = () => {
                 </Row>
               )}
 
-              <Row className="mb-2">
-                <label
-                  htmlFor="example-select-input"
-                  className="col-2 col-form-label"
-                  style={{ fontSize: "0.8rem" }}
-                >
-                  Start Row
-                </label>
-                <div className="col-2 ">
-                  <input
-                    id="startRow"
-                    type="text"
-                    disabled={modalUpdate}
-                    value={startRowInput}
-                    onBlur={(e) => {
-                      const newValue = e.target.valueAsNumber;
-                      if (newValue > 0) {
-                        setSelection((item) => ({
-                          ...item,
-                          startRow: newValue - 1,
-                        }));
-                      } else {
-                        setStartRowInput(selection.startRow + 1); // Reset to previous valid value
-                      }
-                    }}
-                    onChange={(e) => {
-                      const numericValue = e.target.value.replace(
-                        /[^0-9]/g,
-                        ""
-                      );
-                      setStartRowInput(numericValue >= 0 ? numericValue : "");
-                    }}
-                    className="form-control"
-                  />
-                </div>
-                <label
-                  htmlFor="example-select-input"
-                  className="col-2 col-form-label"
-                  style={{ fontSize: "0.8rem" }}
-                >
-                  End Row
-                </label>
-                <div className="col-2">
-                  <input
-                    type="text"
-                    value={endRowInput}
-                    disabled={modalUpdate}
-                    onBlur={(e) => {
-                      const newValue = e.target.valueAsNumber;
-                      if (newValue > 0) {
-                        setSelection((item) => ({
-                          ...item,
-                          endRow: newValue - 1,
-                        }));
-                      } else {
-                        setEndRowInput(selection?.endRow + 1); // Reset to previous valid value
-                      }
-                    }}
-                    onChange={(e) => {
-                      // Allow only numeric input (including empty input)
-                      const numericValue = e.target.value.replace(
-                        /[^0-9]/g,
-                        ""
-                      );
-                      setEndRowInput(numericValue >= 0 ? numericValue : "");
-                    }}
-                    className="form-control"
-                  />
-                </div>
-                <label
-                  htmlFor="example-select-input"
-                  className="col-2 col-form-label"
-                  style={{ fontSize: "0.8rem" }}
-                >
-                  Total Row
-                </label>
-                <div className="col-2">
-                  <input value={numRows} readOnly className="form-control" />
-                </div>
-              </Row>
-              <Row className="">
-                <label
-                  htmlFor="example-select-input"
-                  className="col-2 col-form-label"
-                  style={{ fontSize: "0.8rem" }}
-                >
-                  Steps In Row
-                </label>
-                <div className="col-4">
-                  <BootstrapNumberInput
-                    value={noOfStepInRow}
-                    setValue={setNoOfStepInRow}
-                    start={+startRowInput}
-                    end={+endRowInput}
-                    // setDerivedValue={setNoInRow}
-                    id="step-in-row"
-                  />
-                </div>
-                <label
-                  htmlFor="example-select-input"
-                  className="col-2 col-form-label "
-                  style={{ fontSize: "0.8rem" }}
-                >
-                  Total Per Row
-                </label>
-                <div className="col-4">
-                  <input
-                    type="number"
-                    className="form-control"
-                    value={noInRow}
-                    onChange={(e) => setNoInRow(e.target.value)}
-                    // required
-                    disabled
-                  />
-                </div>
-              </Row>
-              <Row className="mb-2">
-                <label
-                  htmlFor="example-select-input"
-                  className="col-2  col-form-label"
-                  style={{ fontSize: "0.8rem" }}
-                >
-                  Start Col
-                </label>
-                <div className="col-2">
-                  <input
-                    type="text"
-                    value={startColInput}
-                    disabled={modalUpdate}
-                    onBlur={(e) => {
-                      const newValue = e.target.valueAsNumber;
-                      if (newValue > 0) {
-                        setSelection((item) => ({
-                          ...item,
-                          startCol: newValue,
-                        }));
-                      } else {
-                        setStartColInput(selection?.startCol); // Reset to previous valid value
-                      }
-                    }}
-                    onChange={(e) => {
-                      setStartColInput(
-                        e.target.valueAsNumber >= 0 ? e.target.value : ""
-                      );
-                    }}
-                    className="form-control"
-                  />
-                </div>
-
-                <label
-                  htmlFor="example-select-input"
-                  className="col-2 col-form-label"
-                  style={{ fontSize: "0.8rem" }}
-                >
-                  End Col
-                </label>
-                <div className="col-2">
-                  <input
-                    type="text"
-                    value={endColInput}
-                    disabled={modalUpdate}
-                    onBlur={(e) => {
-                      const newValue = e.target.valueAsNumber;
-                      if (newValue > 0) {
-                        setSelection((item) => ({
-                          ...item,
-                          endCol: newValue,
-                        }));
-                      } else {
-                        setEndColInput(selection?.endCol); // Reset to previous valid value
-                      }
-                    }}
-                    onChange={(e) => {
-                      // Allow only numeric input (including empty input)
-                      const numericValue = e.target.value.replace(
-                        /[^0-9]/g,
-                        ""
-                      );
-                      setMaximumMark(numericValue);
-                      setEndColInput(numericValue >= 0 ? numericValue : "");
-                    }}
-                    className="form-control"
-                  />
-                </div>
-                <label
-                  htmlFor="example-select-input"
-                  className="col-2 col-form-label"
-                  style={{ fontSize: "0.8rem" }}
-                >
-                  Total Column
-                </label>
-                <div className="col-2">
-                  <input value={numCols} readOnly className="form-control" />
-                </div>
-              </Row>
+                 <Row className="mb-2">
+                             <label
+                               htmlFor="example-select-input"
+                               className="col-2 col-form-label"
+                               style={{ fontSize: "0.8rem" }}
+                             >
+                               Start Row
+                             </label>
+                             <div className="col-2 ">
+                              <input
+               id="startRow"
+               type="text"
+               value={startRowInput}
+               onBlur={(e) => {
+                 const newValue = Number(e.target.value); // Ensure it's a number
+                 console.log(newValue);
+             
+                 if (newValue > 0) {
+                   setSelection((item) => ({
+                     ...item,
+                     startRow: newValue - 1,
+                   }));
+                 } else {
+                   // Reset to previous valid value
+                   setStartRowInput(selection.startRow + 1);
+                 }
+               }}
+               onChange={(e) => {
+                 let value = e.target.value.replace(/[^0-9]/g, ""); // Strip non-numeric
+             
+                 if (value === "") {
+                   // If input is empty, reset to empty string to allow typing
+                   setStartRowInput("");
+                   return;
+                 }
+             
+                 const numericValue = Number(value);
+                 console.log(typeof numericValue); // This will now always be 'number'
+                 setStartRowInput(numericValue);
+               }}
+               className="form-control"
+             />
+             
+                             </div>
+                             <label
+                               htmlFor="example-select-input"
+                               className="col-2 col-form-label"
+                               style={{ fontSize: "0.8rem" }}
+                             >
+                               End Row
+                             </label>
+                             <div className="col-2">
+                               <input
+               type="text"
+               value={endRowInput}
+               // disabled={modalUpdate}
+               onBlur={(e) => {
+                 const newValue = Number(e.target.value);
+                 if (newValue > 0) {
+                   setSelection((item) => ({
+                     ...item,
+                     endRow: newValue - 1,
+                   }));
+                 } else {
+                   // Reset to previous valid value
+                   setEndRowInput(selection?.endRow + 1);
+                 }
+               }}
+               onChange={(e) => {
+                 const numericValue = e.target.value.replace(/[^0-9]/g, "");
+                 if (numericValue === "") {
+                   setEndRowInput("");
+                 } else {
+                   setEndRowInput(Number(numericValue));
+                 }
+               }}
+               className="form-control"
+             />
+             
+                             </div>
+                             <label
+                               htmlFor="example-select-input"
+                               className="col-2 col-form-label"
+                               style={{ fontSize: "0.8rem" }}
+                             >
+                               Total Row
+                             </label>
+                             <div className="col-2">
+                               <input value={numRows} readOnly className="form-control" />
+                             </div>
+                           </Row>
+                           <Row className="">
+                             <label
+                               htmlFor="example-select-input"
+                               className="col-2 col-form-label"
+                               style={{ fontSize: "0.8rem" }}
+                             >
+                               Steps In Row
+                             </label>
+                             <div className="col-4">
+                               <BootstrapNumberInput
+                                 value={noOfStepInRow}
+                                 setValue={setNoOfStepInRow}
+                                 start={+startRowInput}
+                                 end={+endRowInput}
+                                 // setDerivedValue={setNoInRow}
+                                 id="step-in-row"
+                               />
+                             </div>
+                             <label
+                               htmlFor="example-select-input"
+                               className="col-2 col-form-label "
+                               style={{ fontSize: "0.8rem" }}
+                             >
+                               Total Per Row
+                             </label>
+                             <div className="col-4">
+                               <input
+                                 type="number"
+                                 className="form-control"
+                                 value={noInRow}
+                                 onChange={(e) => setNoInRow(e.target.value)}
+                                 // required
+                                 disabled
+                               />
+                             </div>
+                           </Row>
+                           <Row className="mb-2">
+               {/* Start Column */}
+               <label
+                 htmlFor="startCol"
+                 className="col-2 col-form-label"
+                 style={{ fontSize: "0.8rem" }}
+               >
+                 Start Col
+               </label>
+               <div className="col-2">
+                 <input
+                   id="startCol"
+                   type="text"
+                   value={startColInput}
+                   onBlur={(e) => {
+                     const newValue = Number(e.target.value);
+                     if (newValue > 0) {
+                       setSelection((item) => ({
+                         ...item,
+                         startCol: newValue,
+                       }));
+                     } else {
+                       setStartColInput(selection?.startCol); // Reset to previous valid value
+                     }
+                   }}
+                   onChange={(e) => {
+                     const value = e.target.value.replace(/[^0-9]/g, "");
+                     if (value === "") {
+                       setStartColInput("");
+                     } else {
+                       setStartColInput(Number(value));
+                     }
+                   }}
+                   className="form-control"
+                 />
+               </div>
+             
+               {/* End Column */}
+               <label
+                 htmlFor="endCol"
+                 className="col-2 col-form-label"
+                 style={{ fontSize: "0.8rem" }}
+               >
+                 End Col
+               </label>
+               <div className="col-2">
+                 <input
+                   id="endCol"
+                   type="text"
+                   value={endColInput}
+                   onBlur={(e) => {
+                     const newValue = Number(e.target.value);
+                     if (newValue > 0) {
+                       setSelection((item) => ({
+                         ...item,
+                         endCol: newValue,
+                       }));
+                     } else {
+                       setEndColInput(selection?.endCol); // Reset to previous valid value
+                     }
+                   }}
+                   onChange={(e) => {
+                     const value = e.target.value.replace(/[^0-9]/g, "");
+                     if (value === "") {
+                       setEndColInput("");
+                     } else {
+                       const numericValue = Number(value);
+                       setEndColInput(numericValue);
+                       setMaximumMark(numericValue);
+                     }
+                   }}
+                   className="form-control"
+                 />
+               </div>
+             
+               {/* Total Column */}
+               <label
+                 htmlFor="totalCol"
+                 className="col-2 col-form-label"
+                 style={{ fontSize: "0.8rem" }}
+               >
+                 Total Column
+               </label>
+               <div className="col-2">
+                 <input
+                   id="totalCol"
+                   value={numCols}
+                   readOnly
+                   className="form-control"
+                 />
+               </div>
+             </Row>
               <Row className="mb-2">
                 <label
                   htmlFor="example-select-input"
