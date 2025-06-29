@@ -128,10 +128,14 @@ const DesignTemplate = () => {
   const inputRef = useRef(null);
   const divRefs = useRef([]);
   const [highlightField , setHighlightField] = useState(false)
-
+const [formatting,setFormatting] = useState("")
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
 
+ useEffect(() => {
+  setFormatting(numberOfField === "" ? "" : "X".repeat(numberOfField));
+}, [numberOfField]);
+ 
   useEffect(() => {
     if (modalShow) {
       if (startRowInput && endRowInput && modalShow) {
@@ -2915,6 +2919,31 @@ const DesignTemplate = () => {
                   </div>
                 </Row>
               )}
+              {selectedFieldType === "formField" && (
+  <Row className="mb-2">
+    <label
+      htmlFor="field-formatting"
+      className="col-md-2 col-form-label"
+      style={{ fontSize: "0.8rem" }}
+    >
+      Field Formatting
+    </label>
+    <div className="col-10">
+      <input
+        id="field-formatting"
+        type="text"
+        className="form-control"
+        value = {formatting}
+      // value={numberOfField === "" ? "" : "X".repeat(numberOfField)}
+        onChange={(e) => {
+          setFormatting(e.target.value)
+        }}
+        required
+      />
+    </div>
+  </Row>
+)}
+
               {(selectedFieldType === "questionField" ||
                 selectedFieldType === "formField") &&
                 fieldType === "custom" && (
@@ -2936,6 +2965,9 @@ const DesignTemplate = () => {
                     </div>
                   </Row>
                 )}
+
+
+
             </>
           )}
         </CustomDraggableModal.Body>
