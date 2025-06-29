@@ -2225,16 +2225,16 @@ const EditDesignTemplate = () => {
       <CustomDraggableModal
         show={modalShow}
         size="lg"
+        // onClose={() => {
+        //   setModalShow(false);
+        // }}
         // aria-labelledby="contained-modal-title-vcenter"
         // autoFocus={true}
         // enforceFocus={true}
         // centered
       >
-        <CustomDraggableModal.Header >
-          <div
-          
-            style={{ width: "100%"  }}
-          >
+        <CustomDraggableModal.Header>
+          <div style={{ width: "100%" }}>
             {modalUpdate && (
               <h2 className="text-center">
                 {!modalUpdate
@@ -2257,7 +2257,7 @@ const EditDesignTemplate = () => {
             )}
             <br />
             {!modalUpdate && (
-              <Row className="mb-2" style={{width:"100%"}}>
+              <Row className="mb-2" style={{ width: "100%" }}>
                 <label
                   htmlFor="example-text-input"
                   className="col-md-2 col-form-label"
@@ -2340,7 +2340,7 @@ const EditDesignTemplate = () => {
             )}
           </div>
         </CustomDraggableModal.Header>
-        <CustomDraggableModal.Body >
+        <CustomDraggableModal.Body>
           {selectedFieldType && (
             <>
               {selectedFieldType !== "idField" && (
