@@ -17,7 +17,13 @@ export default function ExcelLikeTable(props) {
       const newRow = props.selected.flatMap((item) => {
         switch (item.fieldType) {
           case "formField":
-            return [{ cellValue: item.name, cellType: item.fieldType }];
+            return [
+              {
+                cellValue: item.name,
+                cellType: item.fieldType,
+                selectedField: item,
+              },
+            ];
 
           case "questionField":
             const [start, end] = item.name.split("-");
@@ -30,15 +36,28 @@ export default function ExcelLikeTable(props) {
               generatedQuestions.push({
                 cellValue: `${prefix}${i}`,
                 cellType: item.fieldType,
+                selectedField: item,
               });
             }
             return generatedQuestions;
 
           case "skewField":
-            return [{ cellValue: item.name, cellType: item.fieldType }];
+            return [
+              {
+                cellValue: item.name,
+                cellType: item.fieldType,
+                selectedField: item,
+              },
+            ];
 
           default:
-            return [{ cellValue: item.name, cellType: item.fieldType }];
+            return [
+              {
+                cellValue: item.name,
+                cellType: item.fieldType,
+                selectedField: item,
+              },
+            ];
         }
       });
 
@@ -53,9 +72,10 @@ export default function ExcelLikeTable(props) {
   }, [props.selected]);
 
   const handleFieldClick = (item, colIndex, rowIndex) => {
-
-    const matchedField = findFieldDetails(item.cellValue);
-
+    console.log(item);
+    console.log(fields);
+    const matchedField = findFieldDetailsUsingObj(item.selectedField);
+    console.log(matchedField);
     if (matchedField) {
       setSelectedCell({ row: rowIndex, col: colIndex });
 
@@ -67,7 +87,9 @@ export default function ExcelLikeTable(props) {
       toast.warning("Selected field not found");
     }
   };
-
+  const findFieldDetailsUsingObj = (selectedField) => {
+    return fields.find((field) => _.isEqual(field, selectedField)) || null;
+  };
   const findFieldDetails = (cellValue) => {
     for (const field of fields) {
       // Assume fieldData is the first array you provided
@@ -118,7 +140,7 @@ export default function ExcelLikeTable(props) {
       if (formDetails.length > 0) {
         dataCtx.changeIndexTemplate(formDetails, "formField");
       }
-      
+
       setData(newData);
       setDraggedCell(null);
     }
