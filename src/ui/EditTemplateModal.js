@@ -284,7 +284,7 @@ const EditTemplateModal = (props) => {
           setSelectedBubble(comparewithName(bubbleData, layout.bubbleType));
           setSensitivity(layout.iSensitivity);
           setDifference(layout.iDifference);
-          setValue([layout.iSensitivity, layout.iDifference]);
+          setValue(layout.iSensitivity);
           // const file = base64ToFile(layout.templateImagePath, "image.jpg");
           // setImageFile(file);
           setImage(layout.templateImagePath);
