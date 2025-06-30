@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useState, useCallback } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+} from "react";
 import { Modal, Button } from "react-bootstrap";
 import DataContext from "store/DataContext";
 import Placeholder from "ui/Placeholder";
@@ -15,7 +21,7 @@ import IconButton from "@mui/material/IconButton";
 import TableRow from "components/TableRow";
 import { toast } from "react-toastify";
 import DeleteIcon from "@mui/icons-material/Delete";
-
+import isEqual from "lodash.isequal";
 const FieldDetails = (props) => {
   const [fields, setFields] = useState([]);
   const [animatingIndex, setAnimatingIndex] = useState(null);
@@ -25,8 +31,8 @@ const FieldDetails = (props) => {
   const [formField, setFormField] = useState([]);
   const [idField, setIdField] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [items, setItems] = useState([]);
-
+  const [items, setItems] = useState(false);
+  const prevSelectedRef = useRef();
   // Only initialize when modal opens
 
   // Example: Selecting All
@@ -70,7 +76,8 @@ const FieldDetails = (props) => {
 
   const dataCtx = useContext(DataContext);
   useEffect(() => {
-    if (props.selected) {
+    // If it's the first render or props.selected has changed deeply
+    if (!isEqual(prevSelectedRef.current, props.selected)) {
       const selectedFields = JSON.parse(JSON.stringify(props.selected)); // Deep copy to prevent parent overwrite
 
       const groupedFields = selectedFields.reduce((acc, item) => {
@@ -87,8 +94,11 @@ const FieldDetails = (props) => {
       setIdField(groupedFields["idField"] || []);
       setFields(selectedFields);
       setSelectedItems([]);
+
+      // Update previous selected ref
+      prevSelectedRef.current = props.selected;
     }
-  }, [dataCtx]);
+  }, [items]);
 
   const moveUp = (index) => {
     if (index > 0) {
@@ -466,7 +476,10 @@ const FieldDetails = (props) => {
               fieldData={formField}
               handleSort={handleSort}
               editHandler={(item, i) => props.editHandler(item, i)}
-              deleteHander={(item, i) => props.deleteHandler(item, i)}
+              deleteHander={(item, i) => {
+                setItems((prev) => !prev);
+                props.deleteHandler(item, i);
+              }}
               selectedItems={selectedItems}
               handleCheckboxChange={handleCheckboxChange}
               serialOffset={0}
@@ -477,7 +490,10 @@ const FieldDetails = (props) => {
               fieldData={questionField}
               handleSort={handleSort}
               editHandler={(item, i) => props.editHandler(item, i)}
-              deleteHander={(item, i) => props.deleteHandler(item, i)}
+              deleteHander={(item, i) => {
+                setItems((prev) => !prev);
+                props.deleteHandler(item, i);
+              }}
               selectedItems={selectedItems}
               handleCheckboxChange={handleCheckboxChange}
               serialOffset={formField.length}
@@ -488,7 +504,10 @@ const FieldDetails = (props) => {
               fieldData={skewField}
               handleSort={handleSort}
               editHandler={(item, i) => props.editHandler(item, i)}
-              deleteHander={(item, i) => props.deleteHandler(item, i)}
+              deleteHander={(item, i) => {
+                setItems((prev) => !prev);
+                props.deleteHandler(item, i);
+              }}
               selectedItems={selectedItems}
               handleCheckboxChange={handleCheckboxChange}
               serialOffset={formField.length + questionField.length}
@@ -498,7 +517,10 @@ const FieldDetails = (props) => {
               fieldData={idField}
               handleSort={handleSort}
               editHandler={(item, i) => props.editHandler(item, i)}
-              deleteHander={(item, i) => props.deleteHandler(item, i)}
+              deleteHander={(item, i) => {
+                setItems((prev) => !prev);
+                props.deleteHandler(item, i);
+              }}
               selectedItems={selectedItems}
               handleCheckboxChange={handleCheckboxChange}
               serialOffset={
