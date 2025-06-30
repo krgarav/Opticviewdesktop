@@ -89,7 +89,7 @@ const FieldDetails = (props) => {
       // Update the state with selected fields
       setFields(selectedFields);
     }
-  }, [dataCtx, props.selected]);
+  }, [props.selected]);
 
   const moveUp = (index) => {
     if (index > 0) {
