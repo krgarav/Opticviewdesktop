@@ -77,9 +77,10 @@ const FieldDetails = (props) => {
   const dataCtx = useContext(DataContext);
   useEffect(() => {
     // If it's the first render or props.selected has changed deeply
-    if (!isEqual(prevSelectedRef.current, props.selected)) {
+    if ( props.selected) {
       const selectedFields = JSON.parse(JSON.stringify(props.selected)); // Deep copy to prevent parent overwrite
-
+console.log("called")
+console.log(props.selected)
       const groupedFields = selectedFields.reduce((acc, item) => {
         if (!acc[item.fieldType]) {
           acc[item.fieldType] = [];
@@ -95,8 +96,7 @@ const FieldDetails = (props) => {
       setFields(selectedFields);
       setSelectedItems([]);
 
-      // Update previous selected ref
-      prevSelectedRef.current = props.selected;
+     
     }
   }, [items]);
 
@@ -422,7 +422,10 @@ const FieldDetails = (props) => {
       indexes.includes(idx)
     );
     dataCtx.deleteMultipleFields(matchedItems);
-    setItems((prev) => !prev);
+    setTimeout(() => {
+       setItems((prev) => !prev);
+    }, 500);
+   
     toast.success("Selected fields deleted successfully.");
   };
   return (
