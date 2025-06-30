@@ -812,6 +812,7 @@ const [formatting,setFormatting] = useState("")
         blankAllow: blank,
         blankValue: blankValue ? blankValue : "",
         customFieldValue: customValue ? customValue : "",
+         formatting:formatting?formatting:""
       };
       const template = dataCtx.allTemplates.find((item) => {
         return item[0].layoutParameters?.key ?? "" === templateIndex;

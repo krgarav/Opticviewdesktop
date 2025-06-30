@@ -746,6 +746,7 @@ const [formatting,setFormatting] = useState("")
         blankAllow: blank,
         blankValue: blankValue ? blankValue : "",
         customFieldValue: customValue ? customValue : "",
+        formatting:formatting?formatting:""
       };
     }
 
