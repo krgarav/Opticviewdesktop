@@ -127,13 +127,13 @@ const BookletTemplateModal = (props) => {
   const [printOrientation, setPrintOrientation] = useState();
   const [printMode, setPrintMode] = useState();
   const [printCustom, setPrintCustom] = useState({ id: "date", name: "Date" });
-  const [startPosition, setStartPosition] = useState(0.01);
+  const [startPosition, setStartPosition] = useState(0);
   const [fontSpace, setFontSpace] = useState(0.8);
   const [printDigit, setPrintDigit] = useState(null);
   const [printStartNumber, setPrintStartNumber] = useState(null);
   const [printCustomValue, setPrintCustomValue] = useState(null);
   const [scannerLoading, setScannerLoading] = useState(false);
-  const [value, setValue] = React.useState([3, 8]);
+  const [value, setValue] = React.useState(3);
   const [images, setImages] = useState([]);
   const [showFront, setShowFront] = useState(true);
   const [baseUrl, setBaseUrl] = useState(null);
@@ -154,21 +154,10 @@ const BookletTemplateModal = (props) => {
     };
     fetchData();
   }, []);
-  const handleChange = (event, newValue, activeThumb) => {
-    const minDistance = 1;
-    if (!Array.isArray(newValue)) {
-      return;
-    }
+ const handleChange = (newValue) => {
 
-    if (activeThumb === 0) {
-      setValue([Math.min(newValue[0], value[1] - minDistance), value[1]]);
-      setSensitivity(newValue[0]);
-      setDifference(newValue[1]);
-    } else {
-      setValue([value[0], Math.max(newValue[1], value[0] + minDistance)]);
-      setSensitivity(newValue[0]);
-      setDifference(newValue[1]);
-    }
+    setValue(newValue);
+    setSensitivity(newValue);
   };
 
   const jobHandler = (e) => {
@@ -1136,7 +1125,7 @@ const BookletTemplateModal = (props) => {
                                         </div>
                                     </Row> */}
 
-                      <Row className="mb-3">
+                     <Row className="mb-3">
                         <label
                           htmlFor="example-text-input"
                           className="col-md-2 col-form-label  "
@@ -1165,19 +1154,8 @@ const BookletTemplateModal = (props) => {
                                 overflow: "hidden",
                               }}
                             >
-                              <ShadesOfGrey />
+                              <ShadesOfGrey type="reverse" />
                             </div>
-
-                            {/* <input
-                              type="range"
-                              id="sensitivityRange"
-                              min="1"
-                              max="16"
-                              value={sensitivity}
-                              onChange={(e) => setSensitivity(e.target.value)}
-                              title={sensitivity}
-                              style={{ cursor: "pointer" }}
-                            /> */}
                             <Box
                               sx={{
                                 width: "94%",
@@ -1188,18 +1166,22 @@ const BookletTemplateModal = (props) => {
                               <Slider
                                 getAriaLabel={() => "Sensitivity range"}
                                 value={value}
-                                onChange={handleChange}
+                                onChange={(event, newValue) =>
+                                  handleChange(newValue)
+                                }
                                 valueLabelDisplay="auto"
-                                min={0} // Ensure minimum value is 0
+                                min={1}
                                 max={16}
-                                disableSwap
+                                step={1}
+                                scale={(x) => 17 - x} // This reverses the displayed value
                                 size="large"
                                 color="PRIMARY"
+                                track="inverted" // Optional: shows the fill from right to left
                                 slots={{
                                   ValueLabel: (props) => (
                                     <CustomTooltip
                                       {...props}
-                                      shade={getShadeFromValue(value)} // Pass the shade based on the value
+                                      shade={getShadeFromValue(value)}
                                     />
                                   ),
                                 }}
@@ -1208,7 +1190,7 @@ const BookletTemplateModal = (props) => {
                           </div>
 
                           <input
-                            value={`${sensitivity} - ${difference}`}
+                            value={`${sensitivity}`}
                             onChange={(e) => setSensitivity(e.target.value)}
                             style={{
                               width: "100%",
@@ -1228,54 +1210,108 @@ const BookletTemplateModal = (props) => {
                             </span>
                           )}
                         </div>
-                        {/* <label
+                      </Row>
+                      <Row className="mb-3">
+                        <label
                           htmlFor="example-text-input"
-                          className="col-md-2 col-form-label "
-                          style={{ fontSize: ".9rem", textAlign: "right" }}
+                          className="col-md-2 col-form-label  "
+                          style={{ fontSize: ".9rem" }}
                         >
-                          Difference
-                        </label> */}
-                        {/* <div className="col-md-3">
-                          <input
+                          Density
+                        </label>
+                        <div
+                          className="col-md-10"
+                          style={{
+                            display: "flex",
+                            gap: "5px",
+                            width: "100%",
+                          }}
+                        >
+                          <div
                             style={{
-                              border: toggle.difference ? "1px solid red" : "",
+                              display: "flex",
+                              flexDirection: "column",
+                              width: "100%",
                             }}
-                            placeholder="Enter difference"
-                            type="number"
-                            className="form-control"
-                            value={difference}
-                            onBlur={(e) => {
-                              const inputValue = e.target.value;
+                          >
+                            <div
+                              style={{
+                                borderRadius: "6px",
+                                overflow: "hidden",
+                              }}
+                            >
+                              <ShadesOfGrey type="normal" />
+                            </div>
+                            <Box
+                              sx={{
+                                width: "94%",
+                                justifyContent: "center",
+                                alignSelf: "center",
+                              }}
+                            >
+                              {/* <Slider
+                                getAriaLabel={() => "Sensitivity range"}
+                                value={value}
+                                onChange={handleChange}
+                                valueLabelDisplay="auto"
+                                min={0} // Ensure minimum value is 0
+                                max={16}
+                                disableSwap
+                                size="large"
+                                color="PRIMARY"
+                                slots={{
+                                  ValueLabel: (props) => (
+                                    <CustomTooltip
+                                      {...props}
+                                      shade={getShadeFromValue(value)} // Pass the shade based on the value
+                                    />
+                                  ),
+                                }}
+                              /> */}
+                              <Slider
+                                getAriaLabel={() => "Sensitivity range"}
+                                value={difference} // should be a single number
+                                onChange={(event, newValue) =>
+                                  setDifference(newValue)
+                                } // handle as a number
+                                valueLabelDisplay="auto"
+                                min={1}
+                                max={16}
+                                size="large"
+                                color="PRIMARY"
+                                slots={{
+                                  ValueLabel: (props) => (
+                                    <CustomTooltip
+                                      {...props}
+                                      shade={getShadeFromValue(value)} // Pass the shade based on the value
+                                    />
+                                  ),
+                                }}
+                              />
+                            </Box>
+                          </div>
 
-                              // Check if the input value is not empty and less than sensitivity
-                              if (
-                                inputValue !== "" &&
-                                +inputValue < +sensitivity
-                              ) {
-                                alert(
-                                  "Entered value cannot be less than sensitivity"
-                                );
-                                setDifference("");
-                                return;
-                              }
+                          <input
+                            value={`${difference}`}
+                            style={{
+                              width: "100%",
+                              padding: "2px",
+                              textAlign: "center",
                             }}
-                            onChange={(e) => {
-                              setDifference(e.target.value);
-                              settoggle((item) => ({
-                                ...item,
-                                difference: false,
-                              }));
-                            }}
+                            className="form-control"
+                            type="text"
+                            disabled
                           />
 
-                          {!difference && (
+                          {!sensitivity && (
                             <span
                               style={{ color: "red", display: spanDisplay }}
                             >
                               This feild is required
                             </span>
                           )}
-                        </div> */}
+                        </div>
+                        
                       </Row>
 
                       <Row className="mb-3">

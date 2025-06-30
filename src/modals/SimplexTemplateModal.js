@@ -127,7 +127,7 @@ const SimplexTemplateModal = (props) => {
   const [printOrientation, setPrintOrientation] = useState();
   const [printMode, setPrintMode] = useState();
   const [printCustom, setPrintCustom] = useState(printCustomOption[0]);
-  const [startPosition, setStartPosition] = useState(0.01);
+  const [startPosition, setStartPosition] = useState(0);
   const [fontSpace, setFontSpace] = useState(0.8);
   const [printDigit, setPrintDigit] = useState(null);
   const [printStartNumber, setPrintStartNumber] = useState(null);
@@ -155,7 +155,7 @@ const SimplexTemplateModal = (props) => {
     fetchData();
   }, []);
   const handleChange = (newValue) => {
-    const minDistance = 1;
+   
 
     setValue(newValue);
     setSensitivity(newValue);
@@ -583,41 +583,7 @@ const SimplexTemplateModal = (props) => {
       setScannerLoading(false);
     }
   };
-  const scanner2Handler = async () => {
-    setScannerLoading(true);
-    setShowScanner(false);
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/GetSampleData/2"
-      );
-      const { data, images } = response.data;
-      const jsonData = data;
-      const correctedJson = jsonData
-        .map((item) => {
-          const filteredItem = Object.fromEntries(
-            Object.entries(item).filter(([key, value]) => key !== "")
-          );
-
-          // Only include the item if it's not empty
-          return Object.keys(filteredItem).length > 0 ? filteredItem : null;
-        })
-        .filter((item) => item !== null); // Remove nulls from the resulting array
-      const Row = correctedJson.length;
-      const Column = Object.keys(correctedJson[1]).filter(
-        (item) => item !== ""
-      ).length;
-
-      setNumberOfLines(Row); //setting number of rows in excel
-      setNumberOfFrontSideColumn(Column); //setting number of columns in excel
-      setExcelJsonFile(correctedJson);
-      setImages(images);
-    } catch (error) {
-      console.log(error);
-      // toast.error(error.message);
-    } finally {
-      setScannerLoading(false);
-    }
-  };
+ 
 
   const systemHandler = () => {
     // document.getElementById("formFile").click();
@@ -1159,51 +1125,7 @@ const SimplexTemplateModal = (props) => {
                           />
                         </div>
                       </Row>
-                      {/* <Row className="mb-3">
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-2 col-form-label "
-                          style={{ fontSize: ".85rem" }}
-                        >
-                          Printing
-                        </label>
-                        <div className="col-md-10">
-                          <Select
-                            value={printEnable}
-                            onChange={(selectedValue) => {
-                              setPrintEnable(selectedValue);
-                            }}
-                            options={printOptionData}
-                            getOptionLabel={(option) => option?.name || ""}
-                            getOptionValue={(option) =>
-                              option?.id?.toString() || ""
-                            }
-                          />
-                        </div>
-                      </Row> */}
-
-                      {/* <Row className="mb-3">
-                                        <label
-                                            htmlFor="example-text-input"
-                                            className="col-md-2 col-form-label "
-                                            style={{ fontSize: ".85rem" }}
-                                        >
-                                            Barcode Count:
-                                        </label>
-                                        <div className="col-md-10">
-                                            <input placeholder="Enter barcode count" type="number" className="form-control" onChange={(e) => {
-                                                settoggle((item) => ({ ...item, barcode: false }));
-                                                setBarCount(e.target.value)
-                                            }}
-                                                style={{ border: toggle.barcode ? "1px solid red" : "" }}
-                                            />
-                                            {!selectedBubble && (
-                                                <span style={{ color: "red", display: spanDisplay }}>
-                                                    This feild is required
-                                                </span>
-                                            )}
-                                        </div>
-                                    </Row> */}
+                     
 
                       <Row className="mb-3">
                         <label

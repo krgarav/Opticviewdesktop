@@ -607,11 +607,20 @@ const LayoutDetailModal = (props) => {
       console.error("Error uploading file: ", error);
     }
   };
-  console.log(dataCtx.allTemplates);
-  const scannerHandler = async () => {
+
+ const scannerHandler = async () => {
     setScannerLoading(true);
+ ;
+
+    if (!scanner?.id) {
+      alert("Please select a scanner");
+      setScannerLoading(false); // ✅ Reset loading state if early return
+      return;
+    }
     try {
-      const response = await axios.post("http://localhost:5000/GetSampleData");
+      const response = await axios.post(
+        `http://localhost:5000/GetSampleData/${scanner?.id}` // Use the selected scanner's id
+      );
       const { data, images } = response.data;
       const jsonData = data;
       const correctedJson = jsonData
@@ -628,13 +637,13 @@ const LayoutDetailModal = (props) => {
       const Column = Object.keys(correctedJson[1]).filter(
         (item) => item !== ""
       ).length;
-      setNumberOfLines(Row);
-      setNumberOfFrontSideColumn(Column);
+
+      setNumberOfLines(Row); //setting number of rows in excel
+      setNumberOfFrontSideColumn(Column); //setting number of columns in excel
       setExcelJsonFile(correctedJson);
       setImages(images);
     } catch (error) {
       console.log(error);
-
       // toast.error(error.message);
     } finally {
       setScannerLoading(false);
