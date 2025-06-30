@@ -6,9 +6,9 @@ const CustomDraggableModal = ({ show, onClose, children, size = "md" }) => {
   if (!show) return null;
 
   const modalSizes = {
-    sm: "300px",
-    md: "500px",
-    lg: "800px",
+    sm: "90%",  // Responsive width
+    md: "80%",
+    lg: "60%",
   };
 
   const modalWidth = modalSizes[size] || modalSizes["md"];
@@ -26,6 +26,8 @@ const CustomDraggableModal = ({ show, onClose, children, size = "md" }) => {
         alignItems: "center",
         justifyContent: "center",
         zIndex: 1000,
+        padding: "10px",
+        boxSizing: "border-box",
       }}
     >
       <Draggable handle=".custom-modal-header" bounds="parent">
@@ -34,11 +36,13 @@ const CustomDraggableModal = ({ show, onClose, children, size = "md" }) => {
             background: "white",
             borderRadius: "8px",
             width: modalWidth,
+            maxHeight: "90vh",
             boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
             position: "relative",
             display: "flex",
             flexDirection: "column",
             cursor: "default",
+            overflow: "hidden",
           }}
         >
           {React.Children.map(children, (child) => {
@@ -55,7 +59,7 @@ const CustomDraggableModal = ({ show, onClose, children, size = "md" }) => {
 
 // Header Subcomponent
 CustomDraggableModal.Header = ({ children, onClose }) => (
- <div
+  <div
     className="custom-modal-header"
     style={{
       padding: "10px",
@@ -67,9 +71,10 @@ CustomDraggableModal.Header = ({ children, onClose }) => (
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
+      flexShrink: 0, // Prevent shrinking
     }}
   >
-    <div style={{ width: '100%' }}>{children}</div> {/* Render as a block */}
+    <div style={{ width: "100%" }}>{children}</div>
     <button
       onClick={onClose}
       style={{
@@ -87,7 +92,16 @@ CustomDraggableModal.Header = ({ children, onClose }) => (
 
 // Body Subcomponent
 CustomDraggableModal.Body = ({ children }) => (
-  <div style={{ padding: "20px", flex: 1 }}>{children}</div>
+  <div
+    style={{
+      flex: 1,              // Take up remaining space
+      minHeight: 0,         // Allow shrinking (critical for flexbox scrolling)
+      overflowY: "auto",    // Scroll when content overflows
+      padding: "20px",
+    }}
+  >
+    {children}
+  </div>
 );
 
 // Footer Subcomponent
@@ -100,10 +114,11 @@ CustomDraggableModal.Footer = ({ children }) => (
       justifyContent: "flex-end",
       borderBottomLeftRadius: "8px",
       borderBottomRightRadius: "8px",
+      flexShrink: 0, // Prevent shrinking
     }}
   >
     {children}
   </div>
 );
 
-export default CustomDraggableModal
+export default CustomDraggableModal;

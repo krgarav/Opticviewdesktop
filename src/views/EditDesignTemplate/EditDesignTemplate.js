@@ -2349,7 +2349,7 @@ const [formatting,setFormatting] = useState("")
         </CustomDraggableModal.Header>
         <CustomDraggableModal.Body>
           {selectedFieldType && (
-            <>
+            <div >
               {selectedFieldType !== "idField" && (
                 <Row className="mb-2">
                   <label
@@ -2998,7 +2998,7 @@ const [formatting,setFormatting] = useState("")
                     </div>
                   </Row>
                 )}
-            </>
+            </div>
           )}
         </CustomDraggableModal.Body>
         <CustomDraggableModal.Footer
