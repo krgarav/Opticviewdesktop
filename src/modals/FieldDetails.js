@@ -422,6 +422,7 @@ const FieldDetails = (props) => {
       indexes.includes(idx)
     );
     dataCtx.deleteMultipleFields(matchedItems);
+    setItems((prev) => !prev);
     toast.success("Selected fields deleted successfully.");
   };
   return (
