@@ -25,6 +25,9 @@ const FieldDetails = (props) => {
   const [formField, setFormField] = useState([]);
   const [idField, setIdField] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [items, setItems] = useState([]);
+
+  // Only initialize when modal opens
 
   // Example: Selecting All
   const handleSelectAll = (e) => {
@@ -66,12 +69,10 @@ const FieldDetails = (props) => {
   };
 
   const dataCtx = useContext(DataContext);
-
   useEffect(() => {
     if (props.selected) {
-      const selectedFields = props.selected;
+      const selectedFields = JSON.parse(JSON.stringify(props.selected)); // Deep copy to prevent parent overwrite
 
-      // Group the fields by fieldType
       const groupedFields = selectedFields.reduce((acc, item) => {
         if (!acc[item.fieldType]) {
           acc[item.fieldType] = [];
@@ -80,16 +81,14 @@ const FieldDetails = (props) => {
         return acc;
       }, {});
 
-      // Set individual field states
       setQuestionFields(groupedFields["questionField"] || []);
       setSkewField(groupedFields["skewMarkField"] || []);
       setFormField(groupedFields["formField"] || []);
       setIdField(groupedFields["idField"] || []);
-
-      // Update the state with selected fields
       setFields(selectedFields);
+      setSelectedItems([]);
     }
-  }, [props.selected]);
+  }, [dataCtx]);
 
   const moveUp = (index) => {
     if (index > 0) {
