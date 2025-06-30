@@ -812,7 +812,7 @@ const [formatting,setFormatting] = useState("")
         blankAllow: blank,
         blankValue: blankValue ? blankValue : "",
         customFieldValue: customValue ? customValue : "",
-         formatting:formatting?formatting:""
+        formatting:formatting?formatting:""
       };
       const template = dataCtx.allTemplates.find((item) => {
         return item[0].layoutParameters?.key ?? "" === templateIndex;
@@ -1048,6 +1048,7 @@ const [formatting,setFormatting] = useState("")
       setNoOfStepInRow(data?.rowStep);
       setNoOfStepInCol(data?.columnStep);
       setCustomValue(data?.customFieldValue);
+      setFormatting(data?.formatting)
     } else if (selectedField?.fieldType === "skewMarkField") {
       const parameters = template[0].skewMarksWindowParameters;
       const index = parameters.findIndex((item) =>

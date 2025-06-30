@@ -1003,6 +1003,7 @@ const [formatting,setFormatting] = useState("")
       setCustomValue(data?.customFieldValue);
       setSuffix(data?.suffix);
       setPrefix(data?.prefix);
+       setFormatting(data?.formatting)
     } else if (selectedField?.fieldType === "skewMarkField") {
       const parameters = template[0].skewMarksWindowParameters;
       const index = parameters.findIndex((item) =>
