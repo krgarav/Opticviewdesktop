@@ -76,17 +76,26 @@ CustomDraggableModal.Header = ({ children, onClose }) => (
   >
     <div style={{ width: "100%" }}>{children}</div>
     <button
-      onClick={onClose}
-      style={{
-        background: "transparent",
-        border: "none",
-        color: "white",
-        fontSize: "20px",
-        cursor: "pointer",
-      }}
-    >
-      &times;
-    </button>
+  onClick={onClose}
+  style={{
+    background: "transparent",
+    border: "none",
+    color: "white",
+    fontSize: "40px",
+    cursor: "pointer",
+    transition: "color 0.3s ease, transform 0.2s ease",
+  }}
+  onMouseEnter={(e) => {
+    e.target.style.color = "#ff4d4d";
+    e.target.style.transform = "scale(1.2)";
+  }}
+  onMouseLeave={(e) => {
+    e.target.style.color = "white";
+    e.target.style.transform = "scale(1)";
+  }}
+>
+  &times;
+</button>
   </div>
 );
 
