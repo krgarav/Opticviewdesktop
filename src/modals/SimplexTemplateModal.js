@@ -1552,9 +1552,9 @@ const SimplexTemplateModal = (props) => {
                           <input
                             type="range"
                             id="start-position"
-                            min="0.01"
+                            min="0"
                             max="355"
-                            step="0.01"
+                            step="1"
                             value={startPosition}
                             className="form-range flex-grow-1"
                             onChange={(e) => {
@@ -1572,9 +1572,7 @@ const SimplexTemplateModal = (props) => {
                               type="text"
                               className="form-control text-end"
                               value={
-                                startPosition !== ""
-                                  ? parseFloat(startPosition).toFixed(2)
-                                  : ""
+                                startPosition 
                               }
                               disabled
                             />
@@ -2177,14 +2175,29 @@ const SimplexTemplateModal = (props) => {
                                 Color
                               </label>
                             </div>
-
+ <div className="form-check form-check-inline mr-3">
+    <input
+      className="form-check-input"
+      type="radio"
+      name="colorType"
+      id="blackwhite"
+      value="blackwhite"
+      checked={colorType === "blackwhite"}
+      onChange={(e) => setColorType(e.target.value)}
+    />
+    <label className="form-check-label" htmlFor="blackwhite">
+      Black & White
+    </label>
+  </div>
                             <div>
                               <img
-                                src={
-                                  colorType !== "grayscale"
-                                    ? "/colored.webp"
-                                    : "/grayscale.webp"
-                                }
+                               src={
+        colorType === "color"
+          ? "/colored.webp"
+          : colorType === "blackwhite"
+          ? "/grayscale.webp"
+          : "/grayscale.webp"
+      }
                                 width={100}
                                 height={100}
                                 alt={colorType}

@@ -1462,9 +1462,9 @@ const BookletTemplateModal = (props) => {
                           <input
                             type="range"
                             id="start-position"
-                            min="0.01"
+                            min="0"
                             max="355"
-                            step="0.01"
+                            step="1"
                             value={startPosition}
                             className="form-range flex-grow-1"
                             onChange={(e) => {
@@ -1478,7 +1478,9 @@ const BookletTemplateModal = (props) => {
                             <input
                               type="text"
                               className="form-control text-end"
-                              value={startPosition !== "" ? parseFloat(startPosition).toFixed(2) : ""}
+                             value={
+                                startPosition 
+                              }
                               disabled
                             />
                             <div className="input-group-append">
@@ -2031,66 +2033,81 @@ const BookletTemplateModal = (props) => {
                     <Tab.Pane eventKey="image">
                       <Form>
                         <Row className="mb-3 align-items-center">
-                          <label
-                            htmlFor="example-text-input"
-                            className="col-md-3 col-form-label"
-                            style={{ fontSize: ".9rem" }}
-                          >
-                            Image Color :
-                          </label>
-
-                          <div className="col-md-9 d-flex align-items-center justify-content-between">
-                            <div className="form-check form-check-inline mr-3">
-                              <input
-                                className="form-check-input"
-                                type="radio"
-                                name="colorType"
-                                id="grayscale"
-                                value="grayscale"
-                                checked={colorType === "grayscale"}
-                                onChange={(e) => setColorType(e.target.value)}
-                              />
-                              <label
-                                className="form-check-label"
-                                htmlFor="grayscale"
-                              >
-                                Grayscale
-                              </label>
-                            </div>
-
-                            <div className="form-check form-check-inline mr-3">
-                              <input
-                                className="form-check-input"
-                                type="radio"
-                                name="colorType"
-                                id="color"
-                                value="color"
-                                checked={colorType === "color"}
-                                onChange={(e) => setColorType(e.target.value)}
-                              />
-                              <label
-                                className="form-check-label"
-                                htmlFor="color"
-                              >
-                                Color
-                              </label>
-                            </div>
-
-                            <div>
-                              <img
-                                src={
-                                  colorType !== "grayscale"
-                                    ? "/colored.webp"
-                                    : "/grayscale.webp"
-                                }
-                                width={100}
-                                height={100}
-                                alt={colorType}
-                                className="rounded shadow"
-                              />
-                            </div>
+                                                  <label
+                                                    htmlFor="example-text-input"
+                                                    className="col-md-3 col-form-label"
+                                                    style={{ fontSize: ".9rem" }}
+                                                  >
+                                                    Image Color :
+                                                  </label>
+                        
+                                                  <div className="col-md-9 d-flex align-items-center justify-content-between">
+                                                    <div className="form-check form-check-inline mr-3">
+                                                      <input
+                                                        className="form-check-input"
+                                                        type="radio"
+                                                        name="colorType"
+                                                        id="grayscale"
+                                                        value="grayscale"
+                                                        checked={colorType === "grayscale"}
+                                                        onChange={(e) => setColorType(e.target.value)}
+                                                      />
+                                                      <label
+                                                        className="form-check-label"
+                                                        htmlFor="grayscale"
+                                                      >
+                                                        Grayscale
+                                                      </label>
+                                                    </div>
+                        
+                                                    <div className="form-check form-check-inline mr-3">
+                                                      <input
+                                                        className="form-check-input"
+                                                        type="radio"
+                                                        name="colorType"
+                                                        id="color"
+                                                        value="color"
+                                                        checked={colorType === "color"}
+                                                        onChange={(e) => setColorType(e.target.value)}
+                                                      />
+                                                      <label
+                                                        className="form-check-label"
+                                                        htmlFor="color"
+                                                      >
+                                                        Color
+                                                      </label>
+                                                    </div>
+                         <div className="form-check form-check-inline mr-3">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="colorType"
+                              id="blackwhite"
+                              value="blackwhite"
+                              checked={colorType === "blackwhite"}
+                              onChange={(e) => setColorType(e.target.value)}
+                            />
+                            <label className="form-check-label" htmlFor="blackwhite">
+                              Black & White
+                            </label>
                           </div>
-                        </Row>
+                                                    <div>
+                                                      <img
+                                                       src={
+                                colorType === "color"
+                                  ? "/colored.webp"
+                                  : colorType === "blackwhite"
+                                  ? "/grayscale.webp"
+                                  : "/grayscale.webp"
+                              }
+                                                        width={100}
+                                                        height={100}
+                                                        alt={colorType}
+                                                        className="rounded shadow"
+                                                      />
+                                                    </div>
+                                                  </div>
+                                                </Row>
 
                         <Row className="mb-3">
                           <label
