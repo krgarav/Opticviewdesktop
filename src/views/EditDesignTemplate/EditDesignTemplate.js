@@ -2155,7 +2155,8 @@ const EditDesignTemplate = () => {
                             {/* Main Rectangle */}
                             <div
                               ref={(el) => (divRefs.current[index] = el)}
-                              onClick={() => handleEyeClick(data, index)}
+                              onDoubleClick={() => handleEyeClick(data, index)}
+                              onClick={() => setCurrentSelectedCoordinate(data)}
                               style={{
                                 border: `3px solid ${borderColor}`,
                                 position: "absolute",
