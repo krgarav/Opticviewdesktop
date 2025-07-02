@@ -6,7 +6,7 @@ const CustomDraggableModal = ({ show, onClose, children, size = "md" }) => {
   if (!show) return null;
 
   const modalSizes = {
-    sm: "90%",  // Responsive width
+    sm: "30%",  // Responsive width
     md: "80%",
     lg: "60%",
   };

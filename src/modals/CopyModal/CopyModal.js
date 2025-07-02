@@ -10,6 +10,7 @@ import {
   Grid,
   Box,
 } from "@mui/material";
+import CustomDraggableModal from "views/test";
 const CopyModal = (props) => {
   const [modalShow, setModalShow] = useState(false);
   const [value, setValue] = useState("top"); // Default value
@@ -28,13 +29,16 @@ const CopyModal = (props) => {
     }
   };
   return (
-    <Modal
+    <CustomDraggableModal
       show={props.show}
-      size="md"
+      size="sm"
+      onClose={() => {
+          props.onHide();
+        }}
       // onHide={() => setModalShow(false)}
     >
-      <Modal.Header>
-        <Modal.Title
+      <CustomDraggableModal.Header>
+        <div
           style={{
             display: "flex",
             width: "100%",
@@ -43,9 +47,9 @@ const CopyModal = (props) => {
           }}
         >
           SELECT COPYING AREA
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body style={{ width: "100%", height: "70dvh", overflow: "auto" }}>
+        </div>
+      </CustomDraggableModal.Header>
+      <CustomDraggableModal.Body >
         <Box
           sx={{
             border: "1px solid #ccc",
@@ -170,8 +174,8 @@ const CopyModal = (props) => {
             </div>
           </Row>
         </Box>
-      </Modal.Body>
-      <Modal.Footer>
+      </CustomDraggableModal.Body>
+      <CustomDraggableModal.Footer>
         <Button
           type="button"
           variant="danger"
@@ -189,8 +193,8 @@ const CopyModal = (props) => {
         >
           Copy
         </Button>
-      </Modal.Footer>
-    </Modal>
+      </CustomDraggableModal.Footer>
+    </CustomDraggableModal>
   );
 };
 
