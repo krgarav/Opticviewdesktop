@@ -2,7 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import _ from "lodash";
 import { toast } from "react-toastify";
 import DataContext from "store/DataContext";
-
+const identifier = {
+  formField: "formFieldWindowParameters",
+  skewMarkField: "skewMarksWindowParameters",
+};
 export default function ExcelLikeTable(props) {
   const [data, setData] = useState([[]]);
   const [fields, setFields] = useState([]);
@@ -10,6 +13,9 @@ export default function ExcelLikeTable(props) {
   const [hoveredCell, setHoveredCell] = useState({ row: null, col: null });
   const [draggedCell, setDraggedCell] = useState({ row: null, col: null });
   const dataCtx = useContext(DataContext);
+  console.log(props.linkFields)
+
+  useEffect(()=>{},[props.linkFields])
   useEffect(() => {
     if (Array.isArray(props.selected)) {
       setFields(props.selected);

@@ -130,7 +130,8 @@ const EditDesignTemplate = () => {
   const numCols = data.totalColumns;
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
-
+const blankRef = useRef(null  )
+const gridRef = useRef(null)
   useEffect(() => {
     setFormatting(numberOfField === "" ? "" : "X".repeat(numberOfField));
   }, [numberOfField]);
@@ -2275,6 +2276,7 @@ const EditDesignTemplate = () => {
         >
           <ExcelLikeTable
             handleEyeClick={handleEyeClick}
+            linkFields={linkFields}
             selected={selectedCoordinates}
             handleSingleSelect={(item) => setCurrentSelectedCoordinate(item)}
             currentSelectedCoordinate={currentSelectedCoordinate}
@@ -2284,7 +2286,7 @@ const EditDesignTemplate = () => {
 
       <CustomDraggableModal
         show={modalShow}
-        size="lg"
+        size="md"
         onClose={() => {
           handleCancel();
         }}
@@ -2334,7 +2336,7 @@ const EditDesignTemplate = () => {
                   />
                 </Col>
                 <Col md={2} className="d-flex align-items-center">
-                  <label htmlFor="fieldType" className="mr-2 mb-0 field-label">
+                  <label htmlFor="fieldType" className=" mb-0 field-label">
                     Question :{" "}
                   </label>
                   <input
@@ -2471,6 +2473,10 @@ const EditDesignTemplate = () => {
                       value={multiple}
                       onChange={(e) => {
                         setMultiple(e.target.value);
+                        if(e.target.value === "not allow"){
+setTimeout(()=>{gridRef?.current?.focus() },100)
+                          
+                        }
                       }}
                       defaultValue={""}
                     >
@@ -2493,6 +2499,7 @@ const EditDesignTemplate = () => {
                       <div className="col-md-4">
                         <input
                           type="text"
+                          ref={gridRef}
                           maxLength={1}
                           className="form-control"
                           placeholder="Character of Multiple"
@@ -2521,6 +2528,13 @@ const EditDesignTemplate = () => {
                       value={blank}
                       onChange={(e) => {
                         setBlank(e.target.value);
+                        if(e.target.value==="not allow"){
+
+                          setBlankValue(" ")
+                          setTimeout(()=>{blankRef.current.focus()  },100)
+                           
+                        }
+                          
                       }}
                       defaultValue={""}
                     >
@@ -2543,6 +2557,7 @@ const EditDesignTemplate = () => {
                       <div className="col-md-4">
                         <input
                           type="text"
+                          ref={blankRef}
                           maxLength={1}
                           className="form-control"
                           placeholder="Character of Blank"

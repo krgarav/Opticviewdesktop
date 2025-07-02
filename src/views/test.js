@@ -7,7 +7,7 @@ const CustomDraggableModal = ({ show, onClose, children, size = "md" }) => {
 
   const modalSizes = {
     sm: "30%",  // Responsive width
-    md: "80%",
+    md: "40%",
     lg: "60%",
   };
 
@@ -25,7 +25,7 @@ const CustomDraggableModal = ({ show, onClose, children, size = "md" }) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        zIndex: 1000,
+        zIndex: 9999,
         padding: "10px",
         boxSizing: "border-box",
       }}
