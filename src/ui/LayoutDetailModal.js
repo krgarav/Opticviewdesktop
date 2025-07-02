@@ -1361,7 +1361,7 @@ const LayoutDetailModal = (props) => {
                           </div>
 
                           <input
-                            value={`${sensitivity}`}
+                            value={`${17 - sensitivity}`}
                             onChange={(e) => setSensitivity(e.target.value)}
                             style={{
                               width: "100%",

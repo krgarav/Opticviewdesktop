@@ -97,6 +97,9 @@ const App = () => {
   const handleContextMenu = (event) => {
     event.preventDefault(); // Prevent right-click menu
     // alert("Right-click is disabled!");
+
+    const zoomoutbtn = document.getElementById("zoomoutbtn");
+    zoomoutbtn.click()
   };
 
   return (

@@ -1896,6 +1896,59 @@ const DesignTemplate = () => {
           </Row>
         </Container>
       </div>
+       <div
+  style={{
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+    display: 'flex',
+    gap: '12px',
+    zIndex: 1000,
+  }}
+>
+  {/* Zoom In Button with MUI Tooltip */}
+  <Tooltip title='Zoom In — Use keyboard: Ctrl + "+" ' placement="bottom" arrow>
+    <Button
+      variant="light"
+      size="sm"
+      id="zoominbtn"
+      // onClick={handleZoomIn}
+      style={{
+        borderRadius: '50%',
+        width: '40px',
+        height: '40px',
+        boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <i className="fas fa-search-plus"></i>
+    </Button>
+  </Tooltip>
+
+  {/* Zoom Out Button with MUI Tooltip */}
+  <Tooltip title='Zoom Out — Use keyboard: Ctrl + "-" ' placement="bottom" arrow>
+    <Button
+      variant="light"
+      size="sm"
+      id="zoomoutbtn"
+      // onClick={handleZoomOut}
+      style={{
+        borderRadius: '50%',
+        width: '40px',
+        height: '40px',
+        boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <i className="fas fa-search-minus"></i>
+    </Button>
+  </Tooltip>
+</div>
+
       {!modalShow && selection && (
         <Button
           onClick={() => {
