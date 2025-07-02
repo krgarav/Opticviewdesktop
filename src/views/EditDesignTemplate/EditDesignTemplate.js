@@ -2027,102 +2027,71 @@ const EditDesignTemplate = () => {
                         );
                       })}
 
-                      {selectedCoordinates.map((data, index) => (
-                        <div
-                          key={index}
-                          ref={(el) => (divRefs.current[index] = el)}
-                          onClick={(e) => handleEyeClick(data, index)}
-                          className="border-blue-900"
-                          style={{
-                            //  backgroundColor:"red",
-                            border: _.isEqual(data, currentSelectedCoordinate)
-                              ? "3px solid red"
-                              : "3px solid #007bff",
-                            position: "absolute",
-                            overflow: "hidden",
-                            left: `${
-                              data.startCol *
-                                (imageRef.current.getBoundingClientRect()
-                                  .width /
-                                  numCols) -
-                              4
-                            }px`,
-                            top: `${
-                              data.startRow *
-                                (imageRef.current.getBoundingClientRect()
-                                  .height /
-                                  numRows) -
-                              3
-                            }px`,
-                            width: `${
-                              (data.endCol - data.startCol + 1) *
-                              (imageRef.current.getBoundingClientRect().width /
-                                numCols)
-                            }px`,
-                            height: `${
-                              (data.endRow - data.startRow + 1) *
-                              (imageRef.current.getBoundingClientRect().height /
-                                numRows +
-                                0.1)
-                            }px`,
-                          }}
-                          // onClick={(e) => e.stopPropagation()}
-                        >
-                          {/* <div
-                            className="d-flex justify-content-between align-items-center bg-dark text-white p-1"
-                            style={{
-                              opacity: 0.6,
-                              fontSize: "12px",
-                              position: "relative",
-                              overflow: "hidden",
-                              zIndex: 2,
-                            }}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            {sizes[index] ? (
-                              <span>
-                                <i
-                                  className={`fas fa-eye me-2 mr-1 ${classes.eye}`}
-                                  onMouseUp={handleIconMouseUp}
-                                  onClick={(e) => handleEyeClick(data, index)}
-                                  style={{ cursor: "pointer" }}
-                                ></i>
-                                <i
-                                  className="fas fa-times text-danger cross-icon ml-1"
-                                  onMouseUp={handleIconMouseUp}
-                                  onClick={() => handleCrossClick(data, index)}
-                                  style={{ cursor: "pointer" }}
-                                ></i>
-                              </span>
-                            ) : (
-                              <>
-                                <span
-                                  className="user-select-none"
-                                  style={{ color: "white", fontWeight: "700" }}
-                                >
-                                  {data.name}
-                                </span>
-                                <span className="d-flex align-items-center user-select-none gap-10">
-                                  <i
-                                    className={`fas fa-eye me-2 mr-1 ${classes.eye}`}
-                                    onMouseUp={handleIconMouseUp}
-                                    onClick={(e) => handleEyeClick(data, index)}
-                                    style={{ cursor: "pointer" }}
-                                  ></i>
-                                  <i
-                                    className="fas fa-times text-danger cross-icon ml-1"
-                                    onMouseUp={handleIconMouseUp}
-                                    onClick={() =>
-                                      handleCrossClick(data, index)
-                                    }
-                                    style={{ cursor: "pointer" }}
-                                  ></i>
-                                </span>
-                              </>
-                            )}
-                          </div> */}
-                        </div>
-                      ))}
+                      {selectedCoordinates.map((data, index) => {
+                        const imageWidth =
+                          imageRef.current.getBoundingClientRect().width;
+                        const imageHeight =
+                          imageRef.current.getBoundingClientRect().height;
+
+                        const boxLeft =
+                          data.startCol * (imageWidth / numCols) - 4;
+                        const boxTop =
+                          data.startRow * (imageHeight / numRows) - 3;
+
+                        const boxWidth =
+                          (data.endCol - data.startCol + 1) *
+                          (imageWidth / numCols);
+                        const boxHeight =
+                          (data.endRow - data.startRow + 1) *
+                          (imageHeight / numRows + 0.1);
+
+                        const isSelected = _.isEqual(
+                          data,
+                          currentSelectedCoordinate
+                        );
+                        const borderColor = isSelected ? "red" : "#007bff";
+
+                        return (
+                          <div key={index} style={{ position: "absolute" }}>
+                            {/* Label Positioned Outside without Margin */}
+                            <div
+                              style={{
+                                position: "absolute",
+                                left: `${boxLeft}px`,
+                                top: `${boxTop - 22}px`, // Move label directly above the box (no margin)
+                                backgroundColor: "#000000", // Good contrast background
+                                color: "white",
+                                fontSize: "12px",
+                                padding: "2px 6px",
+                                borderRadius: "4px",
+                                border: `2px solid ${borderColor}`, // Match the box border color
+                                whiteSpace: "nowrap",
+                                zIndex: 5,
+                                cursor: "default",
+                              }}
+                              onClick={(e) => e.stopPropagation()} // Prevent click propagation
+                            >
+                              {data.name}
+                            </div>
+
+                            {/* Main Rectangle */}
+                            <div
+                              ref={(el) => (divRefs.current[index] = el)}
+                              onClick={() => handleEyeClick(data, index)}
+                              style={{
+                                border: `3px solid ${borderColor}`,
+                                position: "absolute",
+                                overflow: "hidden",
+                                left: `${boxLeft}px`,
+                                top: `${boxTop}px`,
+                                width: `${boxWidth}px`,
+                                height: `${boxHeight}px`,
+                              }}
+                            ></div>
+                          </div>
+                        );
+                      })}
+
                       {linkFields.map((data, index) => {
                         const border =
                           currentLinkField === index
@@ -2377,16 +2346,16 @@ const EditDesignTemplate = () => {
                       }
                       ref={inputRef}
                       value={name}
-                     onChange={(e) => {
-  const inputValue = e.target.value;
+                      onChange={(e) => {
+                        const inputValue = e.target.value;
 
-  // Prevent setting value if first character is a space
-  if (inputValue.length === 1 && inputValue === " ") {
-    return;
-  }
+                        // Prevent setting value if first character is a space
+                        if (inputValue.length === 1 && inputValue === " ") {
+                          return;
+                        }
 
-  setName(inputValue);
-}}
+                        setName(inputValue);
+                      }}
                       onBlur={(e) => {
                         const value = e.target.value;
 

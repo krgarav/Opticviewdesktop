@@ -2054,45 +2054,70 @@ const DesignTemplate = () => {
                         );
                       })}
 
-                      {selectedCoordinates.map((data, index) => (
-                        <div
-                          key={index}
-                          ref={(el) => (divRefs.current[index] = el)}
-                          onClick={(e) => handleEyeClick(data, index)}
-                          className="border-blue-900"
-                          style={{
-                            border: _.isEqual(data, currentSelectedCoordinate)
-                              ? "3px solid red"
-                              : "3px solid #007bff",
-                            position: "absolute",
-                            overflow: "hidden",
-                            left: `${
-                              data.startCol *
-                                (imageRef.current.getBoundingClientRect()
-                                  .width /
-                                  numCols) -
-                              4
-                            }px`,
-                            top: `${
-                              data.startRow *
-                                (imageRef.current.getBoundingClientRect()
-                                  .height /
-                                  numRows) -
-                              3
-                            }px`,
-                            width: `${
-                              (data.endCol - data.startCol + 1) *
-                              (imageRef.current.getBoundingClientRect().width /
-                                numCols)
-                            }px`,
-                            height: `${
-                              (data.endRow - data.startRow + 1) *
-                              (imageRef.current.getBoundingClientRect().height /
-                                numRows)
-                            }px`,
-                          }}
-                        ></div>
-                      ))}
+                      {selectedCoordinates.map((data, index) => {
+                        const imageWidth =
+                          imageRef.current.getBoundingClientRect().width;
+                        const imageHeight =
+                          imageRef.current.getBoundingClientRect().height;
+
+                        const boxLeft =
+                          data.startCol * (imageWidth / numCols) - 4;
+                        const boxTop =
+                          data.startRow * (imageHeight / numRows) - 3;
+
+                        const boxWidth =
+                          (data.endCol - data.startCol + 1) *
+                          (imageWidth / numCols);
+                        const boxHeight =
+                          (data.endRow - data.startRow + 1) *
+                          (imageHeight / numRows + 0.1);
+
+                        const isSelected = _.isEqual(
+                          data,
+                          currentSelectedCoordinate
+                        );
+                        const borderColor = isSelected ? "red" : "#007bff";
+
+                        return (
+                          <div key={index} style={{ position: "absolute" }}>
+                            {/* Label Positioned Outside without Margin */}
+                            <div
+                              style={{
+                                position: "absolute",
+                                left: `${boxLeft}px`,
+                                top: `${boxTop - 22}px`, // Move label directly above the box (no margin)
+                                backgroundColor: "#000000", // Good contrast background
+                                color: "white",
+                                fontSize: "12px",
+                                padding: "2px 6px",
+                                borderRadius: "4px",
+                                border: `2px solid ${borderColor}`, // Match the box border color
+                                whiteSpace: "nowrap",
+                                zIndex: 5,
+                                cursor: "default",
+                              }}
+                              onClick={(e) => e.stopPropagation()} // Prevent click propagation
+                            >
+                              {data.name}
+                            </div>
+
+                            {/* Main Rectangle */}
+                            <div
+                              ref={(el) => (divRefs.current[index] = el)}
+                              onClick={() => handleEyeClick(data, index)}
+                              style={{
+                                border: `3px solid ${borderColor}`,
+                                position: "absolute",
+                                overflow: "hidden",
+                                left: `${boxLeft}px`,
+                                top: `${boxTop}px`,
+                                width: `${boxWidth}px`,
+                                height: `${boxHeight}px`,
+                              }}
+                            ></div>
+                          </div>
+                        );
+                      })}
                       {linkFields.map((data, index) => {
                         const border =
                           currentLinkField === index
