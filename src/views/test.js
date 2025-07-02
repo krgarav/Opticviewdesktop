@@ -60,10 +60,10 @@ const CustomDraggableModal = ({ show, onClose, children, size = "md" }) => {
 // Header Subcomponent
 CustomDraggableModal.Header = ({ children, onClose }) => (
   <div
-    className="custom-modal-header"
+    className="custom-modal-header  bg-gradient-primary"
     style={{
       padding: "10px",
-      backgroundColor: "#007bff",
+      // backgroundColor: "#2563eb",
       color: "white",
       cursor: "move",
       borderTopLeftRadius: "8px",

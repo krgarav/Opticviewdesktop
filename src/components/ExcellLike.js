@@ -70,12 +70,22 @@ export default function ExcelLikeTable(props) {
       setData([newRow]); // Each row is now an array of cell objects
     }
   }, [props.selected]);
+useEffect(() => {
+  if (!props.currentSelectedCoordinate) return;
 
+  // Find the matching cell in the data
+  data.forEach((row, rowIndex) => {
+    row.forEach((cell, colIndex) => {
+      if (_.isEqual(props.currentSelectedCoordinate, cell.selectedField)) {
+        setSelectedCell({ row: rowIndex, col: colIndex });
+      }
+    });
+  });
+
+}, [props.currentSelectedCoordinate, data]);
   const handleFieldClick = (item, colIndex, rowIndex) => {
-    console.log(item);
-    console.log(fields);
     const matchedField = findFieldDetailsUsingObj(item.selectedField);
-    console.log(matchedField);
+   
     if (matchedField) {
       setSelectedCell({ row: rowIndex, col: colIndex });
 
@@ -117,7 +127,11 @@ export default function ExcelLikeTable(props) {
 
     return null; // No match found
   };
-
+  const handleSingleClick = (item, colIndex, rowIndex) => {
+    setSelectedCell({ row: rowIndex, col: colIndex });
+    props.handleSingleSelect(item.selectedField)
+    // console.log(item, colIndex, rowIndex);
+  };
   const handleDragStart = (cell, rowIndex, colIndex) => {
     setDraggedCell({ cell, rowIndex, colIndex });
   };
@@ -188,6 +202,8 @@ export default function ExcelLikeTable(props) {
                   backgroundColor:
                     selectedCell.col === index ? "#A0A0A0" : "#E0E0E0",
                   color: selectedCell.col === index ? "white" : "black", // Highlight selected header
+                  border: selectedCell.col === index ? "2px solid red" : "1px solid #dee2e6", // 🔴 Add red border condition
+                  transition: "background-color 0.2s ease, border 0.2s ease",
                 }}
               >
                 {header}
@@ -229,22 +245,30 @@ export default function ExcelLikeTable(props) {
                     padding: "0",
                     boxSizing: "border-box",
                     overflow: "hidden",
+                    border:
+                      selectedCell.row === rowIndex &&
+                      selectedCell.col === colIndex
+                        ? "2px solid red"
+                        : "1px solid #dee2e6",
                     backgroundColor:
                       selectedCell.row === rowIndex &&
                       selectedCell.col === colIndex
-                        ? "#A5D6A7" // Selected
+                        ? "#A5D6A7" // Optional: slight background change
                         : hoveredCell.row === rowIndex &&
                           hoveredCell.col === colIndex
-                        ? "#A5D6A7" // Hovered
+                        ? "#A5D6A7"
                         : cell.cellType === "formField"
-                        ? "#FFF176" // Yellow for formField
+                        ? "#FFF176"
                         : cell.cellType === "questionField"
-                        ? "#FFB74D" // Orange for questionField
-                        : "#C8E6C9", // Default
+                        ? "#FFB74D"
+                        : "#C8E6C9",
                     transition: "background-color 0.2s ease",
                     cursor: "grab",
                   }}
-                  onClick={() => handleFieldClick(cell, colIndex, rowIndex)}
+                  onDoubleClick={() =>
+                    handleFieldClick(cell, colIndex, rowIndex)
+                  }
+                  onClick={() => handleSingleClick(cell, colIndex, rowIndex)}
                   onMouseEnter={() =>
                     setHoveredCell({ row: rowIndex, col: colIndex })
                   }

@@ -35,7 +35,7 @@ import ExcelLikeTable from "components/ExcellLike";
 import groupQuestionNameGenerator from "helper/groupQuestionGenerator";
 import CustomDraggableModal from "views/test";
 import skewQuestionNameGenerator from "helper/skewQuestionNameGenerator";
-
+import _ from "lodash";
 const DesignTemplate = () => {
   const [selected, setSelected] = useState({});
   const [selection, setSelection] = useState(null);
@@ -123,19 +123,21 @@ const DesignTemplate = () => {
     []
   );
   const [oldCoordinates, setOldCoordinates] = useState(null);
+  const [currentSelectedCoordinate, setCurrentSelectedCoordinate] =
+    useState(null);
   const numRows = timingMarks;
   const numCols = totalColumns;
   const inputRef = useRef(null);
   const divRefs = useRef([]);
-  const [highlightField , setHighlightField] = useState(false)
-const [formatting,setFormatting] = useState("")
+  const [highlightField, setHighlightField] = useState(false);
+  const [formatting, setFormatting] = useState("");
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
 
- useEffect(() => {
-  setFormatting(numberOfField === "" ? "" : "X".repeat(numberOfField));
-}, [numberOfField]);
- 
+  useEffect(() => {
+    setFormatting(numberOfField === "" ? "" : "X".repeat(numberOfField));
+  }, [numberOfField]);
+
   useEffect(() => {
     if (modalShow) {
       if (startRowInput && endRowInput && modalShow) {
@@ -214,7 +216,6 @@ const [formatting,setFormatting] = useState("")
   useEffect(() => {
     const template = dataCtx.allTemplates[0];
     if (template) {
-     
       localStorage.setItem("Template", JSON.stringify(template));
     }
   }, [dataCtx.allTemplates]);
@@ -315,7 +316,7 @@ const [formatting,setFormatting] = useState("")
           const index = parameters.findIndex((param) =>
             isEqual(param.Coordinate, formattedSelectedFile)
           );
-         
+
           // Get the matched object
           const data2 = index !== -1 ? parameters[index] : null;
 
@@ -355,7 +356,7 @@ const [formatting,setFormatting] = useState("")
               stepInCol,
               customValue
             );
-            
+
             const copiedObject = deepcopy(localData[0]);
             delete copiedObject.layoutParameters.numberedExcelJsonFile;
             copiedObject.layoutParameters = {
@@ -498,7 +499,7 @@ const [formatting,setFormatting] = useState("")
   // }, [layoutFieldData]);
   useEffect(() => {
     const template = dataCtx.allTemplates[0];
-    
+
     if (template) {
       setLayoutFieldData(template[0]);
     }
@@ -623,7 +624,7 @@ const [formatting,setFormatting] = useState("")
     setPrefix("");
     setSuffix("");
     setName("");
-    setHighlightField(false)
+    setHighlightField(false);
   };
 
   const validateFormField = () => {
@@ -812,19 +813,20 @@ const [formatting,setFormatting] = useState("")
         blankAllow: blank,
         blankValue: blankValue ? blankValue : "",
         customFieldValue: customValue ? customValue : "",
-        formatting:formatting?formatting:""
+        formatting: formatting ? formatting : "",
       };
       const template = dataCtx.allTemplates.find((item) => {
         return item[0].layoutParameters?.key ?? "" === templateIndex;
       });
-      if(modalUpdate){
-      resetJson(
-        template[0].layoutParameters.numberedExcelJsonFile,
-        oldCoordinates["Start Row"] - 1,
-        oldCoordinates["End Row"] - 1,
-        oldCoordinates["Start Col"],
-        oldCoordinates["End Col"]
-      );}
+      if (modalUpdate) {
+        resetJson(
+          template[0].layoutParameters.numberedExcelJsonFile,
+          oldCoordinates["Start Row"] - 1,
+          oldCoordinates["End Row"] - 1,
+          oldCoordinates["Start Col"],
+          oldCoordinates["End Col"]
+        );
+      }
     }
 
     setModalShow(false);
@@ -924,8 +926,9 @@ const [formatting,setFormatting] = useState("")
   };
 
   const handleEyeClick = (selectedField, index) => {
+    setCurrentSelectedCoordinate(selectedField);
     setSelectedField(selectedField);
-    setHighlightField(true)
+    setHighlightField(true);
     setSelection(() => ({
       startRow: selectedField.startRow,
       startCol: selectedField.startCol,
@@ -1048,7 +1051,7 @@ const [formatting,setFormatting] = useState("")
       setNoOfStepInRow(data?.rowStep);
       setNoOfStepInCol(data?.columnStep);
       setCustomValue(data?.customFieldValue);
-      setFormatting(data?.formatting)
+      setFormatting(data?.formatting);
     } else if (selectedField?.fieldType === "skewMarkField") {
       const parameters = template[0].skewMarksWindowParameters;
       const index = parameters.findIndex((item) =>
@@ -1548,7 +1551,7 @@ const [formatting,setFormatting] = useState("")
         } else if (selectedField.fieldType === "skewMarkField") {
           const updatedName =
             selectedField.fieldType === "skewMarkField"
-              ?  skewQuestionNameGenerator (selectedField.name, i + 1)
+              ? skewQuestionNameGenerator(selectedField.name, i + 1)
               : selectedField.name;
           newData = {
             Coordinate: {
@@ -1606,7 +1609,6 @@ const [formatting,setFormatting] = useState("")
           };
         }
 
-        
         dataCtx.modifyAllTemplate(0, newData, selectedField.fieldType);
       }
 
@@ -2059,7 +2061,9 @@ const [formatting,setFormatting] = useState("")
                           onClick={(e) => handleEyeClick(data, index)}
                           className="border-blue-900"
                           style={{
-                            border: "3px solid #007bff",
+                            border: _.isEqual(data, currentSelectedCoordinate)
+                              ? "3px solid red"
+                              : "3px solid #007bff",
                             position: "absolute",
                             overflow: "hidden",
                             left: `${
@@ -2145,7 +2149,9 @@ const [formatting,setFormatting] = useState("")
                         <div
                           className="border-green-700"
                           style={{
-                            border:!highlightField? "2px solid green":"2px solid red",
+                            border: !highlightField
+                              ? "2px solid green"
+                              : "2px solid red",
                             position: "absolute",
                             left: `${
                               selection.startCol *
@@ -2193,20 +2199,22 @@ const [formatting,setFormatting] = useState("")
           <ExcelLikeTable
             handleEyeClick={handleEyeClick}
             selected={selectedCoordinates}
+            handleSingleSelect={(item) => setCurrentSelectedCoordinate(item)}
           />
         </div>
       </div>
 
-       <CustomDraggableModal
+      <CustomDraggableModal
         show={modalShow}
         size="lg"
-        onClose={()=>{handleCancel()}}
-        
+        onClose={() => {
+          handleCancel();
+        }}
       >
         <CustomDraggableModal.Header>
           <div style={{ width: "100%" }}>
             {modalUpdate && (
-              <h2 className="text-center">
+              <h2 className="text-center text-white pt-2">
                 {!modalUpdate
                   ? "Choose field type"
                   : selectedFieldType === "formField"
@@ -2221,7 +2229,7 @@ const [formatting,setFormatting] = useState("")
               </h2>
             )}
             {!selectedFieldType && (
-              <h2 className="text-center">
+              <h2 className="text-center  text-white`">
                 {!modalUpdate ? "Choose field type" : selectedFieldType}
               </h2>
             )}
@@ -2244,7 +2252,7 @@ const [formatting,setFormatting] = useState("")
                     checked={selectedFieldType === "formField"}
                     onChange={handleRadioChange}
                     className=" field-label"
-                    style={{ accentColor: 'black' }}
+                    style={{ accentColor: "black" }}
                   />
                 </Col>
                 <Col md={2} className="d-flex align-items-center">
@@ -2259,7 +2267,7 @@ const [formatting,setFormatting] = useState("")
                     checked={selectedFieldType === "questionField"}
                     onChange={handleRadioChange}
                     className=" field-label"
-                     style={{ accentColor: 'black' }}
+                    style={{ accentColor: "black" }}
                   />
                 </Col>
                 <Col md={3} className="d-flex align-items-center ">
@@ -2277,7 +2285,7 @@ const [formatting,setFormatting] = useState("")
                     checked={selectedFieldType === "skewMarkField"}
                     onChange={handleRadioChange}
                     className=" field-label mt-0.9"
-                     style={{ accentColor: 'black' }}
+                    style={{ accentColor: "black" }}
                   />
                 </Col>
                 <Col md={2} className="d-flex align-items-center mt-1">
@@ -2298,7 +2306,7 @@ const [formatting,setFormatting] = useState("")
                         onChange={handleRadioChange}
                         className="field-label align-items-center"
                         disabled={idSelectionCount > 0}
-                         style={{ accentColor: 'black' }}
+                        style={{ accentColor: "black" }}
                       />
                     </div>
                     {idSelectionCount > 0 && (
@@ -2337,7 +2345,16 @@ const [formatting,setFormatting] = useState("")
                       }
                       ref={inputRef}
                       value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={(e) => {
+                        const inputValue = e.target.value;
+
+                        // Prevent setting value if first character is a space
+                        if (inputValue.length === 1 && inputValue === " ") {
+                          return;
+                        }
+
+                        setName(inputValue);
+                      }}
                       onBlur={(e) => {
                         const value = e.target.value;
 
@@ -2577,40 +2594,39 @@ const [formatting,setFormatting] = useState("")
                   Start Row
                 </label>
                 <div className="col-2 ">
-                 <input
-  id="startRow"
-  type="text"
-  value={startRowInput}
-  onBlur={(e) => {
-    const newValue = Number(e.target.value); // Ensure it's a number
-    console.log(newValue);
+                  <input
+                    id="startRow"
+                    type="text"
+                    value={startRowInput}
+                    onBlur={(e) => {
+                      const newValue = Number(e.target.value); // Ensure it's a number
+                      console.log(newValue);
 
-    if (newValue > 0) {
-      setSelection((item) => ({
-        ...item,
-        startRow: newValue - 1,
-      }));
-    } else {
-      // Reset to previous valid value
-      setStartRowInput(selection.startRow + 1);
-    }
-  }}
-  onChange={(e) => {
-    let value = e.target.value.replace(/[^0-9]/g, ""); // Strip non-numeric
+                      if (newValue > 0) {
+                        setSelection((item) => ({
+                          ...item,
+                          startRow: newValue - 1,
+                        }));
+                      } else {
+                        // Reset to previous valid value
+                        setStartRowInput(selection.startRow + 1);
+                      }
+                    }}
+                    onChange={(e) => {
+                      let value = e.target.value.replace(/[^0-9]/g, ""); // Strip non-numeric
 
-    if (value === "") {
-      // If input is empty, reset to empty string to allow typing
-      setStartRowInput("");
-      return;
-    }
+                      if (value === "") {
+                        // If input is empty, reset to empty string to allow typing
+                        setStartRowInput("");
+                        return;
+                      }
 
-    const numericValue = Number(value);
-    console.log(typeof numericValue); // This will now always be 'number'
-    setStartRowInput(numericValue);
-  }}
-  className="form-control"
-/>
-
+                      const numericValue = Number(value);
+                      console.log(typeof numericValue); // This will now always be 'number'
+                      setStartRowInput(numericValue);
+                    }}
+                    className="form-control"
+                  />
                 </div>
                 <label
                   htmlFor="example-select-input"
@@ -2621,32 +2637,34 @@ const [formatting,setFormatting] = useState("")
                 </label>
                 <div className="col-2">
                   <input
-  type="text"
-  value={endRowInput}
-  // disabled={modalUpdate}
-  onBlur={(e) => {
-    const newValue = Number(e.target.value);
-    if (newValue > 0) {
-      setSelection((item) => ({
-        ...item,
-        endRow: newValue - 1,
-      }));
-    } else {
-      // Reset to previous valid value
-      setEndRowInput(selection?.endRow + 1);
-    }
-  }}
-  onChange={(e) => {
-    const numericValue = e.target.value.replace(/[^0-9]/g, "");
-    if (numericValue === "") {
-      setEndRowInput("");
-    } else {
-      setEndRowInput(Number(numericValue));
-    }
-  }}
-  className="form-control"
-/>
-
+                    type="text"
+                    value={endRowInput}
+                    // disabled={modalUpdate}
+                    onBlur={(e) => {
+                      const newValue = Number(e.target.value);
+                      if (newValue > 0) {
+                        setSelection((item) => ({
+                          ...item,
+                          endRow: newValue - 1,
+                        }));
+                      } else {
+                        // Reset to previous valid value
+                        setEndRowInput(selection?.endRow + 1);
+                      }
+                    }}
+                    onChange={(e) => {
+                      const numericValue = e.target.value.replace(
+                        /[^0-9]/g,
+                        ""
+                      );
+                      if (numericValue === "") {
+                        setEndRowInput("");
+                      } else {
+                        setEndRowInput(Number(numericValue));
+                      }
+                    }}
+                    className="form-control"
+                  />
                 </div>
                 <label
                   htmlFor="example-select-input"
@@ -2696,97 +2714,97 @@ const [formatting,setFormatting] = useState("")
                 </div>
               </Row>
               <Row className="mb-2">
-  {/* Start Column */}
-  <label
-    htmlFor="startCol"
-    className="col-2 col-form-label"
-    style={{ fontSize: "0.8rem" }}
-  >
-    Start Col
-  </label>
-  <div className="col-2">
-    <input
-      id="startCol"
-      type="text"
-      value={startColInput}
-      onBlur={(e) => {
-        const newValue = Number(e.target.value);
-        if (newValue > 0) {
-          setSelection((item) => ({
-            ...item,
-            startCol: newValue,
-          }));
-        } else {
-          setStartColInput(selection?.startCol); // Reset to previous valid value
-        }
-      }}
-      onChange={(e) => {
-        const value = e.target.value.replace(/[^0-9]/g, "");
-        if (value === "") {
-          setStartColInput("");
-        } else {
-          setStartColInput(Number(value));
-        }
-      }}
-      className="form-control"
-    />
-  </div>
+                {/* Start Column */}
+                <label
+                  htmlFor="startCol"
+                  className="col-2 col-form-label"
+                  style={{ fontSize: "0.8rem" }}
+                >
+                  Start Col
+                </label>
+                <div className="col-2">
+                  <input
+                    id="startCol"
+                    type="text"
+                    value={startColInput}
+                    onBlur={(e) => {
+                      const newValue = Number(e.target.value);
+                      if (newValue > 0) {
+                        setSelection((item) => ({
+                          ...item,
+                          startCol: newValue,
+                        }));
+                      } else {
+                        setStartColInput(selection?.startCol); // Reset to previous valid value
+                      }
+                    }}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^0-9]/g, "");
+                      if (value === "") {
+                        setStartColInput("");
+                      } else {
+                        setStartColInput(Number(value));
+                      }
+                    }}
+                    className="form-control"
+                  />
+                </div>
 
-  {/* End Column */}
-  <label
-    htmlFor="endCol"
-    className="col-2 col-form-label"
-    style={{ fontSize: "0.8rem" }}
-  >
-    End Col
-  </label>
-  <div className="col-2">
-    <input
-      id="endCol"
-      type="text"
-      value={endColInput}
-      onBlur={(e) => {
-        const newValue = Number(e.target.value);
-        if (newValue > 0) {
-          setSelection((item) => ({
-            ...item,
-            endCol: newValue,
-          }));
-        } else {
-          setEndColInput(selection?.endCol); // Reset to previous valid value
-        }
-      }}
-      onChange={(e) => {
-        const value = e.target.value.replace(/[^0-9]/g, "");
-        if (value === "") {
-          setEndColInput("");
-        } else {
-          const numericValue = Number(value);
-          setEndColInput(numericValue);
-          setMaximumMark(numericValue);
-        }
-      }}
-      className="form-control"
-    />
-  </div>
+                {/* End Column */}
+                <label
+                  htmlFor="endCol"
+                  className="col-2 col-form-label"
+                  style={{ fontSize: "0.8rem" }}
+                >
+                  End Col
+                </label>
+                <div className="col-2">
+                  <input
+                    id="endCol"
+                    type="text"
+                    value={endColInput}
+                    onBlur={(e) => {
+                      const newValue = Number(e.target.value);
+                      if (newValue > 0) {
+                        setSelection((item) => ({
+                          ...item,
+                          endCol: newValue,
+                        }));
+                      } else {
+                        setEndColInput(selection?.endCol); // Reset to previous valid value
+                      }
+                    }}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^0-9]/g, "");
+                      if (value === "") {
+                        setEndColInput("");
+                      } else {
+                        const numericValue = Number(value);
+                        setEndColInput(numericValue);
+                        setMaximumMark(numericValue);
+                      }
+                    }}
+                    className="form-control"
+                  />
+                </div>
 
-  {/* Total Column */}
-  <label
-    htmlFor="totalCol"
-    className="col-2 col-form-label"
-    style={{ fontSize: "0.8rem" }}
-  >
-    Total Column
-  </label>
-  <div className="col-2">
-    <input
-      id="totalCol"
-      value={numCols}
-      readOnly
-      className="form-control"
-    />
-  </div>
-</Row>
+                {/* Total Column */}
+                <label
+                  htmlFor="totalCol"
+                  className="col-2 col-form-label"
+                  style={{ fontSize: "0.8rem" }}
+                >
+                  Total Column
+                </label>
+                <div className="col-2">
+                  <input
+                    id="totalCol"
+                    value={numCols}
+                    readOnly
+                    className="form-control"
+                  />
+                </div>
+              </Row>
 
               <Row className="mb-2">
                 <label
@@ -2922,29 +2940,29 @@ const [formatting,setFormatting] = useState("")
                 </Row>
               )}
               {selectedFieldType === "formField" && (
-  <Row className="mb-2">
-    <label
-      htmlFor="field-formatting"
-      className="col-md-2 col-form-label"
-      style={{ fontSize: "0.8rem" }}
-    >
-      Field Formatting
-    </label>
-    <div className="col-10">
-      <input
-        id="field-formatting"
-        type="text"
-        className="form-control"
-        value = {formatting}
-      // value={numberOfField === "" ? "" : "X".repeat(numberOfField)}
-        onChange={(e) => {
-          setFormatting(e.target.value)
-        }}
-        required
-      />
-    </div>
-  </Row>
-)}
+                <Row className="mb-2">
+                  <label
+                    htmlFor="field-formatting"
+                    className="col-md-2 col-form-label"
+                    style={{ fontSize: "0.8rem" }}
+                  >
+                    Field Formatting
+                  </label>
+                  <div className="col-10">
+                    <input
+                      id="field-formatting"
+                      type="text"
+                      className="form-control"
+                      value={formatting}
+                      // value={numberOfField === "" ? "" : "X".repeat(numberOfField)}
+                      onChange={(e) => {
+                        setFormatting(e.target.value);
+                      }}
+                      required
+                    />
+                  </div>
+                </Row>
+              )}
 
               {(selectedFieldType === "questionField" ||
                 selectedFieldType === "formField") &&
@@ -2967,9 +2985,6 @@ const [formatting,setFormatting] = useState("")
                     </div>
                   </Row>
                 )}
-
-
-
             </>
           )}
         </CustomDraggableModal.Body>
