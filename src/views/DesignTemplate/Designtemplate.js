@@ -133,7 +133,8 @@ const DesignTemplate = () => {
   const [formatting, setFormatting] = useState("");
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
-
+  const blankRef = useRef(null);
+  const gridRef = useRef(null);
   useEffect(() => {
     setFormatting(numberOfField === "" ? "" : "X".repeat(numberOfField));
   }, [numberOfField]);
@@ -1896,58 +1897,66 @@ const DesignTemplate = () => {
           </Row>
         </Container>
       </div>
-       <div
-  style={{
-    position: 'absolute',
-    top: '10px',
-    right: '10px',
-    display: 'flex',
-    gap: '12px',
-    zIndex: 1000,
-  }}
->
-  {/* Zoom In Button with MUI Tooltip */}
-  <Tooltip title='Zoom In — Use keyboard: Ctrl + "+" ' placement="bottom" arrow>
-    <Button
-      variant="light"
-      size="sm"
-      id="zoominbtn"
-      // onClick={handleZoomIn}
-      style={{
-        borderRadius: '50%',
-        width: '40px',
-        height: '40px',
-        boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <i className="fas fa-search-plus"></i>
-    </Button>
-  </Tooltip>
+      <div
+        style={{
+          position: "absolute",
+          top: "10px",
+          right: "10px",
+          display: "flex",
+          gap: "12px",
+          zIndex: 1000,
+        }}
+      >
+        {/* Zoom In Button with MUI Tooltip */}
+        <Tooltip
+          title='Zoom In — Use keyboard: Ctrl + "+" '
+          placement="bottom"
+          arrow
+        >
+          <Button
+            variant="light"
+            size="sm"
+            id="zoominbtn"
+            // onClick={handleZoomIn}
+            style={{
+              borderRadius: "50%",
+              width: "40px",
+              height: "40px",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <i className="fas fa-search-plus"></i>
+          </Button>
+        </Tooltip>
 
-  {/* Zoom Out Button with MUI Tooltip */}
-  <Tooltip title='Zoom Out — Use keyboard: Ctrl + "-" ' placement="bottom" arrow>
-    <Button
-      variant="light"
-      size="sm"
-      id="zoomoutbtn"
-      // onClick={handleZoomOut}
-      style={{
-        borderRadius: '50%',
-        width: '40px',
-        height: '40px',
-        boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <i className="fas fa-search-minus"></i>
-    </Button>
-  </Tooltip>
-</div>
+        {/* Zoom Out Button with MUI Tooltip */}
+        <Tooltip
+          title='Zoom Out — Use keyboard: Ctrl + "-" '
+          placement="bottom"
+          arrow
+        >
+          <Button
+            variant="light"
+            size="sm"
+            id="zoomoutbtn"
+            // onClick={handleZoomOut}
+            style={{
+              borderRadius: "50%",
+              width: "40px",
+              height: "40px",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <i className="fas fa-search-minus"></i>
+          </Button>
+        </Tooltip>
+      </div>
 
       {!modalShow && selection && (
         <Button
@@ -2471,6 +2480,11 @@ const DesignTemplate = () => {
                       value={multiple}
                       onChange={(e) => {
                         setMultiple(e.target.value);
+                        if (e.target.value === "not allow") {
+                          setTimeout(() => {
+                            gridRef?.current?.focus();
+                          }, 100);
+                        }
                       }}
                       defaultValue={""}
                     >
@@ -2493,6 +2507,7 @@ const DesignTemplate = () => {
                       <div className="col-md-4">
                         <input
                           type="text"
+                          ref={gridRef}
                           maxLength={1}
                           className="form-control"
                           placeholder="Character of Multiple"
@@ -2521,6 +2536,12 @@ const DesignTemplate = () => {
                       value={blank}
                       onChange={(e) => {
                         setBlank(e.target.value);
+                        if (e.target.value === "not allow") {
+                          setBlankValue(" ");
+                          setTimeout(() => {
+                            blankRef.current.focus();
+                          }, 100);
+                        }
                       }}
                       defaultValue={""}
                     >
@@ -2543,6 +2564,7 @@ const DesignTemplate = () => {
                       <div className="col-md-4">
                         <input
                           type="text"
+                          ref={blankRef}
                           maxLength={1}
                           className="form-control"
                           placeholder="Character of Blank"

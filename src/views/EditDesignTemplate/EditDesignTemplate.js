@@ -130,8 +130,8 @@ const EditDesignTemplate = () => {
   const numCols = data.totalColumns;
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
-const blankRef = useRef(null  )
-const gridRef = useRef(null)
+  const blankRef = useRef(null);
+  const gridRef = useRef(null);
   useEffect(() => {
     setFormatting(numberOfField === "" ? "" : "X".repeat(numberOfField));
   }, [numberOfField]);
@@ -2473,9 +2473,10 @@ const gridRef = useRef(null)
                       value={multiple}
                       onChange={(e) => {
                         setMultiple(e.target.value);
-                        if(e.target.value === "not allow"){
-setTimeout(()=>{gridRef?.current?.focus() },100)
-                          
+                        if (e.target.value === "not allow") {
+                          setTimeout(() => {
+                            gridRef?.current?.focus();
+                          }, 100);
                         }
                       }}
                       defaultValue={""}
@@ -2528,13 +2529,12 @@ setTimeout(()=>{gridRef?.current?.focus() },100)
                       value={blank}
                       onChange={(e) => {
                         setBlank(e.target.value);
-                        if(e.target.value==="not allow"){
-
-                          setBlankValue(" ")
-                          setTimeout(()=>{blankRef.current.focus()  },100)
-                           
+                        if (e.target.value === "not allow") {
+                          setBlankValue(" ");
+                          setTimeout(() => {
+                            blankRef.current.focus();
+                          }, 100);
                         }
-                          
                       }}
                       defaultValue={""}
                     >
