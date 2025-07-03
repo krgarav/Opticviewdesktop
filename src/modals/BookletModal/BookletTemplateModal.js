@@ -154,8 +154,7 @@ const BookletTemplateModal = (props) => {
     };
     fetchData();
   }, []);
- const handleChange = (newValue) => {
-
+  const handleChange = (newValue) => {
     setValue(newValue);
     setSensitivity(newValue);
   };
@@ -465,16 +464,16 @@ const BookletTemplateModal = (props) => {
             readFrom:
               barcodeCategory?.id === undefined ? "" : barcodeCategory?.id,
           },
-         imageData: {
+          imageData: {
             imageEnable: imageStatus ? +imageStatus?.id : 0,
-            imageColor: colorType==="grayscale"?1:0 ,
+            imageColor: colorType === "grayscale" ? 1 : 0,
             imageType: encoding ? +encoding?.id : 0,
             imageParam: 0,
             imageRotation: rotation ? +rotation?.id : 0,
             imageResoMode: 1,
             imageResolution: resolution ? +resolution?.id : 1,
-            imageScanningSide : scannningSide? +scannningSide?.id :0,
-            imageCompression : imageParams?+imageParams?.id:0
+            imageScanningSide: scannningSide ? +scannningSide?.id : 0,
+            imageCompression: imageParams ? +imageParams?.id : 0,
           },
           printingData: {
             printEnable: +printEnable?.id ?? 0,
@@ -641,8 +640,8 @@ const BookletTemplateModal = (props) => {
             >
               <Row>
                 <Col sm={2}>
-                                  <h2>{props.title}</h2>
-                                </Col>
+                  <h2>{props.title}</h2>
+                </Col>
                 <Col sm={8}>
                   {/* Adjusted column span to full width if needed */}
                   <Nav
@@ -977,7 +976,7 @@ const BookletTemplateModal = (props) => {
                           className="col-md-2 col-form-label  "
                           style={{ fontSize: ".95rem" }}
                         >
-                          Image 
+                          Image
                         </label>
                         <div className="col-md-4">
                           <Select
@@ -1125,7 +1124,7 @@ const BookletTemplateModal = (props) => {
                                         </div>
                                     </Row> */}
 
-                     <Row className="mb-3">
+                      <Row className="mb-3">
                         <label
                           htmlFor="example-text-input"
                           className="col-md-2 col-form-label  "
@@ -1190,7 +1189,7 @@ const BookletTemplateModal = (props) => {
                           </div>
 
                           <input
-                            value={`${sensitivity}`}
+                            value={`${17 - sensitivity}`}
                             onChange={(e) => setSensitivity(e.target.value)}
                             style={{
                               width: "100%",
@@ -1311,7 +1310,6 @@ const BookletTemplateModal = (props) => {
                             </span>
                           )}
                         </div>
-                        
                       </Row>
 
                       <Row className="mb-3">
@@ -1448,7 +1446,7 @@ const BookletTemplateModal = (props) => {
                     </Tab.Pane>
 
                     <Tab.Pane eventKey="print">
-                                         <Row className="mb-3">
+                      <Row className="mb-3">
                         <label
                           htmlFor="start-position"
                           className="col-md-2 col-form-label"
@@ -1456,7 +1454,7 @@ const BookletTemplateModal = (props) => {
                         >
                           Start Position:
                         </label>
-                      
+
                         <div className="col-md-10 d-flex align-items-center gap-3">
                           {/* Slider */}
                           <input
@@ -1472,15 +1470,16 @@ const BookletTemplateModal = (props) => {
                               setStartPosition(value);
                             }}
                           />
-                      
+
                           {/* Display input with 'mm' unit using input group */}
-                          <div className="input-group" style={{ maxWidth: "160px" }}>
+                          <div
+                            className="input-group"
+                            style={{ maxWidth: "160px" }}
+                          >
                             <input
                               type="text"
                               className="form-control text-end"
-                             value={
-                                startPosition 
-                              }
+                              value={startPosition}
                               disabled
                             />
                             <div className="input-group-append">
@@ -1489,8 +1488,8 @@ const BookletTemplateModal = (props) => {
                           </div>
                         </div>
                       </Row>
-                      
-                                            <Row className="mb-3">
+
+                      <Row className="mb-3">
                         <label
                           htmlFor="font-space"
                           className="col-md-2 col-form-label"
@@ -1498,7 +1497,7 @@ const BookletTemplateModal = (props) => {
                         >
                           Font Space:
                         </label>
-                      
+
                         <div className="col-md-10 d-flex align-items-center gap-3">
                           {/* Range Slider */}
                           <input
@@ -1514,13 +1513,18 @@ const BookletTemplateModal = (props) => {
                               setFontSpace(parseFloat(value.toFixed(1)));
                             }}
                           />
-                      
+
                           {/* Read-only value with mm label */}
-                          <div className="input-group" style={{ maxWidth: "160px" }}>
+                          <div
+                            className="input-group"
+                            style={{ maxWidth: "160px" }}
+                          >
                             <input
                               type="text"
                               className="form-control text-end"
-                              value={fontSpace !== "" ? fontSpace.toFixed(1) : ""}
+                              value={
+                                fontSpace !== "" ? fontSpace.toFixed(1) : ""
+                              }
                               disabled
                             />
                             <span className="input-group-text">mm</span>
@@ -2033,81 +2037,84 @@ const BookletTemplateModal = (props) => {
                     <Tab.Pane eventKey="image">
                       <Form>
                         <Row className="mb-3 align-items-center">
-                                                  <label
-                                                    htmlFor="example-text-input"
-                                                    className="col-md-3 col-form-label"
-                                                    style={{ fontSize: ".9rem" }}
-                                                  >
-                                                    Image Color :
-                                                  </label>
-                        
-                                                  <div className="col-md-9 d-flex align-items-center justify-content-between">
-                                                    <div className="form-check form-check-inline mr-3">
-                                                      <input
-                                                        className="form-check-input"
-                                                        type="radio"
-                                                        name="colorType"
-                                                        id="grayscale"
-                                                        value="grayscale"
-                                                        checked={colorType === "grayscale"}
-                                                        onChange={(e) => setColorType(e.target.value)}
-                                                      />
-                                                      <label
-                                                        className="form-check-label"
-                                                        htmlFor="grayscale"
-                                                      >
-                                                        Grayscale
-                                                      </label>
-                                                    </div>
-                        
-                                                    <div className="form-check form-check-inline mr-3">
-                                                      <input
-                                                        className="form-check-input"
-                                                        type="radio"
-                                                        name="colorType"
-                                                        id="color"
-                                                        value="color"
-                                                        checked={colorType === "color"}
-                                                        onChange={(e) => setColorType(e.target.value)}
-                                                      />
-                                                      <label
-                                                        className="form-check-label"
-                                                        htmlFor="color"
-                                                      >
-                                                        Color
-                                                      </label>
-                                                    </div>
-                         <div className="form-check form-check-inline mr-3">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="colorType"
-                              id="blackwhite"
-                              value="blackwhite"
-                              checked={colorType === "blackwhite"}
-                              onChange={(e) => setColorType(e.target.value)}
-                            />
-                            <label className="form-check-label" htmlFor="blackwhite">
-                              Black & White
-                            </label>
+                          <label
+                            htmlFor="example-text-input"
+                            className="col-md-3 col-form-label"
+                            style={{ fontSize: ".9rem" }}
+                          >
+                            Image Color :
+                          </label>
+
+                          <div className="col-md-9 d-flex align-items-center justify-content-between">
+                            <div className="form-check form-check-inline mr-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="colorType"
+                                id="grayscale"
+                                value="grayscale"
+                                checked={colorType === "grayscale"}
+                                onChange={(e) => setColorType(e.target.value)}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="grayscale"
+                              >
+                                Grayscale
+                              </label>
+                            </div>
+
+                            <div className="form-check form-check-inline mr-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="colorType"
+                                id="color"
+                                value="color"
+                                checked={colorType === "color"}
+                                onChange={(e) => setColorType(e.target.value)}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="color"
+                              >
+                                Color
+                              </label>
+                            </div>
+                            <div className="form-check form-check-inline mr-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="colorType"
+                                id="blackwhite"
+                                value="blackwhite"
+                                checked={colorType === "blackwhite"}
+                                onChange={(e) => setColorType(e.target.value)}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="blackwhite"
+                              >
+                                Black & White
+                              </label>
+                            </div>
+                            <div>
+                              <img
+                                src={
+                                  colorType === "color"
+                                    ? "/colored.webp"
+                                    : colorType === "blackwhite"
+                                    ? "/grayscale.webp"
+                                    : "/grayscale.webp"
+                                }
+                                width={100}
+                                height={100}
+                                alt={colorType}
+                                className="rounded shadow"
+                              />
+                            </div>
                           </div>
-                                                    <div>
-                                                      <img
-                                                       src={
-                                colorType === "color"
-                                  ? "/colored.webp"
-                                  : colorType === "blackwhite"
-                                  ? "/grayscale.webp"
-                                  : "/grayscale.webp"
-                              }
-                                                        width={100}
-                                                        height={100}
-                                                        alt={colorType}
-                                                        className="rounded shadow"
-                                                      />
-                                                    </div>
-                                                  </div>
-                                                </Row>
+                        </Row>
 
                         <Row className="mb-3">
                           <label
@@ -2419,7 +2426,6 @@ const BookletTemplateModal = (props) => {
         backdrop="static"
         keyboard={false}
       >
-        
         <Modal.Body style={{ height: "80dvh" }}>
           <>
             {scannerLoading && (
