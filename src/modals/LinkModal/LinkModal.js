@@ -34,7 +34,7 @@ const LinkModal = (props) => {
         const fields = props.selectedCoordinates.filter(
           (field) => field.fieldType === props.fieldType
         );
-
+        console.log(fields);
         if (filteredLinkedCoordinates.length !== 0) {
           const flattened = filteredLinkedCoordinates
             .map((item) => item.fieldIndexes)
@@ -45,22 +45,29 @@ const LinkModal = (props) => {
             (field) =>
               !flattened.includes(props.selectedCoordinates.indexOf(field))
           );
-
+       
           setFields(result);
           return;
+        } else {
+          setFields(fields);
+          return;
         }
+
+        console.log("if called");
       } else {
+        console.log("else called");
         if (props.selectedCoordinates.length !== 0) {
           const fields = props.selectedCoordinates.filter((field) => {
             return field.fieldType === props.fieldType;
           });
+          console.log(props.selectedCoordinates);
           setFields(fields);
         }
       }
       // setFields(fields);
     }
   }, [props.selectedCoordinates, props.fieldType]);
-
+  console.log(fields);
   const handleChange = (event) => {
     const {
       target: { value },
@@ -87,58 +94,58 @@ const LinkModal = (props) => {
     ...field,
     id: `${field.name}_${index}`,
   }));
- const saveArea = () => {
-  const fieldIndexes = [];
+  const saveArea = () => {
+    const fieldIndexes = [];
 
-  // Correctly retrieve the full field objects
-  const filteredFields = allFields.filter((field) =>
-    selectedCol.some((item) => item.value === field.id)
-  );
+    // Correctly retrieve the full field objects
+    const filteredFields = allFields.filter((field) =>
+      selectedCol.some((item) => item.value === field.id)
+    );
 
-  if (!fieldName) {
-    alert("Field Name is required");
-    return;
-  }
+    if (!fieldName) {
+      alert("Field Name is required");
+      return;
+    }
 
-  if (filteredFields.length <= 1) {
-    alert("Please select the fields");
-    return;
-  }
+    if (filteredFields.length <= 1) {
+      alert("Please select the fields");
+      return;
+    }
 
-  console.log(dataCtx.allTemplates);
-  console.log(props.fieldType);
+    console.log(dataCtx.allTemplates);
+    console.log(props.fieldType);
 
-  const keyIdentifier = identifier[props.fieldType];
-  console.log(keyIdentifier);
+    const keyIdentifier = identifier[props.fieldType];
+    console.log(keyIdentifier);
 
-  const template = dataCtx.allTemplates[0][0][keyIdentifier];
+    const template = dataCtx.allTemplates[0][0][keyIdentifier];
 
-  const formatCoordinate = (field) => ({
-    "End Col": field.endCol,
-    "End Row": field.endRow + 1,
-    "Start Col": field.startCol,
-    "Start Row": field.startRow + 1,
-    fieldType: field.fieldType,
-    name: field.name,
-  });
-
-  if (Array.isArray(template)) {
-    filteredFields.forEach((field) => {
-      const formatted = formatCoordinate(field);
-
-      const index = template.findIndex((item) =>
-        isEqual(item.Coordinate, formatted)
-      );
-
-      if (index !== -1) {
-        fieldIndexes.push(index);
-      }
+    const formatCoordinate = (field) => ({
+      "End Col": field.endCol,
+      "End Row": field.endRow + 1,
+      "Start Col": field.startCol,
+      "Start Row": field.startRow + 1,
+      fieldType: field.fieldType,
+      name: field.name,
     });
-  }
 
-  dataCtx.linkField(filteredFields, fieldName, fieldIndexes, keyIdentifier);
-  props.onHide();
-};
+    if (Array.isArray(template)) {
+      filteredFields.forEach((field) => {
+        const formatted = formatCoordinate(field);
+
+        const index = template.findIndex((item) =>
+          isEqual(item.Coordinate, formatted)
+        );
+
+        if (index !== -1) {
+          fieldIndexes.push(index);
+        }
+      });
+    }
+
+    dataCtx.linkField(filteredFields, fieldName, fieldIndexes, keyIdentifier);
+    props.onHide();
+  };
 
   const options = allFields.map((field) => ({
     label: field.name,
@@ -194,7 +201,7 @@ const LinkModal = (props) => {
         </FormControl>
 
         <FormControl sx={{ width: "100%", maxWidth: 420 }}>
-          <InputLabel id="demo-multiple-checkbox-label">FIELDS</InputLabel>
+          {/* <InputLabel id="demo-multiple-checkbox-label">FIELDS</InputLabel> */}
           {/* <Select
             labelId="demo-multiple-checkbox-label"
             id="demo-multiple-checkbox"
@@ -225,6 +232,7 @@ const LinkModal = (props) => {
             value={selectedCol}
             onChange={setSelectedCol}
             labelledBy="Select Fields"
+            overrideStrings={{ selectSomeItems: "SELECT FIELDS" }}
           />
         </FormControl>
       </Modal.Body>

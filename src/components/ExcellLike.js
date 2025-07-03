@@ -13,9 +13,18 @@ export default function ExcelLikeTable(props) {
   const [hoveredCell, setHoveredCell] = useState({ row: null, col: null });
   const [draggedCell, setDraggedCell] = useState({ row: null, col: null });
   const dataCtx = useContext(DataContext);
-  console.log(props.linkFields)
+  console.log(props.linkFields);
+  const [dottedIndexes, setDottedIndexes] = useState([]);
+  useEffect(() => {
+    if (props.linkFields.length > 0) {
+      const allFieldIndexes = props.linkFields
+        .map((item) => item.fieldIndexes)
+        .flat(); // Flatten in case you have nested arrays
 
-  useEffect(()=>{},[props.linkFields])
+      setDottedIndexes(allFieldIndexes);
+    }
+  }, [props.linkFields]);
+  console.log(fields);
   useEffect(() => {
     if (Array.isArray(props.selected)) {
       setFields(props.selected);
@@ -76,22 +85,21 @@ export default function ExcelLikeTable(props) {
       setData([newRow]); // Each row is now an array of cell objects
     }
   }, [props.selected]);
-useEffect(() => {
-  if (!props.currentSelectedCoordinate) return;
+  useEffect(() => {
+    if (!props.currentSelectedCoordinate) return;
 
-  // Find the matching cell in the data
-  data.forEach((row, rowIndex) => {
-    row.forEach((cell, colIndex) => {
-      if (_.isEqual(props.currentSelectedCoordinate, cell.selectedField)) {
-        setSelectedCell({ row: rowIndex, col: colIndex });
-      }
+    // Find the matching cell in the data
+    data.forEach((row, rowIndex) => {
+      row.forEach((cell, colIndex) => {
+        if (_.isEqual(props.currentSelectedCoordinate, cell.selectedField)) {
+          setSelectedCell({ row: rowIndex, col: colIndex });
+        }
+      });
     });
-  });
-
-}, [props.currentSelectedCoordinate, data]);
+  }, [props.currentSelectedCoordinate, data]);
   const handleFieldClick = (item, colIndex, rowIndex) => {
     const matchedField = findFieldDetailsUsingObj(item.selectedField);
-   
+
     if (matchedField) {
       setSelectedCell({ row: rowIndex, col: colIndex });
 
@@ -135,7 +143,7 @@ useEffect(() => {
   };
   const handleSingleClick = (item, colIndex, rowIndex) => {
     setSelectedCell({ row: rowIndex, col: colIndex });
-    props.handleSingleSelect(item.selectedField)
+    props.handleSingleSelect(item.selectedField);
     // console.log(item, colIndex, rowIndex);
   };
   const handleDragStart = (cell, rowIndex, colIndex) => {
@@ -143,20 +151,28 @@ useEffect(() => {
   };
 
   const handleDrop = (targetRow, targetCol) => {
+    // Prevent drop into dotted or selected cells
+    if (
+      dottedIndexes.includes(targetCol) ||
+      (selectedCell.row === targetRow && selectedCell.col === targetCol)
+    ) {
+      return; // Do nothing
+    }
+
     if (draggedCell && data[targetRow][targetCol].cellType === "formField") {
       const newData = [...data];
       // Swap cells
       const temp = newData[targetRow][targetCol];
       newData[targetRow][targetCol] = draggedCell.cell;
       newData[draggedCell.rowIndex][draggedCell.colIndex] = temp;
-      console.log(newData);
-      const filteredFormfield = newData[0].filter((item) => {
-        return item.cellType === "formField";
-      });
 
-      const formDetails = filteredFormfield.map((item) => {
-        return findFieldDetails(item.cellValue);
-      });
+      const filteredFormfield = newData[0].filter(
+        (item) => item.cellType === "formField"
+      );
+
+      const formDetails = filteredFormfield.map((item) =>
+        findFieldDetails(item.cellValue)
+      );
       if (formDetails.length > 0) {
         dataCtx.changeIndexTemplate(formDetails, "formField");
       }
@@ -167,11 +183,19 @@ useEffect(() => {
   };
 
   const handleDragOver = (e, targetRow, targetCol) => {
-    // Allow drop only on formField cells
+    // Disallow drop if cell is in dotted indexes or is the selected cell
+    if (
+      dottedIndexes.includes(targetCol) ||
+      (selectedCell.row === targetRow && selectedCell.col === targetCol)
+    ) {
+      return; // Don't allow drop
+    }
+
     if (data[targetRow][targetCol].cellType === "formField") {
-      e.preventDefault();
+      e.preventDefault(); // Allow drop
     }
   };
+
   // Generate Excel-style column headers: A, B, ..., Z, AA, AB, ...
   const columnHeaders =
     data[0]?.map((_, index) => {
@@ -208,7 +232,10 @@ useEffect(() => {
                   backgroundColor:
                     selectedCell.col === index ? "#A0A0A0" : "#E0E0E0",
                   color: selectedCell.col === index ? "white" : "black", // Highlight selected header
-                  border: selectedCell.col === index ? "2px solid red" : "1px solid #dee2e6", // 🔴 Add red border condition
+                  border:
+                    selectedCell.col === index
+                      ? "2px solid red"
+                      : "1px solid #dee2e6", // 🔴 Add red border condition
                   transition: "background-color 0.2s ease, border 0.2s ease",
                 }}
               >
@@ -239,7 +266,13 @@ useEffect(() => {
               {row.map((cell, colIndex) => (
                 <td
                   key={colIndex}
-                  draggable
+                  draggable={
+                    !(
+                      dottedIndexes.includes(colIndex) ||
+                      (selectedCell.row === rowIndex &&
+                        selectedCell.col === colIndex)
+                    )
+                  }
                   onDragStart={() => handleDragStart(cell, rowIndex, colIndex)}
                   onDragOver={(e) => handleDragOver(e, rowIndex, colIndex)}
                   onDrop={() => handleDrop(rowIndex, colIndex)}
@@ -255,11 +288,13 @@ useEffect(() => {
                       selectedCell.row === rowIndex &&
                       selectedCell.col === colIndex
                         ? "2px solid red"
+                        : dottedIndexes.includes(colIndex)
+                        ? "2px dotted blue"
                         : "1px solid #dee2e6",
                     backgroundColor:
                       selectedCell.row === rowIndex &&
                       selectedCell.col === colIndex
-                        ? "#A5D6A7" // Optional: slight background change
+                        ? "#A5D6A7"
                         : hoveredCell.row === rowIndex &&
                           hoveredCell.col === colIndex
                         ? "#A5D6A7"
@@ -269,7 +304,12 @@ useEffect(() => {
                         ? "#FFB74D"
                         : "#C8E6C9",
                     transition: "background-color 0.2s ease",
-                    cursor: "grab",
+                    cursor:
+                      dottedIndexes.includes(colIndex) ||
+                      (selectedCell.row === rowIndex &&
+                        selectedCell.col === colIndex)
+                        ? "not-allowed"
+                        : "grab",
                   }}
                   onDoubleClick={() =>
                     handleFieldClick(cell, colIndex, rowIndex)

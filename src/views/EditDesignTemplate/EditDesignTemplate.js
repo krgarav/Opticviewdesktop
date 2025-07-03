@@ -2296,6 +2296,7 @@ const EditDesignTemplate = () => {
             selected={selectedCoordinates}
             handleSingleSelect={(item) => setCurrentSelectedCoordinate(item)}
             currentSelectedCoordinate={currentSelectedCoordinate}
+          
           />
         </div>
       </div>
