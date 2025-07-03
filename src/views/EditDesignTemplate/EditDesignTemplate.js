@@ -1804,17 +1804,32 @@ const EditDesignTemplate = () => {
         style={{
           position: isWideScreen ? "fixed" : "absolute",
           top: "5px",
-          padding: "10px",
+          left: "10px",
+          marginTop: "8px",
           zIndex: "999",
+          backgroundColor: "#f8f9fa", // Light grey background
+          borderRadius: "8px",
+          boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow
+          border: "1px solid #dee2e6", // Light border for structure
         }}
       >
         <nav
           style={{ "--bs-breadcrumb-divider": "'>'" }}
           aria-label="breadcrumb"
         >
-          <ol className="breadcrumb" style={{ fontSize: "0.8rem" }}>
-            <li className="breadcrumb-item text-blue" aria-current="page">
-              {dataCtx.allTemplates[0][0]?.layoutParameters?.layoutName}
+          <ol className="breadcrumb mb-0" style={{ fontSize: "0.9rem" }}>
+            <li
+              className="breadcrumb-item"
+              style={{
+                fontWeight: "600",
+                color: "#0d6efd", // Bootstrap primary blue
+              }}
+              aria-current="page"
+            >
+              Layout Name:&nbsp;
+              <span style={{ color: "#212529" }}>
+                {dataCtx.allTemplates[0][0]?.layoutParameters?.layoutName}
+              </span>
             </li>
           </ol>
         </nav>
@@ -2293,7 +2308,7 @@ const EditDesignTemplate = () => {
         }}
       >
         <CustomDraggableModal.Header>
-          <div style={{ width: "100%", }}>
+          <div style={{ width: "100%" }}>
             {modalUpdate && (
               <h2 className="text-center text-white pt-2">
                 {!modalUpdate
@@ -2315,85 +2330,93 @@ const EditDesignTemplate = () => {
               </h2>
             )}
             <br />
-          {!modalUpdate && (
-      <div className="d-flex justify-content-center">
-        <Row
-          className="mb-2 align-items-center flex-nowrap"
-          style={{ width: "auto", overflowX: "auto" }}
-        >
-          <Col md="auto" className="d-flex align-items-center">
-            <label htmlFor="formField" className="mr-2 mb-0 field-label">
-              Form:
-            </label>
-            <input
-              id="formField"
-              type="radio"
-              name="fieldType"
-              value="formField"
-              checked={selectedFieldType === "formField"}
-              onChange={handleRadioChange}
-              className="field-label"
-              style={{ accentColor: "black" }}
-            />
-          </Col>
+            {!modalUpdate && (
+              <div className="d-flex justify-content-center">
+                <Row
+                  className="mb-2 align-items-center flex-nowrap"
+                  style={{ width: "auto", overflowX: "auto" }}
+                >
+                  <Col md="auto" className="d-flex align-items-center">
+                    <label
+                      htmlFor="formField"
+                      className="mr-2 mb-0 field-label"
+                    >
+                      Form:
+                    </label>
+                    <input
+                      id="formField"
+                      type="radio"
+                      name="fieldType"
+                      value="formField"
+                      checked={selectedFieldType === "formField"}
+                      onChange={handleRadioChange}
+                      className="field-label"
+                      style={{ accentColor: "black" }}
+                    />
+                  </Col>
 
-          <Col md="auto" className="d-flex align-items-center">
-            <label htmlFor="fieldType" className="mr-2 mb-0 field-label">
-              Question:
-            </label>
-            <input
-              id="fieldType"
-              type="radio"
-              name="fieldType"
-              value="questionField"
-              checked={selectedFieldType === "questionField"}
-              onChange={handleRadioChange}
-              className="field-label"
-              style={{ accentColor: "black" }}
-            />
-          </Col>
+                  <Col md="auto" className="d-flex align-items-center">
+                    <label
+                      htmlFor="fieldType"
+                      className="mr-2 mb-0 field-label"
+                    >
+                      Question:
+                    </label>
+                    <input
+                      id="fieldType"
+                      type="radio"
+                      name="fieldType"
+                      value="questionField"
+                      checked={selectedFieldType === "questionField"}
+                      onChange={handleRadioChange}
+                      className="field-label"
+                      style={{ accentColor: "black" }}
+                    />
+                  </Col>
 
-          <Col md="auto" className="d-flex align-items-center">
-            <label htmlFor="skewMarkField" className="mr-2 mb-0 field-label">
-              Skew Mark:
-            </label>
-            <input
-              id="skewMarkField"
-              type="radio"
-              name="fieldType"
-              value="skewMarkField"
-              checked={selectedFieldType === "skewMarkField"}
-              onChange={handleRadioChange}
-              className="field-label"
-              style={{ accentColor: "black" }}
-            />
-          </Col>
+                  <Col md="auto" className="d-flex align-items-center">
+                    <label
+                      htmlFor="skewMarkField"
+                      className="mr-2 mb-0 field-label"
+                    >
+                      Skew Mark:
+                    </label>
+                    <input
+                      id="skewMarkField"
+                      type="radio"
+                      name="fieldType"
+                      value="skewMarkField"
+                      checked={selectedFieldType === "skewMarkField"}
+                      onChange={handleRadioChange}
+                      className="field-label"
+                      style={{ accentColor: "black" }}
+                    />
+                  </Col>
 
-          <Col md="auto" className="d-flex align-items-center">
-            <label htmlFor="idField" className="mr-2 mb-0 field-label">
-              ID Mark:
-            </label>
-            <input
-              id="idField"
-              type="radio"
-              name="fieldType"
-              value="idField"
-              checked={selectedFieldType === "idField"}
-              onChange={handleRadioChange}
-              className="field-label"
-              disabled={idSelectionCount > 0}
-              style={{ accentColor: "black" }}
-            />
-            {idSelectionCount > 0 && (
-              <small style={{ color: "orangered", marginLeft: "5px" }}>
-                already selected
-              </small>
+                  <Col md="auto" className="d-flex align-items-center">
+                    <label htmlFor="idField" className="mr-2 mb-0 field-label">
+                      ID Mark:
+                    </label>
+                    <input
+                      id="idField"
+                      type="radio"
+                      name="fieldType"
+                      value="idField"
+                      checked={selectedFieldType === "idField"}
+                      onChange={handleRadioChange}
+                      className="field-label"
+                      disabled={idSelectionCount > 0}
+                      style={{ accentColor: "black" }}
+                    />
+                    {idSelectionCount > 0 && (
+                      <small style={{ color: "orangered", marginLeft: "5px" }}>
+                        already selected
+                      </small>
+                    )}
+                  </Col>
+                </Row>
+              </div>
             )}
-          </Col>
-        </Row>
-      </div>
-    )}
-
           </div>
         </CustomDraggableModal.Header>
         <CustomDraggableModal.Body>
