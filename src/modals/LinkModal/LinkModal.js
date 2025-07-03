@@ -10,7 +10,7 @@ import Checkbox from "@mui/material/Checkbox";
 import DataContext from "store/DataContext";
 import { TextField } from "@mui/material";
 import isEqual from "lodash/isEqual";
-
+import { MultiSelect } from "react-multi-select-component";
 const identifier = {
   formField: "formFieldWindowParameters",
   skewMarkField: "skewMarksWindowParameters",
@@ -20,6 +20,7 @@ const LinkModal = (props) => {
   const [fieldValues, setFieldValues] = React.useState([]);
   const [fieldName, setFieldName] = React.useState(null);
   const [fields, setFields] = React.useState([]);
+  const [selectedCol, setSelectedCol] = React.useState([]);
   const dataCtx = useContext(DataContext);
   React.useEffect(() => {
     if (props.selectedCoordinates.length !== 0) {
@@ -77,6 +78,7 @@ const LinkModal = (props) => {
       style: {
         maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
         width: 300,
+        zIndex: 13000,
       },
     },
   };
@@ -85,57 +87,69 @@ const LinkModal = (props) => {
     ...field,
     id: `${field.name}_${index}`,
   }));
-  const saveArea = () => {
-    const fieldIndexes = [];
-    const filteredFields = allFields.filter((field) => {
-      return fieldValues.includes(field.id);
+ const saveArea = () => {
+  const fieldIndexes = [];
+
+  // Correctly retrieve the full field objects
+  const filteredFields = allFields.filter((field) =>
+    selectedCol.some((item) => item.value === field.id)
+  );
+
+  if (!fieldName) {
+    alert("Field Name is required");
+    return;
+  }
+
+  if (filteredFields.length <= 1) {
+    alert("Please select the fields");
+    return;
+  }
+
+  console.log(dataCtx.allTemplates);
+  console.log(props.fieldType);
+
+  const keyIdentifier = identifier[props.fieldType];
+  console.log(keyIdentifier);
+
+  const template = dataCtx.allTemplates[0][0][keyIdentifier];
+
+  const formatCoordinate = (field) => ({
+    "End Col": field.endCol,
+    "End Row": field.endRow + 1,
+    "Start Col": field.startCol,
+    "Start Row": field.startRow + 1,
+    fieldType: field.fieldType,
+    name: field.name,
+  });
+
+  if (Array.isArray(template)) {
+    filteredFields.forEach((field) => {
+      const formatted = formatCoordinate(field);
+
+      const index = template.findIndex((item) =>
+        isEqual(item.Coordinate, formatted)
+      );
+
+      if (index !== -1) {
+        fieldIndexes.push(index);
+      }
     });
+  }
 
-    if (!fieldName) {
-      alert("Field Name is required");
-      return;
-    }
-    if (filteredFields.length <= 1) {
-      alert("Please select the fields");
-      return;
-    }
-    console.log(dataCtx.allTemplates);
-    console.log(props.fieldType);
-    const keyIdentifier = identifier[props.fieldType];
-    console.log(keyIdentifier);
-    const template = dataCtx.allTemplates[0][0][keyIdentifier];
-    const formatCoordinate = (field) => ({
-      "End Col": field.endCol,
-      "End Row": field.endRow + 1,
-      "Start Col": field.startCol,
-      "Start Row": field.startRow + 1,
-      fieldType: field.fieldType,
-      name: field.name,
-    });
+  dataCtx.linkField(filteredFields, fieldName, fieldIndexes, keyIdentifier);
+  props.onHide();
+};
 
-    if (Array.isArray(template)) {
-      filteredFields.forEach((field) => {
-        const formatted = formatCoordinate(field);
+  const options = allFields.map((field) => ({
+    label: field.name,
+    value: field.id,
+  }));
 
-        const index = template.findIndex((item) =>
-          isEqual(item.Coordinate, formatted)
-        );
-
-        if (index !== -1) {
-          fieldIndexes.push(index);
-        }
-      });
-    }
-
-    dataCtx.linkField(filteredFields, fieldName, fieldIndexes, keyIdentifier);
-    props.onHide();
-  };
-  // console.log(dataCtx.allTemplates);
   return (
     <Modal
       show={props.show}
       size="md"
-      style={{zIndex:"99999"}}
+      style={{ zIndex: "9999" }}
       // onHide={() => setModalShow(false)}
     >
       <Modal.Header>
@@ -181,7 +195,7 @@ const LinkModal = (props) => {
 
         <FormControl sx={{ width: "100%", maxWidth: 420 }}>
           <InputLabel id="demo-multiple-checkbox-label">FIELDS</InputLabel>
-          <Select
+          {/* <Select
             labelId="demo-multiple-checkbox-label"
             id="demo-multiple-checkbox"
             multiple
@@ -204,7 +218,14 @@ const LinkModal = (props) => {
                 <ListItemText primary={field.name} />
               </MenuItem>
             ))}
-          </Select>
+          </Select> */}
+
+          <MultiSelect
+            options={options}
+            value={selectedCol}
+            onChange={setSelectedCol}
+            labelledBy="Select Fields"
+          />
         </FormControl>
       </Modal.Body>
 

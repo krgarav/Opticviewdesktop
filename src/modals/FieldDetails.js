@@ -79,8 +79,7 @@ const FieldDetails = (props) => {
     // If it's the first render or props.selected has changed deeply
     if ( props.selected) {
       const selectedFields = JSON.parse(JSON.stringify(props.selected)); // Deep copy to prevent parent overwrite
-console.log("called")
-console.log(props.selected)
+
       const groupedFields = selectedFields.reduce((acc, item) => {
         if (!acc[item.fieldType]) {
           acc[item.fieldType] = [];
