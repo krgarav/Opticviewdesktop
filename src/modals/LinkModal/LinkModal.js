@@ -135,6 +135,7 @@ const LinkModal = (props) => {
     <Modal
       show={props.show}
       size="md"
+      style={{zIndex:"99999"}}
       // onHide={() => setModalShow(false)}
     >
       <Modal.Header>
