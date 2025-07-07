@@ -2352,7 +2352,7 @@ const EditDesignTemplate = () => {
                       checked={selectedFieldType === "formField"}
                       onChange={handleRadioChange}
                       className="field-label"
-                      style={{ accentColor: "black" }}
+                      style={{ accentColor: "rgba(255, 128, 0)" }}
                     />
                   </Col>
 
@@ -2371,7 +2371,7 @@ const EditDesignTemplate = () => {
                       checked={selectedFieldType === "questionField"}
                       onChange={handleRadioChange}
                       className="field-label"
-                      style={{ accentColor: "black" }}
+                     style={{ accentColor: "rgba(255, 128, 0)" }}
                     />
                   </Col>
 
@@ -2390,7 +2390,7 @@ const EditDesignTemplate = () => {
                       checked={selectedFieldType === "skewMarkField"}
                       onChange={handleRadioChange}
                       className="field-label"
-                      style={{ accentColor: "black" }}
+                      style={{ accentColor: "rgba(255, 128, 0)" }}
                     />
                   </Col>
 
@@ -2407,7 +2407,7 @@ const EditDesignTemplate = () => {
                       onChange={handleRadioChange}
                       className="field-label"
                       disabled={idSelectionCount > 0}
-                      style={{ accentColor: "black" }}
+                      style={{ accentColor: "rgba(255, 128, 0)" }}
                     />
                     {idSelectionCount > 0 && (
                       <small style={{ color: "orangered", marginLeft: "5px" }}>

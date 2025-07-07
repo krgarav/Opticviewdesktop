@@ -1897,66 +1897,7 @@ const DesignTemplate = () => {
           </Row>
         </Container>
       </div>
-      <div
-        style={{
-          position: "absolute",
-          top: "10px",
-          right: "10px",
-          display: "flex",
-          gap: "12px",
-          zIndex: 1000,
-        }}
-      >
-        {/* Zoom In Button with MUI Tooltip */}
-        <Tooltip
-          title='Zoom In — Use keyboard: Ctrl + "+" '
-          placement="bottom"
-          arrow
-        >
-          <Button
-            variant="light"
-            size="sm"
-            id="zoominbtn"
-            // onClick={handleZoomIn}
-            style={{
-              borderRadius: "50%",
-              width: "40px",
-              height: "40px",
-              boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <i className="fas fa-search-plus"></i>
-          </Button>
-        </Tooltip>
-
-        {/* Zoom Out Button with MUI Tooltip */}
-        <Tooltip
-          title='Zoom Out — Use keyboard: Ctrl + "-" '
-          placement="bottom"
-          arrow
-        >
-          <Button
-            variant="light"
-            size="sm"
-            id="zoomoutbtn"
-            // onClick={handleZoomOut}
-            style={{
-              borderRadius: "50%",
-              width: "40px",
-              height: "40px",
-              boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <i className="fas fa-search-minus"></i>
-          </Button>
-        </Tooltip>
-      </div>
+      
 
       {!modalShow && selection && (
         <Button
@@ -2286,15 +2227,17 @@ const DesignTemplate = () => {
         >
           <ExcelLikeTable
             handleEyeClick={handleEyeClick}
+             linkFields={linkFields}
             selected={selectedCoordinates}
             handleSingleSelect={(item) => setCurrentSelectedCoordinate(item)}
+            currentSelectedCoordinate={currentSelectedCoordinate}
           />
         </div>
       </div>
 
       <CustomDraggableModal
         show={modalShow}
-        size="lg"
+        size="md"
         onClose={() => {
           handleCancel();
         }}
@@ -2302,7 +2245,8 @@ const DesignTemplate = () => {
         <CustomDraggableModal.Header>
           <div style={{ width: "100%" }}>
             {modalUpdate && (
-              <h2 className="text-center text-white pt-2">
+              <h2 className="text-center text-uppercase pt-2 fw-semibold fs-1"
+  style={{ letterSpacing: '0.5px',fontSize:"1.7rem" , color:"rgba(255, 128, 0)"}}>
                 {!modalUpdate
                   ? "Choose field type"
                   : selectedFieldType === "formField"
@@ -2317,97 +2261,98 @@ const DesignTemplate = () => {
               </h2>
             )}
             {!selectedFieldType && (
-              <h2 className="text-center  text-white`">
+              <h2 className="text-center" style={{color:"rgba(255, 128, 0)"}}>
                 {!modalUpdate ? "Choose field type" : selectedFieldType}
               </h2>
             )}
             <br />
-            {!modalUpdate && (
-              <Row className="mb-2" style={{ width: "100%" }}>
-                <label
-                  htmlFor="example-text-input"
-                  className="col-md-2 col-form-label"
-                ></label>
-                <Col md={2} className="d-flex align-items-center">
-                  <label htmlFor="formField" className="mr-2 mb-0 field-label">
-                    Form :{" "}
-                  </label>
-                  <input
-                    id="formField"
-                    type="radio"
-                    name="fieldType"
-                    value="formField"
-                    checked={selectedFieldType === "formField"}
-                    onChange={handleRadioChange}
-                    className=" field-label"
-                    style={{ accentColor: "black" }}
-                  />
-                </Col>
-                <Col md={2} className="d-flex align-items-center">
-                  <label htmlFor="fieldType" className="mr-2 mb-0 field-label">
-                    Question :{" "}
-                  </label>
-                  <input
-                    id="fieldType"
-                    type="radio"
-                    name="fieldType"
-                    value="questionField"
-                    checked={selectedFieldType === "questionField"}
-                    onChange={handleRadioChange}
-                    className=" field-label"
-                    style={{ accentColor: "black" }}
-                  />
-                </Col>
-                <Col md={3} className="d-flex align-items-center ">
-                  <label
-                    htmlFor="skewMarkField"
-                    className="mr-2 mb-0 field-label"
-                  >
-                    Skew Mark:
-                  </label>
-                  <input
-                    id="skewMarkField"
-                    type="radio"
-                    name="fieldType"
-                    value="skewMarkField"
-                    checked={selectedFieldType === "skewMarkField"}
-                    onChange={handleRadioChange}
-                    className=" field-label mt-0.9"
-                    style={{ accentColor: "black" }}
-                  />
-                </Col>
-                <Col md={2} className="d-flex align-items-center mt-1">
-                  <div style={{ display: "flex", flexDirection: "column" }}>
-                    <div className="d-flex align-items-center mt-2">
-                      <label
-                        htmlFor="idField"
-                        className="mr-2 mb-0 field-label"
-                      >
-                        ID Mark :
-                      </label>
-                      <input
-                        id="idField"
-                        type="radio"
-                        name="fieldType"
-                        value="idField"
-                        checked={selectedFieldType === "idField"}
-                        onChange={handleRadioChange}
-                        className="field-label align-items-center"
-                        disabled={idSelectionCount > 0}
-                        style={{ accentColor: "black" }}
-                      />
-                    </div>
-                    {idSelectionCount > 0 && (
-                      <div>
-                        <small style={{ color: "orangered" }}>
-                          already selected
-                        </small>
-                      </div>
-                    )}
-                  </div>
-                </Col>
-              </Row>
-            )}
+           {!modalUpdate && (
+                         <div className="d-flex justify-content-center">
+                           <Row
+                             className="mb-2 align-items-center flex-nowrap"
+                             style={{ width: "auto", overflowX: "auto" }}
+                           >
+                             <Col md="auto" className="d-flex align-items-center">
+                               <label
+                                 htmlFor="formField"
+                                 className="mr-2 mb-0 field-label"
+                               >
+                                 Form:
+                               </label>
+                               <input
+                                 id="formField"
+                                 type="radio"
+                                 name="fieldType"
+                                 value="formField"
+                                 checked={selectedFieldType === "formField"}
+                                 onChange={handleRadioChange}
+                                 className="field-label"
+                                 style={{ accentColor: "rgba(255, 128, 0)" }}
+                               />
+                             </Col>
+           
+                             <Col md="auto" className="d-flex align-items-center">
+                               <label
+                                 htmlFor="fieldType"
+                                 className="mr-2 mb-0 field-label"
+                               >
+                                 Question:
+                               </label>
+                               <input
+                                 id="fieldType"
+                                 type="radio"
+                                 name="fieldType"
+                                 value="questionField"
+                                 checked={selectedFieldType === "questionField"}
+                                 onChange={handleRadioChange}
+                                 className="field-label"
+                                 style={{ accentColor: "rgba(255, 128, 0)" }}
+                               />
+                             </Col>
+           
+                             <Col md="auto" className="d-flex align-items-center">
+                               <label
+                                 htmlFor="skewMarkField"
+                                 className="mr-2 mb-0 field-label"
+                               >
+                                 Skew Mark:
+                               </label>
+                               <input
+                                 id="skewMarkField"
+                                 type="radio"
+                                 name="fieldType"
+                                 value="skewMarkField"
+                                 checked={selectedFieldType === "skewMarkField"}
+                                 onChange={handleRadioChange}
+                                 className="field-label"
+                               style={{ accentColor: "rgba(255, 128, 0)" }}
+                               />
+                             </Col>
+           
+                             <Col md="auto" className="d-flex align-items-center">
+                               <label htmlFor="idField" className="mr-2 mb-0 field-label">
+                                 ID Mark:
+                               </label>
+                               <input
+                                 id="idField"
+                                 type="radio"
+                                 name="fieldType"
+                                 value="idField"
+                                 checked={selectedFieldType === "idField"}
+                                 onChange={handleRadioChange}
+                                 className="field-label"
+                                 disabled={idSelectionCount > 0}
+                                 style={{ accentColor: "rgba(255, 128, 0)" }}
+                               />
+                               {idSelectionCount > 0 && (
+                                 <small style={{ color: "orangered", marginLeft: "5px" }}>
+                                   already selected
+                                 </small>
+                               )}
+                             </Col>
+                           </Row>
+                         </div>
+                       )}
           </div>
         </CustomDraggableModal.Header>
         <CustomDraggableModal.Body>

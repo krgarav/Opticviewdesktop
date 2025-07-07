@@ -60,10 +60,12 @@ const CustomDraggableModal = ({ show, onClose, children, size = "md" }) => {
 // Header Subcomponent
 CustomDraggableModal.Header = ({ children, onClose }) => (
   <div
-    className="custom-modal-header  bg-gradient-primary"
+    className="custom-modal-header"
     style={{
       padding: "10px",
+          position: "relative",
       // backgroundColor: "#2563eb",
+       background: 'linear-gradient(90deg, #000000, #434343)',
       color: "white",
       cursor: "move",
       borderTopLeftRadius: "8px",
@@ -77,14 +79,17 @@ CustomDraggableModal.Header = ({ children, onClose }) => (
     <div style={{ width: "100%" }}>{children}</div>
     <button
   onClick={onClose}
-  style={{
-    background: "transparent",
-    border: "none",
-    color: "white",
-    fontSize: "40px",
-    cursor: "pointer",
-    transition: "color 0.3s ease, transform 0.2s ease",
-  }}
+   style={{
+      position: "absolute",
+      top: "10px",
+      right: "10px",
+      background: "transparent",
+      border: "none",
+      color: "white",
+      fontSize: "30px",
+      cursor: "pointer",
+      transition: "color 0.3s ease, transform 0.2s ease",
+    }}
   onMouseEnter={(e) => {
     e.target.style.color = "#ff4d4d";
     e.target.style.transform = "scale(1.2)";

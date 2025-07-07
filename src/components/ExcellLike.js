@@ -13,10 +13,10 @@ export default function ExcelLikeTable(props) {
   const [hoveredCell, setHoveredCell] = useState({ row: null, col: null });
   const [draggedCell, setDraggedCell] = useState({ row: null, col: null });
   const dataCtx = useContext(DataContext);
-  console.log(props.linkFields);
+
   const [dottedIndexes, setDottedIndexes] = useState([]);
   useEffect(() => {
-    if (props.linkFields.length > 0) {
+    if (props?.linkFields?.length > 0) {
       const allFieldIndexes = props.linkFields
         .map((item) => item.fieldIndexes)
         .flat(); // Flatten in case you have nested arrays
