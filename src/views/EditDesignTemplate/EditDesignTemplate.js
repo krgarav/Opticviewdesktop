@@ -2312,7 +2312,8 @@ const EditDesignTemplate = () => {
         <CustomDraggableModal.Header>
           <div style={{ width: "100%" }}>
             {modalUpdate && (
-              <h2 className="text-center text-white pt-2">
+             <h2 className="text-center text-uppercase pt-2 fw-semibold fs-1"
+  style={{ letterSpacing: '0.5px',fontSize:"1.7rem" , color:"rgba(255, 128, 0)"}}>
                 {!modalUpdate
                   ? "Choose field type"
                   : selectedFieldType === "formField"
@@ -2326,12 +2327,13 @@ const EditDesignTemplate = () => {
                   : ""}
               </h2>
             )}
-            {!selectedFieldType && (
-              <h2 className="text-center text-white">
+          {!selectedFieldType && (<>
+              <h2 className="text-center" style={{color:"rgba(255, 128, 0)"}}>
                 {!modalUpdate ? "Choose field type" : selectedFieldType}
               </h2>
+              <br />
+              </>
             )}
-            <br />
             {!modalUpdate && (
               <div className="d-flex justify-content-center">
                 <Row

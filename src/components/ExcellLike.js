@@ -15,17 +15,46 @@ export default function ExcelLikeTable(props) {
   const dataCtx = useContext(DataContext);
 
   const [dottedIndexes, setDottedIndexes] = useState([]);
-  useEffect(() => {
-    if (props?.linkFields?.length > 0) {
-      const allFieldIndexes = props.linkFields
-        .map((item) => item.fieldIndexes)
-        .flat(); // Flatten in case you have nested arrays
+  console.log(props.linkFields)
+  // useEffect(() => {
+  //   if (props?.linkFields?.length > 0) {
+  //     const allFieldIndexes = props.linkFields
+  //       .map((item) => item.fieldIndexes)
+  //       .flat(); // Flatten in case you have nested arrays
 
-      setDottedIndexes(allFieldIndexes);
-    }
-  }, [props.linkFields]);
-  console.log(fields);
-  useEffect(() => {
+  //     setDottedIndexes(allFieldIndexes);
+  //   }
+  // }, [props.linkFields]);
+console.log(dottedIndexes)
+useEffect(() => {
+  if (props?.linkFields?.length > 0) {
+    // Extract all fieldIndexes (existing functionality)
+    const allFieldIndexes = props.linkFields
+      .map((item) => item.fieldIndexes)
+      .flat();
+
+    setDottedIndexes(allFieldIndexes);
+
+    // 👉 Remove all fieldIndexes from formFields and replace with new fields
+    setFields((prevFields) => {
+      // Filter out existing formFields (optional: if you want to reset completely)
+      const updatedFields = prevFields.filter(
+        (field) => field.fieldType !== "formField"
+      );
+
+      // Create new formField entries from linkFields' fieldName
+      const newFormFields = props.linkFields.map((item) => ({
+        name: item.fieldName,
+        fieldType: "formField",
+      }));
+
+      return [...updatedFields, ...newFormFields];
+    });
+  }
+}, [props.linkFields]);
+  console.log(fields)
+
+useEffect(() => {
     if (Array.isArray(props.selected)) {
       setFields(props.selected);
 
@@ -84,7 +113,7 @@ export default function ExcelLikeTable(props) {
 
       setData([newRow]); // Each row is now an array of cell objects
     }
-  }, [props.selected]);
+  }, [props.selected,props.linkFields]);
   useEffect(() => {
     if (!props.currentSelectedCoordinate) return;
 
