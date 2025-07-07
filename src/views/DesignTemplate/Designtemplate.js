@@ -2122,7 +2122,7 @@ const DesignTemplate = () => {
                           </div>
                         );
                       })}
-                      {linkFields.map((data, index) => {
+                       {linkFields.map((data, index) => {
                         const border =
                           currentLinkField === index
                             ? "4px dashed red"
@@ -2139,6 +2139,7 @@ const DesignTemplate = () => {
                             style={{
                               border,
                               boxShadow,
+                              pointerEvents: 'none',
                               position: "absolute",
                               overflow: "hidden",
                               padding: "10px",
@@ -2174,6 +2175,7 @@ const DesignTemplate = () => {
                           ></div>
                         );
                       })}
+                     
                       {selection && (
                         <div
                           className="border-green-700"
@@ -2260,12 +2262,14 @@ const DesignTemplate = () => {
                   : ""}
               </h2>
             )}
-            {!selectedFieldType && (
+            {!selectedFieldType && (<>
               <h2 className="text-center" style={{color:"rgba(255, 128, 0)"}}>
                 {!modalUpdate ? "Choose field type" : selectedFieldType}
               </h2>
+              <br />
+              </>
             )}
-            <br />
+            
            {!modalUpdate && (
                          <div className="d-flex justify-content-center">
                            <Row

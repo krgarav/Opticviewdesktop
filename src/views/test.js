@@ -81,8 +81,8 @@ CustomDraggableModal.Header = ({ children, onClose }) => (
   onClick={onClose}
    style={{
       position: "absolute",
-      top: "10px",
-      right: "10px",
+      top: "-5px",
+      right: "5px",
       background: "transparent",
       border: "none",
       color: "white",

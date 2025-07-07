@@ -2203,6 +2203,7 @@ const EditDesignTemplate = () => {
                             style={{
                               border,
                               boxShadow,
+                               pointerEvents: 'none',
                               position: "absolute",
                               overflow: "hidden",
                               padding: "10px",
