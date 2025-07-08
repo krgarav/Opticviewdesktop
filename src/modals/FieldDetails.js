@@ -450,27 +450,31 @@ const FieldDetails = (props) => {
           // responsive
         >
           <thead
-            className="thead-light"
+            // className="thead-light"
             style={{
               position: "sticky",
               top: 0,
               zIndex: 1,
-              backgroundColor: "white",
+              // backgroundColor: "white",
+              
+              backgroundColor: "#000000",
+              color: "white", 
+               fontSize: "1.7rem !important",
             }}
           >
             <tr>
-              <th scope="col">
+              <th scope="col" >
                 <input
                   type="checkbox"
                   checked={isAllSelected()}
                   onChange={handleSelectAll}
                 />
               </th>
-              <th scope="col">SL no.</th>
-              <th scope="col">Field Name</th>
-              <th scope="col">Field Type</th>
-              <th scope="col">Change Direction</th>
-              <th scope="col">Action</th>
+              <th scope="col" style={{ fontSize: "0.7rem" }}>SL no.</th>
+              <th scope="col" style={{ fontSize: "0.7rem" }}>Field Name</th>
+              <th scope="col" style={{ fontSize: "0.7rem" }}>Field Type</th>
+              <th scope="col" style={{ fontSize: "0.7rem" }}>Change Direction</th>
+              <th scope="col" style={{ fontSize: "0.7rem" }}>Action</th>
             </tr>
           </thead>
           <tbody>

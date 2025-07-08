@@ -2203,7 +2203,7 @@ const EditDesignTemplate = () => {
                             style={{
                               border,
                               boxShadow,
-                               pointerEvents: 'none',
+                              pointerEvents: "none",
                               position: "absolute",
                               overflow: "hidden",
                               padding: "10px",
@@ -2297,7 +2297,6 @@ const EditDesignTemplate = () => {
             selected={selectedCoordinates}
             handleSingleSelect={(item) => setCurrentSelectedCoordinate(item)}
             currentSelectedCoordinate={currentSelectedCoordinate}
-          
           />
         </div>
       </div>
@@ -2312,8 +2311,14 @@ const EditDesignTemplate = () => {
         <CustomDraggableModal.Header>
           <div style={{ width: "100%" }}>
             {modalUpdate && (
-             <h2 className="text-center text-uppercase pt-2 fw-semibold fs-1"
-  style={{ letterSpacing: '0.5px',fontSize:"1.7rem" , color:"rgba(255, 128, 0)"}}>
+              <h2
+                className="text-center text-uppercase pt-2 fw-semibold fs-1"
+                style={{
+                  letterSpacing: "0.5px",
+                  fontSize: "1.7rem",
+                  color: "rgba(255, 128, 0)",
+                }}
+              >
                 {!modalUpdate
                   ? "Choose field type"
                   : selectedFieldType === "formField"
@@ -2327,11 +2332,15 @@ const EditDesignTemplate = () => {
                   : ""}
               </h2>
             )}
-          {!selectedFieldType && (<>
-              <h2 className="text-center" style={{color:"rgba(255, 128, 0)"}}>
-                {!modalUpdate ? "Choose field type" : selectedFieldType}
-              </h2>
-              <br />
+            {!selectedFieldType && (
+              <>
+                <h2
+                  className="text-center"
+                  style={{ color: "rgba(255, 128, 0)" }}
+                >
+                  {!modalUpdate ? "Choose field type" : selectedFieldType}
+                </h2>
+                <br />
               </>
             )}
             {!modalUpdate && (
@@ -2374,7 +2383,7 @@ const EditDesignTemplate = () => {
                       checked={selectedFieldType === "questionField"}
                       onChange={handleRadioChange}
                       className="field-label"
-                     style={{ accentColor: "rgba(255, 128, 0)" }}
+                      style={{ accentColor: "rgba(255, 128, 0)" }}
                     />
                   </Col>
 
