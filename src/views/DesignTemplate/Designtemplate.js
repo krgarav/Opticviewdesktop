@@ -1836,7 +1836,40 @@ const DesignTemplate = () => {
       <div style={{ position: "sticky", top: 0, zIndex: 99 }}>
         <SmallHeader />
       </div>
-
+  <div
+        style={{
+          position: isWideScreen ? "fixed" : "absolute",
+          top: "5px",
+          left: "10px",
+          marginTop: "8px",
+          zIndex: "999",
+          backgroundColor: "#f8f9fa", // Light grey background
+          borderRadius: "8px",
+          boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow
+          border: "1px solid #dee2e6", // Light border for structure
+        }}
+      >
+        <nav
+          style={{ "--bs-breadcrumb-divider": "'>'" }}
+          aria-label="breadcrumb"
+        >
+          <ol className="breadcrumb mb-0" style={{ fontSize: "0.9rem" }}>
+            <li
+              className="breadcrumb-item"
+              style={{
+                fontWeight: "600",
+                color: "#0d6efd", // Bootstrap primary blue
+              }}
+              aria-current="page"
+            >
+              Layout Name:&nbsp;
+              <span style={{ color: "#212529" }}>
+                {dataCtx.allTemplates[0][0]?.layoutParameters?.layoutName}
+              </span>
+            </li>
+          </ol>
+        </nav>
+      </div>
       <div
         style={{
           position: isWideScreen ? "fixed" : "absolute",
@@ -3126,6 +3159,7 @@ const DesignTemplate = () => {
         size="lg"
         aria-labelledby="contained-modal-title-vcenter"
         centered
+         onHide={()=>setImageModalShow(false)}
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">

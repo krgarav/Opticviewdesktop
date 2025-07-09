@@ -433,9 +433,10 @@ const FieldDetails = (props) => {
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
+      onHide={props.onHide}
     >
       <Modal.Header>
-        <Modal.Title id="contained-modal-title-vcenter">All Fields</Modal.Title>
+        <Modal.Title id="contained-modal-title-vcenter"   > <span style={{ fontSize: "1.2rem" }}>All Fields</span></Modal.Title>
       </Modal.Header>
       <Modal.Body
         style={{

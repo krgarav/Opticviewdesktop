@@ -41,12 +41,12 @@ import ExcelLikeTable from "components/ExcellLike";
 import CustomDraggableModal from "views/test";
 import skewQuestionNameGenerator from "helper/skewQuestionNameGenerator";
 import _ from "lodash";
+
 const EditDesignTemplate = () => {
   const [selected, setSelected] = useState({});
   const [selection, setSelection] = useState(null);
   const [dragStart, setDragStart] = useState(null);
   const [modalShow, setModalShow] = useState(false);
-  const [selectedClass, setSelectedClass] = useState("circle");
   const imageRef = useRef(null);
   const [selectedCoordinates, setSelectedCoordinates] = useState([]);
   const [name, setName] = useState();
@@ -440,17 +440,6 @@ const EditDesignTemplate = () => {
   }, [dataCtx.allTemplates]);
 
   // *****************************************************************************************
-  useEffect(() => {
-    const classMap = {
-      "rounded rectangle": "rounded-rectangle",
-      rectangle: "rectangle",
-      circle: "circle",
-      oval: "oval",
-    };
-
-    // Set the class, defaulting to "circle" if bubbleType is not found
-    setSelectedClass(classMap[data.bubbleType] || "circle");
-  }, [data.bubbleType]);
 
   useEffect(() => {
     // Create an array to hold the options
@@ -1789,7 +1778,7 @@ const EditDesignTemplate = () => {
       }
     } catch (err) {
       toast.error("Something went wrong");
-      console.log(err);
+      
     }
   };
 
@@ -1891,67 +1880,6 @@ const EditDesignTemplate = () => {
             </Col>
           </Row>
         </Container>
-      </div>
-
-      <div
-        style={{
-          position: "absolute",
-          top: "10px",
-          right: "10px",
-          display: "flex",
-          gap: "12px",
-          zIndex: 1000,
-        }}
-      >
-        {/* Zoom In Button with MUI Tooltip */}
-        <Tooltip
-          title='Zoom In — Use keyboard: Ctrl + "+" '
-          placement="bottom"
-          arrow
-        >
-          <Button
-            variant="light"
-            size="sm"
-            id="zoominbtn"
-            onClick={handleZoomIn}
-            style={{
-              borderRadius: "50%",
-              width: "40px",
-              height: "40px",
-              boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <i className="fas fa-search-plus"></i>
-          </Button>
-        </Tooltip>
-
-        {/* Zoom Out Button with MUI Tooltip */}
-        <Tooltip
-          title='Zoom Out — Use keyboard: Ctrl + "-" '
-          placement="bottom"
-          arrow
-        >
-          <Button
-            variant="light"
-            size="sm"
-            id="zoomoutbtn"
-            onClick={handleZoomOut}
-            style={{
-              borderRadius: "50%",
-              width: "40px",
-              height: "40px",
-              boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <i className="fas fa-search-minus"></i>
-          </Button>
-        </Tooltip>
       </div>
 
       {!modalShow && selection && (
@@ -3186,8 +3114,10 @@ const EditDesignTemplate = () => {
       <Modal
         show={imageModalShow}
         size="lg"
+        onHide={() => setImageModalShow(false)}
         aria-labelledby="contained-modal-title-vcenter"
         centered
+        keyboard={false}
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">

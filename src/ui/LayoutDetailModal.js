@@ -697,7 +697,7 @@ const LayoutDetailModal = (props) => {
         aria-labelledby="modal-custom-navbar"
         centered
         dialogClassName="modal-90w"
-        backdrop="static"
+        // backdrop="static"
         keyboard={false}
       >
         <Modal.Body style={{ height: "65dvh", overflow: "auto" }}>
