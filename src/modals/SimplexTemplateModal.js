@@ -1168,8 +1168,11 @@ const SimplexTemplateModal = (props) => {
                               <Slider
                                 getAriaLabel={() => "Sensitivity range"}
                                 value={value}
-                                onChange={(event, newValue) =>
-                                  handleChange(newValue)
+                                onChange={(event, newValue) =>{
+                                  const val = 17 - newValue
+                                  handleChange(val)
+                                }
+                                
                                 }
                                 valueLabelDisplay="auto"
                                 min={1}
@@ -1192,7 +1195,7 @@ const SimplexTemplateModal = (props) => {
                           </div>
 
                           <input
-                            value={`${17 - sensitivity}`}
+                            value={`${sensitivity}`}
                             onChange={(e) => setSensitivity(e.target.value)}
                             style={{
                               width: "100%",

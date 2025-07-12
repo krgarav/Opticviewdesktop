@@ -1778,7 +1778,6 @@ const EditDesignTemplate = () => {
       }
     } catch (err) {
       toast.error("Something went wrong");
-      
     }
   };
 
@@ -2100,6 +2099,7 @@ const EditDesignTemplate = () => {
                               ref={(el) => (divRefs.current[index] = el)}
                               onDoubleClick={() => handleEyeClick(data, index)}
                               onClick={() => setCurrentSelectedCoordinate(data)}
+                              onDragStart={(e) => e.preventDefault()}
                               style={{
                                 border: `3px solid ${borderColor}`,
                                 position: "absolute",
@@ -3198,6 +3198,7 @@ const EditDesignTemplate = () => {
             setShowFieldDetails(false);
           }}
           selected={selectedCoordinates}
+          linkFields={linkFields}
           editHandler={(item, i) => handleEyeClick(item, i)}
           deleteHandler={(item, i) => handleCrossClick(item, i)}
         />

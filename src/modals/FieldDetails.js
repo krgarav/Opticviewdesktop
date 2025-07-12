@@ -32,10 +32,15 @@ const FieldDetails = (props) => {
   const [idField, setIdField] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [items, setItems] = useState(false);
+
   const prevSelectedRef = useRef();
   // Only initialize when modal opens
 
   // Example: Selecting All
+
+
+
+
   const handleSelectAll = (e) => {
     const allCurrentFields = [
       ...formField,
@@ -491,6 +496,7 @@ const FieldDetails = (props) => {
               selectedItems={selectedItems}
               handleCheckboxChange={handleCheckboxChange}
               serialOffset={0}
+              linkedFields={props.linkFields}
             />
 
             <TableRow
@@ -505,6 +511,7 @@ const FieldDetails = (props) => {
               selectedItems={selectedItems}
               handleCheckboxChange={handleCheckboxChange}
               serialOffset={formField.length}
+              linkedFields={[]}
             />
 
             <TableRow
@@ -519,6 +526,7 @@ const FieldDetails = (props) => {
               selectedItems={selectedItems}
               handleCheckboxChange={handleCheckboxChange}
               serialOffset={formField.length + questionField.length}
+              linkedFields={[]}
             />
             <TableRow
               type="idField"
@@ -534,6 +542,7 @@ const FieldDetails = (props) => {
               serialOffset={
                 formField.length + questionField.length + skewField.length
               }
+              linkedFields={[]}
             />
 
             {/* {props.fieldsLoading ? placeHolderJobs : LoadedTemplates} */}
