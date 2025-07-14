@@ -38,9 +38,6 @@ const FieldDetails = (props) => {
 
   // Example: Selecting All
 
-
-
-
   const handleSelectAll = (e) => {
     const allCurrentFields = [
       ...formField,
@@ -82,7 +79,7 @@ const FieldDetails = (props) => {
   const dataCtx = useContext(DataContext);
   useEffect(() => {
     // If it's the first render or props.selected has changed deeply
-    if ( props.selected) {
+    if (props.selected) {
       const selectedFields = JSON.parse(JSON.stringify(props.selected)); // Deep copy to prevent parent overwrite
 
       const groupedFields = selectedFields.reduce((acc, item) => {
@@ -99,8 +96,6 @@ const FieldDetails = (props) => {
       setIdField(groupedFields["idField"] || []);
       setFields(selectedFields);
       setSelectedItems([]);
-
-     
     }
   }, [items]);
 
@@ -427,9 +422,9 @@ const FieldDetails = (props) => {
     );
     dataCtx.deleteMultipleFields(matchedItems);
     setTimeout(() => {
-       setItems((prev) => !prev);
+      setItems((prev) => !prev);
     }, 500);
-   
+
     toast.success("Selected fields deleted successfully.");
   };
   return (
@@ -441,7 +436,10 @@ const FieldDetails = (props) => {
       onHide={props.onHide}
     >
       <Modal.Header>
-        <Modal.Title id="contained-modal-title-vcenter"   > <span style={{ fontSize: "1.2rem" }}>All Fields</span></Modal.Title>
+        <Modal.Title id="contained-modal-title-vcenter">
+          {" "}
+          <span style={{ fontSize: "1.2rem" }}>All Fields</span>
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body
         style={{
@@ -462,25 +460,35 @@ const FieldDetails = (props) => {
               top: 0,
               zIndex: 1,
               // backgroundColor: "white",
-              
+
               backgroundColor: "#000000",
-              color: "white", 
-               fontSize: "1.7rem !important",
+              color: "white",
+              fontSize: "1.7rem !important",
             }}
           >
             <tr>
-              <th scope="col" >
+              <th scope="col">
                 <input
                   type="checkbox"
                   checked={isAllSelected()}
                   onChange={handleSelectAll}
                 />
               </th>
-              <th scope="col" style={{ fontSize: "0.7rem" }}>SL no.</th>
-              <th scope="col" style={{ fontSize: "0.7rem" }}>Field Name</th>
-              <th scope="col" style={{ fontSize: "0.7rem" }}>Field Type</th>
-              <th scope="col" style={{ fontSize: "0.7rem" }}>Change Direction</th>
-              <th scope="col" style={{ fontSize: "0.7rem" }}>Action</th>
+              <th scope="col" style={{ fontSize: "0.7rem" }}>
+                SL no.
+              </th>
+              <th scope="col" style={{ fontSize: "0.7rem" }}>
+                Field Name
+              </th>
+              <th scope="col" style={{ fontSize: "0.7rem" }}>
+                Field Type
+              </th>
+              <th scope="col" style={{ fontSize: "0.7rem" }}>
+                Change Direction
+              </th>
+              <th scope="col" style={{ fontSize: "0.7rem" }}>
+                Action
+              </th>
             </tr>
           </thead>
           <tbody>

@@ -12,49 +12,115 @@ export default function ExcelLikeTable(props) {
   const [selectedCell, setSelectedCell] = useState({ row: null, col: null }); // Track selected cell
   const [hoveredCell, setHoveredCell] = useState({ row: null, col: null });
   const [draggedCell, setDraggedCell] = useState({ row: null, col: null });
+  const [dottedIndexes, setDottedIndexes] = useState([]);
+
   const dataCtx = useContext(DataContext);
 
-  const [dottedIndexes, setDottedIndexes] = useState([]);
-  console.log(props.linkFields)
-  // useEffect(() => {
-  //   if (props?.linkFields?.length > 0) {
-  //     const allFieldIndexes = props.linkFields
-  //       .map((item) => item.fieldIndexes)
-  //       .flat(); // Flatten in case you have nested arrays
+  useEffect(() => {
+    if (!data[0]) return;
 
-  //     setDottedIndexes(allFieldIndexes);
-  //   }
-  // }, [props.linkFields]);
-console.log(dottedIndexes)
-useEffect(() => {
-  if (props?.linkFields?.length > 0) {
-    // Extract all fieldIndexes (existing functionality)
-    const allFieldIndexes = props.linkFields
-      .map((item) => item.fieldIndexes)
-      .flat();
+    const firstRowLength = data[0].length;
 
-    setDottedIndexes(allFieldIndexes);
+    setData((prevData) => {
+      const secondRow = prevData[1] || [];
 
-    // 👉 Remove all fieldIndexes from formFields and replace with new fields
-    setFields((prevFields) => {
-      // Filter out existing formFields (optional: if you want to reset completely)
-      const updatedFields = prevFields.filter(
-        (field) => field.fieldType !== "formField"
-      );
+      // Only update if second row is shorter
+      if (secondRow.length < firstRowLength) {
+        const additionalCells = Array.from(
+          { length: firstRowLength - secondRow.length },
+          () => ({
+            cellValue: "",
+            cellType: "",
+          })
+        );
 
-      // Create new formField entries from linkFields' fieldName
-      const newFormFields = props.linkFields.map((item) => ({
-        name: item.fieldName,
-        fieldType: "formField",
-      }));
+        const newSecondRow = [...secondRow, ...additionalCells];
 
-      return [...updatedFields, ...newFormFields];
+        const updatedData = [...prevData];
+        updatedData[1] = newSecondRow;
+
+        return updatedData;
+      }
+
+      return prevData; // No changes needed
     });
-  }
-}, [props.linkFields]);
-  console.log(fields)
+  }, [data[0]]);
 
-useEffect(() => {
+  useEffect(() => {
+    if (!props.linkFields || props.linkFields.length === 0) {
+      setDottedIndexes([]);
+    }
+  }, [props.linkFields]);
+
+  useEffect(() => {
+    if (props?.linkFields?.length > 0) {
+      const allFieldIndexes = props.linkFields
+        .map((item) => item.fieldIndexes)
+        .flat();
+
+      setDottedIndexes(allFieldIndexes);
+
+      setFields((prevFields) => {
+        const updatedFields = prevFields.filter(
+          (field) => field.fieldType !== "formField"
+        );
+
+        const newFormFields = props.linkFields.map((item) => ({
+          name: item.fieldName,
+          fieldType: "formField",
+        }));
+
+        const newFields = [...updatedFields, ...newFormFields];
+
+        const desiredLength = 20;
+        const linkedRow = Array(desiredLength).fill({
+          cellValue: "",
+          cellType: "",
+        });
+
+        props.linkFields.forEach((item) => {
+          const indexes = item.fieldIndexes || [];
+          if (indexes.length === 0) return;
+
+          // Calculate center index of span
+          const centerIndex = indexes[Math.floor(indexes.length / 2)];
+
+          indexes.forEach((idx) => {
+            if (idx === centerIndex) {
+              // Center cell with label
+              linkedRow[idx] = {
+                cellValue: item.fieldName,
+                cellType: "formField",
+                selectedField: {
+                  name: item.fieldName,
+                  fieldType: "formField",
+                },
+                isCenter: true,
+              };
+            } else {
+              // Spanned cells with empty display but marked
+              linkedRow[idx] = {
+                cellValue: "",
+                cellType: "formField",
+                isSpanned: true,
+              };
+            }
+          });
+        });
+
+        setData((prevData) => {
+          const firstRow =
+            prevData[0] ||
+            Array(desiredLength).fill({ cellValue: "", cellType: "" });
+          return [firstRow, linkedRow];
+        });
+
+        return newFields;
+      });
+    }
+  }, [props.linkFields]);
+
+  useEffect(() => {
     if (Array.isArray(props.selected)) {
       setFields(props.selected);
 
@@ -113,7 +179,7 @@ useEffect(() => {
 
       setData([newRow]); // Each row is now an array of cell objects
     }
-  }, [props.selected,props.linkFields]);
+  }, [props.selected, props.linkFields]);
   useEffect(() => {
     if (!props.currentSelectedCoordinate) return;
 
@@ -126,6 +192,7 @@ useEffect(() => {
       });
     });
   }, [props.currentSelectedCoordinate, data]);
+
   const handleFieldClick = (item, colIndex, rowIndex) => {
     const matchedField = findFieldDetailsUsingObj(item.selectedField);
 
@@ -173,7 +240,6 @@ useEffect(() => {
   const handleSingleClick = (item, colIndex, rowIndex) => {
     setSelectedCell({ row: rowIndex, col: colIndex });
     props.handleSingleSelect(item.selectedField);
-    // console.log(item, colIndex, rowIndex);
   };
   const handleDragStart = (cell, rowIndex, colIndex) => {
     setDraggedCell({ cell, rowIndex, colIndex });
@@ -236,7 +302,7 @@ useEffect(() => {
       }
       return result;
     }) || [];
-
+  console.log(data);
   return (
     <div
       style={{ overflowX: "auto" }}
@@ -292,82 +358,100 @@ useEffect(() => {
               >
                 {rowIndex + 1}
               </th>
-              {row.map((cell, colIndex) => (
-                <td
-                  key={colIndex}
-                  draggable={
-                    !(
-                      dottedIndexes.includes(colIndex) ||
-                      (selectedCell.row === rowIndex &&
-                        selectedCell.col === colIndex)
-                    )
-                  }
-                  onDragStart={() => handleDragStart(cell, rowIndex, colIndex)}
-                  onDragOver={(e) => handleDragOver(e, rowIndex, colIndex)}
-                  onDrop={() => handleDrop(rowIndex, colIndex)}
-                  style={{
-                    width: "100px",
-                    minWidth: "100px",
-                    maxWidth: "100px",
-                    height: "40px",
-                    padding: "0",
-                    boxSizing: "border-box",
-                    overflow: "hidden",
-                    border:
-                      selectedCell.row === rowIndex &&
-                      selectedCell.col === colIndex
-                        ? "2px solid red"
-                        : dottedIndexes.includes(colIndex)
-                        ? "2px dotted blue"
-                        : "1px solid #dee2e6",
-                    backgroundColor:
-                      selectedCell.row === rowIndex &&
-                      selectedCell.col === colIndex
-                        ? "#A5D6A7"
-                        : hoveredCell.row === rowIndex &&
-                          hoveredCell.col === colIndex
-                        ? "#A5D6A7"
-                        : cell.cellType === "formField"
-                        ? "#FFF176"
-                        : cell.cellType === "questionField"
-                        ? "#FFB74D"
-                        : "#C8E6C9",
-                    transition: "background-color 0.2s ease",
-                    cursor:
-                      dottedIndexes.includes(colIndex) ||
-                      (selectedCell.row === rowIndex &&
-                        selectedCell.col === colIndex)
-                        ? "not-allowed"
-                        : "grab",
-                  }}
-                  onDoubleClick={() =>
-                    handleFieldClick(cell, colIndex, rowIndex)
-                  }
-                  onClick={() => handleSingleClick(cell, colIndex, rowIndex)}
-                  onMouseEnter={() =>
-                    setHoveredCell({ row: rowIndex, col: colIndex })
-                  }
-                  onMouseLeave={() => setHoveredCell({ row: -1, col: -1 })}
-                >
-                  <div
-                    className="text-center"
+              {row.map((cell, colIndex) => {
+                // Skip cells marked as spanned but not the center
+                if (cell.isSpanned && !cell.isCenter) {
+                  return null;
+                }
+
+                const colSpan = cell.isCenter
+                  ? props.linkFields.find(
+                      (f) =>
+                        f.fieldName === cell.cellValue &&
+                        f.fieldIndexes.includes(colIndex)
+                    )?.fieldIndexes.length || 1
+                  : 1;
+
+                return (
+                  <td
+                    key={colIndex}
+                    colSpan={colSpan}
+                    draggable={
+                      !(
+                        dottedIndexes.includes(colIndex) ||
+                        (selectedCell.row === rowIndex &&
+                          selectedCell.col === colIndex)
+                      )
+                    }
+                    onDragStart={() =>
+                      handleDragStart(cell, rowIndex, colIndex)
+                    }
+                    onDragOver={(e) => handleDragOver(e, rowIndex, colIndex)}
+                    onDrop={() => handleDrop(rowIndex, colIndex)}
                     style={{
-                      width: "100%",
-                      height: "100%",
-                      padding: "4px",
+                      width: `${100 * colSpan}px`,
+                      minWidth: `${100 * colSpan}px`,
+                      maxWidth: `${100 * colSpan}px`,
+                      height: "40px",
+                      padding: "0",
                       boxSizing: "border-box",
-                      whiteSpace: "nowrap",
                       overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
+                      border:
+                        selectedCell.row === rowIndex &&
+                        selectedCell.col === colIndex
+                          ? "2px solid red"
+                          : dottedIndexes.includes(colIndex)
+                          ? "2px dotted blue"
+                          : "1px solid #dee2e6",
+                      backgroundColor:
+                        selectedCell.row === rowIndex &&
+                        selectedCell.col === colIndex
+                          ? "#A5D6A7"
+                          : hoveredCell.row === rowIndex &&
+                            hoveredCell.col === colIndex
+                          ? "#A5D6A7"
+                          : cell.cellType === "formField"
+                          ? "#FFF176"
+                          : cell.cellType === "questionField"
+                          ? "#FFB74D"
+                          : "#C8E6C9",
+                      transition: "background-color 0.2s ease",
+                      cursor:
+                        dottedIndexes.includes(colIndex) ||
+                        (selectedCell.row === rowIndex &&
+                          selectedCell.col === colIndex)
+                          ? "not-allowed"
+                          : "grab",
                     }}
+                    onDoubleClick={() =>
+                      handleFieldClick(cell, colIndex, rowIndex)
+                    }
+                    onClick={() => handleSingleClick(cell, colIndex, rowIndex)}
+                    onMouseEnter={() =>
+                      setHoveredCell({ row: rowIndex, col: colIndex })
+                    }
+                    onMouseLeave={() => setHoveredCell({ row: -1, col: -1 })}
                   >
-                    {cell.cellValue}
-                  </div>
-                </td>
-              ))}
+                    <div
+                      className="text-center"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        padding: "4px",
+                        boxSizing: "border-box",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {cell.cellValue}
+                    </div>
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>
