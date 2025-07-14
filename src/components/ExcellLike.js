@@ -16,170 +16,270 @@ export default function ExcelLikeTable(props) {
 
   const dataCtx = useContext(DataContext);
 
+  // useEffect(() => {
+  //   if (!data[0]) return;
+    
+  //   const firstRowLength = data[0].length;
+
+  //   // setData((prevData) => {
+  //   //   const secondRow = prevData[1] || [];
+
+  //   //   // Only update if second row is shorter
+  //   //   if (secondRow.length < firstRowLength) {
+  //   //     const additionalCells = Array.from(
+  //   //       { length: firstRowLength - secondRow.length },
+  //   //       () => ({
+  //   //         cellValue: "",
+  //   //         cellType: "",
+  //   //       })
+  //   //     );
+
+  //   //     const newSecondRow = [...secondRow, ...additionalCells];
+
+  //   //     const updatedData = [...prevData];
+  //   //     updatedData[1] = newSecondRow;
+
+  //   //     return updatedData;
+  //   //   }
+
+  //   //   return prevData; // No changes needed
+  //   // });
+  // }, [data,props.linkField]);
+  // console.log(data)
+
+  // useEffect(() => {
+  //   if (!props.linkFields || props.linkFields.length === 0) {
+  //     setDottedIndexes([]);
+  //   }
+  // }, [props.linkFields]);
+
+  // useEffect(() => {
+  //   if (props?.linkFields?.length > 0) {
+  //     const allFieldIndexes = props.linkFields
+  //       .map((item) => item.fieldIndexes)
+  //       .flat();
+
+  //     setDottedIndexes(allFieldIndexes);
+
+  //     setFields((prevFields) => {
+  //       const updatedFields = prevFields.filter(
+  //         (field) => field.fieldType !== "formField"
+  //       );
+
+  //       const newFormFields = props.linkFields.map((item) => ({
+  //         name: item.fieldName,
+  //         fieldType: "formField",
+  //       }));
+
+  //       const newFields = [...updatedFields, ...newFormFields];
+
+  //       const desiredLength = 20;
+  //       const linkedRow = Array(desiredLength).fill({
+  //         cellValue: "",
+  //         cellType: "",
+  //       });
+
+  //       props.linkFields.forEach((item) => {
+  //         const indexes = item.fieldIndexes || [];
+  //         if (indexes.length === 0) return;
+
+  //         // Calculate center index of span
+  //         const centerIndex = indexes[Math.floor(indexes.length / 2)];
+
+  //         indexes.forEach((idx) => {
+  //           if (idx === centerIndex) {
+  //             // Center cell with label
+  //             linkedRow[idx] = {
+  //               cellValue: item.fieldName,
+  //               cellType: "formField",
+  //               selectedField: {
+  //                 name: item.fieldName,
+  //                 fieldType: "formField",
+  //               },
+  //               isCenter: true,
+  //             };
+  //           } else {
+  //             // Spanned cells with empty display but marked
+  //             linkedRow[idx] = {
+  //               cellValue: "",
+  //               cellType: "formField",
+  //               isSpanned: true,
+  //             };
+  //           }
+  //         });
+  //       });
+
+  //       setData((prevData) => {
+  //         const firstRow =
+  //           prevData[0] ||
+  //           Array(desiredLength).fill({ cellValue: "", cellType: "" });
+  //         return [firstRow, linkedRow];
+  //       });
+
+  //       return newFields;
+  //     });
+  //   }
+  // }, [props.linkFields]);
+
+  // useEffect(() => {
+  //   if (Array.isArray(props.selected)) {
+  //     setFields(props.selected);
+
+  //     const newRow = props.selected.flatMap((item) => {
+  //       switch (item.fieldType) {
+  //         case "formField":
+  //           return [
+  //             {
+  //               cellValue: item.name,
+  //               cellType: item.fieldType,
+  //               selectedField: item,
+  //             },
+  //           ];
+
+  //         case "questionField":
+  //           const [start, end] = item.name.split("-");
+  //           const prefix = start.replace(/\d+$/, "");
+  //           const startNum = parseInt(start.match(/\d+/)[0]);
+  //           const endNum = parseInt(end.match(/\d+/)[0]);
+
+  //           const generatedQuestions = [];
+  //           for (let i = startNum; i <= endNum; i++) {
+  //             generatedQuestions.push({
+  //               cellValue: `${prefix}${i}`,
+  //               cellType: item.fieldType,
+  //               selectedField: item,
+  //             });
+  //           }
+  //           return generatedQuestions;
+
+  //         case "skewField":
+  //           return [
+  //             {
+  //               cellValue: item.name,
+  //               cellType: item.fieldType,
+  //               selectedField: item,
+  //             },
+  //           ];
+
+  //         default:
+  //           return [
+  //             {
+  //               cellValue: item.name,
+  //               cellType: item.fieldType,
+  //               selectedField: item,
+  //             },
+  //           ];
+  //       }
+  //     });
+
+  //     // Pad the row with empty cells if less than desired length
+  //     const desiredLength = 20;
+  //     while (newRow.length < desiredLength) {
+  //       newRow.push({ cellValue: "", cellType: "" }); // Empty object for empty cells
+  //     }
+
+  //     setData([newRow]); // Each row is now an array of cell objects
+  //   }
+  // }, [props.selected, props.linkFields]);
+  
+  
   useEffect(() => {
-    if (!data[0]) return;
+  const selectedFields = Array.isArray(props.selected)
+    ? props.selected
+    : [];
 
-    const firstRowLength = data[0].length;
+  const linkFields = Array.isArray(props.linkFields)
+    ? props.linkFields
+    : [];
 
-    setData((prevData) => {
-      const secondRow = prevData[1] || [];
+  const allFields = [...selectedFields];
 
-      // Only update if second row is shorter
-      if (secondRow.length < firstRowLength) {
-        const additionalCells = Array.from(
-          { length: firstRowLength - secondRow.length },
-          () => ({
-            cellValue: "",
-            cellType: "",
-          })
-        );
-
-        const newSecondRow = [...secondRow, ...additionalCells];
-
-        const updatedData = [...prevData];
-        updatedData[1] = newSecondRow;
-
-        return updatedData;
-      }
-
-      return prevData; // No changes needed
+  // Add form fields from linkFields
+  linkFields.forEach((item) => {
+    allFields.push({
+      name: item.fieldName,
+      fieldType: "formField",
     });
-  }, [data[0]]);
+  });
 
-  useEffect(() => {
-    if (!props.linkFields || props.linkFields.length === 0) {
-      setDottedIndexes([]);
-    }
-  }, [props.linkFields]);
+  setFields(allFields);
 
-  useEffect(() => {
-    if (props?.linkFields?.length > 0) {
-      const allFieldIndexes = props.linkFields
-        .map((item) => item.fieldIndexes)
-        .flat();
-
-      setDottedIndexes(allFieldIndexes);
-
-      setFields((prevFields) => {
-        const updatedFields = prevFields.filter(
-          (field) => field.fieldType !== "formField"
-        );
-
-        const newFormFields = props.linkFields.map((item) => ({
-          name: item.fieldName,
-          fieldType: "formField",
-        }));
-
-        const newFields = [...updatedFields, ...newFormFields];
-
-        const desiredLength = 20;
-        const linkedRow = Array(desiredLength).fill({
-          cellValue: "",
-          cellType: "",
-        });
-
-        props.linkFields.forEach((item) => {
-          const indexes = item.fieldIndexes || [];
-          if (indexes.length === 0) return;
-
-          // Calculate center index of span
-          const centerIndex = indexes[Math.floor(indexes.length / 2)];
-
-          indexes.forEach((idx) => {
-            if (idx === centerIndex) {
-              // Center cell with label
-              linkedRow[idx] = {
-                cellValue: item.fieldName,
-                cellType: "formField",
-                selectedField: {
-                  name: item.fieldName,
-                  fieldType: "formField",
-                },
-                isCenter: true,
-              };
-            } else {
-              // Spanned cells with empty display but marked
-              linkedRow[idx] = {
-                cellValue: "",
-                cellType: "formField",
-                isSpanned: true,
-              };
-            }
+  // Build first row
+  const newRow = selectedFields.flatMap((item) => {
+    switch (item.fieldType) {
+      case "formField":
+      case "skewField":
+        return [{
+          cellValue: item.name,
+          cellType: item.fieldType,
+          selectedField: item,
+        }];
+      case "questionField":
+        const [start, end] = item.name.split("-");
+        const prefix = start.replace(/\d+$/, "");
+        const startNum = parseInt(start.match(/\d+/)[0]);
+        const endNum = parseInt(end.match(/\d+/)[0]);
+        const questions = [];
+        for (let i = startNum; i <= endNum; i++) {
+          questions.push({
+            cellValue: `${prefix}${i}`,
+            cellType: item.fieldType,
+            selectedField: item,
           });
-        });
-
-        setData((prevData) => {
-          const firstRow =
-            prevData[0] ||
-            Array(desiredLength).fill({ cellValue: "", cellType: "" });
-          return [firstRow, linkedRow];
-        });
-
-        return newFields;
-      });
-    }
-  }, [props.linkFields]);
-
-  useEffect(() => {
-    if (Array.isArray(props.selected)) {
-      setFields(props.selected);
-
-      const newRow = props.selected.flatMap((item) => {
-        switch (item.fieldType) {
-          case "formField":
-            return [
-              {
-                cellValue: item.name,
-                cellType: item.fieldType,
-                selectedField: item,
-              },
-            ];
-
-          case "questionField":
-            const [start, end] = item.name.split("-");
-            const prefix = start.replace(/\d+$/, "");
-            const startNum = parseInt(start.match(/\d+/)[0]);
-            const endNum = parseInt(end.match(/\d+/)[0]);
-
-            const generatedQuestions = [];
-            for (let i = startNum; i <= endNum; i++) {
-              generatedQuestions.push({
-                cellValue: `${prefix}${i}`,
-                cellType: item.fieldType,
-                selectedField: item,
-              });
-            }
-            return generatedQuestions;
-
-          case "skewField":
-            return [
-              {
-                cellValue: item.name,
-                cellType: item.fieldType,
-                selectedField: item,
-              },
-            ];
-
-          default:
-            return [
-              {
-                cellValue: item.name,
-                cellType: item.fieldType,
-                selectedField: item,
-              },
-            ];
         }
-      });
-
-      // Pad the row with empty cells if less than desired length
-      const desiredLength = 20;
-      while (newRow.length < desiredLength) {
-        newRow.push({ cellValue: "", cellType: "" }); // Empty object for empty cells
-      }
-
-      setData([newRow]); // Each row is now an array of cell objects
+        return questions;
+      default:
+        return [{
+          cellValue: item.name,
+          cellType: item.fieldType,
+          selectedField: item,
+        }];
     }
-  }, [props.selected, props.linkFields]);
+  });
+
+  const desiredLength = 20;
+  while (newRow.length < desiredLength) {
+    newRow.push({ cellValue: "", cellType: "" });
+  }
+
+  // Build second row from linkFields
+  const linkedRow = Array(desiredLength).fill({
+    cellValue: "",
+    cellType: "",
+  });
+
+  const allFieldIndexes = linkFields.map((item) => item.fieldIndexes).flat();
+  setDottedIndexes(allFieldIndexes);
+
+  linkFields.forEach((item) => {
+    const indexes = item.fieldIndexes || [];
+    const centerIndex = indexes[Math.floor(indexes.length / 2)];
+
+    indexes.forEach((idx) => {
+      linkedRow[idx] =
+        idx === centerIndex
+          ? {
+              cellValue: item.fieldName,
+              cellType: "formField",
+              selectedField: {
+                name: item.fieldName,
+                fieldType: "formField",
+              },
+              isCenter: true,
+            }
+          : {
+              cellValue: "",
+              cellType: "formField",
+              isSpanned: true,
+            };
+    });
+  });
+
+  setData([newRow, linkedRow]);
+}, [props.selected, props.linkFields]);
+
+  
+  
   useEffect(() => {
     if (!props.currentSelectedCoordinate) return;
 
