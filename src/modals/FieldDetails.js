@@ -504,7 +504,7 @@ const FieldDetails = (props) => {
               selectedItems={selectedItems}
               handleCheckboxChange={handleCheckboxChange}
               serialOffset={0}
-              linkedFields={props.linkFields}
+              linkedFields={props.linkFields??[]}
             />
 
             <TableRow
