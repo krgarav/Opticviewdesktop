@@ -3231,6 +3231,7 @@ const DesignTemplate = () => {
       {showFieldDetails && (
         <FieldDetails
           show={showFieldDetails}
+          linkFields={linkFields}
           onHide={() => {
             setShowFieldDetails(false);
           }}
