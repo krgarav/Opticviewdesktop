@@ -125,6 +125,7 @@ const DesignTemplate = () => {
   const [oldCoordinates, setOldCoordinates] = useState(null);
   const [currentSelectedCoordinate, setCurrentSelectedCoordinate] =
     useState(null);
+  const [activeArea, setActiveArea] = useState({ row: null, col: null });
   const numRows = timingMarks;
   const numCols = totalColumns;
   const inputRef = useRef(null);
@@ -1523,7 +1524,6 @@ const DesignTemplate = () => {
               fieldType: selectedField.fieldType,
             },
             windowName: updatedName,
-
             columnStart: +newObject?.startCol,
             columnNumber: +noInCol,
             columnStep: +noOfStepInCol,
@@ -1836,7 +1836,7 @@ const DesignTemplate = () => {
       <div style={{ position: "sticky", top: 0, zIndex: 99 }}>
         <SmallHeader />
       </div>
-  <div
+      <div
         style={{
           position: isWideScreen ? "fixed" : "absolute",
           top: "5px",
@@ -1950,13 +1950,18 @@ const DesignTemplate = () => {
       )}
       <div style={{ height: "80%" }}>
         <div style={{ height: "97%", overflow: "auto", width: "100%" }}>
-          <div className="main-container">
+          <div className="main-container" style={{ marginTop: "0.5rem" }}>
             <div className="containers">
               <div className="d-flex">
                 <div style={{ marginRight: "1rem" }}>
                   <div className="top"></div>
                   {Array.from({ length: numRows }).map((_, rowIndex) => (
-                    <div key={rowIndex} className="row">
+                    <div
+                      key={rowIndex}
+                      className={`row ${
+                        activeArea.row === rowIndex ? "rowactive" : ""
+                      }`}
+                    >
                       <div
                         className={
                           bubbleType === "circle"
@@ -1973,22 +1978,32 @@ const DesignTemplate = () => {
                   <div className="top-row">
                     <div className="corner"></div>
                     {Array.from({ length: numCols }).map((_, index) => (
-                      <div key={index} className="top-num">
+                      <div
+                        key={index}
+                        className={`top-num ${
+                          activeArea.col === index ? "colactive" : ""
+                        }`}
+                      >
                         {index + 1}
                       </div>
                     ))}
                   </div>
                   <div
                     id="grid-div"
-                    style={{
-                      border: "2px solid black",
-                      paddingTop: "1rem",
-                      paddingRight: "1.2rem",
-                      paddingLeft: "1rem",
-                      overflowY: "auto",
-                      // marginRight: "1rem"
-                      width: "max-content",
+                    // style={{
+                    //   border: "2px solid black",
+                    //   paddingTop: "1rem",
+                    //   paddingRight: "1.2rem",
+                    //   paddingLeft: "1rem",
+                    //   overflowY: "auto",
+                    //   // marginRight: "1rem"
+                    //   width: "max-content",
+                    // }}
+
+                    onMouseLeave={()=>{
+                      setActiveArea({ row: null, col: null });
                     }}
+                    className="grid-container"
                   >
                     <div
                       className="grid"
@@ -2066,6 +2081,15 @@ const DesignTemplate = () => {
                                           : "8px",
                                       color: fontColor,
                                       userSelect: "none",
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      setActiveArea({
+                                        row: rowIndex,
+                                        col: colIndex,
+                                      });
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      // setActiveArea({row: null, col: null})
                                     }}
                                     // style={{
                                     //     backgroundColor:
@@ -3159,7 +3183,7 @@ const DesignTemplate = () => {
         size="lg"
         aria-labelledby="contained-modal-title-vcenter"
         centered
-         onHide={()=>setImageModalShow(false)}
+        onHide={() => setImageModalShow(false)}
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">

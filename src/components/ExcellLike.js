@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import { toast } from "react-toastify";
 import DataContext from "store/DataContext";
@@ -9,16 +9,46 @@ const identifier = {
 export default function ExcelLikeTable(props) {
   const [data, setData] = useState([[]]);
   const [fields, setFields] = useState([]);
-  const [selectedCell, setSelectedCell] = useState({ row: null, col: null }); // Track selected cell
+  // const [selectedCell, setSelectedCell] = useState({ row: null, col: null }); // Track selected cell
   const [hoveredCell, setHoveredCell] = useState({ row: null, col: null });
   const [draggedCell, setDraggedCell] = useState({ row: null, col: null });
   const [dottedIndexes, setDottedIndexes] = useState([]);
-
+  const [selectedCell, setSelectedCell] = useState([]);
+  const tableWrapperRef = useRef(null);
+  const cellRefs = useRef({});
   const dataCtx = useContext(DataContext);
+
+  useEffect(() => {
+    if (!selectedCell || selectedCell.length === 0) return;
+
+    const lastCell = selectedCell[selectedCell.length - 1];
+    const key = `${lastCell.row}-${lastCell.col}`;
+    const cellElement = cellRefs.current[key];
+
+    if (cellElement && tableWrapperRef.current) {
+      const wrapper = tableWrapperRef.current;
+      const cellRect = cellElement.getBoundingClientRect();
+      const wrapperRect = wrapper.getBoundingClientRect();
+
+      // Scroll if out of view
+      if (
+        cellRect.top < wrapperRect.top ||
+        cellRect.bottom > wrapperRect.bottom ||
+        cellRect.left < wrapperRect.left ||
+        cellRect.right > wrapperRect.right
+      ) {
+        cellElement.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "center",
+        });
+      }
+    }
+  }, [selectedCell]);
 
   // useEffect(() => {
   //   if (!data[0]) return;
-    
+
   //   const firstRowLength = data[0].length;
 
   //   // setData((prevData) => {
@@ -181,123 +211,168 @@ export default function ExcelLikeTable(props) {
   //     setData([newRow]); // Each row is now an array of cell objects
   //   }
   // }, [props.selected, props.linkFields]);
-  
-  
+
   useEffect(() => {
-  const selectedFields = Array.isArray(props.selected)
-    ? props.selected
-    : [];
+    const selectedFields = Array.isArray(props.selected) ? props.selected : [];
 
-  const linkFields = Array.isArray(props.linkFields)
-    ? props.linkFields
-    : [];
+    const linkFields = Array.isArray(props.linkFields) ? props.linkFields : [];
 
-  const allFields = [...selectedFields];
+    const allFields = [...selectedFields];
 
-  // Add form fields from linkFields
-  linkFields.forEach((item) => {
-    allFields.push({
-      name: item.fieldName,
-      fieldType: "formField",
+    // Add form fields from linkFields
+    linkFields.forEach((item) => {
+      allFields.push({
+        name: item.fieldName,
+        fieldType: "formField",
+      });
     });
-  });
 
-  setFields(allFields);
+    setFields(allFields);
 
-  // Build first row
-  const newRow = selectedFields.flatMap((item) => {
-    switch (item.fieldType) {
-      case "formField":
-      case "skewField":
-        return [{
-          cellValue: item.name,
-          cellType: item.fieldType,
-          selectedField: item,
-        }];
-      case "questionField":
-        const [start, end] = item.name.split("-");
-        const prefix = start.replace(/\d+$/, "");
-        const startNum = parseInt(start.match(/\d+/)[0]);
-        const endNum = parseInt(end.match(/\d+/)[0]);
-        const questions = [];
-        for (let i = startNum; i <= endNum; i++) {
-          questions.push({
-            cellValue: `${prefix}${i}`,
-            cellType: item.fieldType,
-            selectedField: item,
-          });
-        }
-        return questions;
-      default:
-        return [{
-          cellValue: item.name,
-          cellType: item.fieldType,
-          selectedField: item,
-        }];
+    // Build first row
+    const newRow = selectedFields.flatMap((item) => {
+      switch (item.fieldType) {
+        case "formField":
+        case "skewField":
+          return [
+            {
+              cellValue: item.name,
+              cellType: item.fieldType,
+              selectedField: item,
+            },
+          ];
+        case "questionField":
+          const [start, end] = item.name.split("-");
+          const prefix = start.replace(/\d+$/, "");
+          const startNum = parseInt(start.match(/\d+/)[0]);
+          const endNum = parseInt(end.match(/\d+/)[0]);
+          const questions = [];
+          for (let i = startNum; i <= endNum; i++) {
+            questions.push({
+              cellValue: `${prefix}${i}`,
+              cellType: item.fieldType,
+              selectedField: item,
+            });
+          }
+          return questions;
+        default:
+          return [
+            {
+              cellValue: item.name,
+              cellType: item.fieldType,
+              selectedField: item,
+            },
+          ];
+      }
+    });
+
+    const desiredLength = 20;
+    while (newRow.length < desiredLength) {
+      newRow.push({ cellValue: "", cellType: "" });
     }
-  });
 
-  const desiredLength = 20;
-  while (newRow.length < desiredLength) {
-    newRow.push({ cellValue: "", cellType: "" });
-  }
-
-  // Build second row from linkFields
-  const linkedRow = Array(desiredLength).fill({
-    cellValue: "",
-    cellType: "",
-  });
-
-  const allFieldIndexes = linkFields.map((item) => item.fieldIndexes).flat();
-  setDottedIndexes(allFieldIndexes);
-
-  linkFields.forEach((item) => {
-    const indexes = item.fieldIndexes || [];
-    const centerIndex = indexes[Math.floor(indexes.length / 2)];
-
-    indexes.forEach((idx) => {
-      linkedRow[idx] =
-        idx === centerIndex
-          ? {
-              cellValue: item.fieldName,
-              cellType: "formField",
-              selectedField: {
-                name: item.fieldName,
-                fieldType: "formField",
-              },
-              isCenter: true,
-            }
-          : {
-              cellValue: "",
-              cellType: "formField",
-              isSpanned: true,
-            };
+    // Build second row from linkFields
+    const linkedRow = Array(desiredLength).fill({
+      cellValue: "",
+      cellType: "",
     });
-  });
 
-  setData([newRow, linkedRow]);
-}, [props.selected, props.linkFields]);
+    const allFieldIndexes = linkFields.map((item) => item.fieldIndexes).flat();
+    setDottedIndexes(allFieldIndexes);
 
-  
-  
+    linkFields.forEach((item) => {
+      const indexes = item.fieldIndexes || [];
+      const centerIndex = indexes[Math.floor(indexes.length / 2)];
+
+      indexes.forEach((idx) => {
+        linkedRow[idx] =
+          idx === centerIndex
+            ? {
+                cellValue: item.fieldName,
+                cellType: "formField",
+                selectedField: {
+                  name: item.fieldName,
+                  fieldType: "formField",
+                },
+                isCenter: true,
+              }
+            : {
+                cellValue: "",
+                cellType: "formField",
+                isSpanned: true,
+              };
+      });
+    });
+
+    setData([newRow, linkedRow]);
+  }, [props.selected, props.linkFields]);
+
   useEffect(() => {
     if (!props.currentSelectedCoordinate) return;
-
+    console.log(
+      "Current Selected Coordinate:",
+      props.currentSelectedCoordinate
+    );
+    const coordinate = { ...props.currentSelectedCoordinate };
+    const matchingCells = [];
+    // delete coordinate["name"];
     // Find the matching cell in the data
     data.forEach((row, rowIndex) => {
       row.forEach((cell, colIndex) => {
-        if (_.isEqual(props.currentSelectedCoordinate, cell.selectedField)) {
-          setSelectedCell({ row: rowIndex, col: colIndex });
+        if (_.isEqual(coordinate, cell.selectedField)) {
+          console.log("Found matching cell:", cell);
+          matchingCells.push({ row: rowIndex, col: colIndex });
         }
       });
     });
+    setSelectedCell(matchingCells);
   }, [props.currentSelectedCoordinate, data]);
+
+  // useEffect(() => {
+  //   if (!props.currentSelectedCoordinate) return;
+
+  //   const coord = String(props.currentSelectedCoordinate);
+  //   const selectedCells = [];
+
+  //   // Handle range like "q1-q10"
+  //   const match = coord.match(/^q(\d+)-q(\d+)$/);
+  //   if (match) {
+  //     const start = parseInt(match[1]);
+  //     const end = parseInt(match[2]);
+
+  //     data.forEach((row, rowIndex) => {
+  //       row.forEach((cell, colIndex) => {
+  //         const cellField = String(cell.selectedField);
+  //         const cellMatch = cellField.match(/^q(\d+)$/);
+  //         if (cellMatch) {
+  //           const num = parseInt(cellMatch[1]);
+  //           if (num >= start && num <= end) {
+  //             selectedCells.push({ row: rowIndex, col: colIndex });
+  //           }
+  //         }
+  //       });
+  //     });
+
+  //     setSelectedCell(selectedCells);
+  //   } else {
+  //     // Handle single field like "q3"
+  //     data.forEach((row, rowIndex) => {
+  //       row.forEach((cell, colIndex) => {
+  //         if (String(cell.selectedField) === coord) {
+  //           selectedCells.push({ row: rowIndex, col: colIndex });
+  //         }
+  //       });
+  //     });
+
+  //     setSelectedCell(selectedCells);
+  //   }
+  // }, [props.currentSelectedCoordinate, data]);
 
   const handleFieldClick = (item, colIndex, rowIndex) => {
     const matchedField = findFieldDetailsUsingObj(item.selectedField);
 
     if (matchedField) {
-      setSelectedCell({ row: rowIndex, col: colIndex });
+      setSelectedCell([{ row: rowIndex, col: colIndex }]);
 
       const indexOfField = fields.findIndex((field) =>
         _.isEqual(field, matchedField)
@@ -338,7 +413,8 @@ export default function ExcelLikeTable(props) {
     return null; // No match found
   };
   const handleSingleClick = (item, colIndex, rowIndex) => {
-    setSelectedCell({ row: rowIndex, col: colIndex });
+    setSelectedCell([{ row: rowIndex, col: colIndex }]); // ✅ Wrap in array
+
     props.handleSingleSelect(item.selectedField);
   };
   const handleDragStart = (cell, rowIndex, colIndex) => {
@@ -376,7 +452,6 @@ export default function ExcelLikeTable(props) {
       setDraggedCell(null);
     }
   };
-
   const handleDragOver = (e, targetRow, targetCol) => {
     // Disallow drop if cell is in dotted indexes or is the selected cell
     if (
@@ -402,10 +477,10 @@ export default function ExcelLikeTable(props) {
       }
       return result;
     }) || [];
-  console.log(data);
   return (
     <div
-      style={{ overflowX: "auto" }}
+      style={{ overflowX: "auto" , backgroundColor:"white " }}
+      ref={tableWrapperRef}
       className="border border-dark border-bottom-0"
     >
       <table
@@ -424,13 +499,15 @@ export default function ExcelLikeTable(props) {
                   maxWidth: "100px",
                   textAlign: "center",
                   verticalAlign: "middle",
-                  backgroundColor:
-                    selectedCell.col === index ? "#A0A0A0" : "#E0E0E0",
-                  color: selectedCell.col === index ? "white" : "black", // Highlight selected header
-                  border:
-                    selectedCell.col === index
-                      ? "2px solid red"
-                      : "1px solid #dee2e6", // 🔴 Add red border condition
+                  backgroundColor: selectedCell.some((c) => c.col === index)
+                    ? "#A0A0A0"
+                    : "#E0E0E0",
+                  color: selectedCell.some((c) => c.col === index)
+                    ? "white"
+                    : "black",
+                  border: selectedCell.some((c) => c.col === index)
+                    ? "2px solid red"
+                    : "1px solid #dee2e6",
                   transition: "background-color 0.2s ease, border 0.2s ease",
                 }}
               >
@@ -439,7 +516,7 @@ export default function ExcelLikeTable(props) {
             ))}
           </tr>
         </thead>
-        <tbody>
+        <tbody >
           {data.map((row, rowIndex) => (
             <tr key={rowIndex} style={{ height: "45px" }}>
               <th
@@ -459,10 +536,7 @@ export default function ExcelLikeTable(props) {
                 {rowIndex + 1}
               </th>
               {row.map((cell, colIndex) => {
-                // Skip cells marked as spanned but not the center
-                if (cell.isSpanned && !cell.isCenter) {
-                  return null;
-                }
+                if (cell.isSpanned && !cell.isCenter) return null;
 
                 const colSpan = cell.isCenter
                   ? props.linkFields.find(
@@ -472,16 +546,22 @@ export default function ExcelLikeTable(props) {
                     )?.fieldIndexes.length || 1
                   : 1;
 
+                const isSelected = selectedCell.some(
+                  (c) => c.row === rowIndex && c.col === colIndex
+                );
+
                 return (
                   <td
                     key={colIndex}
+                    ref={(el) => {
+                      if (el) {
+                        const key = `${rowIndex}-${colIndex}`;
+                        cellRefs.current[key] = el;
+                      }
+                    }}
                     colSpan={colSpan}
                     draggable={
-                      !(
-                        dottedIndexes.includes(colIndex) ||
-                        (selectedCell.row === rowIndex &&
-                          selectedCell.col === colIndex)
-                      )
+                      !(dottedIndexes.includes(colIndex) || isSelected)
                     }
                     onDragStart={() =>
                       handleDragStart(cell, rowIndex, colIndex)
@@ -496,30 +576,24 @@ export default function ExcelLikeTable(props) {
                       padding: "0",
                       boxSizing: "border-box",
                       overflow: "hidden",
-                      border:
-                        selectedCell.row === rowIndex &&
-                        selectedCell.col === colIndex
-                          ? "2px solid red"
-                          : dottedIndexes.includes(colIndex)
-                          ? "2px dotted blue"
-                          : "1px solid #dee2e6",
-                      backgroundColor:
-                        selectedCell.row === rowIndex &&
-                        selectedCell.col === colIndex
-                          ? "#A5D6A7"
-                          : hoveredCell.row === rowIndex &&
-                            hoveredCell.col === colIndex
-                          ? "#A5D6A7"
-                          : cell.cellType === "formField"
-                          ? "#FFF176"
-                          : cell.cellType === "questionField"
-                          ? "#FFB74D"
-                          : "#C8E6C9",
+                      border: isSelected
+                        ? "2px solid red"
+                        : dottedIndexes.includes(colIndex)
+                        ? "2px dotted blue"
+                        : "1px solid #dee2e6",
+                      backgroundColor: isSelected
+                        ? "#A5D6A7"
+                        : hoveredCell.row === rowIndex &&
+                          hoveredCell.col === colIndex
+                        ? "#A5D6A7"
+                        : cell.cellType === "formField"
+                        ? "#FFF176"
+                        : cell.cellType === "questionField"
+                        ? "#FFB74D"
+                        : "#C8E6C9",
                       transition: "background-color 0.2s ease",
                       cursor:
-                        dottedIndexes.includes(colIndex) ||
-                        (selectedCell.row === rowIndex &&
-                          selectedCell.col === colIndex)
+                        dottedIndexes.includes(colIndex) || isSelected
                           ? "not-allowed"
                           : "grab",
                     }}

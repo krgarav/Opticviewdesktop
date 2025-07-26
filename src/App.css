@@ -49,17 +49,41 @@ input[type="number"] {
   /* justify-content: center;  */
   /* align-items: center;  */
   overflow-y: auto;
-  /* al */
 }
+.grid-container {
+  border: 2px solid black;
+  padding-top: 1rem;
+  padding-right: 1.2rem;
+  padding-left: 1rem;
+  overflow-y: auto;
+  width: max-content;
+}
+/* .top-row {
+    display: flex;
+    margin-left: 40px;
+  
+  } */
 
 .top-row {
+  position: fixed;
+  top: 72px;
+  z-index: 999; /* Ensure it stays above grid rows */
+  background-color: whitesmoke;
   display: flex;
   margin-left: 40px;
-  /* Adjust according to the size of the timing marks */
+}
+.rowactive {
+  background-color: #da3c2b; /* Highlight active row */
+  color: white; /* Change text color for better contrast */
+}
+
+.colactive {
+  background-color: #da3c2b; /* Highlight active column */
+  color: white; /* Change text color for better contrast */
 }
 
 .top {
-  height: 37px;
+  height: 17px;
 }
 
 .corner {

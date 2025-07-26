@@ -22,6 +22,7 @@ const RightSideBar = ({
   }, [selectedWindow]);
 
   const toggleSidebar = () => {
+    setCurrentLinkField(null)
     onClose(!isOpen);
   };
 
