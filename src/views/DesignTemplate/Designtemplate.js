@@ -1913,7 +1913,7 @@ const DesignTemplate = () => {
                   setDetailPage(true);
                 }}
               >
-                Layout details
+                Layout Details
               </Button>
             </Col>
 

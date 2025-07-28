@@ -26,6 +26,8 @@ const NormalHeader = () => {
         className="header pb-6 pt-5 pt-md-8"
         style={{
           background: "linear-gradient(90deg, #000000, #434343)",
+
+          // background: "linear-gradient(to right, #F2FBFC, #ffffff)",
         }}
       >
         <Container fluid>
