@@ -155,8 +155,6 @@ const SimplexTemplateModal = (props) => {
     fetchData();
   }, []);
   const handleChange = (newValue) => {
-   
-
     setValue(newValue);
     setSensitivity(newValue);
   };
@@ -1167,7 +1165,7 @@ const SimplexTemplateModal = (props) => {
                             >
                               <Slider
                                 getAriaLabel={() => "Sensitivity range"}
-                                value={value}
+                                value={17-value}
                                 onChange={(event, newValue) =>{
                                   const val = 17 - newValue
                                   handleChange(val)
@@ -1181,7 +1179,7 @@ const SimplexTemplateModal = (props) => {
                                 scale={(x) => 17 - x} // This reverses the displayed value
                                 size="large"
                                 color="PRIMARY"
-                                track="inverted" // Optional: shows the fill from right to left
+                                // track="inverted" // Optional: shows the fill from right to left
                                 slots={{
                                   ValueLabel: (props) => (
                                     <CustomTooltip

@@ -1164,8 +1164,8 @@ const BookletTemplateModal = (props) => {
                             >
                               <Slider
                                 getAriaLabel={() => "Sensitivity range"}
-                                value={value}
-                               onChange={(event, newValue) =>{
+                                value={17-value}
+                                onChange={(event, newValue) =>{
                                   const val = 17 - newValue
                                   handleChange(val)
                                 }
@@ -1178,7 +1178,7 @@ const BookletTemplateModal = (props) => {
                                 scale={(x) => 17 - x} // This reverses the displayed value
                                 size="large"
                                 color="PRIMARY"
-                                track="inverted" // Optional: shows the fill from right to left
+                                // track="inverted" // Optional: shows the fill from right to left
                                 slots={{
                                   ValueLabel: (props) => (
                                     <CustomTooltip
