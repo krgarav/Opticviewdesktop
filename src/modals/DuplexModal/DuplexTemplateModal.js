@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Modal,
   Button,
@@ -39,9 +39,14 @@ import {
 import DataContext from "store/DataContext";
 import Select, { components } from "react-select";
 import { useNavigate } from "react-router-dom";
-import ShadesOfGrey from "ui/shadesOfGrey";
+import ShadesOfGrey from "../../ui/shadesOfGrey";
+import { MultiSelect } from "react-multi-select-component";
+import axios from "axios";
+import ImageSelection from "../../ui/imageSelection";
+import { getScannedImage } from "helper/TemplateHelper";
 import { toast } from "react-toastify";
-import Jobcard from "ui/Jobcard";
+import Jobcard from "../../ui/Jobcard";
+import DuplexJob from "../../ui/DuplexJob";
 import Papa from "papaparse";
 import { getSampleData } from "helper/TemplateHelper";
 import { v4 as uuidv4 } from "uuid";
@@ -50,6 +55,14 @@ import { imageParamsData } from "data/helperData";
 import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
 import CustomTooltip from "components/CustomTooltip";
+import ImageUrls from "data/imageData";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Carousel } from "react-responsive-carousel";
+import { getUrls } from "helper/url_helper";
+import { debounce } from "lodash";
+import { digitType } from "data/helperData";
+import { scannerData } from "data/helperData";
+
 const DuplexTemplateModal = (props) => {
   const [modalShow, setModalShow] = useState(false);
   const [name, setName] = useState("");
@@ -57,8 +70,8 @@ const DuplexTemplateModal = (props) => {
   const [numberOfLines, setNumberOfLines] = useState("");
   const [imageSrc, setImageSrc] = useState("");
   const [backImageSrc, setBackImageSrc] = useState("");
-  const [sensitivity, setSensitivity] = useState(5);
-  const [difference, setDifference] = useState(6);
+  const [sensitivity, setSensitivity] = useState(3);
+  const [difference, setDifference] = useState(8);
   const [barCount, setBarCount] = useState(0);
   const [selectedBubble, setSelectedBubble] = useState(null);
   const [reject, setReject] = useState({ id: 1, name: "0", showName: "False" });
@@ -74,12 +87,12 @@ const DuplexTemplateModal = (props) => {
   const [activeKey, setActiveKey] = useState("general");
   const [spanDisplay, setSpanDisplay] = useState("none");
   const dataCtx = useContext(DataContext);
-  const [colorType, setColorType] = useState();
+  const [colorType, setColorType] = useState("grayscale");
   const [encoding, setEncoding] = useState();
   const [rotation, setRotation] = useState();
   const [resolution, setResolution] = useState();
   const [scannningSide, setScanningSide] = useState();
-  const [imageParams, setImageParams] = useState();
+  const [imageParams, setImageParams] = useState(0);
   const [imageStatus, setImageStatus] = useState(imageStatusData[0]);
   const [barcodeType, setBarcodeType] = useState({});
   const [barcodeCategory, setBarcodeCategory] = useState({});
@@ -92,17 +105,18 @@ const DuplexTemplateModal = (props) => {
   const [barcodeTopPos, setBarcodeTopPos] = useState();
   const [barcodeBottomPos, setBarcodeBottomPos] = useState();
   const [option, setOption] = useState(null);
+  const [imageFile, setImageFile] = useState();
   const [imageModal, setImageModal] = useState();
   const [image, setImage] = useState();
+
   const [imageTempFile, setTempImageFile] = useState();
-  const [imageBack, setImageBack] = useState();
   const [selectedUI, setSelectedUI] = useState("SIMPLEX");
   const [activeTab, setActiveTab] = useState("simplex");
   const [barcodeEnable, setBarcodeEnable] = useState({
     id: "disable",
     name: "Disable",
   });
-  const [idPresent, setIdPresent] = useState();
+  const [idPresent, setIdPresent] = useState(IdOptionData[1]);
   const [fileModal, setFileModal] = useState(false);
   const [excelJsonFile, setExcelJsonFile] = useState();
   const [excelFile, setExcelFile] = useState("");
@@ -112,34 +126,38 @@ const DuplexTemplateModal = (props) => {
   });
   const [printOrientation, setPrintOrientation] = useState();
   const [printMode, setPrintMode] = useState();
-  const [printCustom, setPrintCustom] = useState(printCustomOption[0]);
-  const [startPosition, setStartPosition] = useState(null);
-  const [fontSpace, setFontSpace] = useState(null);
+  const [printCustom, setPrintCustom] = useState({ id: "date", name: "Date" });
+  const [startPosition, setStartPosition] = useState(0);
+  const [fontSpace, setFontSpace] = useState(0.8);
   const [printDigit, setPrintDigit] = useState(null);
   const [printStartNumber, setPrintStartNumber] = useState(null);
   const [printCustomValue, setPrintCustomValue] = useState(null);
   const [scannerLoading, setScannerLoading] = useState(false);
-  const [value, setValue] = React.useState([5, 6]);
-
-  const handleChange = (event, newValue, activeThumb) => {
-    const minDistance = 1;
-    if (!Array.isArray(newValue)) {
-      return;
-    }
-
-    if (activeThumb === 0) {
-      setValue([Math.min(newValue[0], value[1] - minDistance), value[1]]);
-      setSensitivity(newValue[0]);
-      setDifference(newValue[1]);
-    } else {
-      setValue([value[0], Math.max(newValue[1], value[0] + minDistance)]);
-      setSensitivity(newValue[0]);
-      setDifference(newValue[1]);
-    }
-  };
-
-  const handleAdditionalSensitivity = () => {};
+  const [value, setValue] = React.useState(3);
+  const [images, setImages] = useState([]);
+  const [showFront, setShowFront] = useState(true);
+  const [baseUrl, setBaseUrl] = useState(null);
+  const [showScanner, setShowScanner] = useState(false);
+  const [prefix, setPrefix] = useState("0000");
+  const [prefixzeroes, setPrefixZeroes] = useState("0000");
+  const [scanner, setScanner] = useState("scanner1");
   const navigate = useNavigate();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getUrls();
+        const GetDataURL = response.MAIN_URL;
+        setBaseUrl(GetDataURL);
+      } catch (error) {
+        console.log("Error", error);
+      }
+    };
+    fetchData();
+  }, []);
+  const handleChange = (newValue) => {
+    setValue(newValue);
+    setSensitivity(newValue);
+  };
 
   const jobHandler = (e) => {
     setSelectedUI(e);
@@ -151,7 +169,6 @@ const DuplexTemplateModal = (props) => {
   const imageModalHandler = () => {
     setImageModal(true);
   };
-
   const resetModalHandler = () => {
     settoggle({});
     // setModalShow(false);
@@ -210,11 +227,7 @@ const DuplexTemplateModal = (props) => {
       setModalShow(false);
     }
   }, [props.show]);
-  // useEffect(() => {
-  //   if (props.onHide) {
-  //     setSelectedUI("");
-  //   }
-  // }, [props.onHide]);
+
   const Option = (props) => {
     return (
       <components.Option {...props}>
@@ -254,7 +267,6 @@ const DuplexTemplateModal = (props) => {
             })
             .filter((item) => item !== null); // Remove nulls from the resulting array
 
-          console.log(correctedJson);
           const Row = correctedJson.length;
           const Column = Object.keys(json[1]).filter(
             (item) => item !== ""
@@ -270,35 +282,6 @@ const DuplexTemplateModal = (props) => {
     }
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    console.log(file);
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImageSrc(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-    if (file) {
-      setImage(URL.createObjectURL(file));
-      setTempImageFile(file);
-    }
-  };
-  const handleImage2Upload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setBackImageSrc(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-    if (file) {
-      setImageBack(URL.createObjectURL(file));
-      // setTempImageFile(file);
-    }
-  };
   const getShadeFromValue = (value) => {
     // Example function to map slider value to a shade
     const shades = Array.from({ length: 16 }, (_, i) => {
@@ -327,14 +310,20 @@ const DuplexTemplateModal = (props) => {
     return true;
   };
 
+  const debouncedClick = debounce(
+    () => {
+      createTemplateHandler();
+    },
+    2000,
+    { leading: true, trailing: false }
+  );
+
   const createTemplateHandler = async () => {
     if (printEnable.id !== "0") {
       if (!validatePrintField()) {
         return;
       }
     }
-    console.log(face);
-    // return
     if (
       !name ||
       !numberOfLines ||
@@ -379,8 +368,6 @@ const DuplexTemplateModal = (props) => {
         toast.error("Please Select ID Field ");
         return;
       }
-      console.log(idPresent);
-      console.log(idPresent.id === "present");
 
       if (idPresent && idPresent.id === "present") {
         if (Object.values(face).length === 0) {
@@ -432,9 +419,6 @@ const DuplexTemplateModal = (props) => {
       }
       return;
     }
-
-    // console.log("called");
-    // return
     const key = uuidv4();
     try {
       const emptyExcelJsonFile = excelJsonFile.map((row) => {
@@ -461,8 +445,11 @@ const DuplexTemplateModal = (props) => {
             dataReadDirection: direction?.id,
             idStatus: idPresent.id,
             iReject: 0,
+            isBooklet: true,
+            templateType: props.title,
             idMarksPattern: "000000000000000000000000",
             excelJsonFile: excelJsonFile,
+            images: images,
             numberedExcelJsonFile: emptyExcelJsonFile,
           },
           barcodeData: {
@@ -480,33 +467,34 @@ const DuplexTemplateModal = (props) => {
           },
           imageData: {
             imageEnable: imageStatus ? +imageStatus?.id : 0,
-            imageColor: colorType ? +colorType?.id : 0,
+            imageColor: colorType === "grayscale" ? 1 : 0,
             imageType: encoding ? +encoding?.id : 0,
             imageParam: 0,
             imageRotation: rotation ? +rotation?.id : 0,
             imageResoMode: 1,
             imageResolution: resolution ? +resolution?.id : 1,
+            imageScanningSide: scannningSide ? +scannningSide?.id : 0,
+            imageCompression: imageParams ? +imageParams?.id : 0,
           },
           printingData: {
-            printEnable: +(printEnable?.id ?? 0),
-            printStartPos: +(startPosition ?? 0),
-            printDigit: +(printDigit?.id ?? 0),
-            printStartNumber: +(printStartNumber ?? 0),
-            printOrientation: +(printOrientation?.id ?? 0),
+            printEnable: +printEnable?.id ?? 0,
+            printStartPos: +Math.floor(startPosition) ?? 0,
+            printDigit: printDigit?.id ?? 0,
+            printStartNumber: +printStartNumber ?? 0,
+            printOrientation:
+              printOrientation?.id === undefined ? 0 : +printOrientation?.id,
             printFontSize: 0,
-            printFontSpace: +(fontSpace ?? 0),
-            printMode: +(printMode?.id ?? 0),
+            printFontSpace: +Math.floor(fontSpace) ?? 0,
+            printMode: printMode?.id === undefined ? 0 : +printMode?.id,
             customType: printCustom?.id === undefined ? "" : printCustom?.id,
             customValue: printCustomValue ? printCustomValue : "",
           },
         },
       ];
-      console.log(templateData);
-
       localStorage.setItem("Template", JSON.stringify(templateData));
       const index = dataCtx.setAllTemplates(templateData);
       setModalShow(false);
-      navigate("/admin/template/design-template");
+      navigate("/design-template");
     } catch (error) {
       console.error("Error uploading file: ", error);
     }
@@ -514,12 +502,19 @@ const DuplexTemplateModal = (props) => {
 
   const scannerHandler = async () => {
     setScannerLoading(true);
+    setShowScanner(false);
+
+    if (!scanner?.id) {
+      alert("Please select a scanner");
+      setScannerLoading(false); // ✅ Reset loading state if early return
+      return;
+    }
     try {
-      const response = await getSampleData();
-      console.log(response);
-      const jsonData = response?.data;
-      const base64ImageUrl = response?.frontImage;
-      const base64ImageUrl2 = response?.backImage;
+      const response = await axios.post(
+        `http://localhost:5000/GetSampleData/${scanner?.id}` // Use the selected scanner's id
+      );
+      const { data, images } = response.data;
+      const jsonData = data;
       const correctedJson = jsonData
         .map((item) => {
           const filteredItem = Object.fromEntries(
@@ -534,67 +529,90 @@ const DuplexTemplateModal = (props) => {
       const Column = Object.keys(correctedJson[1]).filter(
         (item) => item !== ""
       ).length;
-      console.log(Object.values(jsonData[1]));
-      setNumberOfLines(Row);
-      setNumberOfFrontSideColumn(Column);
+
+      setNumberOfLines(Row); //setting number of rows in excel
+      setNumberOfFrontSideColumn(Column); //setting number of columns in excel
       setExcelJsonFile(correctedJson);
-      const csv = Papa.unparse(correctedJson);
-      // Create a Blob from the CSV string
-      const blob = new Blob([csv], { type: "text/csv" });
-
-      // Create a File object from the Blob
-      const csvfile = new File([blob], "data.csv", { type: "text/csv" });
-
-      // Set the File object to state
-      setExcelFile(csvfile);
-
-      const file = base64ToFile(base64ImageUrl, "image.png");
-      // Convert the File object to an image URL
-      const imageUrl = URL.createObjectURL(file);
-      setTempImageFile(file);
-      // Set the image URL to be used in the component
-      setImage(imageUrl);
-      setImageSrc(base64ImageUrl);
-      setBackImageSrc(base64ImageUrl2);
-      setScannerLoading(false);
+      setImages(images);
     } catch (error) {
       console.log(error);
-      setScannerLoading(false);
       // toast.error(error.message);
+    } finally {
+      setScannerLoading(false);
     }
   };
+  const scanner2Handler = async () => {
+    setScannerLoading(true);
+    setShowScanner(false);
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/GetSampleData/2"
+      );
+      const { data, images } = response.data;
+      const jsonData = data;
+      const correctedJson = jsonData
+        .map((item) => {
+          const filteredItem = Object.fromEntries(
+            Object.entries(item).filter(([key, value]) => key !== "")
+          );
 
+          // Only include the item if it's not empty
+          return Object.keys(filteredItem).length > 0 ? filteredItem : null;
+        })
+        .filter((item) => item !== null); // Remove nulls from the resulting array
+      const Row = correctedJson.length;
+      const Column = Object.keys(correctedJson[1]).filter(
+        (item) => item !== ""
+      ).length;
+
+      setNumberOfLines(Row); //setting number of rows in excel
+      setNumberOfFrontSideColumn(Column); //setting number of columns in excel
+      setExcelJsonFile(correctedJson);
+      setImages(images);
+    } catch (error) {
+      console.log(error);
+      // toast.error(error.message);
+    } finally {
+      setScannerLoading(false);
+    }
+  };
   const systemHandler = () => {
     // document.getElementById("formFile").click();
     setFileModal(true);
   };
-
   const saveHandler = () => {
-    if (!image) {
-      alert("Please select image");
+    if (!excelJsonFile) {
+      alert("Please select excel file");
     } else {
       setImageModal(false);
     }
-    // if (imageTempFile) {
-    //   // setImageFile(imageTempFile);
-    //   setImageModal(false);
-    // } else {
-    //   alert("Please select image");
-    // }
   };
-
   const saveFileHandler = () => {
-    if (!image) {
-      alert("Please select image");
-      return;
-    }
     if (!excelJsonFile) {
       alert("Please select excel file");
       return;
     }
     setFileModal(false);
+    setImages([
+      {
+        frontImagePath: "1_Front.jpg",
+        backImagePath: "2_Back.jpg",
+      },
+      {
+        frontImagePath: "3_Front.jpg",
+        backImagePath: "4_Back.jpg",
+      },
+      {
+        frontImagePath: "5_Front.jpg",
+        backImagePath: "6_Back.jpg",
+      },
+      {
+        frontImagePath: "7_Front.jpg",
+        backImagePath: "8_Back.jpg",
+      },
+    ]);
   };
-  console.log(selectedUI);
+
   return (
     <>
       <Modal
@@ -607,34 +625,11 @@ const DuplexTemplateModal = (props) => {
         backdrop="static"
         keyboard={false}
       >
-        {/* <Modal.Header className="d-flex flex-column w-100">
-          <Modal.Title id="modal-custom-navbar" className="mb-2 ">
-            {props.title}
-          </Modal.Title>
-          {selectedUI === "SIMPLEX" && (
-            <Nav
-              fill
-              variant="tabs"
-              activeKey={activeTab}
-              onSelect={handleSelect}
-              className="w-100"
-            >
-              <Nav.Item>
-                <Nav.Link eventKey="simplex">Front Side</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="duplex">Back Side</Nav.Link>
-              </Nav.Item>
-            </Nav>
-          )}
-        </Modal.Header> */}
-
         <Modal.Body style={{ height: "80dvh", overflow: "auto" }}>
           {selectedUI === "" && (
             <div className="d-flex" style={{ justifyContent: "space-evenly" }}>
               <Jobcard text="SIMPLEX" handleJob={jobHandler} />
               <Jobcard text={"DUPLEX"} handleJob={jobHandler} />
-              {/* <DuplexJob/> */}
             </div>
           )}
 
@@ -680,7 +675,7 @@ const DuplexTemplateModal = (props) => {
                       <Row className="mb-3">
                         <label
                           htmlFor="example-text-input"
-                          className="col-md-2 "
+                          className="col-md-2 col-form-label"
                           style={{ fontSize: ".9rem" }}
                         >
                           Name
@@ -734,12 +729,12 @@ const DuplexTemplateModal = (props) => {
                           className="col-md-2  col-form-label"
                           style={{ fontSize: ".87rem" }}
                         >
-                          Bubble Variant
+                          Bubble
                         </label>
-                        <div className="col-md-10">
+                        <div className="col-md-4">
                           <Select
                             value={selectedBubble}
-                            placeholder="Select bubble"
+                            placeholder="Select Bubble"
                             onChange={(selectedValue) => {
                               setSelectedBubble(selectedValue);
                               settoggle((item) => ({
@@ -770,106 +765,45 @@ const DuplexTemplateModal = (props) => {
                             </span>
                           )}
                         </div>
+                        <label
+                          htmlFor="bubble-variant-input"
+                          className="col-md-2  col-form-label"
+                          style={{ fontSize: ".87rem" }}
+                        >
+                          Scanner
+                        </label>
+                        <div className="col-md-4">
+                          <Select
+                            value={scanner}
+                            placeholder="Select Scanner"
+                            onChange={(selectedValue) => {
+                              setScanner(selectedValue);
+                            }}
+                            styles={{
+                              control: (provided, state) => ({
+                                ...provided,
+                                border: toggle.bubbleVariant
+                                  ? "1px solid red !important"
+                                  : provided.border,
+                              }),
+                            }}
+                            options={scannerData}
+                            getOptionLabel={(option) => option?.name || ""}
+                            getOptionValue={(option) =>
+                              option?.id?.toString() || ""
+                            }
+                            components={{ Option, SingleValue }}
+                          />
+                          {!selectedBubble && (
+                            <span
+                              style={{ color: "red", display: spanDisplay }}
+                            >
+                              This feild is required
+                            </span>
+                          )}
+                        </div>
                       </Row>
-                      {/* <Row className="mb-3">
-                                            <label
-                                                htmlFor="example-text-input"
-                                                className="col-md-2 "
-                                                style={{ fontSize: ".9rem" }}
-                                            >
-                                                Size:
-                                            </label>
-                                            <div className="col-md-10">
-                                                <Select
-                                                    value={size}
-                                                    onChange={(selectedValue) => setSize(selectedValue)}
-                                                    options={sizeData}
-                                                    getOptionLabel={(option) => option?.name || ""}
-                                                    getOptionValue={(option) =>
-                                                        option?.id?.toString() || ""
-                                                    }
-                                                />
-                                                {!size && (
-                                                    <span style={{ color: "red", display: "block" }}>
-                                                        This feild is required
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </Row> */}
-                      {/* <Row className="mb-3">
-                          <Col md={6}>
-                            <Row>
-                              <label
-                                htmlFor="example-text-input"
-                                className="col-md-4 col-form-label"
-                                style={{ fontSize: ".9rem" }}
-                              >
-                                No. of Rows
-                              </label>
-                              <div className="col-md-6">
-                                <input
-                                  type="number"
-                                  className="form-control"
-                                  value={numberOfLines}
-                                  placeholder="Enter rows"
-                                  onChange={(e) => {
-                                    settoggle((item) => ({
-                                      ...item,
-                                      row: false,
-                                    }));
-                                    setNumberOfLines(e.target.value);
-                                  }}
-                                  style={{
-                                    border: toggle.row ? "1px solid red" : "",
-                                  }}
-                                />
-                                {!numberOfLines && (
-                                  <span
-                                    style={{ color: "red", display: spanDisplay }}
-                                  >
-                                    This feild is required
-                                  </span>
-                                )}
-                              </div>
-                            </Row>
-                          </Col>
-                          <Col md={6}>
-                            <Row>
-                              <label
-                                htmlFor="example-text-input"
-                                className="col-md-6 col-form-label "
-                                style={{ fontSize: ".9rem" }}
-                              >
-                                Number of columns
-                              </label>
-                              <div className="col-md-6">
-                                <input
-                                  placeholder="Enter columns"
-                                  type="number"
-                                  className="form-control"
-                                  value={numberOfFrontSideColumn}
-                                  onChange={(e) => {
-                                    settoggle((item) => ({
-                                      ...item,
-                                      col: false,
-                                    }));
-                                    setNumberOfFrontSideColumn(e.target.value);
-                                  }}
-                                  style={{
-                                    border: toggle.col ? "1px solid red" : "",
-                                  }}
-                                />
-                                {!numberOfFrontSideColumn && (
-                                  <span
-                                    style={{ color: "red", display: spanDisplay }}
-                                  >
-                                    This feild is required
-                                  </span>
-                                )}
-                              </div>
-                            </Row>
-                          </Col>
-                        </Row> */}
+
                       <Row className="mb-3">
                         <label
                           htmlFor="example-text-input"
@@ -1043,9 +977,9 @@ const DuplexTemplateModal = (props) => {
                           className="col-md-2 col-form-label  "
                           style={{ fontSize: ".95rem" }}
                         >
-                          Image Status
+                          Image
                         </label>
-                        <div className="col-md-10">
+                        <div className="col-md-4">
                           <Select
                             value={imageStatus}
                             onChange={(selectedValue) =>
@@ -1059,16 +993,14 @@ const DuplexTemplateModal = (props) => {
                             defaultInputValue=""
                           />
                         </div>
-                      </Row>
-                      <Row className="mb-3">
                         <label
                           htmlFor="example-text-input"
                           className="col-md-2 col-form-label "
-                          style={{ fontSize: ".85rem" }}
+                          style={{ fontSize: ".95rem" }}
                         >
                           Printing
                         </label>
-                        <div className="col-md-10">
+                        <div className="col-md-4">
                           <Select
                             value={printEnable}
                             onChange={(selectedValue) => {
@@ -1090,7 +1022,7 @@ const DuplexTemplateModal = (props) => {
                             className="col-md-2 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
-                            Window NG
+                            Exception
                           </label>
                           <div className="col-md-10">
                             <Select
@@ -1222,7 +1154,7 @@ const DuplexTemplateModal = (props) => {
                                 overflow: "hidden",
                               }}
                             >
-                              <ShadesOfGrey />
+                              <ShadesOfGrey type="reverse" />
                             </div>
                             <Box
                               sx={{
@@ -1233,19 +1165,24 @@ const DuplexTemplateModal = (props) => {
                             >
                               <Slider
                                 getAriaLabel={() => "Sensitivity range"}
-                                value={value}
-                                onChange={handleChange}
+                                value={17 - value}
+                                onChange={(event, newValue) => {
+                                  const val = 17 - newValue;
+                                  handleChange(val);
+                                }}
                                 valueLabelDisplay="auto"
-                                min={0} // Ensure minimum value is 0
+                                min={1}
                                 max={16}
-                                disableSwap
+                                step={1}
+                                scale={(x) => 17 - x} // This reverses the displayed value
                                 size="large"
                                 color="PRIMARY"
+                                // track="inverted" // Optional: shows the fill from right to left
                                 slots={{
                                   ValueLabel: (props) => (
                                     <CustomTooltip
                                       {...props}
-                                      shade={getShadeFromValue(value)} // Pass the shade based on the value
+                                      shade={getShadeFromValue(value)}
                                     />
                                   ),
                                 }}
@@ -1254,7 +1191,7 @@ const DuplexTemplateModal = (props) => {
                           </div>
 
                           <input
-                            value={`${sensitivity} - ${difference}`}
+                            value={`${sensitivity}`}
                             onChange={(e) => setSensitivity(e.target.value)}
                             style={{
                               width: "100%",
@@ -1274,54 +1211,107 @@ const DuplexTemplateModal = (props) => {
                             </span>
                           )}
                         </div>
-                        {/* <label
+                      </Row>
+                      <Row className="mb-3">
+                        <label
                           htmlFor="example-text-input"
-                          className="col-md-2 col-form-label "
-                          style={{ fontSize: ".9rem", textAlign: "right" }}
+                          className="col-md-2 col-form-label  "
+                          style={{ fontSize: ".9rem" }}
                         >
-                          Difference
-                        </label> */}
-                        {/* <div className="col-md-3">
-                          <input
+                          Density
+                        </label>
+                        <div
+                          className="col-md-10"
+                          style={{
+                            display: "flex",
+                            gap: "5px",
+                            width: "100%",
+                          }}
+                        >
+                          <div
                             style={{
-                              border: toggle.difference ? "1px solid red" : "",
+                              display: "flex",
+                              flexDirection: "column",
+                              width: "100%",
                             }}
-                            placeholder="Enter difference"
-                            type="number"
-                            className="form-control"
-                            value={difference}
-                            onBlur={(e) => {
-                              const inputValue = e.target.value;
+                          >
+                            <div
+                              style={{
+                                borderRadius: "6px",
+                                overflow: "hidden",
+                              }}
+                            >
+                              <ShadesOfGrey type="normal" />
+                            </div>
+                            <Box
+                              sx={{
+                                width: "94%",
+                                justifyContent: "center",
+                                alignSelf: "center",
+                              }}
+                            >
+                              {/* <Slider
+                                getAriaLabel={() => "Sensitivity range"}
+                                value={value}
+                                onChange={handleChange}
+                                valueLabelDisplay="auto"
+                                min={0} // Ensure minimum value is 0
+                                max={16}
+                                disableSwap
+                                size="large"
+                                color="PRIMARY"
+                                slots={{
+                                  ValueLabel: (props) => (
+                                    <CustomTooltip
+                                      {...props}
+                                      shade={getShadeFromValue(value)} // Pass the shade based on the value
+                                    />
+                                  ),
+                                }}
+                              /> */}
+                              <Slider
+                                getAriaLabel={() => "Sensitivity range"}
+                                value={difference} // should be a single number
+                                onChange={(event, newValue) =>
+                                  setDifference(newValue)
+                                } // handle as a number
+                                valueLabelDisplay="auto"
+                                min={1}
+                                max={16}
+                                size="large"
+                                color="PRIMARY"
+                                slots={{
+                                  ValueLabel: (props) => (
+                                    <CustomTooltip
+                                      {...props}
+                                      shade={getShadeFromValue(value)} // Pass the shade based on the value
+                                    />
+                                  ),
+                                }}
+                              />
+                            </Box>
+                          </div>
 
-                              // Check if the input value is not empty and less than sensitivity
-                              if (
-                                inputValue !== "" &&
-                                +inputValue < +sensitivity
-                              ) {
-                                alert(
-                                  "Entered value cannot be less than sensitivity"
-                                );
-                                setDifference("");
-                                return;
-                              }
+                          <input
+                            value={`${difference}`}
+                            style={{
+                              width: "100%",
+                              padding: "2px",
+                              textAlign: "center",
                             }}
-                            onChange={(e) => {
-                              setDifference(e.target.value);
-                              settoggle((item) => ({
-                                ...item,
-                                difference: false,
-                              }));
-                            }}
+                            className="form-control"
+                            type="text"
+                            disabled
                           />
 
-                          {!difference && (
+                          {!sensitivity && (
                             <span
                               style={{ color: "red", display: spanDisplay }}
                             >
                               This feild is required
                             </span>
                           )}
-                        </div> */}
+                        </div>
                       </Row>
 
                       <Row className="mb-3">
@@ -1460,84 +1450,176 @@ const DuplexTemplateModal = (props) => {
                     <Tab.Pane eventKey="print">
                       <Row className="mb-3">
                         <label
-                          htmlFor="example-text-input"
+                          htmlFor="start-position"
                           className="col-md-2 col-form-label"
                           style={{ fontSize: ".9rem" }}
                         >
                           Start Position:
                         </label>
-                        <div className="col-md-10">
+
+                        <div className="col-md-10 d-flex align-items-center gap-3">
+                          {/* Slider */}
                           <input
+                            type="range"
+                            id="start-position"
+                            min="0"
+                            max="355"
+                            step="1"
                             value={startPosition}
-                            type="number"
-                            className="form-control"
-                            placeholder="Enter value between 0.00mm and 355.0mm"
+                            className="form-range flex-grow-1"
                             onChange={(e) => {
-                              setStartPosition(e.target.value);
+                              const value = parseFloat(e.target.value);
+                              setStartPosition(value);
                             }}
                           />
+
+                          {/* Display input with 'mm' unit using input group */}
+                          <div
+                            className="input-group"
+                            style={{ maxWidth: "160px" }}
+                          >
+                            <input
+                              type="text"
+                              className="form-control text-end"
+                              value={startPosition}
+                              disabled
+                            />
+                            <div className="input-group-append">
+                              <span className="input-group-text">mm</span>
+                            </div>
+                          </div>
                         </div>
                       </Row>
+
                       <Row className="mb-3">
                         <label
-                          htmlFor="example-text-input"
-                          className="col-md-2 col-form-label "
+                          htmlFor="font-space"
+                          className="col-md-2 col-form-label"
                           style={{ fontSize: ".9rem" }}
                         >
                           Font Space:
                         </label>
-                        <div className="col-md-10">
+
+                        <div className="col-md-10 d-flex align-items-center gap-3">
+                          {/* Range Slider */}
                           <input
-                            type="number"
+                            type="range"
+                            id="font-space"
+                            min="0.8"
+                            max="92"
+                            step="0.1"
                             value={fontSpace}
-                            className="form-control"
-                            placeholder="Enter value between 0.8mm and 92.0mm"
+                            className="form-range flex-grow-1"
                             onChange={(e) => {
-                              setFontSpace(e.target.value);
+                              const value = parseFloat(e.target.value);
+                              setFontSpace(parseFloat(value.toFixed(1)));
                             }}
                           />
+
+                          {/* Read-only value with mm label */}
+                          <div
+                            className="input-group"
+                            style={{ maxWidth: "160px" }}
+                          >
+                            <input
+                              type="text"
+                              className="form-control text-end"
+                              value={
+                                fontSpace !== "" ? fontSpace.toFixed(1) : ""
+                              }
+                              disabled
+                            />
+                            <span className="input-group-text">mm</span>
+                          </div>
                         </div>
                       </Row>
-                      <Row className="mb-3">
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-2 col-form-label "
-                          style={{ fontSize: ".9rem" }}
-                        >
-                          Digit :
-                        </label>
-                        <div className="col-md-10">
-                          <input
-                            type="number"
-                            value={printDigit}
-                            className="form-control"
-                            placeholder="Enter the digits of sequence number (MAX 8digits)"
-                            onChange={(e) => {
-                              setPrintDigit(e.target.value);
-                            }}
-                          />
-                        </div>
-                      </Row>
-                      <Row className="mb-3">
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-2 col-form-label "
-                          style={{ fontSize: ".85rem" }}
-                        >
-                          Start Number :
-                        </label>
-                        <div className="col-md-10">
-                          <input
-                            type="number"
-                            value={printStartNumber}
-                            className="form-control"
-                            placeholder="Enter the start number for print sequence number"
-                            onChange={(e) => {
-                              setPrintStartNumber(e.target.value);
-                            }}
-                          />
-                        </div>
-                      </Row>
+                      <div
+                        style={{
+                          border: "1px solid #ccc",
+                          margin: "0",
+                          padding: "10px",
+                          borderRadius: "5px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <small className="text-red">
+                          Select options for serial numbers
+                        </small>
+                        <Row className="mb-3">
+                          <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label "
+                            style={{ fontSize: ".9rem" }}
+                          >
+                            Digit :
+                          </label>
+                          <div className="col-md-10">
+                            <Select
+                              placeholder="Select The Digits Of Sequence Number"
+                              options={digitType}
+                              getOptionLabel={(option) => option?.name || ""}
+                              getOptionValue={(option) =>
+                                option?.id?.toString() || ""
+                              }
+                              value={printDigit}
+                              onChange={(selectedValue) => {
+                                setPrintDigit(selectedValue);
+                                const id = selectedValue.id;
+                                const zeroes = "0".repeat(parseInt(id));
+                                setPrefixZeroes(zeroes);
+                                setPrefix(zeroes);
+                              }}
+                            />
+                          </div>
+                        </Row>
+                        <Row className="mb-3">
+                          <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label "
+                            style={{ fontSize: ".85rem" }}
+                          >
+                            Start Number :
+                          </label>
+                          <div className="col-md-10 d-flex flex-row align-items-center gap-3 w-[20%]">
+                            <input
+                              type="number"
+                              value={prefix}
+                              className="form-control"
+                              style={{ width: "20%" }}
+                              disabled
+                            />
+                            <input
+                              type="number"
+                              style={{ width: "80%" }}
+                              value={printStartNumber}
+                              className="form-control  w-[80%]"
+                              placeholder="Enter The Start Number For Print Sequence Number"
+                              onChange={(e) => {
+                                const startNumber = e.target.value;
+
+                                if (startNumber.length <= prefixzeroes.length) {
+                                  const num = parseInt(startNumber);
+
+                                  if (!isNaN(num)) {
+                                    // Format number with leading zeroes
+                                    const zeroedNum =
+                                      prefixzeroes.substring(
+                                        0,
+                                        prefixzeroes.length - startNumber.length
+                                      ) + startNumber;
+                                    setPrefix(zeroedNum);
+                                  } else {
+                                    // Empty input → show full prefixzeroes
+                                    setPrefix(prefixzeroes);
+                                  }
+
+                                  setPrintStartNumber(startNumber);
+                                }
+                              }}
+                            />
+                          </div>
+                        </Row>
+                      </div>
                       <Row className="mb-3">
                         <label
                           htmlFor="example-text-input"
@@ -1604,6 +1686,7 @@ const DuplexTemplateModal = (props) => {
                             getOptionValue={(option) =>
                               option?.id?.toString() || ""
                             }
+                            menuPlacement="top"
                           />
                         </div>
                       </Row>
@@ -1621,7 +1704,7 @@ const DuplexTemplateModal = (props) => {
                               type="text"
                               value={printCustomValue}
                               className="form-control"
-                              placeholder="Enter the custom value to be printed"
+                              placeholder="Enter The Custom Value To Be Printed"
                               onChange={(e) => {
                                 setPrintCustomValue(e.target.value);
                               }}
@@ -1955,36 +2038,93 @@ const DuplexTemplateModal = (props) => {
                     </Tab.Pane>
                     <Tab.Pane eventKey="image">
                       <Form>
-                        <Row className="mb-3">
+                        <Row className="mb-3 align-items-center">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
-                            Color Types :
+                            Image Color :
                           </label>
-                          <div className="col-md-9">
-                            <Select
-                              value={colorType}
-                              onChange={(selectedValue) =>
-                                setColorType(selectedValue)
-                              }
-                              options={colorTypeData}
-                              getOptionLabel={(option) => option?.name || ""}
-                              getOptionValue={(option) =>
-                                option?.id?.toString() || ""
-                              }
-                              placeholder="Select color type..."
-                            />
+
+                          <div className="col-md-9 d-flex align-items-center justify-content-between">
+                            <div className="form-check form-check-inline mr-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="colorType"
+                                id="grayscale"
+                                value="grayscale"
+                                checked={colorType === "grayscale"}
+                                onChange={(e) => setColorType(e.target.value)}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="grayscale"
+                              >
+                                Grayscale
+                              </label>
+                            </div>
+
+                            <div className="form-check form-check-inline mr-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="colorType"
+                                id="color"
+                                value="color"
+                                checked={colorType === "color"}
+                                onChange={(e) => setColorType(e.target.value)}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="color"
+                              >
+                                Color
+                              </label>
+                            </div>
+                            <div className="form-check form-check-inline mr-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="colorType"
+                                id="blackwhite"
+                                value="blackwhite"
+                                checked={colorType === "blackwhite"}
+                                onChange={(e) => setColorType(e.target.value)}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="blackwhite"
+                              >
+                                Black & White
+                              </label>
+                            </div>
+                            <div>
+                              <img
+                                src={
+                                  colorType === "color"
+                                    ? "/colored.webp"
+                                    : colorType === "blackwhite"
+                                    ? "/grayscale.webp"
+                                    : "/grayscale.webp"
+                                }
+                                width={100}
+                                height={100}
+                                alt={colorType}
+                                className="rounded shadow"
+                              />
+                            </div>
                           </div>
                         </Row>
+
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
-                            Encoding Option :
+                            Image Type :
                           </label>
                           <div className="col-md-9">
                             <Select
@@ -2004,7 +2144,7 @@ const DuplexTemplateModal = (props) => {
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
                             Rotation :
@@ -2027,7 +2167,7 @@ const DuplexTemplateModal = (props) => {
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label "
                             style={{ fontSize: ".9rem" }}
                           >
                             Resolution :
@@ -2043,7 +2183,7 @@ const DuplexTemplateModal = (props) => {
                               getOptionValue={(option) =>
                                 option?.id?.toString() || ""
                               }
-                              placeholder="Select rotation option..."
+                              placeholder="Select Resolution Option..."
                             />
                             {resolution?.id === "0" && (
                               <span
@@ -2057,7 +2197,7 @@ const DuplexTemplateModal = (props) => {
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
-                            className="col-md-3 "
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
                             Scanning Side :
@@ -2073,17 +2213,17 @@ const DuplexTemplateModal = (props) => {
                               getOptionValue={(option) =>
                                 option?.id?.toString() || ""
                               }
-                              placeholder="Select rotation option..."
+                              placeholder="Select Scanning Side..."
                             />
                           </div>
                         </Row>
                         {/* <Row className="mb-3">
                           <label
-                            htmlFor="example-text-input"
-                            className="col-md-3 "
+                            htmlFor="example-text-input col-form-label"
+                            className="col-md-3 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
-                            Image compression :
+                            Image Compression :
                           </label>
                           <div className="col-md-9">
                             <Select
@@ -2096,7 +2236,7 @@ const DuplexTemplateModal = (props) => {
                               getOptionValue={(option) =>
                                 option?.id?.toString() || ""
                               }
-                              placeholder="Select rotation option..."
+                              placeholder="Select Compression..."
                             />
                           </div>
                         </Row> */}
@@ -2232,16 +2372,6 @@ const DuplexTemplateModal = (props) => {
                         <input class="form-control" type="file" id="formFile" onChange={handleImageUpload} accept="image/*" />
                     </div> */}
             <div>
-              {/* {imageFile?.name}  */}
-              {/* {!imageFile && <Button onClick={imageModalHandler}>Select Image</Button>}
-
-                            {imageFile &&
-                                <div >
-                                    <Button variant='info' onClick={imageModalHandler}>Choose another</Button>
-                                    <img src={image} alt="Fetched Thumbnail" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
-                                </div>
-                            } */}
-
               <div>
                 {selectedUI &&
                   (!image ? (
@@ -2282,7 +2412,7 @@ const DuplexTemplateModal = (props) => {
           >
             Close
           </Button>
-          <Button variant="success" onClick={createTemplateHandler}>
+          <Button variant="success" onClick={debouncedClick}>
             Create Template
           </Button>
         </Modal.Footer>
@@ -2298,10 +2428,7 @@ const DuplexTemplateModal = (props) => {
         backdrop="static"
         keyboard={false}
       >
-        <Modal.Header>
-          <Modal.Title id="modal-custom-navbar">Select Image</Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ height: "65dvh" }}>
+        <Modal.Body style={{ height: "80dvh" }}>
           <>
             {scannerLoading && (
               <div
@@ -2361,13 +2488,93 @@ const DuplexTemplateModal = (props) => {
                   </div>
                 </Col>
               </Row>
+              <Row className="d-flex justify-content-center mt-2">
+                {images.length > 0 && (
+                  <div className=" my-1">
+                    <div className="row justify-content-center">
+                      <div className="col-12 col-md-8">
+                        {/* Toggle Buttons */}
+                        <div className="d-flex justify-content-center mb-3">
+                          <button
+                            className={`btn ${
+                              showFront ? "btn-primary" : "btn-outline-primary"
+                            } me-2`}
+                            onClick={() => setShowFront(true)}
+                          >
+                            Show Front Images
+                          </button>
+                          <button
+                            className={`btn ${
+                              !showFront ? "btn-primary" : "btn-outline-primary"
+                            }`}
+                            onClick={() => setShowFront(false)}
+                          >
+                            Show Back Images
+                          </button>
+                        </div>
+
+                        {/* Front Image Carousel */}
+                        {showFront && (
+                          <Carousel
+                            showArrows={true}
+                            showThumbs={false}
+                            infiniteLoop
+                            emulateTouch
+                          >
+                            {images.map((item, index) => (
+                              <div key={index}>
+                                <img
+                                  src={`http://localhost:5000/GetImage?imagePath=${item.frontImagePath}`}
+                                  alt={`Front Slide ${index + 1}`}
+                                  className="img-fluid rounded"
+                                  style={{
+                                    maxHeight: "300px",
+                                    objectFit: "cover",
+                                    width: "100%",
+                                  }}
+                                />
+                                <p className="legend">{`Front Image ${
+                                  index + 1
+                                }`}</p>
+                              </div>
+                            ))}
+                          </Carousel>
+                        )}
+
+                        {/* Back Image Carousel */}
+                        {!showFront && (
+                          <Carousel
+                            showArrows={true}
+                            showThumbs={false}
+                            infiniteLoop
+                            emulateTouch
+                          >
+                            {images.map((item, index) => (
+                              <div key={index}>
+                                <img
+                                  src={`http://localhost:5000/GetImage?imagePath=${item.backImagePath}`}
+                                  alt={`Back Slide ${index + 1}`}
+                                  className="img-fluid rounded"
+                                  style={{
+                                    maxHeight: "400px",
+                                    objectFit: "cover",
+                                    width: "100%",
+                                  }}
+                                />
+                                <p className="legend">{`Back Image ${
+                                  index + 1
+                                }`}</p>
+                              </div>
+                            ))}
+                          </Carousel>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {images.length === 0 && <p>Please select the image</p>}
+              </Row>
             </div>
-            <Row className="d-flex justify-content-center mt-4">
-              {image && (
-                <img src={image} alt="Scanned" width={200} height={200} />
-              )}
-              {!image && <p>Please select the image</p>}
-            </Row>
           </>
         </Modal.Body>
         <Modal.Footer>
@@ -2387,87 +2594,27 @@ const DuplexTemplateModal = (props) => {
 
       <Modal
         show={fileModal}
-        // onHide={props.onHide}
         size="sm"
         aria-labelledby="modal-custom-navbar"
         centered
         dialogClassName="modal-50w"
-        backdrop="static"
+        // backdrop="static"
         keyboard={false}
       >
         <Modal.Header>
-          <Modal.Title id="modal-custom-navbar">Select Image</Modal.Title>
+          <Modal.Title id="modal-custom-navbar">Select Images</Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ height: "65dvh", overflow: "auto" }}>
-          {props.title === "SIMPLEX" && (
-            <>
-              <Row className="d-flex justify-content-center mt-4">
-                <label>Choose Front Image</label>
-                <input
-                  className="form-control"
-                  type="file"
-                  id="formFile"
-                  onChange={handleImageUpload}
-                  accept="image/*"
-                />
-                {image && (
-                  <img src={image} alt="Scanned" width={100} height={100} />
-                )}
-              </Row>
-              <Row className="d-flex justify-content-center mt-4">
-                <label>Choose Back Image</label>
-                <input
-                  className="form-control"
-                  type="file"
-                  id="formFile"
-                  onChange={handleImage2Upload}
-                  accept="image/*"
-                />
-                {imageBack && (
-                  <img src={imageBack} alt="Scanned" width={100} height={100} />
-                )}
-              </Row>
-              <Row className="d-flex justify-content-center mt-4">
-                <label>Choose Excel File</label>
-                <input
-                  className="form-control"
-                  type="file"
-                  id="formFile"
-                  onChange={handleExcelUpload}
-                  accept=".xls,.xlsx,.csv"
-                />
-              </Row>
-            </>
-          )}
-
-          {props.title === "BOOKLET" && (
-            <>
-              <Row className="d-flex justify-content-center mt-4">
-                <label>Upload Images</label>
-                <input
-                  className="form-control"
-                  type="file"
-                  id="formFile"
-                  onChange={handleImage2Upload}
-                  accept="image/*"
-                  multiple
-                />
-                {imageBack && (
-                  <img src={imageBack} alt="Scanned" width={100} height={100} />
-                )}
-              </Row>
-              <Row className="d-flex justify-content-center mt-4">
-                <label>Upload Excel File</label>
-                <input
-                  className="form-control"
-                  type="file"
-                  id="formFile"
-                  onChange={handleExcelUpload}
-                  accept=".xls,.xlsx,.csv"
-                />
-              </Row>
-            </>
-          )}
+          <Row className="d-flex justify-content-center mt-4">
+            <label>Choose Excel File</label>
+            <input
+              className="form-control"
+              type="file"
+              id="formFile"
+              onChange={handleExcelUpload}
+              accept=".xls,.xlsx,.csv"
+            />
+          </Row>
         </Modal.Body>
         <Modal.Footer>
           <Button

@@ -73,7 +73,7 @@ const BookletModal = (props) => {
               <Jobcard handleJob={handleJob} text={"Booklet"} />
             </Col>
 
-             <Col
+            <Col
               xs={4}
               sm={4}
               md={4}
@@ -94,7 +94,7 @@ const BookletModal = (props) => {
         />
       )}
       {showDuplexModal && (
-        <BookletTemplateModal
+        <DuplexTemplateModal
           show={showDuplexModal}
           onHide={() => {
             setShowDuplexModal(false);

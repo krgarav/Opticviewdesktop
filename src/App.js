@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import Template from "views/Template";
 import DesignTemplate from "views/DesignTemplate/Designtemplate";
 import Redirect from "components/Redirect";
+import DuplexDesignTemplate from "views/DuplexDesignTemplate/DuplexDesignTemplate";
 const useTokenRedirect = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -109,9 +110,12 @@ const App = () => {
           <Route path="/admin/*" element={<AdminLayout />} />
           <Route path="/operator/*" element={<Operator />} />
           <Route path="/moderator/*" element={<Moderator />} />
-        
 
           <Route path="/design-template" element={<DesignTemplate />} />
+          <Route
+            path="/duplex-design-template"
+            element={<DuplexDesignTemplate />}
+          />
           <Route path="/edit" element={<Redirect />} />
           <Route path="/" element={<Template />} />
           {/* <Route path="*" element={<Navigate to="/auth/login" replace />} /> */}
