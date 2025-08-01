@@ -57,20 +57,29 @@ const BookletModal = (props) => {
             }}
           >
             <Col
-              xs={12}
-              sm={12}
-              md={6}
+              xs={4}
+              sm={4}
+              md={4}
               className="d-md-flex justify-content-md-end gap-4"
             >
               <Jobcard handleJob={handleJob} text={"Simplex"} />
             </Col>
             <Col
-              xs={12}
-              sm={12}
-              md={6}
+              xs={4}
+              sm={4}
+              md={4}
               className="d-md-flex justify-content-md-start"
             >
               <Jobcard handleJob={handleJob} text={"Booklet"} />
+            </Col>
+
+             <Col
+              xs={4}
+              sm={4}
+              md={4}
+              className="d-md-flex justify-content-md-start"
+            >
+              <Jobcard handleJob={handleJob} text={"Duplex"} />
             </Col>
           </Row>
         </Modal.Body>
@@ -85,7 +94,7 @@ const BookletModal = (props) => {
         />
       )}
       {showDuplexModal && (
-        <DuplexTemplateModal
+        <BookletTemplateModal
           show={showDuplexModal}
           onHide={() => {
             setShowDuplexModal(false);

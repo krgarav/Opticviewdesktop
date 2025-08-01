@@ -594,7 +594,7 @@ const DuplexTemplateModal = (props) => {
     }
     setFileModal(false);
   };
-
+  console.log(selectedUI);
   return (
     <>
       <Modal
@@ -607,11 +607,11 @@ const DuplexTemplateModal = (props) => {
         backdrop="static"
         keyboard={false}
       >
-        <Modal.Header className="d-flex flex-column w-100">
+        {/* <Modal.Header className="d-flex flex-column w-100">
           <Modal.Title id="modal-custom-navbar" className="mb-2 ">
             {props.title}
           </Modal.Title>
-          {selectedUI === "DUPLEX" && (
+          {selectedUI === "SIMPLEX" && (
             <Nav
               fill
               variant="tabs"
@@ -627,8 +627,9 @@ const DuplexTemplateModal = (props) => {
               </Nav.Item>
             </Nav>
           )}
-        </Modal.Header>
-        <Modal.Body style={{ height: "65dvh", overflow: "auto" }}>
+        </Modal.Header> */}
+
+        <Modal.Body style={{ height: "80dvh", overflow: "auto" }}>
           {selectedUI === "" && (
             <div className="d-flex" style={{ justifyContent: "space-evenly" }}>
               <Jobcard text="SIMPLEX" handleJob={jobHandler} />
@@ -644,7 +645,10 @@ const DuplexTemplateModal = (props) => {
               onSelect={(k) => setActiveKey(k)}
             >
               <Row>
-                <Col sm={12}>
+                <Col sm={2}>
+                  <h2>{props.title}</h2>
+                </Col>
+                <Col sm={8}>
                   {/* Adjusted column span to full width if needed */}
                   <Nav
                     variant="pills"

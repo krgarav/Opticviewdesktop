@@ -446,6 +446,7 @@ const BookletTemplateModal = (props) => {
             idStatus: idPresent.id,
             iReject: 0,
             isBooklet: true,
+            templateType: props.title,
             idMarksPattern: "000000000000000000000000",
             excelJsonFile: excelJsonFile,
             images: images,
@@ -1164,13 +1165,11 @@ const BookletTemplateModal = (props) => {
                             >
                               <Slider
                                 getAriaLabel={() => "Sensitivity range"}
-                                value={17-value}
-                                onChange={(event, newValue) =>{
-                                  const val = 17 - newValue
-                                  handleChange(val)
-                                }
-                                
-                                }
+                                value={17 - value}
+                                onChange={(event, newValue) => {
+                                  const val = 17 - newValue;
+                                  handleChange(val);
+                                }}
                                 valueLabelDisplay="auto"
                                 min={1}
                                 max={16}
@@ -1192,7 +1191,7 @@ const BookletTemplateModal = (props) => {
                           </div>
 
                           <input
-                            value={`${ sensitivity}`}
+                            value={`${sensitivity}`}
                             onChange={(e) => setSensitivity(e.target.value)}
                             style={{
                               width: "100%",
