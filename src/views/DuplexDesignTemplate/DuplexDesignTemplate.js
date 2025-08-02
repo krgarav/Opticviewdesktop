@@ -136,6 +136,7 @@ const DuplexDesignTemplate = () => {
   const isWideScreen = width >= 994;
   const blankRef = useRef(null);
   const gridRef = useRef(null);
+
   useEffect(() => {
     setFormatting(numberOfField === "" ? "" : "X".repeat(numberOfField));
   }, [numberOfField]);
@@ -222,33 +223,6 @@ const DuplexDesignTemplate = () => {
     }
   }, [dataCtx.allTemplates]);
 
-  // useEffect(() => {
-  //   const handleBeforeUnload = (event) => {
-  //     const confirmationMessage =
-  //       "Are you sure you want to leave this page? All unsaved data will be lost.";
-  //     event.returnValue = confirmationMessage; // Standard for most browsers
-  //     return confirmationMessage; // Required for some browsers
-  //   };
-
-  //   const handleNavigation = (event) => {
-  //     if (
-  //       event.type === "POP" &&
-  //       !window.confirm(
-  //         "Are you sure you want to leave this page? All unsaved data will be lost."
-  //       )
-  //     ) {
-  //       navigate(location.pathname); // Navigate back to the current page
-  //     }
-  //   };
-
-  //   window.addEventListener("beforeunload", handleBeforeUnload);
-  //   window.addEventListener("popstate", handleNavigation);
-
-  //   return () => {
-  //     window.removeEventListener("beforeunload", handleBeforeUnload);
-  //     window.removeEventListener("popstate", handleNavigation);
-  //   };
-  // }, [navigate, location.pathname]);
   useEffect(() => {
     setStartRowInput(selection?.startRow + 1);
     setEndRowInput(selection?.endRow + 1);
@@ -427,78 +401,6 @@ const DuplexDesignTemplate = () => {
     }
   }, [dataCtx, localData]); // Run only once on component mount
 
-  // *************************For Fetching the details and setting the coordinate******************
-  // useEffect(() => {
-  //   const fetchDetails = async () => {
-  //     try {
-  //       // Fetch layout data by template ID
-  //       const response = await getLayoutDataById(templateId);
-  //       console.log(response);
-  //       setLayoutFieldData(response);
-  //       if (response) {
-  //         // Extract data from the response
-  //         const formFieldData = response?.formFieldWindowParameters ?? [];
-  //         const questionField = response?.questionsWindowParameters ?? [];
-  //         const skewField = response?.skewMarksWindowParameters ?? [];
-  //         const idField = response?.layoutParameters ?? {};
-
-  //         // Map and restructure data for coordinates
-  //         const coordinateOfFormData = formFieldData.map((item) => ({
-  //           ...item.formFieldCoordinates,
-  //           name: item.windowName,
-  //         }));
-
-  //         const coordinateOfQuestionField = questionField.map((item) => ({
-  //           ...item.questionWindowCoordinates,
-  //           name: item.windowName,
-  //         }));
-
-  //         const coordinateOfSkewField = skewField.map((item) => ({
-  //           ...item.layoutWindowCoordinates,
-  //           name: item.windowName,
-  //         }));
-
-  //         const coordinateOfIdField = idField.layoutCoordinates ?? [];
-
-  //         // Combine all coordinates into a single array
-  //         const allCoordinates = [
-  //           ...coordinateOfFormData,
-  //           ...coordinateOfQuestionField,
-  //           ...coordinateOfSkewField,
-  //           coordinateOfIdField,
-  //         ];
-
-  //         // Format the coordinates for the state update
-  //         const newSelectedFields = allCoordinates.map((item) => {
-  //           const {
-  //             start: startRow,
-  //             left: startCol,
-  //             end: endRow,
-  //             right: endCol,
-  //             name,
-  //           } = item;
-  //           return { startRow, startCol, endRow, endCol, name };
-  //         });
-
-  //         // Update state with the formatted coordinates and image data
-  //         setSelectedCoordinates(newSelectedFields);
-  //         setPosition(idField?.imageCoordinates);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching layout data:", error);
-  //     }
-  //   };
-
-  //   // Call the fetch details function
-  //   fetchDetails();
-  // }, [templateId]);
-  // *****************************************************************************************
-  // useEffect(() => {
-  //   if (layoutFieldData) {
-  //     dataCtx.addFieldToTemplate(layoutFieldData, templateIndex);
-  //     console.log("called");
-  //   }
-  // }, [layoutFieldData]);
   useEffect(() => {
     const template = dataCtx.allTemplates[0];
 
@@ -1869,7 +1771,45 @@ const DuplexDesignTemplate = () => {
             </li>
           </ol>
         </nav>
+         {/* Dropdown on the right */}
+  
       </div>
+     
+
+
+
+<div
+  style={{
+    position: isWideScreen ? "fixed" : "absolute",
+    top: "5px",
+    left: "280px", // Adjust this if needed
+    marginTop: "8px",
+    zIndex: 999,
+    backgroundColor: "#ffffff",
+    borderRadius: "8px",
+    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
+    border: "1px solid #ced4da",
+    padding: "6px 12px",
+  }}
+>
+  <select
+    style={{
+      fontSize: "0.9rem",
+      border: "none",
+      background: "transparent",
+      outline: "none",
+      color: "#212529",
+    }}
+    defaultValue="Front"
+    onChange={(e) => console.log("Selected:", e.target.value)}
+  >
+    <option value="Front">Front</option>
+    <option value="Side">Side</option>
+  </select>
+</div>
+
+
+     
       <div
         style={{
           position: isWideScreen ? "fixed" : "absolute",
@@ -2000,7 +1940,7 @@ const DuplexDesignTemplate = () => {
                     //   width: "max-content",
                     // }}
 
-                    onMouseLeave={()=>{
+                    onMouseLeave={() => {
                       setActiveArea({ row: null, col: null });
                     }}
                     className="grid-container"

@@ -141,6 +141,9 @@ const DuplexTemplateModal = (props) => {
   const [prefix, setPrefix] = useState("0000");
   const [prefixzeroes, setPrefixZeroes] = useState("0000");
   const [scanner, setScanner] = useState("scanner1");
+  const [backExcelJsonFile, setBackExcelJsonFile] = useState([]);
+  const [numberOfBackSideColumn, setNumberOfBackSideColumn] = useState(null);
+  const [numberBackSideRow, setNumberBackSideRow] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
@@ -274,6 +277,40 @@ const DuplexTemplateModal = (props) => {
           setNumberOfLines(Row);
           setNumberOfFrontSideColumn(Column);
           setExcelJsonFile(correctedJson);
+        },
+        error: (error) => {
+          console.error("Error parsing CSV:", error);
+        },
+      });
+    }
+  };
+
+  const handleBackExcelUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      Papa.parse(file, {
+        header: true,
+        complete: (results) => {
+          const json = results.data;
+          setExcelFile(file);
+          const correctedJson = json
+            .map((item) => {
+              const filteredItem = Object.fromEntries(
+                Object.entries(item).filter(([key, value]) => key !== "")
+              );
+
+              // Only include the item if it's not empty
+              return Object.keys(filteredItem).length > 0 ? filteredItem : null;
+            })
+            .filter((item) => item !== null); // Remove nulls from the resulting array
+
+          const Row = correctedJson.length;
+          const Column = Object.keys(json[1]).filter(
+            (item) => item !== ""
+          ).length;
+          setNumberBackSideRow(Row);
+          setNumberOfBackSideColumn(Column);
+          setBackExcelJsonFile(correctedJson);
         },
         error: (error) => {
           console.error("Error parsing CSV:", error);
@@ -427,6 +464,12 @@ const DuplexTemplateModal = (props) => {
           return acc;
         }, {});
       });
+      const emptyBackExcelJsonFile = backExcelJsonFile.map((row) => {
+        return Object.keys(row).reduce((acc, key) => {
+          acc[key] = ""; // Set each value to an empty string
+          return acc;
+        }, {});
+      });
       const templateData = [
         {
           layoutParameters: {
@@ -449,8 +492,10 @@ const DuplexTemplateModal = (props) => {
             templateType: props.title,
             idMarksPattern: "000000000000000000000000",
             excelJsonFile: excelJsonFile,
+            backExcelJsonFile: backExcelJsonFile,
             images: images,
             numberedExcelJsonFile: emptyExcelJsonFile,
+            numberedBackExcelJsonFile: emptyBackExcelJsonFile,
           },
           barcodeData: {
             barcodeSide: 0,
@@ -492,14 +537,15 @@ const DuplexTemplateModal = (props) => {
         },
       ];
       localStorage.setItem("Template", JSON.stringify(templateData));
-      const index = dataCtx.setAllTemplates(templateData);
+      console.log(templateData)
+      // const index = dataCtx.setAllTemplates(templateData);
+      // return;
       setModalShow(false);
-      navigate("/design-template");
+      navigate("/duplex-design-template");
     } catch (error) {
       console.error("Error uploading file: ", error);
     }
   };
-
   const scannerHandler = async () => {
     setScannerLoading(true);
     setShowScanner(false);
@@ -2606,12 +2652,22 @@ const DuplexTemplateModal = (props) => {
         </Modal.Header>
         <Modal.Body style={{ height: "65dvh", overflow: "auto" }}>
           <Row className="d-flex justify-content-center mt-4">
-            <label>Choose Excel File</label>
+            <label>Choose Front Excel File</label>
             <input
               className="form-control"
               type="file"
               id="formFile"
               onChange={handleExcelUpload}
+              accept=".xls,.xlsx,.csv"
+            />
+          </Row>
+          <Row className="d-flex justify-content-center mt-4">
+            <label>Choose Back Excel File</label>
+            <input
+              className="form-control"
+              type="file"
+              id="formFile"
+              onChange={handleBackExcelUpload}
               accept=".xls,.xlsx,.csv"
             />
           </Row>
