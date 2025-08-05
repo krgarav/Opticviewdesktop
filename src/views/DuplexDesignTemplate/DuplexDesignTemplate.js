@@ -43,7 +43,6 @@ const DuplexDesignTemplate = () => {
   const [modalShow, setModalShow] = useState(false);
   const imageRef = useRef(null);
   const [selectedCoordinates, setSelectedCoordinates] = useState([]);
-
   const [name, setName] = useState();
   const [skewoption, setSkewOption] = useState("none");
   const [windowNgOption, setWindowNgOption] = useState("");
@@ -64,7 +63,6 @@ const DuplexDesignTemplate = () => {
     width: 400,
     height: 400,
   });
-  const [loading, setLoading] = useState(false);
   const [detailPage, setDetailPage] = useState(false);
   const dataCtx = useContext(DataContext);
   const [localData, setLocalData] = useState(
@@ -102,8 +100,6 @@ const DuplexDesignTemplate = () => {
   const [skewFieldValue, setSkewFieldValue] = useState(null);
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkFields, setLinkFields] = useState([]);
-  const [disabled, setDisabled] = React.useState(false);
-  const location = useLocation();
   const {
     totalColumns,
     timingMarks,
@@ -128,7 +124,7 @@ const DuplexDesignTemplate = () => {
   const [currentSelectedCoordinate, setCurrentSelectedCoordinate] =
     useState(null);
   const [activeArea, setActiveArea] = useState({ row: null, col: null });
-  const [currentExcelJsonFile, setCurrentExcelJsonFile] = useState([]);
+  const [currentExcelJsonFile, setCurrentExcelJsonFile] = useState(excelJsonFile);
   const numRows = timingMarks;
   const numCols = totalColumns;
   const inputRef = useRef(null);
@@ -136,7 +132,7 @@ const DuplexDesignTemplate = () => {
   const [highlightField, setHighlightField] = useState(false);
   const [formatting, setFormatting] = useState("");
   const [showFront, setShowFront] = useState(false);
-  const [currentSelectedField, setCurrentSelectedField] = useState(null);
+  const [currentSelectedField, setCurrentSelectedField] = useState([]);
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
   const blankRef = useRef(null);
@@ -148,7 +144,7 @@ const DuplexDesignTemplate = () => {
     } else {
       setCurrentExcelJsonFile(backExcelJsonFile);
     }
-  }, [showFront]);
+  }, [showFront,excelJsonFile, backExcelJsonFile]);
 
   useEffect(() => {
     setFormatting(numberOfField === "" ? "" : "X".repeat(numberOfField));
@@ -278,96 +274,96 @@ const DuplexDesignTemplate = () => {
     return () => window.removeEventListener("resize", checkSizes);
   }, [selectedCoordinates, selection]);
 
-  useEffect(() => {
-    currentSelectedField.forEach((item) => {
-      const isQuestionField = item?.fieldType === "questionField";
-      const isFormField = item?.fieldType === "formField";
+  // useEffect(() => {
+  //   currentSelectedField.forEach((item) => {
+  //     const isQuestionField = item?.fieldType === "questionField";
+  //     const isFormField = item?.fieldType === "formField";
 
-      if (isQuestionField || isFormField) {
-        const template = dataCtx.allTemplates.find((item) => {
-          return item[0].layoutParameters?.key ?? "" === templateIndex;
-        });
-        const parameters = isQuestionField
-          ? template[0].questionsWindowParameters
-          : template[0].formFieldWindowParameters;
+  //     if (isQuestionField || isFormField) {
+  //       const template = dataCtx.allTemplates.find((item) => {
+  //         return item[0].layoutParameters?.key ?? "" === templateIndex;
+  //       });
+  //       const parameters = isQuestionField
+  //         ? template[0].questionsWindowParameters
+  //         : template[0].formFieldWindowParameters;
 
-        // Format the selected file for comparison
-        const formattedSelectedFile = {
-          "End Col": item.endCol,
-          "End Row": item.endRow + 1,
-          "Start Col": item.startCol,
-          "Start Row": item.startRow + 1,
-          fieldType: item.fieldType,
-          name: item.name,
-        };
-        if (parameters) {
-          // Find the index of the matched object
-          const index = parameters.findIndex((param) =>
-            isEqual(param.Coordinate, formattedSelectedFile)
-          );
+  //       // Format the selected file for comparison
+  //       const formattedSelectedFile = {
+  //         "End Col": item.endCol,
+  //         "End Row": item.endRow + 1,
+  //         "Start Col": item.startCol,
+  //         "Start Row": item.startRow + 1,
+  //         fieldType: item.fieldType,
+  //         name: item.name,
+  //       };
+  //       if (parameters) {
+  //         // Find the index of the matched object
+  //         const index = parameters.findIndex((param) =>
+  //           isEqual(param.Coordinate, formattedSelectedFile)
+  //         );
 
-          // Get the matched object
-          const data2 = index !== -1 ? parameters[index] : null;
+  //         // Get the matched object
+  //         const data2 = index !== -1 ? parameters[index] : null;
 
-          if (data2) {
-            // Determine the reading direction
-            const directionMapping = {
-              0: "topToBottom",
-              1: "topToBottom",
-              2: "bottomToTop",
-              3: "bottomToTop",
-              4: "leftToRight",
-              5: "rightToLeft",
-              6: "leftToRight",
-              7: "rightToLeft",
-            };
-            const readingDirection =
-              directionMapping[data2.iDirection] || "rightToLeft";
-            const type = data2.numericOrAlphabets;
-            // Process the data with the determined direction
-            const stepInRow = data2.rowStep;
-            const stepInCol = data2.columnStep;
-            const customRawValue = data2?.customFieldValue
-              ? data2.customFieldValue.split(",")
-              : [""];
-            const customValue = customRawValue.map((item) =>
-              item.slice(0, 2).toUpperCase()
-            );
-            const numberedJsonFile = showFront
-              ? template[0].layoutParameters.numberedExcelJsonFile
-              : template[0].layoutParameters.numberedBackExcelJsonFile;
-            const data = processDirection(
-              readingDirection,
-              item.startRow,
-              item.endRow,
-              item.startCol,
-              item.endCol,
-              numberedJsonFile,
-              type,
-              stepInRow,
-              stepInCol,
-              customValue
-            );
-            if (showFront) {
-              const copiedObject = deepcopy(localData[0]);
-              delete copiedObject.layoutParameters.numberedExcelJsonFile;
-              copiedObject.layoutParameters = {
-                ...copiedObject.layoutParameters,
-                numberedExcelJsonFile: data,
-              };
-            } else {
-              const copiedObject = deepcopy(localData[0]);
-              delete copiedObject.layoutParameters.numberedBackExcelJsonFile;
-              copiedObject.layoutParameters = {
-                ...copiedObject.layoutParameters,
-                numberedBackExcelJsonFile: data,
-              };
-            }
-          }
-        }
-      }
-    });
-  }, [currentSelectedField, dataCtx, modalUpdate]);
+  //         if (data2) {
+  //           // Determine the reading direction
+  //           const directionMapping = {
+  //             0: "topToBottom",
+  //             1: "topToBottom",
+  //             2: "bottomToTop",
+  //             3: "bottomToTop",
+  //             4: "leftToRight",
+  //             5: "rightToLeft",
+  //             6: "leftToRight",
+  //             7: "rightToLeft",
+  //           };
+  //           const readingDirection =
+  //             directionMapping[data2.iDirection] || "rightToLeft";
+  //           const type = data2.numericOrAlphabets;
+  //           // Process the data with the determined direction
+  //           const stepInRow = data2.rowStep;
+  //           const stepInCol = data2.columnStep;
+  //           const customRawValue = data2?.customFieldValue
+  //             ? data2.customFieldValue.split(",")
+  //             : [""];
+  //           const customValue = customRawValue.map((item) =>
+  //             item.slice(0, 2).toUpperCase()
+  //           );
+  //           const numberedJsonFile = showFront
+  //             ? template[0].layoutParameters.numberedExcelJsonFile
+  //             : template[0].layoutParameters.numberedBackExcelJsonFile;
+  //           const data = processDirection(
+  //             readingDirection,
+  //             item.startRow,
+  //             item.endRow,
+  //             item.startCol,
+  //             item.endCol,
+  //             numberedJsonFile,
+  //             type,
+  //             stepInRow,
+  //             stepInCol,
+  //             customValue
+  //           );
+  //           if (showFront) {
+  //             const copiedObject = deepcopy(localData[0]);
+  //             delete copiedObject.layoutParameters.numberedExcelJsonFile;
+  //             copiedObject.layoutParameters = {
+  //               ...copiedObject.layoutParameters,
+  //               numberedExcelJsonFile: data,
+  //             };
+  //           } else {
+  //             const copiedObject = deepcopy(localData[0]);
+  //             delete copiedObject.layoutParameters.numberedBackExcelJsonFile;
+  //             copiedObject.layoutParameters = {
+  //               ...copiedObject.layoutParameters,
+  //               numberedBackExcelJsonFile: data,
+  //             };
+  //           }
+  //         }
+  //       }
+  //     }
+  //   });
+  // }, [currentSelectedField, dataCtx, modalUpdate]);
 
 useEffect(() => {
   const arr = dataCtx.allTemplates[0];
@@ -1834,6 +1830,10 @@ resetJson(
     return <div>Loading</div>;
   }
 
+  if(currentExcelJsonFile.length === 0) {
+    return <div>Loading</div>;
+  }
+
   return (
     <>
       <div style={{ position: "sticky", top: 0, zIndex: 99 }}>
@@ -2067,11 +2067,11 @@ resetJson(
                       onMouseUp={handleMouseUp}
                       onMouseMove={handleMouseMove}
                     >
-                      {Array.from({ length: numRows }).map((_, rowIndex) => {
+                      {/* {Array.from({ length: numRows }).map((_, rowIndex) => {
                         const result = [
                           ...currentExcelJsonFile.map(Object.values),
                         ];
-
+                        console.log(result);
                         const templates = dataCtx.allTemplates[0];
                         let numberedJson = [];
                         if (showFront) {
@@ -2177,7 +2177,76 @@ resetJson(
                             )}
                           </div>
                         );
-                      })}
+                      })} */}
+
+{Array.from({ length: numRows }).map((_, rowIndex) => {
+  const result = currentExcelJsonFile.map(Object.values);
+  const templates = dataCtx.allTemplates?.[0];
+  const numberedJson = showFront
+    ? templates?.layoutParameters?.numberedExcelJsonFile?.map(Object.values) ?? []
+    : templates?.layoutParameters?.numberedBackExcelJsonFile?.map(Object.values) ?? [];
+// console.log(result)
+  return (
+    <div key={rowIndex} className="row">
+      <div
+        className={bubbleType === "circle" ? "left-num-circle" : "left-num"}
+        style={{ visibility: "hidden" }}
+      >
+        <div className="timing-mark "></div>
+      </div>
+
+      {Array.from({ length: numCols }).map((_, colIndex) => {
+        const num = numberedJson?.[rowIndex]?.[colIndex] ?? null;
+console.log(result?.[rowIndex]?.[colIndex])
+        let bgColor =
+          +result?.[rowIndex]?.[colIndex] >= +templates?.layoutParameters?.iSensitivity &&
+          result?.[rowIndex]?.[colIndex] !== undefined
+            ? "black"
+            : "";
+        // console.log(bgColor)
+        if (num || num === 0) {
+          bgColor = "lightgreen";
+        }
+
+        let fontColor =
+          result?.[rowIndex]?.[colIndex] != 0 &&
+          result?.[rowIndex]?.[colIndex] !== undefined
+            ? "lightgray"
+            : "black";
+
+        if (num || num === 0) {
+          fontColor = "black";
+        }
+
+        return (
+          <div
+            key={colIndex}
+            style={{
+              backgroundColor: bgColor,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: bubbleType === "circle" ? "12px" : "8px",
+              color: fontColor,
+              userSelect: "none",
+            }}
+            onMouseEnter={() => {
+              setActiveArea({ row: rowIndex, col: colIndex });
+            }}
+            className={`${bubbleType} ${
+              selected[`${rowIndex},${colIndex}`] ? "selected" : ""
+            }`}
+          >
+            {num}
+          </div>
+        );
+      })}
+    </div>
+  );
+})}
+
+
+
 
                       {currentSelectedField.map((data, index) => {
                         const imageWidth =
