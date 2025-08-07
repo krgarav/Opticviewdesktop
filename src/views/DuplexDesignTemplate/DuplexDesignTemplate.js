@@ -125,8 +125,11 @@ const DuplexDesignTemplate = () => {
     useState(null);
   const [activeArea, setActiveArea] = useState({ row: null, col: null });
   const [currentExcelJsonFile, setCurrentExcelJsonFile] = useState(excelJsonFile);
-  const numRows = timingMarks;
-  const numCols = totalColumns;
+  const [numRows, setNumRows] = useState(excelJsonFile.length )
+  const [numCols, setNumCols] = useState( Object.keys(excelJsonFile[0]).length);
+  
+  // let numRows = Object.keys(excelJsonFile[0]).length ;
+  // let numCols = excelJsonFile.length;
   const inputRef = useRef(null);
   const divRefs = useRef([]);
   const [highlightField, setHighlightField] = useState(false);
@@ -138,11 +141,18 @@ const DuplexDesignTemplate = () => {
   const blankRef = useRef(null);
   const gridRef = useRef(null);
 
+// console.log(Object.keys(excelJsonFile[0]).length)
+ 
+
   useEffect(() => {
     if (showFront) {
       setCurrentExcelJsonFile(excelJsonFile);
+      setNumCols(Object.keys(excelJsonFile[0]).length)
+      setNumRows(excelJsonFile.length)
     } else {
       setCurrentExcelJsonFile(backExcelJsonFile);
+      setNumCols(Object.keys(backExcelJsonFile[0]).length)
+      setNumRows(backExcelJsonFile.length)
     }
   }, [showFront,excelJsonFile, backExcelJsonFile]);
 
@@ -273,97 +283,104 @@ const DuplexDesignTemplate = () => {
 
     return () => window.removeEventListener("resize", checkSizes);
   }, [selectedCoordinates, selection]);
+console.log(currentSelectedField)
+  useEffect(() => {
+    currentSelectedField.forEach((item) => {
+      const isQuestionField = item?.fieldType === "questionField";
+      const isFormField = item?.fieldType === "formField";
 
-  // useEffect(() => {
-  //   currentSelectedField.forEach((item) => {
-  //     const isQuestionField = item?.fieldType === "questionField";
-  //     const isFormField = item?.fieldType === "formField";
+      if (isQuestionField || isFormField) {
+        const template = dataCtx.allTemplates.find((item) => {
+          return item[0].layoutParameters?.key ?? "" === templateIndex;
+        });
+        const parameters = isQuestionField
+          ? template[0].questionsWindowParameters
+          : template[0].formFieldWindowParameters;
 
-  //     if (isQuestionField || isFormField) {
-  //       const template = dataCtx.allTemplates.find((item) => {
-  //         return item[0].layoutParameters?.key ?? "" === templateIndex;
-  //       });
-  //       const parameters = isQuestionField
-  //         ? template[0].questionsWindowParameters
-  //         : template[0].formFieldWindowParameters;
+        // Format the selected file for comparison
+        const formattedSelectedFile = {
+          "End Col": item.endCol,
+          "End Row": item.endRow + 1,
+          "Start Col": item.startCol,
+          "Start Row": item.startRow + 1,
+          fieldType: item.fieldType,
+          name: item.name,
+        };
+        if (parameters) {
+          // Find the index of the matched object
+          const index = parameters.findIndex((param) =>
+            isEqual(param.Coordinate, formattedSelectedFile)
+          );
 
-  //       // Format the selected file for comparison
-  //       const formattedSelectedFile = {
-  //         "End Col": item.endCol,
-  //         "End Row": item.endRow + 1,
-  //         "Start Col": item.startCol,
-  //         "Start Row": item.startRow + 1,
-  //         fieldType: item.fieldType,
-  //         name: item.name,
-  //       };
-  //       if (parameters) {
-  //         // Find the index of the matched object
-  //         const index = parameters.findIndex((param) =>
-  //           isEqual(param.Coordinate, formattedSelectedFile)
-  //         );
+          // Get the matched object
+          const data2 = index !== -1 ? parameters[index] : null;
 
-  //         // Get the matched object
-  //         const data2 = index !== -1 ? parameters[index] : null;
-
-  //         if (data2) {
-  //           // Determine the reading direction
-  //           const directionMapping = {
-  //             0: "topToBottom",
-  //             1: "topToBottom",
-  //             2: "bottomToTop",
-  //             3: "bottomToTop",
-  //             4: "leftToRight",
-  //             5: "rightToLeft",
-  //             6: "leftToRight",
-  //             7: "rightToLeft",
-  //           };
-  //           const readingDirection =
-  //             directionMapping[data2.iDirection] || "rightToLeft";
-  //           const type = data2.numericOrAlphabets;
-  //           // Process the data with the determined direction
-  //           const stepInRow = data2.rowStep;
-  //           const stepInCol = data2.columnStep;
-  //           const customRawValue = data2?.customFieldValue
-  //             ? data2.customFieldValue.split(",")
-  //             : [""];
-  //           const customValue = customRawValue.map((item) =>
-  //             item.slice(0, 2).toUpperCase()
-  //           );
-  //           const numberedJsonFile = showFront
-  //             ? template[0].layoutParameters.numberedExcelJsonFile
-  //             : template[0].layoutParameters.numberedBackExcelJsonFile;
-  //           const data = processDirection(
-  //             readingDirection,
-  //             item.startRow,
-  //             item.endRow,
-  //             item.startCol,
-  //             item.endCol,
-  //             numberedJsonFile,
-  //             type,
-  //             stepInRow,
-  //             stepInCol,
-  //             customValue
-  //           );
-  //           if (showFront) {
-  //             const copiedObject = deepcopy(localData[0]);
-  //             delete copiedObject.layoutParameters.numberedExcelJsonFile;
-  //             copiedObject.layoutParameters = {
-  //               ...copiedObject.layoutParameters,
-  //               numberedExcelJsonFile: data,
-  //             };
-  //           } else {
-  //             const copiedObject = deepcopy(localData[0]);
-  //             delete copiedObject.layoutParameters.numberedBackExcelJsonFile;
-  //             copiedObject.layoutParameters = {
-  //               ...copiedObject.layoutParameters,
-  //               numberedBackExcelJsonFile: data,
-  //             };
-  //           }
-  //         }
-  //       }
-  //     }
-  //   });
-  // }, [currentSelectedField, dataCtx, modalUpdate]);
+          if (data2) {
+            // Determine the reading direction
+            const directionMapping = {
+              0: "topToBottom",
+              1: "topToBottom",
+              2: "bottomToTop",
+              3: "bottomToTop",
+              4: "leftToRight",
+              5: "rightToLeft",
+              6: "leftToRight",
+              7: "rightToLeft",
+            };
+            const readingDirection =
+              directionMapping[data2.iDirection] || "rightToLeft";
+            const type = data2.numericOrAlphabets;
+            // Process the data with the determined direction
+            const stepInRow = data2.rowStep;
+            const stepInCol = data2.columnStep;
+            const customRawValue = data2?.customFieldValue
+              ? data2.customFieldValue.split(",")
+              : [""];
+            const customValue = customRawValue.map((item) =>
+              item.slice(0, 2).toUpperCase()
+            );
+            const numberedJsonFile = showFront
+              ? template[0].layoutParameters.numberedExcelJsonFile
+              : template[0].layoutParameters.numberedBackExcelJsonFile;
+            const data = processDirection(
+              readingDirection,
+              item.startRow,
+              item.endRow,
+              item.startCol,
+              item.endCol,
+              numberedJsonFile,
+              type,
+              stepInRow,
+              stepInCol,
+              customValue
+            );
+            if (showFront) {
+              const template =dataCtx.allTemplates[0][0]
+              const copiedObject = deepcopy(template);
+              delete copiedObject.layoutParameters.numberedExcelJsonFile;
+              copiedObject.layoutParameters = {
+                ...copiedObject.layoutParameters,
+                numberedExcelJsonFile: data,
+              };
+              // console.log(copiedObject)
+              
+              dataCtx.setNewTemplates([[copiedObject]])
+            } else {
+            const template =dataCtx.allTemplates[0][0]
+              const copiedObject = deepcopy(template);
+              delete copiedObject.layoutParameters.numberedBackExcelJsonFile;
+              copiedObject.layoutParameters = {
+                ...copiedObject.layoutParameters,
+                numberedBackExcelJsonFile: data,
+              };
+              // dataCtx.setNewTemplates([[copiedObject]])
+            }
+          }
+        }
+      }
+    });
+  }, [currentSelectedField]);
+  // console.log(dataCtx.allTemplates)
 
 useEffect(() => {
   const arr = dataCtx.allTemplates[0];
@@ -2181,11 +2198,12 @@ resetJson(
 
 {Array.from({ length: numRows }).map((_, rowIndex) => {
   const result = currentExcelJsonFile.map(Object.values);
+  // console.log(numRows)
   const templates = dataCtx.allTemplates?.[0];
   const numberedJson = showFront
-    ? templates?.layoutParameters?.numberedExcelJsonFile?.map(Object.values) ?? []
-    : templates?.layoutParameters?.numberedBackExcelJsonFile?.map(Object.values) ?? [];
-// console.log(result)
+    ? templates[0]?.layoutParameters?.numberedExcelJsonFile?.map(Object.values) ?? []
+    : templates[0]?.layoutParameters?.numberedBackExcelJsonFile?.map(Object.values) ?? [];
+console.log(templates[0]?.layoutParameters?.numberedExcelJsonFile?.map(Object.values) )
   return (
     <div key={rowIndex} className="row">
       <div
@@ -2197,12 +2215,18 @@ resetJson(
 
       {Array.from({ length: numCols }).map((_, colIndex) => {
         const num = numberedJson?.[rowIndex]?.[colIndex] ?? null;
-console.log(result?.[rowIndex]?.[colIndex])
+// console.log(result[rowIndex][colIndex])
         let bgColor =
           +result?.[rowIndex]?.[colIndex] >= +templates?.layoutParameters?.iSensitivity &&
           result?.[rowIndex]?.[colIndex] !== undefined
             ? "black"
             : "";
+
+          //   let bgColor =
+          //  Number(result?.[rowIndex]?.[colIndex]) >= templates[0].layoutParameters.iSensitivity
+         
+          //   ? "black"
+          //   : "";
         // console.log(bgColor)
         if (num || num === 0) {
           bgColor = "lightgreen";
@@ -2222,7 +2246,7 @@ console.log(result?.[rowIndex]?.[colIndex])
           <div
             key={colIndex}
             style={{
-              backgroundColor: bgColor,
+              backgroundColor:bgColor ,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
