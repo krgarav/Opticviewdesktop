@@ -39,7 +39,7 @@ root.render(
   <BrowserRouter>
     <DataProvider>
       <App />
-      <ToastContainer />
+      <ToastContainer position="bottom-center"/>
     </DataProvider>
   </BrowserRouter>
 );

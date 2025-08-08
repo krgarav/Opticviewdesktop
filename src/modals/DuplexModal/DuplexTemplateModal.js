@@ -537,9 +537,9 @@ const DuplexTemplateModal = (props) => {
         },
       ];
       localStorage.setItem("Template", JSON.stringify(templateData));
-      console.log(templateData)
-      // const index = dataCtx.setAllTemplates(templateData);
-      return;
+    
+      const index = dataCtx.setAllTemplates(templateData);
+    
       setModalShow(false);
       navigate("/duplex-design-template");
     } catch (error) {

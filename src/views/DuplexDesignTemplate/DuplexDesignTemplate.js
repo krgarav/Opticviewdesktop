@@ -127,21 +127,17 @@ const DuplexDesignTemplate = () => {
   const [currentExcelJsonFile, setCurrentExcelJsonFile] = useState(excelJsonFile);
   const [numRows, setNumRows] = useState(excelJsonFile.length )
   const [numCols, setNumCols] = useState( Object.keys(excelJsonFile[0]).length);
-  
-  // let numRows = Object.keys(excelJsonFile[0]).length ;
-  // let numCols = excelJsonFile.length;
   const inputRef = useRef(null);
   const divRefs = useRef([]);
   const [highlightField, setHighlightField] = useState(false);
   const [formatting, setFormatting] = useState("");
-  const [showFront, setShowFront] = useState(false);
+  const [showFront, setShowFront] = useState(true);
   const [currentSelectedField, setCurrentSelectedField] = useState([]);
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
   const blankRef = useRef(null);
   const gridRef = useRef(null);
 
-// console.log(Object.keys(excelJsonFile[0]).length)
  
 
   useEffect(() => {
@@ -283,9 +279,302 @@ const DuplexDesignTemplate = () => {
 
     return () => window.removeEventListener("resize", checkSizes);
   }, [selectedCoordinates, selection]);
-console.log(currentSelectedField)
-  useEffect(() => {
-    currentSelectedField.forEach((item) => {
+// console.log(currentSelectedField)
+  // useEffect(() => {
+  //   currentSelectedField.forEach((item) => {
+  //     const isQuestionField = item?.fieldType === "questionField";
+  //     const isFormField = item?.fieldType === "formField";
+
+  //     if (isQuestionField || isFormField) {
+  //       const template = dataCtx.allTemplates.find((item) => {
+  //         return item[0].layoutParameters?.key ?? "" === templateIndex;
+  //       });
+  //       const parameters = isQuestionField
+  //         ? template[0].questionsWindowParameters
+  //         : template[0].formFieldWindowParameters;
+
+  //       // Format the selected file for comparison
+  //       const formattedSelectedFile = {
+  //         "End Col": item.endCol,
+  //         "End Row": item.endRow + 1,
+  //         "Start Col": item.startCol,
+  //         "Start Row": item.startRow + 1,
+  //         fieldType: item.fieldType,
+  //         name: item.name,
+  //       };
+  //       if (parameters) {
+  //         // Find the index of the matched object
+  //         const index = parameters.findIndex((param) =>
+  //           isEqual(param.Coordinate, formattedSelectedFile)
+  //         );
+
+  //         // Get the matched object
+  //         const data2 = index !== -1 ? parameters[index] : null;
+
+  //         if (data2) {
+  //           // Determine the reading direction
+  //           const directionMapping = {
+  //             0: "topToBottom",
+  //             1: "topToBottom",
+  //             2: "bottomToTop",
+  //             3: "bottomToTop",
+  //             4: "leftToRight",
+  //             5: "rightToLeft",
+  //             6: "leftToRight",
+  //             7: "rightToLeft",
+  //           };
+  //           const readingDirection =
+  //             directionMapping[data2.iDirection] || "rightToLeft";
+  //           const type = data2.numericOrAlphabets;
+  //           // Process the data with the determined direction
+  //           const stepInRow = data2.rowStep;
+  //           const stepInCol = data2.columnStep;
+  //           const customRawValue = data2?.customFieldValue
+  //             ? data2.customFieldValue.split(",")
+  //             : [""];
+  //           const customValue = customRawValue.map((item) =>
+  //             item.slice(0, 2).toUpperCase()
+  //           );
+  //           const numberedJsonFile = showFront
+  //             ? template[0].layoutParameters.numberedExcelJsonFile
+  //             : template[0].layoutParameters.numberedBackExcelJsonFile;
+  //           const data = processDirection(
+  //             readingDirection,
+  //             item.startRow,
+  //             item.endRow,
+  //             item.startCol,
+  //             item.endCol,
+  //             numberedJsonFile,
+  //             type,
+  //             stepInRow,
+  //             stepInCol,
+  //             customValue
+  //           );
+  //           if (showFront) {
+  //             const template =dataCtx.allTemplates[0][0]
+  //             const copiedObject = deepcopy(template);
+  //             delete copiedObject.layoutParameters.numberedExcelJsonFile;
+  //             copiedObject.layoutParameters = {
+  //               ...copiedObject.layoutParameters,
+  //               numberedExcelJsonFile: data,
+  //             };
+  //             // console.log(copiedObject)
+              
+  //             dataCtx.setNewTemplates([[copiedObject]])
+  //           } else {
+  //           const template =dataCtx.allTemplates[0][0]
+  //             const copiedObject = deepcopy(template);
+  //             delete copiedObject.layoutParameters.numberedBackExcelJsonFile;
+  //             copiedObject.layoutParameters = {
+  //               ...copiedObject.layoutParameters,
+  //               numberedBackExcelJsonFile: data,
+  //             };
+  //             // dataCtx.setNewTemplates([[copiedObject]])
+  //           }
+  //         }
+  //       }
+  //     }
+  //   });
+  // }, [currentSelectedField]);
+  // console.log(dataCtx.allTemplates)
+
+// useEffect(()=>{
+//   processFields()
+// },[])
+
+
+
+//  const processFieldsWithCurrentField = (currentFields)=>{
+//      currentFields.forEach((item) => {
+//       const isQuestionField = item?.fieldType === "questionField";
+//       const isFormField = item?.fieldType === "formField";
+
+//       if (isQuestionField || isFormField) {
+//         const template = dataCtx.allTemplates.find((item) => {
+//           return item[0].layoutParameters?.key ?? "" === templateIndex;
+//         });
+//         const parameters = isQuestionField
+//           ? template[0].questionsWindowParameters
+//           : template[0].formFieldWindowParameters;
+
+//         // Format the selected file for comparison
+//         const formattedSelectedFile = {
+//           "End Col": item.endCol,
+//           "End Row": item.endRow + 1,
+//           "Start Col": item.startCol,
+//           "Start Row": item.startRow + 1,
+//           fieldType: item.fieldType,
+//           name: item.name,
+//         };
+//         if (parameters) {
+//           // Find the index of the matched object
+//           const index = parameters.findIndex((param) =>
+//             isEqual(param.Coordinate, formattedSelectedFile)
+//           );
+
+//           // Get the matched object
+//           const data2 = index !== -1 ? parameters[index] : null;
+
+//           if (data2) {
+//             // Determine the reading direction
+//             const directionMapping = {
+//               0: "topToBottom",
+//               1: "topToBottom",
+//               2: "bottomToTop",
+//               3: "bottomToTop",
+//               4: "leftToRight",
+//               5: "rightToLeft",
+//               6: "leftToRight",
+//               7: "rightToLeft",
+//             };
+//             const readingDirection =
+//               directionMapping[data2.iDirection] || "rightToLeft";
+//             const type = data2.numericOrAlphabets;
+//             // Process the data with the determined direction
+//             const stepInRow = data2.rowStep;
+//             const stepInCol = data2.columnStep;
+//             const customRawValue = data2?.customFieldValue
+//               ? data2.customFieldValue.split(",")
+//               : [""];
+//             const customValue = customRawValue.map((item) =>
+//               item.slice(0, 2).toUpperCase()
+//             );
+//             const numberedJsonFile = showFront
+//               ? template[0].layoutParameters.numberedExcelJsonFile
+//               : template[0].layoutParameters.numberedBackExcelJsonFile;
+//             const data = processDirection(
+//               readingDirection,
+//               item.startRow,
+//               item.endRow,
+//               item.startCol,
+//               item.endCol,
+//               numberedJsonFile,
+//               type,
+//               stepInRow,
+//               stepInCol,
+//               customValue
+//             );
+//             if (showFront) {
+//               const template =dataCtx.allTemplates[0][0]
+//               const copiedObject = deepcopy(template);
+//               delete copiedObject.layoutParameters.numberedExcelJsonFile;
+//               copiedObject.layoutParameters = {
+//                 ...copiedObject.layoutParameters,
+//                 numberedExcelJsonFile: data,
+//               };
+//               // console.log(copiedObject)
+              
+//               dataCtx.setNewTemplates([[copiedObject]])
+//             } else {
+//             const template =dataCtx.allTemplates[0][0]
+//               const copiedObject = deepcopy(template);
+//               delete copiedObject.layoutParameters.numberedBackExcelJsonFile;
+//               copiedObject.layoutParameters = {
+//                 ...copiedObject.layoutParameters,
+//                 numberedBackExcelJsonFile: data,
+//               };
+//               // dataCtx.setNewTemplates([[copiedObject]])
+//             }
+//           }
+//         }
+//       }
+//     });
+//   }
+
+
+
+
+const processFieldsWithCurrentField = (currentFields) => {
+  currentFields.forEach((item) => {
+    const isQuestionField = item?.fieldType === "questionField";
+    const isFormField = item?.fieldType === "formField";
+
+    if (!isQuestionField && !isFormField) return;
+
+    const templateGroup = dataCtx.allTemplates.find(
+      (tpl) => (tpl[0]?.layoutParameters?.key ?? "") === templateIndex
+    );
+    const template = templateGroup?.[0];
+    if (!template) return;
+
+    const parameters = isQuestionField
+      ? template.questionsWindowParameters
+      : template.formFieldWindowParameters;
+
+    if (!parameters) return;
+
+    const formattedSelectedFile = {
+      "End Col": item.endCol,
+      "End Row": item.endRow + 1,
+      "Start Col": item.startCol,
+      "Start Row": item.startRow + 1,
+      fieldType: item.fieldType,
+      name: item.name,
+    };
+
+    const index = parameters.findIndex((param) =>
+      isEqual(param.Coordinate, formattedSelectedFile)
+    );
+    const data2 = index !== -1 ? parameters[index] : null;
+    if (!data2) return;
+
+    const directionMapping = {
+      0: "topToBottom",
+      1: "topToBottom",
+      2: "bottomToTop",
+      3: "bottomToTop",
+      4: "leftToRight",
+      5: "rightToLeft",
+      6: "leftToRight",
+      7: "rightToLeft",
+    };
+    const readingDirection = directionMapping[data2.iDirection] || "rightToLeft";
+    const type = data2.numericOrAlphabets;
+    const stepInRow = data2.rowStep;
+    const stepInCol = data2.columnStep;
+
+    const customRawValue = data2?.customFieldValue
+      ? data2.customFieldValue.split(",")
+      : [""];
+    const customValue = customRawValue.map((val) => val.slice(0, 2).toUpperCase());
+
+    const numberedJsonFile = showFront
+      ? template.layoutParameters.numberedExcelJsonFile
+      : template.layoutParameters.numberedBackExcelJsonFile;
+
+    const data = processDirection(
+      readingDirection,
+      item.startRow,
+      item.endRow,
+      item.startCol,
+      item.endCol,
+      numberedJsonFile,
+      type,
+      stepInRow,
+      stepInCol,
+      customValue
+    );
+// console.log(data)
+    // Clone and update template
+    const copiedObject = deepcopy(template);
+// const onceParsed = JSON.parse(data);       // Still a string (but with valid JSON inside)
+// const finalData = JSON.parse(onceParsed);
+// const tripleParse = JSON.parse(finalData); // Now a string with valid JSON inside
+// console.log(tripleParse)
+// return
+    if (showFront) {
+      copiedObject.layoutParameters.numberedExcelJsonFile = data;
+    } else {
+      copiedObject.layoutParameters.numberedBackExcelJsonFile = data;
+    }
+// console.log(copiedObject)
+    // Replace template in context
+    // dataCtx.setNewTemplates([[copiedObject]]);
+  });
+};
+
+  const processFields = ()=>{
+     currentSelectedField.forEach((item) => {
       const isQuestionField = item?.fieldType === "questionField";
       const isFormField = item?.fieldType === "formField";
 
@@ -379,8 +668,7 @@ console.log(currentSelectedField)
         }
       }
     });
-  }, [currentSelectedField]);
-  // console.log(dataCtx.allTemplates)
+  }
 
 useEffect(() => {
   const arr = dataCtx.allTemplates[0];
@@ -439,18 +727,15 @@ useEffect(() => {
     });
 
     // Update state
+    processFieldsWithCurrentField(newSelectedFields)
     setCurrentSelectedField(newSelectedFields);
     // setLinkFields(arr[0]?.linkedCoordinates || []);
   }
 }, [dataCtx, localData, showFront]);
- // Run only once on component mount
-
-
 
 
    useEffect(() => {
      const arr = dataCtx.allTemplates[0];
-     // console.log(template);
      if (arr) {
        // Extract parameters from the first element of the array (if it exists)
        const formFieldData = arr[0]?.formFieldWindowParameters;
@@ -504,9 +789,6 @@ useEffect(() => {
        setLinkFields(arr[0]?.linkedCoordinates || []);
      }
    }, [dataCtx, localData]); 
-
-
-
 
 
   useEffect(() => {
@@ -832,6 +1114,8 @@ useEffect(() => {
       const template = dataCtx.allTemplates.find((item) => {
         return item[0].layoutParameters?.key ?? "" === templateIndex;
       });
+      
+     
       if (modalUpdate) {
         resetJson(
           template[0].layoutParameters.numberedExcelJsonFile,
@@ -1564,6 +1848,7 @@ resetJson(
             customFieldValue: customValue ? customValue : "",
             prefix: selectedFieldType === "formField" ? prefix : "",
             suffix: selectedFieldType === "formField" ? suffix : "",
+             side: showFront ? "front" : "back"
           };
         } else if (selectedField.fieldType === "skewMarkField") {
           const updatedName =
@@ -1598,6 +1883,7 @@ resetJson(
             skewMark: +skewoption,
             dataRejection: skewoption,
             skewFieldValue: skewFieldValue,
+             side: showFront ? "front" : "back"
           };
         } else {
           const updatedName =
@@ -1623,6 +1909,7 @@ resetJson(
             rowStep: +noOfStepInRow,
             iDirection: +readingDirectionOption,
             idMarksPattern: idNumber.toString(),
+             side: showFront ? "front" : "back"
           };
         }
 
@@ -1795,6 +2082,7 @@ resetJson(
               customFieldValue: customValue || "",
               prefix: field.fieldType === "formField" ? prefix : "",
               suffix: field.fieldType === "formField" ? suffix : "",
+              side: showFront ? "front" : "back"
             };
           } else if (field.fieldType === "skewMarkField") {
             newData = {
@@ -1818,6 +2106,7 @@ resetJson(
               skewMark: +skewoption,
               dataRejection: skewoption,
               skewFieldValue: skewFieldValue,
+               side: showFront ? "front" : "back"
             };
           } else {
             newData = {
@@ -1830,6 +2119,7 @@ resetJson(
               rowStep: +noOfStepInRow,
               iDirection: +readingDirectionOption,
               idMarksPattern: idNumber.toString(),
+               side: showFront ? "front" : "back"
             };
           }
 
@@ -1842,6 +2132,7 @@ resetJson(
       console.log(err);
     }
   };
+
 
   if (dataCtx.allTemplates.length === 0) {
     return <div>Loading</div>;
@@ -2011,11 +2302,12 @@ resetJson(
           <div className="main-container" style={{ marginTop: "0.5rem" }}>
             <div className="containers">
               <div
+              
                 className={`d-flex ${
                   !showFront ? "flex-row-reverse" : "flex-row"
                 }`}
               >
-                <div style={{ marginRight: "1rem" }}>
+                <div style={{ marginRight: "1rem",marginLeft:"1rem" }}>
                   <div className="top"></div>
                   {Array.from({ length: numRows }).map((_, rowIndex) => (
                     <div
@@ -2198,12 +2490,22 @@ resetJson(
 
 {Array.from({ length: numRows }).map((_, rowIndex) => {
   const result = currentExcelJsonFile.map(Object.values);
-  // console.log(numRows)
   const templates = dataCtx.allTemplates?.[0];
-  const numberedJson = showFront
-    ? templates[0]?.layoutParameters?.numberedExcelJsonFile?.map(Object.values) ?? []
-    : templates[0]?.layoutParameters?.numberedBackExcelJsonFile?.map(Object.values) ?? [];
-console.log(templates[0]?.layoutParameters?.numberedExcelJsonFile?.map(Object.values) )
+  const layoutParams = templates[0]?.layoutParameters;
+const fileData = showFront
+  ? layoutParams?.numberedExcelJsonFile
+  : layoutParams?.numberedBackExcelJsonFile;
+
+const numberedJson = Array.isArray(fileData)
+  ? fileData.map(Object.values)
+  : typeof fileData === 'object' && fileData !== null
+  ? Object.values(fileData).map(Object.values)
+  : [];
+
+  // const numberedJson = showFront
+  //   ? templates[0]?.layoutParameters?.numberedExcelJsonFile?.map(Object.values) ?? []
+  //   : templates[0]?.layoutParameters?.numberedBackExcelJsonFile?.map(Object.values) ?? [];
+// console.log(templates[0]?.layoutParameters?.numberedExcelJsonFile?.map(Object.values) )  
   return (
     <div key={rowIndex} className="row">
       <div
@@ -2215,9 +2517,8 @@ console.log(templates[0]?.layoutParameters?.numberedExcelJsonFile?.map(Object.va
 
       {Array.from({ length: numCols }).map((_, colIndex) => {
         const num = numberedJson?.[rowIndex]?.[colIndex] ?? null;
-// console.log(result[rowIndex][colIndex])
         let bgColor =
-          +result?.[rowIndex]?.[colIndex] >= +templates?.layoutParameters?.iSensitivity &&
+          +result?.[rowIndex]?.[colIndex] >= +templates[0]?.layoutParameters?.iSensitivity &&
           result?.[rowIndex]?.[colIndex] !== undefined
             ? "black"
             : "";

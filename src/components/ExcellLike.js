@@ -2,14 +2,10 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import { toast } from "react-toastify";
 import DataContext from "store/DataContext";
-const identifier = {
-  formField: "formFieldWindowParameters",
-  skewMarkField: "skewMarksWindowParameters",
-};
+
 export default function ExcelLikeTable(props) {
   const [data, setData] = useState([[]]);
   const [fields, setFields] = useState([]);
-  // const [selectedCell, setSelectedCell] = useState({ row: null, col: null }); // Track selected cell
   const [hoveredCell, setHoveredCell] = useState({ row: null, col: null });
   const [draggedCell, setDraggedCell] = useState({ row: null, col: null });
   const [dottedIndexes, setDottedIndexes] = useState([]);
@@ -46,171 +42,6 @@ export default function ExcelLikeTable(props) {
     }
   }, [selectedCell]);
 
-  // useEffect(() => {
-  //   if (!data[0]) return;
-
-  //   const firstRowLength = data[0].length;
-
-  //   // setData((prevData) => {
-  //   //   const secondRow = prevData[1] || [];
-
-  //   //   // Only update if second row is shorter
-  //   //   if (secondRow.length < firstRowLength) {
-  //   //     const additionalCells = Array.from(
-  //   //       { length: firstRowLength - secondRow.length },
-  //   //       () => ({
-  //   //         cellValue: "",
-  //   //         cellType: "",
-  //   //       })
-  //   //     );
-
-  //   //     const newSecondRow = [...secondRow, ...additionalCells];
-
-  //   //     const updatedData = [...prevData];
-  //   //     updatedData[1] = newSecondRow;
-
-  //   //     return updatedData;
-  //   //   }
-
-  //   //   return prevData; // No changes needed
-  //   // });
-  // }, [data,props.linkField]);
-  // console.log(data)
-
-  // useEffect(() => {
-  //   if (!props.linkFields || props.linkFields.length === 0) {
-  //     setDottedIndexes([]);
-  //   }
-  // }, [props.linkFields]);
-
-  // useEffect(() => {
-  //   if (props?.linkFields?.length > 0) {
-  //     const allFieldIndexes = props.linkFields
-  //       .map((item) => item.fieldIndexes)
-  //       .flat();
-
-  //     setDottedIndexes(allFieldIndexes);
-
-  //     setFields((prevFields) => {
-  //       const updatedFields = prevFields.filter(
-  //         (field) => field.fieldType !== "formField"
-  //       );
-
-  //       const newFormFields = props.linkFields.map((item) => ({
-  //         name: item.fieldName,
-  //         fieldType: "formField",
-  //       }));
-
-  //       const newFields = [...updatedFields, ...newFormFields];
-
-  //       const desiredLength = 20;
-  //       const linkedRow = Array(desiredLength).fill({
-  //         cellValue: "",
-  //         cellType: "",
-  //       });
-
-  //       props.linkFields.forEach((item) => {
-  //         const indexes = item.fieldIndexes || [];
-  //         if (indexes.length === 0) return;
-
-  //         // Calculate center index of span
-  //         const centerIndex = indexes[Math.floor(indexes.length / 2)];
-
-  //         indexes.forEach((idx) => {
-  //           if (idx === centerIndex) {
-  //             // Center cell with label
-  //             linkedRow[idx] = {
-  //               cellValue: item.fieldName,
-  //               cellType: "formField",
-  //               selectedField: {
-  //                 name: item.fieldName,
-  //                 fieldType: "formField",
-  //               },
-  //               isCenter: true,
-  //             };
-  //           } else {
-  //             // Spanned cells with empty display but marked
-  //             linkedRow[idx] = {
-  //               cellValue: "",
-  //               cellType: "formField",
-  //               isSpanned: true,
-  //             };
-  //           }
-  //         });
-  //       });
-
-  //       setData((prevData) => {
-  //         const firstRow =
-  //           prevData[0] ||
-  //           Array(desiredLength).fill({ cellValue: "", cellType: "" });
-  //         return [firstRow, linkedRow];
-  //       });
-
-  //       return newFields;
-  //     });
-  //   }
-  // }, [props.linkFields]);
-
-  // useEffect(() => {
-  //   if (Array.isArray(props.selected)) {
-  //     setFields(props.selected);
-
-  //     const newRow = props.selected.flatMap((item) => {
-  //       switch (item.fieldType) {
-  //         case "formField":
-  //           return [
-  //             {
-  //               cellValue: item.name,
-  //               cellType: item.fieldType,
-  //               selectedField: item,
-  //             },
-  //           ];
-
-  //         case "questionField":
-  //           const [start, end] = item.name.split("-");
-  //           const prefix = start.replace(/\d+$/, "");
-  //           const startNum = parseInt(start.match(/\d+/)[0]);
-  //           const endNum = parseInt(end.match(/\d+/)[0]);
-
-  //           const generatedQuestions = [];
-  //           for (let i = startNum; i <= endNum; i++) {
-  //             generatedQuestions.push({
-  //               cellValue: `${prefix}${i}`,
-  //               cellType: item.fieldType,
-  //               selectedField: item,
-  //             });
-  //           }
-  //           return generatedQuestions;
-
-  //         case "skewField":
-  //           return [
-  //             {
-  //               cellValue: item.name,
-  //               cellType: item.fieldType,
-  //               selectedField: item,
-  //             },
-  //           ];
-
-  //         default:
-  //           return [
-  //             {
-  //               cellValue: item.name,
-  //               cellType: item.fieldType,
-  //               selectedField: item,
-  //             },
-  //           ];
-  //       }
-  //     });
-
-  //     // Pad the row with empty cells if less than desired length
-  //     const desiredLength = 20;
-  //     while (newRow.length < desiredLength) {
-  //       newRow.push({ cellValue: "", cellType: "" }); // Empty object for empty cells
-  //     }
-
-  //     setData([newRow]); // Each row is now an array of cell objects
-  //   }
-  // }, [props.selected, props.linkFields]);
 
   useEffect(() => {
     const selectedFields = Array.isArray(props.selected) ? props.selected : [];
@@ -309,10 +140,7 @@ export default function ExcelLikeTable(props) {
 
   useEffect(() => {
     if (!props.currentSelectedCoordinate) return;
-    console.log(
-      "Current Selected Coordinate:",
-      props.currentSelectedCoordinate
-    );
+   
     const coordinate = { ...props.currentSelectedCoordinate };
     const matchingCells = [];
     // delete coordinate["name"];
@@ -320,7 +148,7 @@ export default function ExcelLikeTable(props) {
     data.forEach((row, rowIndex) => {
       row.forEach((cell, colIndex) => {
         if (_.isEqual(coordinate, cell.selectedField)) {
-          console.log("Found matching cell:", cell);
+         
           matchingCells.push({ row: rowIndex, col: colIndex });
         }
       });
@@ -328,45 +156,7 @@ export default function ExcelLikeTable(props) {
     setSelectedCell(matchingCells);
   }, [props.currentSelectedCoordinate, data]);
 
-  // useEffect(() => {
-  //   if (!props.currentSelectedCoordinate) return;
 
-  //   const coord = String(props.currentSelectedCoordinate);
-  //   const selectedCells = [];
-
-  //   // Handle range like "q1-q10"
-  //   const match = coord.match(/^q(\d+)-q(\d+)$/);
-  //   if (match) {
-  //     const start = parseInt(match[1]);
-  //     const end = parseInt(match[2]);
-
-  //     data.forEach((row, rowIndex) => {
-  //       row.forEach((cell, colIndex) => {
-  //         const cellField = String(cell.selectedField);
-  //         const cellMatch = cellField.match(/^q(\d+)$/);
-  //         if (cellMatch) {
-  //           const num = parseInt(cellMatch[1]);
-  //           if (num >= start && num <= end) {
-  //             selectedCells.push({ row: rowIndex, col: colIndex });
-  //           }
-  //         }
-  //       });
-  //     });
-
-  //     setSelectedCell(selectedCells);
-  //   } else {
-  //     // Handle single field like "q3"
-  //     data.forEach((row, rowIndex) => {
-  //       row.forEach((cell, colIndex) => {
-  //         if (String(cell.selectedField) === coord) {
-  //           selectedCells.push({ row: rowIndex, col: colIndex });
-  //         }
-  //       });
-  //     });
-
-  //     setSelectedCell(selectedCells);
-  //   }
-  // }, [props.currentSelectedCoordinate, data]);
 
   const handleFieldClick = (item, colIndex, rowIndex) => {
     const matchedField = findFieldDetailsUsingObj(item.selectedField);
@@ -477,6 +267,9 @@ export default function ExcelLikeTable(props) {
       }
       return result;
     }) || [];
+
+
+
   return (
     <div
       style={{ overflowX: "auto" , backgroundColor:"white " }}
@@ -489,14 +282,14 @@ export default function ExcelLikeTable(props) {
       >
         <thead>
           <tr>
-            <th style={{ width: "50px", minWidth: "50px" }}></th>
+            <th style={{ width: "40px", minWidth: "40px" }}></th>
             {columnHeaders.map((header, index) => (
               <th
                 key={index}
                 style={{
-                  width: "100px",
-                  minWidth: "100px",
-                  maxWidth: "100px",
+                  width: "80px",
+                  minWidth: "80px",
+                  maxWidth: "80px",
                   textAlign: "center",
                   verticalAlign: "middle",
                   backgroundColor: selectedCell.some((c) => c.col === index)
@@ -518,12 +311,12 @@ export default function ExcelLikeTable(props) {
         </thead>
         <tbody >
           {data.map((row, rowIndex) => (
-            <tr key={rowIndex} style={{ height: "45px" }}>
+            <tr key={rowIndex} style={{ height: "25px" }}>
               <th
                 style={{
-                  width: "50px",
-                  minWidth: "50px",
-                  maxWidth: "50px",
+                  width: "40px",
+                  minWidth: "40px",
+                  maxWidth: "40px",
                   verticalAlign: "middle",
                   textAlign: "center",
                   backgroundColor: "#E0E0E0",
@@ -572,7 +365,7 @@ export default function ExcelLikeTable(props) {
                       width: `${100 * colSpan}px`,
                       minWidth: `${100 * colSpan}px`,
                       maxWidth: `${100 * colSpan}px`,
-                      height: "40px",
+                      height: "30px",
                       padding: "0",
                       boxSizing: "border-box",
                       overflow: "hidden",
