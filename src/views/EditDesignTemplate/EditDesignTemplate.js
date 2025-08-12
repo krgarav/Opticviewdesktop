@@ -115,6 +115,7 @@ const EditDesignTemplate = () => {
   const [formatting, setFormatting] = useState("");
   const [currentSelectedCoordinate, setCurrentSelectedCoordinate] =
     useState(null);
+  const [activeArea, setActiveArea] = useState({ row: null, col: null });
   const [scale, setScale] = useState(1);
 
   const handleZoomIn = () => {
@@ -1906,7 +1907,9 @@ const EditDesignTemplate = () => {
                 <div style={{ marginRight: "1rem", position: "sticky" }}>
                   <div className="top"></div>
                   {Array.from({ length: numRows }).map((_, rowIndex) => (
-                    <div key={rowIndex} className="row">
+                    <div key={rowIndex}  className={`row ${
+                        activeArea.row === rowIndex ? "rowactive" : ""
+                      }`}>
                       <div
                         className={
                           data.bubbleType === "circle"
@@ -1920,18 +1923,12 @@ const EditDesignTemplate = () => {
                   ))}
                 </div>
                 <div>
-                  <div
-                    className="top-row"
-                    style={{
-                      position: "",
-                      top: 120,
-                      zIndex: 10,
-                      backgroundColor: "white",
-                    }}
-                  >
+                  <div className="top-row">
                     <div className="corner"></div>
                     {Array.from({ length: numCols }).map((_, index) => (
-                      <div key={index} className="top-num">
+                      <div key={index} className={`top-num ${
+                          activeArea.col === index ? "colactive" : ""
+                        }`}>
                         {index + 1}
                       </div>
                     ))}
@@ -1940,12 +1937,17 @@ const EditDesignTemplate = () => {
                   <div
                     id="grid-div"
                     style={{
-                      border: "2px solid black",
-                      paddingTop: "1rem",
-                      paddingRight: "1.2rem",
-                      paddingLeft: "1rem",
-                      overflowY: "auto",
-                      width: "max-content",
+                      // border: "2px solid black",
+                      marginTop: "1rem",
+                      // paddingTop: "1.5rem",
+                      // paddingRight: "1.2rem",
+                      // paddingLeft: "1rem",
+                      // overflowY: "auto",
+                      // width: "max-content",
+                    }}
+                    className="grid-container"
+                    onMouseLeave={() => {
+                      setActiveArea({ row: null, col: null });
                     }}
                   >
                     <div
@@ -2027,6 +2029,12 @@ const EditDesignTemplate = () => {
                                           : "8px",
                                       color: fontColor,
                                       userSelect: "none",
+                                    }}
+                                     onMouseEnter={(e) => {
+                                      setActiveArea({
+                                        row: rowIndex,
+                                        col: colIndex,
+                                      });
                                     }}
                                     className={`${data.bubbleType} ${
                                       selected[`${rowIndex},${colIndex}`]
@@ -3125,7 +3133,7 @@ const EditDesignTemplate = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ height: "60vh" }}>
-          {data.images && (
+          {data?.images?.length>0 && (
             <EditImagesCropper
               handleImage={handleImage}
               images={data.images}

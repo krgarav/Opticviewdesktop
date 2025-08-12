@@ -319,6 +319,9 @@ const EditImagesCropper = ({ images, handleImage, selectedCoordinateData }) => {
     );
   });
 
+  if (images?.length <= 0) {
+    return <></>;
+  }
   return (
     <>
       <Card className="shadow">
