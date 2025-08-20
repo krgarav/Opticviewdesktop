@@ -68,7 +68,7 @@ const DesignTemplate = () => {
   const [detailPage, setDetailPage] = useState(false);
   const dataCtx = useContext(DataContext);
   const [localData, setLocalData] = useState(
-    JSON.parse(localStorage.getItem("Template"))
+    JSON.parse(sessionStorage.getItem("Template"))
   );
   const [selectedCol, setSelectedCol] = useState([]);
   const [options, setOptions] = useState([]);
@@ -153,7 +153,7 @@ const DesignTemplate = () => {
     }
   }, [modalShow]);
   useEffect(() => {
-    const template = localStorage.getItem("Template");
+    const template = sessionStorage.getItem("Template");
     if (template) {
       setLocalData(JSON.parse(template));
     }
@@ -190,7 +190,7 @@ const DesignTemplate = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      setLocalData(JSON.parse(localStorage.getItem("Template")));
+      setLocalData(JSON.parse(sessionStorage.getItem("Template")));
     }, 1000);
   }, [detailPage]);
 
@@ -206,7 +206,7 @@ const DesignTemplate = () => {
   }, [selectedCoordinates, selection]);
 
   useEffect(() => {
-    const templateData = JSON.parse(localStorage.getItem("Template"));
+    const templateData = JSON.parse(sessionStorage.getItem("Template"));
 
     if (templateData) {
       if (dataCtx.allTemplates.length === 0) {
@@ -218,7 +218,7 @@ const DesignTemplate = () => {
   useEffect(() => {
     const template = dataCtx.allTemplates[0];
     if (template) {
-      localStorage.setItem("Template", JSON.stringify(template));
+      sessionStorage.setItem("Template", JSON.stringify(template));
     }
   }, [dataCtx.allTemplates]);
 
@@ -1388,7 +1388,7 @@ const DesignTemplate = () => {
       linkedCoordinates,
     };
     handleCancel();
-    localStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
+    sessionStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
   };
   const handleImage = (images) => {
     setImagesSelectedCount(images.length);
@@ -2026,7 +2026,7 @@ const DesignTemplate = () => {
                               ),
                             ]
                           : [];
-
+                            console.log(numberedJson)
                         return (
                           <div key={rowIndex} className="row">
                             <div

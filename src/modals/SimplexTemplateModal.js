@@ -529,7 +529,7 @@ const SimplexTemplateModal = (props) => {
         },
       ];
 
-      localStorage.setItem("Template", JSON.stringify(templateData));
+      sessionStorage.setItem("Template", JSON.stringify(templateData));
 
       dataCtx.setNewTemplates([templateData]);
 

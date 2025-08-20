@@ -8,21 +8,11 @@ import {
   useLocation,
 } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import AdminLayout from "layouts/Admin.js";
-import Operator from "layouts/Operator";
-import AuthLayout from "layouts/Auth.js";
-import Moderator from "layouts/Moderator";
-import IpModal from "ui/IpChange";
-import axios from "axios";
-import { getUrls } from "helper/url_helper";
-import DataContext from "store/DataContext";
-import { fetchAllTemplate } from "helper/TemplateHelper";
-import TextLoader from "loaders/TextLoader";
-import { toast } from "react-toastify";
 import Template from "views/Template";
 import DesignTemplate from "views/DesignTemplate/Designtemplate";
 import Redirect from "components/Redirect";
 import DuplexDesignTemplate from "views/DuplexDesignTemplate/DuplexDesignTemplate";
+import Redirect2 from "components/Redirect2";
 const useTokenRedirect = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -74,6 +64,7 @@ const useTokenRedirect = () => {
 };
 
 const App = () => {
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       // Prevent Ctrl+R or Ctrl+Shift+R
@@ -97,28 +88,24 @@ const App = () => {
 
   const handleContextMenu = (event) => {
     event.preventDefault(); // Prevent right-click menu
-    // alert("Right-click is disabled!");
-
-    // const zoomoutbtn = document.getElementById("zoomoutbtn");
-    // zoomoutbtn.click()
   };
 
   return (
     <>
       <div onContextMenu={handleContextMenu}>
         <Routes>
-          <Route path="/admin/*" element={<AdminLayout />} />
-          <Route path="/operator/*" element={<Operator />} />
-          <Route path="/moderator/*" element={<Moderator />} />
-
           <Route path="/design-template" element={<DesignTemplate />} />
           <Route
             path="/duplex-design-template"
             element={<DuplexDesignTemplate />}
           />
+          <Route
+            path="/duplex-edit-design-template"
+            element={<DuplexDesignTemplate />}
+          />
           <Route path="/edit" element={<Redirect />} />
+          <Route path="/edit-duplex" element={<Redirect2 />} />
           <Route path="/" element={<Template />} />
-          {/* <Route path="*" element={<Navigate to="/auth/login" replace />} /> */}
         </Routes>
       </div>
     </>

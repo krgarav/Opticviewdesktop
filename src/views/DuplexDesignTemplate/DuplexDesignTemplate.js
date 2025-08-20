@@ -66,7 +66,7 @@ const DuplexDesignTemplate = () => {
   const [detailPage, setDetailPage] = useState(false);
   const dataCtx = useContext(DataContext);
   const [localData, setLocalData] = useState(
-    JSON.parse(localStorage.getItem("Template"))
+    JSON.parse(sessionStorage.getItem("Template"))
   );
   const [selectedCol, setSelectedCol] = useState([]);
   const [options, setOptions] = useState([]);
@@ -124,9 +124,10 @@ const DuplexDesignTemplate = () => {
   const [currentSelectedCoordinate, setCurrentSelectedCoordinate] =
     useState(null);
   const [activeArea, setActiveArea] = useState({ row: null, col: null });
-  const [currentExcelJsonFile, setCurrentExcelJsonFile] = useState(excelJsonFile);
-  const [numRows, setNumRows] = useState(excelJsonFile.length )
-  const [numCols, setNumCols] = useState( Object.keys(excelJsonFile[0]).length);
+  const [currentExcelJsonFile, setCurrentExcelJsonFile] =
+    useState(excelJsonFile);
+  const [numRows, setNumRows] = useState(excelJsonFile.length);
+  const [numCols, setNumCols] = useState(Object.keys(excelJsonFile[0]).length);
   const inputRef = useRef(null);
   const divRefs = useRef([]);
   const [highlightField, setHighlightField] = useState(false);
@@ -138,19 +139,17 @@ const DuplexDesignTemplate = () => {
   const blankRef = useRef(null);
   const gridRef = useRef(null);
 
- 
-
   useEffect(() => {
     if (showFront) {
       setCurrentExcelJsonFile(excelJsonFile);
-      setNumCols(Object.keys(excelJsonFile[0]).length)
-      setNumRows(excelJsonFile.length)
+      setNumCols(Object.keys(excelJsonFile[0]).length);
+      setNumRows(excelJsonFile.length);
     } else {
       setCurrentExcelJsonFile(backExcelJsonFile);
-      setNumCols(Object.keys(backExcelJsonFile[0]).length)
-      setNumRows(backExcelJsonFile.length)
+      setNumCols(Object.keys(backExcelJsonFile[0]).length);
+      setNumRows(backExcelJsonFile.length);
     }
-  }, [showFront,excelJsonFile, backExcelJsonFile]);
+  }, [showFront, excelJsonFile, backExcelJsonFile]);
 
   useEffect(() => {
     setFormatting(numberOfField === "" ? "" : "X".repeat(numberOfField));
@@ -169,7 +168,7 @@ const DuplexDesignTemplate = () => {
     }
   }, [modalShow]);
   useEffect(() => {
-    const template = localStorage.getItem("Template");
+    const template = sessionStorage.getItem("Template");
     if (template) {
       setLocalData(JSON.parse(template));
     }
@@ -206,7 +205,7 @@ const DuplexDesignTemplate = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      setLocalData(JSON.parse(localStorage.getItem("Template")));
+      setLocalData(JSON.parse(sessionStorage.getItem("Template")));
     }, 1000);
   }, [detailPage]);
 
@@ -222,7 +221,7 @@ const DuplexDesignTemplate = () => {
   }, [selectedCoordinates, selection]);
 
   useEffect(() => {
-    const templateData = JSON.parse(localStorage.getItem("Template"));
+    const templateData = JSON.parse(sessionStorage.getItem("Template"));
 
     if (templateData) {
       if (dataCtx.allTemplates.length === 0) {
@@ -234,7 +233,7 @@ const DuplexDesignTemplate = () => {
   useEffect(() => {
     const template = dataCtx.allTemplates[0];
     if (template) {
-      localStorage.setItem("Template", JSON.stringify(template));
+      sessionStorage.setItem("Template", JSON.stringify(template));
     }
   }, [dataCtx.allTemplates]);
 
@@ -279,7 +278,7 @@ const DuplexDesignTemplate = () => {
 
     return () => window.removeEventListener("resize", checkSizes);
   }, [selectedCoordinates, selection]);
-// console.log(currentSelectedField)
+  // console.log(currentSelectedField)
   // useEffect(() => {
   //   currentSelectedField.forEach((item) => {
   //     const isQuestionField = item?.fieldType === "questionField";
@@ -359,7 +358,7 @@ const DuplexDesignTemplate = () => {
   //               numberedExcelJsonFile: data,
   //             };
   //             // console.log(copiedObject)
-              
+
   //             dataCtx.setNewTemplates([[copiedObject]])
   //           } else {
   //           const template =dataCtx.allTemplates[0][0]
@@ -378,107 +377,104 @@ const DuplexDesignTemplate = () => {
   // }, [currentSelectedField]);
   // console.log(dataCtx.allTemplates)
 
-// useEffect(()=>{
-//   processFields()
-// },[])
+  // useEffect(()=>{
+  //   processFields()
+  // },[])
 
+  const processFieldsWithCurrentField = (currentFields) => {
+    currentFields.forEach((item) => {
+      const isQuestionField = item?.fieldType === "questionField";
+      const isFormField = item?.fieldType === "formField";
 
+      if (!isQuestionField && !isFormField) return;
 
+      const templateGroup = dataCtx.allTemplates.find(
+        (tpl) => (tpl[0]?.layoutParameters?.key ?? "") === templateIndex
+      );
+      const template = templateGroup?.[0];
+      if (!template) return;
 
+      const parameters = isQuestionField
+        ? template.questionsWindowParameters
+        : template.formFieldWindowParameters;
 
+      if (!parameters) return;
 
+      const formattedSelectedFile = {
+        "End Col": item.endCol,
+        "End Row": item.endRow + 1,
+        "Start Col": item.startCol,
+        "Start Row": item.startRow + 1,
+        fieldType: item.fieldType,
+        name: item.name,
+      };
 
-const processFieldsWithCurrentField = (currentFields) => {
-  currentFields.forEach((item) => {
-    const isQuestionField = item?.fieldType === "questionField";
-    const isFormField = item?.fieldType === "formField";
+      const index = parameters.findIndex((param) =>
+        isEqual(param.Coordinate, formattedSelectedFile)
+      );
+      const data2 = index !== -1 ? parameters[index] : null;
+      if (!data2) return;
 
-    if (!isQuestionField && !isFormField) return;
+      const directionMapping = {
+        0: "topToBottom",
+        1: "topToBottom",
+        2: "bottomToTop",
+        3: "bottomToTop",
+        4: "leftToRight",
+        5: "rightToLeft",
+        6: "leftToRight",
+        7: "rightToLeft",
+      };
+      const readingDirection =
+        directionMapping[data2.iDirection] || "rightToLeft";
+      const type = data2.numericOrAlphabets;
+      const stepInRow = data2.rowStep;
+      const stepInCol = data2.columnStep;
 
-    const templateGroup = dataCtx.allTemplates.find(
-      (tpl) => (tpl[0]?.layoutParameters?.key ?? "") === templateIndex
-    );
-    const template = templateGroup?.[0];
-    if (!template) return;
+      const customRawValue = data2?.customFieldValue
+        ? data2.customFieldValue.split(",")
+        : [""];
+      const customValue = customRawValue.map((val) =>
+        val.slice(0, 2).toUpperCase()
+      );
 
-    const parameters = isQuestionField
-      ? template.questionsWindowParameters
-      : template.formFieldWindowParameters;
+      const numberedJsonFile = showFront
+        ? template.layoutParameters.numberedExcelJsonFile
+        : template.layoutParameters.numberedBackExcelJsonFile;
 
-    if (!parameters) return;
+      const data = processDirection(
+        readingDirection,
+        item.startRow,
+        item.endRow,
+        item.startCol,
+        item.endCol,
+        numberedJsonFile,
+        type,
+        stepInRow,
+        stepInCol,
+        customValue
+      );
+      // console.log(data)
+      // Clone and update template
+      const copiedObject = deepcopy(template);
+      // const onceParsed = JSON.parse(data);       // Still a string (but with valid JSON inside)
+      // const finalData = JSON.parse(onceParsed);
+      // const tripleParse = JSON.parse(finalData); // Now a string with valid JSON inside
+      // console.log(tripleParse)
+      // return
+      if (showFront) {
+        copiedObject.layoutParameters.numberedExcelJsonFile = data;
+      } else {
+        copiedObject.layoutParameters.numberedBackExcelJsonFile = data;
+      }
+      // console.log(copiedObject)
+      // Replace template in context
+      // dataCtx.setNewTemplates([[copiedObject]]);
+    });
+  };
 
-    const formattedSelectedFile = {
-      "End Col": item.endCol,
-      "End Row": item.endRow + 1,
-      "Start Col": item.startCol,
-      "Start Row": item.startRow + 1,
-      fieldType: item.fieldType,
-      name: item.name,
-    };
-
-    const index = parameters.findIndex((param) =>
-      isEqual(param.Coordinate, formattedSelectedFile)
-    );
-    const data2 = index !== -1 ? parameters[index] : null;
-    if (!data2) return;
-
-    const directionMapping = {
-      0: "topToBottom",
-      1: "topToBottom",
-      2: "bottomToTop",
-      3: "bottomToTop",
-      4: "leftToRight",
-      5: "rightToLeft",
-      6: "leftToRight",
-      7: "rightToLeft",
-    };
-    const readingDirection = directionMapping[data2.iDirection] || "rightToLeft";
-    const type = data2.numericOrAlphabets;
-    const stepInRow = data2.rowStep;
-    const stepInCol = data2.columnStep;
-
-    const customRawValue = data2?.customFieldValue
-      ? data2.customFieldValue.split(",")
-      : [""];
-    const customValue = customRawValue.map((val) => val.slice(0, 2).toUpperCase());
-
-    const numberedJsonFile = showFront
-      ? template.layoutParameters.numberedExcelJsonFile
-      : template.layoutParameters.numberedBackExcelJsonFile;
-
-    const data = processDirection(
-      readingDirection,
-      item.startRow,
-      item.endRow,
-      item.startCol,
-      item.endCol,
-      numberedJsonFile,
-      type,
-      stepInRow,
-      stepInCol,
-      customValue
-    );
-// console.log(data)
-    // Clone and update template
-    const copiedObject = deepcopy(template);
-// const onceParsed = JSON.parse(data);       // Still a string (but with valid JSON inside)
-// const finalData = JSON.parse(onceParsed);
-// const tripleParse = JSON.parse(finalData); // Now a string with valid JSON inside
-// console.log(tripleParse)
-// return
-    if (showFront) {
-      copiedObject.layoutParameters.numberedExcelJsonFile = data;
-    } else {
-      copiedObject.layoutParameters.numberedBackExcelJsonFile = data;
-    }
-// console.log(copiedObject)
-    // Replace template in context
-    // dataCtx.setNewTemplates([[copiedObject]]);
-  });
-};
-
-  const processFields = ()=>{
-     currentSelectedField.forEach((item) => {
+  const processFields = () => {
+    currentSelectedField.forEach((item) => {
       const isQuestionField = item?.fieldType === "questionField";
       const isFormField = item?.fieldType === "formField";
 
@@ -548,7 +544,7 @@ const processFieldsWithCurrentField = (currentFields) => {
               customValue
             );
             if (showFront) {
-              const template =dataCtx.allTemplates[0][0]
+              const template = dataCtx.allTemplates[0][0];
               const copiedObject = deepcopy(template);
               delete copiedObject.layoutParameters.numberedExcelJsonFile;
               copiedObject.layoutParameters = {
@@ -556,10 +552,10 @@ const processFieldsWithCurrentField = (currentFields) => {
                 numberedExcelJsonFile: data,
               };
               // console.log(copiedObject)
-              
-              dataCtx.setNewTemplates([[copiedObject]])
+
+              dataCtx.setNewTemplates([[copiedObject]]);
             } else {
-            const template =dataCtx.allTemplates[0][0]
+              const template = dataCtx.allTemplates[0][0];
               const copiedObject = deepcopy(template);
               delete copiedObject.layoutParameters.numberedBackExcelJsonFile;
               copiedObject.layoutParameters = {
@@ -572,128 +568,129 @@ const processFieldsWithCurrentField = (currentFields) => {
         }
       }
     });
-  }
+  };
 
-useEffect(() => {
-  const arr = dataCtx.allTemplates[0];
-  const parameter = showFront ? "front" : "back";
+  useEffect(() => {
+    const arr = dataCtx.allTemplates[0];
+    const parameter = showFront ? "front" : "back";
 
-  if (arr) {
-    // Extract parameters from the first element of the array
-    const formFieldData = arr[0]?.formFieldWindowParameters?.filter(
-      (item) => item.side === parameter
-    );
-    const questionField = arr[0]?.questionsWindowParameters?.filter(
-      (item) => item.side === parameter
-    );
-    const skewField = arr[0]?.skewMarksWindowParameters?.filter(
-      (item) => item.side === parameter
-    );
+    if (arr) {
+      // Extract parameters from the first element of the array
+      const formFieldData = arr[0]?.formFieldWindowParameters?.filter(
+        (item) => item.side === parameter
+      );
+      const questionField = arr[0]?.questionsWindowParameters?.filter(
+        (item) => item.side === parameter
+      );
+      const skewField = arr[0]?.skewMarksWindowParameters?.filter(
+        (item) => item.side === parameter
+      );
 
-    const idField = arr[0]?.layoutParameters;
-    const coordinateOfIdField =
-      idField?.side === parameter && idField?.Coordinate
-        ? [idField.Coordinate]
+      const idField = arr[0]?.layoutParameters;
+      const coordinateOfIdField =
+        idField?.side === parameter && idField?.Coordinate
+          ? [idField.Coordinate]
+          : [];
+
+      // Map each set of filtered parameters to their coordinates or default to an empty array
+      const coordinateOfFormData =
+        formFieldData?.map((item) => item.Coordinate) ?? [];
+      const coordinateOfQuestionField =
+        questionField?.map((item) => item.Coordinate) ?? [];
+      const coordinateOfSkewField =
+        skewField?.map((item) => item.Coordinate) ?? [];
+
+      // Combine all coordinates into a single array
+      const allCoordinates = [
+        ...coordinateOfFormData,
+        ...coordinateOfQuestionField,
+        ...coordinateOfSkewField,
+        ...coordinateOfIdField,
+      ];
+
+      // Map each coordinate to the expected structure
+      const newSelectedFields = allCoordinates?.map((item) => {
+        const {
+          "Start Row": startRow,
+          "Start Col": startCol,
+          "End Row": endRow,
+          "End Col": endCol,
+          name,
+          fieldType,
+        } = item;
+
+        return {
+          startRow: startRow - 1,
+          startCol,
+          endRow: endRow - 1,
+          endCol,
+          name,
+          fieldType,
+        };
+      });
+
+      // Update state
+      processFieldsWithCurrentField(newSelectedFields);
+      setCurrentSelectedField(newSelectedFields);
+      // setLinkFields(arr[0]?.linkedCoordinates || []);
+    }
+  }, [dataCtx, localData, showFront]);
+
+  useEffect(() => {
+    const arr = dataCtx.allTemplates[0];
+    if (arr) {
+      // Extract parameters from the first element of the array (if it exists)
+      const formFieldData = arr[0]?.formFieldWindowParameters;
+      const questionField = arr[0]?.questionsWindowParameters;
+      const skewField = arr[0]?.skewMarksWindowParameters;
+      const idField = arr[0]?.layoutParameters;
+
+      // Map each set of parameters to their coordinates or default to an empty array
+      const coordinateOfFormData =
+        formFieldData?.map((item) => item.Coordinate) ?? [];
+      const coordinateOfQuestionField =
+        questionField?.map((item) => item.Coordinate) ?? [];
+      const coordinateOfSkewField =
+        skewField?.map((item) => item.Coordinate) ?? [];
+      const coordinateOfIdField = idField?.Coordinate
+        ? [idField?.Coordinate]
         : [];
+      // Combine all coordinates into a single array
+      const allCoordinates = [
+        ...coordinateOfFormData,
+        ...coordinateOfQuestionField,
+        ...coordinateOfSkewField,
+        ...coordinateOfIdField,
+      ];
 
-    // Map each set of filtered parameters to their coordinates or default to an empty array
-    const coordinateOfFormData = formFieldData?.map((item) => item.Coordinate) ?? [];
-    const coordinateOfQuestionField = questionField?.map((item) => item.Coordinate) ?? [];
-    const coordinateOfSkewField = skewField?.map((item) => item.Coordinate) ?? [];
+      // Map each coordinate to a new format
+      const newSelectedFields = allCoordinates?.map((item) => {
+        const {
+          "Start Row": startRow,
+          "Start Col": startCol,
+          "End Row": endRow,
+          "End Col": endCol,
 
-    // Combine all coordinates into a single array
-    const allCoordinates = [
-      ...coordinateOfFormData,
-      ...coordinateOfQuestionField,
-      ...coordinateOfSkewField,
-      ...coordinateOfIdField,
-    ];
+          name,
+          fieldType,
+        } = item;
 
-    // Map each coordinate to the expected structure
-    const newSelectedFields = allCoordinates?.map((item) => {
-      const {
-        "Start Row": startRow,
-        "Start Col": startCol,
-        "End Row": endRow,
-        "End Col": endCol,
-        name,
-        fieldType,
-      } = item;
+        return {
+          startRow: startRow - 1,
+          startCol,
+          endRow: endRow - 1,
+          endCol,
+          name,
+          fieldType,
+        };
+      });
 
-      return {
-        startRow: startRow - 1,
-        startCol,
-        endRow: endRow - 1,
-        endCol,
-        name,
-        fieldType,
-      };
-    });
+      // Update the state with the new coordinates and image structure data
+      setSelectedCoordinates(newSelectedFields);
 
-    // Update state
-    processFieldsWithCurrentField(newSelectedFields)
-    setCurrentSelectedField(newSelectedFields);
-    // setLinkFields(arr[0]?.linkedCoordinates || []);
-  }
-}, [dataCtx, localData, showFront]);
-
-
-   useEffect(() => {
-     const arr = dataCtx.allTemplates[0];
-     if (arr) {
-       // Extract parameters from the first element of the array (if it exists)
-       const formFieldData = arr[0]?.formFieldWindowParameters;
-       const questionField = arr[0]?.questionsWindowParameters;
-       const skewField = arr[0]?.skewMarksWindowParameters;
-       const idField = arr[0]?.layoutParameters;
- 
-       // Map each set of parameters to their coordinates or default to an empty array
-       const coordinateOfFormData =
-         formFieldData?.map((item) => item.Coordinate) ?? [];
-       const coordinateOfQuestionField =
-         questionField?.map((item) => item.Coordinate) ?? [];
-       const coordinateOfSkewField =
-         skewField?.map((item) => item.Coordinate) ?? [];
-       const coordinateOfIdField = idField?.Coordinate
-         ? [idField?.Coordinate]
-         : [];
-       // Combine all coordinates into a single array
-       const allCoordinates = [
-         ...coordinateOfFormData,
-         ...coordinateOfQuestionField,
-         ...coordinateOfSkewField,
-         ...coordinateOfIdField,
-       ];
- 
-       // Map each coordinate to a new format
-       const newSelectedFields = allCoordinates?.map((item) => {
-         const {
-           "Start Row": startRow,
-           "Start Col": startCol,
-           "End Row": endRow,
-           "End Col": endCol,
- 
-           name,
-           fieldType,
-         } = item;
- 
-         return {
-           startRow: startRow - 1,
-           startCol,
-           endRow: endRow - 1,
-           endCol,
-           name,
-           fieldType,
-         };
-       });
- 
-       // Update the state with the new coordinates and image structure data
-       setSelectedCoordinates(newSelectedFields);
-     
-       setLinkFields(arr[0]?.linkedCoordinates || []);
-     }
-   }, [dataCtx, localData]); 
-
+      setLinkFields(arr[0]?.linkedCoordinates || []);
+    }
+  }, [dataCtx, localData]);
 
   useEffect(() => {
     const template = dataCtx.allTemplates[0];
@@ -1018,8 +1015,7 @@ useEffect(() => {
       const template = dataCtx.allTemplates.find((item) => {
         return item[0].layoutParameters?.key ?? "" === templateIndex;
       });
-      
-     
+
       if (modalUpdate) {
         resetJson(
           template[0].layoutParameters.numberedExcelJsonFile,
@@ -1447,16 +1443,16 @@ useEffect(() => {
     });
     dataCtx.deleteFieldTemplateWithUUID(templateIndex, formattedSelectedFile);
     const jsonFile = showFront
-  ? template[0].layoutParameters.numberedExcelJsonFile
-  : template[0].layoutParameters.numberedBackExcelJsonFile;
+      ? template[0].layoutParameters.numberedExcelJsonFile
+      : template[0].layoutParameters.numberedBackExcelJsonFile;
 
-resetJson(
-  jsonFile,
-  formattedSelectedFile["Start Row"] - 1,
-  formattedSelectedFile["End Row"] - 1,
-  formattedSelectedFile["Start Col"],
-  formattedSelectedFile["End Col"]
-);
+    resetJson(
+      jsonFile,
+      formattedSelectedFile["Start Row"] - 1,
+      formattedSelectedFile["End Row"] - 1,
+      formattedSelectedFile["Start Col"],
+      formattedSelectedFile["End Col"]
+    );
   };
 
   const handleIconMouseUp = (event) => {
@@ -1592,7 +1588,10 @@ resetJson(
       linkedCoordinates,
     };
     handleCancel();
-    localStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
+    sessionStorage.setItem(
+      "StructuredTemplate",
+      JSON.stringify(fullRequestData)
+    );
   };
   const handleImage = (images) => {
     setImagesSelectedCount(images.length);
@@ -1752,7 +1751,7 @@ resetJson(
             customFieldValue: customValue ? customValue : "",
             prefix: selectedFieldType === "formField" ? prefix : "",
             suffix: selectedFieldType === "formField" ? suffix : "",
-             side: showFront ? "front" : "back"
+            side: showFront ? "front" : "back",
           };
         } else if (selectedField.fieldType === "skewMarkField") {
           const updatedName =
@@ -1787,7 +1786,7 @@ resetJson(
             skewMark: +skewoption,
             dataRejection: skewoption,
             skewFieldValue: skewFieldValue,
-             side: showFront ? "front" : "back"
+            side: showFront ? "front" : "back",
           };
         } else {
           const updatedName =
@@ -1813,7 +1812,7 @@ resetJson(
             rowStep: +noOfStepInRow,
             iDirection: +readingDirectionOption,
             idMarksPattern: idNumber.toString(),
-             side: showFront ? "front" : "back"
+            side: showFront ? "front" : "back",
           };
         }
 
@@ -1986,7 +1985,7 @@ resetJson(
               customFieldValue: customValue || "",
               prefix: field.fieldType === "formField" ? prefix : "",
               suffix: field.fieldType === "formField" ? suffix : "",
-              side: showFront ? "front" : "back"
+              side: showFront ? "front" : "back",
             };
           } else if (field.fieldType === "skewMarkField") {
             newData = {
@@ -2010,7 +2009,7 @@ resetJson(
               skewMark: +skewoption,
               dataRejection: skewoption,
               skewFieldValue: skewFieldValue,
-               side: showFront ? "front" : "back"
+              side: showFront ? "front" : "back",
             };
           } else {
             newData = {
@@ -2023,7 +2022,7 @@ resetJson(
               rowStep: +noOfStepInRow,
               iDirection: +readingDirectionOption,
               idMarksPattern: idNumber.toString(),
-               side: showFront ? "front" : "back"
+              side: showFront ? "front" : "back",
             };
           }
 
@@ -2037,12 +2036,11 @@ resetJson(
     }
   };
 
-
   if (dataCtx.allTemplates.length === 0) {
     return <div>Loading</div>;
   }
 
-  if(currentExcelJsonFile.length === 0) {
+  if (currentExcelJsonFile.length === 0) {
     return <div>Loading</div>;
   }
 
@@ -2206,12 +2204,11 @@ resetJson(
           <div className="main-container" style={{ marginTop: "0.5rem" }}>
             <div className="containers">
               <div
-              
                 className={`d-flex ${
                   !showFront ? "flex-row-reverse" : "flex-row"
                 }`}
               >
-                <div style={{ marginRight: "1rem",marginLeft:"1rem" }}>
+                <div style={{ marginRight: "1rem", marginLeft: "1rem" }}>
                   <div className="top"></div>
                   {Array.from({ length: numRows }).map((_, rowIndex) => (
                     <div
@@ -2392,90 +2389,104 @@ resetJson(
                         );
                       })} */}
 
-{Array.from({ length: numRows }).map((_, rowIndex) => {
-  const result = currentExcelJsonFile.map(Object.values);
-  const templates = dataCtx.allTemplates?.[0];
-  const layoutParams = templates[0]?.layoutParameters;
-const fileData = showFront
-  ? layoutParams?.numberedExcelJsonFile
-  : layoutParams?.numberedBackExcelJsonFile;
+                      {Array.from({ length: numRows }).map((_, rowIndex) => {
+                        const result = currentExcelJsonFile.map(Object.values);
+                        const templates = dataCtx.allTemplates?.[0];
+                        const layoutParams = templates[0]?.layoutParameters;
+                        const fileData = showFront
+                          ? layoutParams?.numberedExcelJsonFile
+                          : layoutParams?.numberedBackExcelJsonFile;
 
-const numberedJson = Array.isArray(fileData)
-  ? fileData.map(Object.values)
-  : typeof fileData === 'object' && fileData !== null
-  ? Object.values(fileData).map(Object.values)
-  : [];
+                        const numberedJson = Array.isArray(fileData)
+                          ? fileData.map(Object.values)
+                          : typeof fileData === "object" && fileData !== null
+                          ? Object.values(fileData).map(Object.values)
+                          : [];
 
-  // const numberedJson = showFront
-  //   ? templates[0]?.layoutParameters?.numberedExcelJsonFile?.map(Object.values) ?? []
-  //   : templates[0]?.layoutParameters?.numberedBackExcelJsonFile?.map(Object.values) ?? [];
-// console.log(templates[0]?.layoutParameters?.numberedExcelJsonFile?.map(Object.values) )  
-  return (
-    <div key={rowIndex} className="row">
-      <div
-        className={bubbleType === "circle" ? "left-num-circle" : "left-num"}
-        style={{ visibility: "hidden" }}
-      >
-        <div className="timing-mark "></div>
-      </div>
+                        // const numberedJson = showFront
+                        //   ? templates[0]?.layoutParameters?.numberedExcelJsonFile?.map(Object.values) ?? []
+                        //   : templates[0]?.layoutParameters?.numberedBackExcelJsonFile?.map(Object.values) ?? [];
+                        // console.log(templates[0]?.layoutParameters?.numberedExcelJsonFile?.map(Object.values) )
+                        return (
+                          <div key={rowIndex} className="row">
+                            <div
+                              className={
+                                bubbleType === "circle"
+                                  ? "left-num-circle"
+                                  : "left-num"
+                              }
+                              style={{ visibility: "hidden" }}
+                            >
+                              <div className="timing-mark "></div>
+                            </div>
 
-      {Array.from({ length: numCols }).map((_, colIndex) => {
-        const num = numberedJson?.[rowIndex]?.[colIndex] ?? null;
-        let bgColor =
-          +result?.[rowIndex]?.[colIndex] >= +templates[0]?.layoutParameters?.iSensitivity &&
-          result?.[rowIndex]?.[colIndex] !== undefined
-            ? "black"
-            : "";
+                            {Array.from({ length: numCols }).map(
+                              (_, colIndex) => {
+                                const num =
+                                  numberedJson?.[rowIndex]?.[colIndex] ?? null;
+                                let bgColor =
+                                  +result?.[rowIndex]?.[colIndex] >=
+                                    +templates[0]?.layoutParameters
+                                      ?.iSensitivity &&
+                                  result?.[rowIndex]?.[colIndex] !== undefined
+                                    ? "black"
+                                    : "";
 
-          //   let bgColor =
-          //  Number(result?.[rowIndex]?.[colIndex]) >= templates[0].layoutParameters.iSensitivity
-         
-          //   ? "black"
-          //   : "";
-        // console.log(bgColor)
-        if (num || num === 0) {
-          bgColor = "lightgreen";
-        }
+                                //   let bgColor =
+                                //  Number(result?.[rowIndex]?.[colIndex]) >= templates[0].layoutParameters.iSensitivity
 
-        let fontColor =
-          result?.[rowIndex]?.[colIndex] != 0 &&
-          result?.[rowIndex]?.[colIndex] !== undefined
-            ? "lightgray"
-            : "black";
+                                //   ? "black"
+                                //   : "";
+                                // console.log(bgColor)
+                                if (num || num === 0) {
+                                  bgColor = "lightgreen";
+                                }
 
-        if (num || num === 0) {
-          fontColor = "black";
-        }
+                                let fontColor =
+                                  result?.[rowIndex]?.[colIndex] != 0 &&
+                                  result?.[rowIndex]?.[colIndex] !== undefined
+                                    ? "lightgray"
+                                    : "black";
 
-        return (
-          <div
-            key={colIndex}
-            style={{
-              backgroundColor:bgColor ,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: bubbleType === "circle" ? "12px" : "8px",
-              color: fontColor,
-              userSelect: "none",
-            }}
-            onMouseEnter={() => {
-              setActiveArea({ row: rowIndex, col: colIndex });
-            }}
-            className={`${bubbleType} ${
-              selected[`${rowIndex},${colIndex}`] ? "selected" : ""
-            }`}
-          >
-            {num}
-          </div>
-        );
-      })}
-    </div>
-  );
-})}
+                                if (num || num === 0) {
+                                  fontColor = "black";
+                                }
 
-
-
+                                return (
+                                  <div
+                                    key={colIndex}
+                                    style={{
+                                      backgroundColor: bgColor,
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      fontSize:
+                                        bubbleType === "circle"
+                                          ? "12px"
+                                          : "8px",
+                                      color: fontColor,
+                                      userSelect: "none",
+                                    }}
+                                    onMouseEnter={() => {
+                                      setActiveArea({
+                                        row: rowIndex,
+                                        col: colIndex,
+                                      });
+                                    }}
+                                    className={`${bubbleType} ${
+                                      selected[`${rowIndex},${colIndex}`]
+                                        ? "selected"
+                                        : ""
+                                    }`}
+                                  >
+                                    {num}
+                                  </div>
+                                );
+                              }
+                            )}
+                          </div>
+                        );
+                      })}
 
                       {currentSelectedField.map((data, index) => {
                         const imageWidth =

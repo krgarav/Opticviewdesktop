@@ -5,6 +5,7 @@ import convertToCamelCase from "services/lowerLetter";
 import StructureData from "services/dataSrtucture";
 import _ from "lodash";
 import resetJson from "data/resetJson";
+import { useLocation } from "react-router-dom";
 const initialData = {
   allTemplates: [],
   backendIP: "localhost",
@@ -32,21 +33,36 @@ function getBoundingBox(fields) {
 const DataProvider = (props) => {
   // Initialize dataState from localStorage if it exists, otherwise use initialData
   const [dataState, setDataState] = useState(initialData);
+  const location = useLocation();
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const storedData = sessionStorage.getItem("Template");
-      if (storedData) {
-        setDataState({
-          allTemplates: [
-            [StructureData(convertToCamelCase(JSON.parse(storedData)))],
-          ],
-          backendIP: "localhost",
-        });
-      }
-    }, 1000);
+    if (location.pathname.includes("edit")) {
+      const timer = setTimeout(() => {
+        const storedData = sessionStorage.getItem("Template");
+        if (!storedData) return;
 
-    return () => clearTimeout(timer); // Cleanup timeout
-  }, []);
+        const parsedData = JSON.parse(storedData);
+
+        if (Array.isArray(parsedData)) {
+          const extractedObj = parsedData[0];
+          // console.log(extractedObj);
+        console.log([[StructureData(convertToCamelCase(extractedObj))]])
+
+          setDataState({
+            allTemplates: [[StructureData(convertToCamelCase(extractedObj))]],
+            backendIP: "localhost",
+          });
+          sessionStorage.setItem("Template", JSON.stringify([StructureData(convertToCamelCase(extractedObj))]));
+        } else {
+          setDataState({
+            allTemplates: [[StructureData(convertToCamelCase(parsedData))]],
+            backendIP: "localhost",
+          });
+        }
+      }, 1000);
+
+      return () => clearTimeout(timer); // Cleanup timeout
+    }
+  }, [location.pathname]);
   const templateHandler = (template) => {
     let newIndex;
     setDataState((prevState) => {
