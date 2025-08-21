@@ -1924,9 +1924,9 @@ const EditDesignTemplate = () => {
                     className="top-row"
                     style={{
                       position: "",
-                      top: 120,
+                      // top: 120,
                       zIndex: 10,
-                      backgroundColor: "white",
+                      // backgroundColor: "white",
                     }}
                   >
                     <div className="corner"></div>
@@ -1941,6 +1941,7 @@ const EditDesignTemplate = () => {
                     id="grid-div"
                     style={{
                       border: "2px solid black",
+                      marginTop: "0.5rem",
                       paddingTop: "1rem",
                       paddingRight: "1.2rem",
                       paddingLeft: "1rem",
