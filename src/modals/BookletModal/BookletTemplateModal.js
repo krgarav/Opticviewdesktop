@@ -491,7 +491,7 @@ const BookletTemplateModal = (props) => {
           },
         },
       ];
-      localStorage.setItem("Template", JSON.stringify(templateData));
+      sessionStorage.setItem("Template", JSON.stringify(templateData));
       const index = dataCtx.setAllTemplates(templateData);
       setModalShow(false);
       navigate("/design-template");
