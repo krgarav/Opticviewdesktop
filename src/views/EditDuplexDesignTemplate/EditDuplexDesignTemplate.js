@@ -97,8 +97,7 @@ const EditDuplexDesignTemplate = () => {
   const [skewFieldValue, setSkewFieldValue] = useState(null);
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkFields, setLinkFields] = useState([]);
-  console.log(localData[0].layoutParameters);
-  console.log(dataCtx.allTemplates);
+
   const {
     totalColumns,
     images,
@@ -136,7 +135,7 @@ const EditDuplexDesignTemplate = () => {
   const isWideScreen = width >= 994;
   const blankRef = useRef(null);
   const gridRef = useRef(null);
-  
+
   useEffect(() => {
     if (showFront) {
       setCurrentExcelJsonFile(excelJsonFile);
@@ -1203,6 +1202,7 @@ const EditDuplexDesignTemplate = () => {
       setNoOfStepInRow(data?.rowStep);
       setNoOfStepInCol(data?.columnStep);
       setCustomValue(data?.customFieldValue);
+      setShowFront(data?.side === "front" ? true : false);
     } else if (selectedField?.fieldType === "formField") {
       const parameters = template[0].formFieldWindowParameters;
 
@@ -1218,7 +1218,7 @@ const EditDuplexDesignTemplate = () => {
       const data = index !== -1 ? parameters[index] : null;
 
       setCoordinateIndex(index);
-
+      console.log(data);
       setModalUpdate(true);
       setModalShow(true);
       setSelectedFieldType("formField");
@@ -1248,6 +1248,7 @@ const EditDuplexDesignTemplate = () => {
       setNoOfStepInCol(data?.columnStep);
       setCustomValue(data?.customFieldValue);
       setFormatting(data?.formatting);
+      setShowFront(data?.side === "front" ? true : false);
     } else if (selectedField?.fieldType === "skewMarkField") {
       const parameters = template[0].skewMarksWindowParameters;
       const index = parameters.findIndex((item) =>
@@ -1277,6 +1278,163 @@ const EditDuplexDesignTemplate = () => {
       setNoInCol(data?.columnNumber);
       setSkewOption(data?.dataRejection);
       setSkewFieldValue(data?.skewFieldValue);
+      setShowFront(data?.side === "front" ? true : false);
+    }
+  };
+
+  const handleMoveIndexClick = (selectedField, index) => {
+    // setCurrentSelectedCoordinate(selectedField);
+    // setSelectedField(selectedField);
+    setHighlightField(true);
+    // setSelection(() => ({
+    //   startRow: selectedField.startRow,
+    //   startCol: selectedField.startCol,
+    //   endRow: selectedField.endRow,
+    //   endCol: selectedField.endCol,
+    // }));
+    const formattedSelectedFile = {
+      "End Col": selectedField.endCol,
+      "End Row": selectedField.endRow + 1,
+      "Start Col": selectedField.startCol,
+      "Start Row": selectedField.startRow + 1,
+      fieldType: selectedField.fieldType,
+      name: selectedField.name,
+    };
+    // setOldCoordinates({ ...formattedSelectedFile });
+    // setSelectionIndex(index);
+    const template = dataCtx.allTemplates.find((item) => {
+      return item[0].layoutParameters?.key ?? "" === templateIndex;
+    });
+    // console.log(template);
+    if (selectedField?.fieldType === "idField") {
+      const data = template[0].layoutParameters;
+
+      // setSelectedFieldType("idField");
+      // setWindowNgOption(data?.ngAction);
+      // setMinimumMark(data?.minimumMark);
+      // setMaximumMark(data?.maximumMark);
+      // setReadingDirectionOption(data?.iDirection);
+      // setNoInRow(data?.rowNumber);
+      // setNoInCol(data?.columnNumber);
+      // setNoOfStepInRow(data?.rowStep);
+      // setNoOfStepInCol(data?.columnStep);
+      // setStartRowInput(formattedSelectedFile["Start Row"]);
+      // setEndRowInput(formattedSelectedFile["End Row"]);
+      // setStartColInput(formattedSelectedFile["Start Col"]);
+      // setEndColInput(formattedSelectedFile["End Col"]);
+      // setCoordinateIndex(index);
+    } else if (selectedField?.fieldType === "questionField") {
+      const parameters = template[0].questionsWindowParameters;
+
+      // Find the index of the matched object
+      const index = parameters.findIndex((item) =>
+        isEqual(item.Coordinate, formattedSelectedFile)
+      );
+      if (index === -1) {
+        alert("Coordinate Not Found");
+      }
+
+      // Get the matched object
+      const data = index !== -1 ? parameters[index] : null;
+
+      // setCoordinateIndex(index);
+
+      // setName(data?.windowName);
+      // setSelectedFieldType("questionField");
+      // setWindowNgOption(data?.ngAction);
+      // setMinimumMark(data?.iMaximumMarks);
+      // setMaximumMark(data?.iMinimumMarks);
+      // setNoInRow(data?.rowNumber);
+      // setNoInCol(data?.columnNumber);
+      // setStartRowInput(formattedSelectedFile["Start Row"]);
+      // setEndRowInput(formattedSelectedFile["End Row"]);
+      // setStartColInput(formattedSelectedFile["Start Col"]);
+      // setEndColInput(formattedSelectedFile["End Col"]);
+      // setReadingDirectionOption(data?.iDirection);
+      // setType(data?.iType);
+      // setNumberOfField(data?.totalNumberOfFields);
+      // setFieldType(data?.numericOrAlphabets);
+      // setMultiple(data?.multipleAllow);
+      // setMultipleValue(data?.multipleValue);
+      // setBlank(data?.blankAllow);
+      // setBlankValue(data?.blankValue);
+      // setNoOfStepInRow(data?.rowStep);
+      // setNoOfStepInCol(data?.columnStep);
+      // setCustomValue(data?.customFieldValue);
+      setShowFront(data?.side === "front" ? true : false);
+    } else if (selectedField?.fieldType === "formField") {
+      const parameters = template[0].formFieldWindowParameters;
+
+      const index = parameters.findIndex((item) => {
+        return isEqual(item.Coordinate, formattedSelectedFile);
+      });
+
+      if (index === -1) {
+        alert("Coordinate Not Found");
+      }
+
+      // Get the matched object
+      const data = index !== -1 ? parameters[index] : null;
+
+      // setCoordinateIndex(index);
+      // setSelectedFieldType("formField");
+      // setName(data?.windowName);
+      // setWindowNgOption(data?.ngAction);
+      // setMinimumMark(data?.iMaximumMarks);
+
+      // setMaximumMark(data?.iMinimumMarks);
+      // setNoInRow(data?.rowNumber);
+      // setNoInCol(data?.columnNumber);
+      // setStartRowInput(formattedSelectedFile["Start Row"] - 1);
+      // setEndRowInput(formattedSelectedFile["End Row"] - 1);
+      // setStartColInput(formattedSelectedFile["Start Col"]);
+      // setEndColInput(formattedSelectedFile["End Col"]);
+      // setReadingDirectionOption(data?.iDirection);
+      // setType(data?.iType);
+      // // setOption(data?.iOption);
+      // setNumberOfField(data?.totalNumberOfFields);
+      // setFieldType(data?.numericOrAlphabets);
+      // setMultiple(data?.multipleAllow);
+      // setMultipleValue(data?.multipleValue);
+      // setBlank(data?.blankAllow);
+      // setBlankValue(data?.blankValue);
+      // setSuffix(data?.suffix);
+      // setPrefix(data?.prefix);
+      // setNoOfStepInRow(data?.rowStep);
+      // setNoOfStepInCol(data?.columnStep);
+      // setCustomValue(data?.customFieldValue);
+      // setFormatting(data?.formatting);
+      setShowFront(data?.side === "front" ? true : false);
+    } else if (selectedField?.fieldType === "skewMarkField") {
+      const parameters = template[0].skewMarksWindowParameters;
+      const index = parameters.findIndex((item) =>
+        isEqual(item.Coordinate, formattedSelectedFile)
+      );
+
+      // Get the matched object
+      const data = index !== -1 ? parameters[index] : null;
+      // setCoordinateIndex(index);
+      // setModalUpdate(true);
+      // setModalShow(true);
+      // setSelectedFieldType("skewMarkField");
+      // setStartRowInput(formattedSelectedFile["Start Row"]);
+      // setEndRowInput(formattedSelectedFile["End Row"]);
+      // setStartColInput(formattedSelectedFile["Start Col"]);
+      // setEndColInput(formattedSelectedFile["End Col"]);
+      // setNumberOfField(data?.totalNumberOfFields);
+      // setNoOfStepInRow(data?.rowStep);
+      // setNoOfStepInCol(data?.columnStep);
+      // setName(data?.windowName);
+      // setWindowNgOption(data?.ngAction);
+      // setMinimumMark(data?.iMaximumMarks);
+      // setMaximumMark(data?.iMinimumMarks);
+      // setType(data?.iType);
+      // setReadingDirectionOption(data?.iDirection);
+      // setNoInRow(data?.rowNumber);
+      // setNoInCol(data?.columnNumber);
+      // setSkewOption(data?.dataRejection);
+      // setSkewFieldValue(data?.skewFieldValue);
+      setShowFront(data?.side === "front" ? true : false);
     }
   };
   const handleFillData = (selectedField, index) => {
@@ -2105,6 +2263,7 @@ const EditDuplexDesignTemplate = () => {
             outline: "none",
             color: "#212529",
           }}
+          value={showFront ? "Front" : "Back"}
           defaultValue="Front"
           onChange={(e) => {
             if (e.target.value === "Front") {
@@ -2660,7 +2819,11 @@ const EditDuplexDesignTemplate = () => {
             handleEyeClick={handleEyeClick}
             linkFields={linkFields}
             selected={selectedCoordinates}
-            handleSingleSelect={(item) => setCurrentSelectedCoordinate(item)}
+            handleSingleSelect={(item, indexOfField) => {
+              // console.log(selectedCoordinates)
+              handleMoveIndexClick(item, indexOfField);
+              setCurrentSelectedCoordinate(item);
+            }}
             currentSelectedCoordinate={currentSelectedCoordinate}
           />
         </div>

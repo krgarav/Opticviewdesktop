@@ -204,8 +204,16 @@ export default function ExcelLikeTable(props) {
   };
   const handleSingleClick = (item, colIndex, rowIndex) => {
     setSelectedCell([{ row: rowIndex, col: colIndex }]); // ✅ Wrap in array
+ const matchedField = findFieldDetailsUsingObj(item.selectedField);
+ 
+    if (matchedField) {
+      setSelectedCell([{ row: rowIndex, col: colIndex }]);
 
-    props.handleSingleSelect(item.selectedField);
+      const indexOfField = fields.findIndex((field) =>
+        _.isEqual(field, matchedField)
+      );
+      props.handleSingleSelect(item.selectedField,indexOfField);
+    }
   };
   const handleDragStart = (cell, rowIndex, colIndex) => {
     setDraggedCell({ cell, rowIndex, colIndex });
