@@ -31,6 +31,7 @@ export const bubbleData = [
 export const scannerData = [
   { id: 1, name: "SR 3500H", icon: <MdOutlineScanner /> },
   { id: 2, name: "SR 8000H", icon: <MdScanner /> },
+   { id: 3, name: "SR 55D", icon: <MdScanner /> },
   
 ];
 
