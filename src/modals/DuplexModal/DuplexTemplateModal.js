@@ -557,9 +557,9 @@ const DuplexTemplateModal = (props) => {
     }
     try {
       const response = await axios.post(
-        `http://localhost:5000/GetSampleData/${scanner?.id}` // Use the selected scanner's id
+        `http://localhost:5000/GetSampleData?id=${scanner?.id}&type=${"Duplex"} ` // Use the selected scanner's id
       );
-      const { data, images } = response.data;
+      const { data,backData, images } = response.data;
       const jsonData = data;
       const correctedJson = jsonData
         .map((item) => {
@@ -580,6 +580,24 @@ const DuplexTemplateModal = (props) => {
       setNumberOfFrontSideColumn(Column); //setting number of columns in excel
       setExcelJsonFile(correctedJson);
       setImages(images);
+
+
+       const correctedJson2 = backData
+        .map((item) => {
+          const filteredItem = Object.fromEntries(
+            Object.entries(item).filter(([key, value]) => key !== "")
+          );
+
+          // Only include the item if it's not empty
+          return Object.keys(filteredItem).length > 0 ? filteredItem : null;
+        })
+        .filter((item) => item !== null); // Remove nulls from the resulting array
+      const Row1 = correctedJson2.length;
+      const Column1 = Object.keys(correctedJson2[1]).filter(
+        (item) => item !== ""
+      ).length;
+setBackExcelJsonFile(correctedJson2)
+
     } catch (error) {
       console.log(error);
       // toast.error(error.message);

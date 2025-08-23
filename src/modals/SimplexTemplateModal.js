@@ -569,7 +569,6 @@ const SimplexTemplateModal = (props) => {
       const Column = Object.keys(correctedJson[1]).filter(
         (item) => item !== ""
       ).length;
-
       setNumberOfLines(Row); //setting number of rows in excel
       setNumberOfFrontSideColumn(Column); //setting number of columns in excel
       setExcelJsonFile(correctedJson);
