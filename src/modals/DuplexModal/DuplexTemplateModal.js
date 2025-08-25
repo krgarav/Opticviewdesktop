@@ -488,7 +488,7 @@ const DuplexTemplateModal = (props) => {
             dataReadDirection: direction?.id,
             idStatus: idPresent.id,
             iReject: 0,
-            isBooklet: true,
+            isBooklet: false,
             templateType: props.title,
             idMarksPattern: "000000000000000000000000",
             excelJsonFile: excelJsonFile,
@@ -537,9 +537,9 @@ const DuplexTemplateModal = (props) => {
         },
       ];
       sessionStorage.setItem("Template", JSON.stringify(templateData));
-    
+
       const index = dataCtx.setAllTemplates(templateData);
-    
+
       setModalShow(false);
       navigate("/duplex-design-template");
     } catch (error) {
@@ -557,9 +557,11 @@ const DuplexTemplateModal = (props) => {
     }
     try {
       const response = await axios.post(
-        `http://localhost:5000/GetSampleData?id=${scanner?.id}&type=${"Duplex"} ` // Use the selected scanner's id
+        `http://localhost:5000/GetSampleData?id=${
+          scanner?.id
+        }&type=duplex` // Use the selected scanner's id
       );
-      const { data,backData, images } = response.data;
+      const { data, backData, images } = response.data;
       const jsonData = data;
       const correctedJson = jsonData
         .map((item) => {
@@ -581,8 +583,7 @@ const DuplexTemplateModal = (props) => {
       setExcelJsonFile(correctedJson);
       setImages(images);
 
-
-       const correctedJson2 = backData
+      const correctedJson2 = backData
         .map((item) => {
           const filteredItem = Object.fromEntries(
             Object.entries(item).filter(([key, value]) => key !== "")
@@ -596,8 +597,7 @@ const DuplexTemplateModal = (props) => {
       const Column1 = Object.keys(correctedJson2[1]).filter(
         (item) => item !== ""
       ).length;
-setBackExcelJsonFile(correctedJson2)
-
+      setBackExcelJsonFile(correctedJson2);
     } catch (error) {
       console.log(error);
       // toast.error(error.message);
