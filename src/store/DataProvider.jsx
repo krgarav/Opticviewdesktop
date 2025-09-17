@@ -6,6 +6,49 @@ import StructureData from "services/dataSrtucture";
 import _ from "lodash";
 import resetJson from "data/resetJson";
 import { useLocation } from "react-router-dom";
+
+function updateCoordinates(data) {
+  // ✅ Deep copy using JSON
+  const copiedData = JSON.parse(JSON.stringify(data));
+
+  const num = copiedData.layoutParameters.backExcelJsonFile.length;
+
+  function updateFields(fields) {
+    if (!Array.isArray(fields)) return fields;
+
+    return fields.map((field) => {
+      if (field.side === "back") {
+        return {
+          ...field,
+          rowStart: field.rowStart - num,
+          Coordinate: {
+            ...field.Coordinate,
+            "Start Row": field.Coordinate["Start Row"] - num,
+            "End Row": field.Coordinate["End Row"] - num,
+          },
+        };
+      }
+      return field;
+    });
+  }
+
+  // ✅ Update both formFieldWindowParameters and questionsWindowParameters
+  if (copiedData) {
+    if (Array.isArray(copiedData.formFieldWindowParameters)) {
+      copiedData.formFieldWindowParameters = updateFields(
+        copiedData.formFieldWindowParameters
+      );
+    }
+    if (Array.isArray(copiedData.questionsWindowParameters)) {
+      copiedData.questionsWindowParameters = updateFields(
+        copiedData.questionsWindowParameters
+      );
+    }
+  }
+
+  return copiedData;
+}
+
 const initialData = {
   allTemplates: [],
   backendIP: "localhost",
@@ -44,14 +87,22 @@ const DataProvider = (props) => {
 
         if (Array.isArray(parsedData)) {
           const extractedObj = parsedData[0];
-          // console.log(extractedObj);
-        console.log([[StructureData(convertToCamelCase(extractedObj))]])
 
+          // console.log(updateCoordinates(StructureData(convertToCamelCase(extractedObj))));
+          const obj = StructureData(convertToCamelCase(extractedObj));
+          const deepCopy = JSON.parse(JSON.stringify(obj));
+          console.log(deepCopy)
+          console.log(updateCoordinates(deepCopy));
+          
+          // console.log(updateCoordinates(StructureData(convertToCamelCase(extractedObj))));
           setDataState({
             allTemplates: [[StructureData(convertToCamelCase(extractedObj))]],
             backendIP: "localhost",
           });
-          sessionStorage.setItem("Template", JSON.stringify([StructureData(convertToCamelCase(extractedObj))]));
+          sessionStorage.setItem(
+            "Template",
+            JSON.stringify([StructureData(convertToCamelCase(extractedObj))])
+          );
         } else {
           setDataState({
             allTemplates: [[StructureData(convertToCamelCase(parsedData))]],

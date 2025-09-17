@@ -511,7 +511,7 @@ const BookletTemplateModal = (props) => {
     }
     try {
       const response = await axios.post(
-        `http://localhost:5000/GetSampleDataid=${scanner?.id}&type=booklet` // Use the selected scanner's id
+        `http://localhost:5000/GetSampleDataid=${scanner?.id}&type=bookletw` // Use the selected scanner's id
       );
       const { data, images } = response.data;
       const jsonData = data;
