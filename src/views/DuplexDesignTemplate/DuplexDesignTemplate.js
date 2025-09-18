@@ -3709,10 +3709,10 @@ const DuplexDesignTemplate = () => {
           id="field-formatting"
           type="text"
           className="form-control"
-          placeholder="Enter formatting..."
+         
           value={formatting}
           onChange={(e) => setFormatting(e.target.value)}
-          style={{ maxWidth: "300px" }} // optional for better alignment
+          
         />
       )}
     </div>
