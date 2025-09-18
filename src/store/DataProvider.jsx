@@ -91,21 +91,25 @@ const DataProvider = (props) => {
           // console.log(updateCoordinates(StructureData(convertToCamelCase(extractedObj))));
           const obj = StructureData(convertToCamelCase(extractedObj));
           const deepCopy = JSON.parse(JSON.stringify(obj));
-          console.log(deepCopy)
-          console.log(updateCoordinates(deepCopy));
-          
+
+          const temp = [[updateCoordinates(deepCopy)]];
+          const sessionStorageData = [updateCoordinates(deepCopy)];
           // console.log(updateCoordinates(StructureData(convertToCamelCase(extractedObj))));
           setDataState({
-            allTemplates: [[StructureData(convertToCamelCase(extractedObj))]],
+            allTemplates: temp,
             backendIP: "localhost",
           });
           sessionStorage.setItem(
             "Template",
-            JSON.stringify([StructureData(convertToCamelCase(extractedObj))])
+            JSON.stringify(sessionStorageData)
           );
         } else {
+          const obj = StructureData(convertToCamelCase(parsedData));
+          const deepCopy = JSON.parse(JSON.stringify(obj));
+
+          const temp = [[updateCoordinates(deepCopy)]];
           setDataState({
-            allTemplates: [[StructureData(convertToCamelCase(parsedData))]],
+            allTemplates: temp,
             backendIP: "localhost",
           });
         }

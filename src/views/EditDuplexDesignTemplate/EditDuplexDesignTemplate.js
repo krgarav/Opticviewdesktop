@@ -33,6 +33,64 @@ import CustomDraggableModal from "views/test";
 import skewQuestionNameGenerator from "helper/skewQuestionNameGenerator";
 import _ from "lodash";
 
+
+
+function updateFormFieldCoordinates(data, num) {
+  // Helper to update a field list
+  function updateFields(fields) {
+    if (!Array.isArray(fields)) return fields;
+
+    return fields.map((field) => {
+      if (field.side === "back") {
+        return {
+          ...field,
+          rowStart: field.rowStart + num,
+          formFieldCoordinates: {
+            ...field.formFieldCoordinates,
+            start: field.formFieldCoordinates.start + num,
+            end: field.formFieldCoordinates.end + num,
+          },
+        };
+      }
+      return field;
+    });
+  }
+
+  function updateQuestionFields(fields) {
+    if (!Array.isArray(fields)) return fields;
+
+    return fields.map((field) => {
+      if (field.side === "back") {
+        return {
+          ...field,
+          rowStart: field.rowStart + num,
+          questionWindowCoordinates: {
+            ...field.questionWindowCoordinates,
+            start: field.questionWindowCoordinates.start + num,
+            end: field.questionWindowCoordinates.end + num,
+          },
+        };
+      }
+      return field;
+    });
+  }
+
+  // Update both formFieldWindowParameters and questionFieldWindowParameters if present
+  if (data) {
+    if (Array.isArray(data.formFieldWindowParameters)) {
+      data.formFieldWindowParameters = updateFields(
+        data.formFieldWindowParameters
+      );
+    }
+    if (Array.isArray(data.questionsWindowParameters)) {
+      data.questionsWindowParameters = updateQuestionFields(
+        data.questionsWindowParameters
+      );
+    }
+  }
+
+  return data;
+}
 const EditDuplexDesignTemplate = () => {
   const [selected, setSelected] = useState({});
   const [selection, setSelection] = useState(null);
@@ -1743,10 +1801,14 @@ const EditDuplexDesignTemplate = () => {
       imageCroppingDTO: imageCroppingDTO ? imageCroppingDTO : [],
       linkedCoordinates,
     };
+    const formattedData = updateFormFieldCoordinates(
+      fullRequestData,
+      backExcelJsonFile.length
+    );
     handleCancel();
     sessionStorage.setItem(
       "StructuredTemplate",
-      JSON.stringify(fullRequestData)
+      JSON.stringify(formattedData)
     );
   };
   const handleImage = (images) => {

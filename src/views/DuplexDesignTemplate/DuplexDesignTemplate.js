@@ -50,7 +50,7 @@ function updateFormFieldCoordinates(data, num) {
           formFieldCoordinates: {
             ...field.formFieldCoordinates,
             start: field.formFieldCoordinates.start + num,
-            left: field.formFieldCoordinates.left + num,
+            end: field.formFieldCoordinates.end + num,
           },
         };
       }
@@ -69,7 +69,7 @@ function updateFormFieldCoordinates(data, num) {
           questionWindowCoordinates: {
             ...field.questionWindowCoordinates,
             start: field.questionWindowCoordinates.start + num,
-            left: field.questionWindowCoordinates.left + num,
+            end: field.questionWindowCoordinates.end + num,
           },
         };
       }
@@ -1801,6 +1801,8 @@ const DuplexDesignTemplate = () => {
       imageCroppingDTO: imageCroppingDTO ? imageCroppingDTO : [],
       linkedCoordinates,
     };
+// console.log(fullRequestData)
+// return
     const formattedData = updateFormFieldCoordinates(
       fullRequestData,
       backExcelJsonFile.length
