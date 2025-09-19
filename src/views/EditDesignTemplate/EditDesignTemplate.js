@@ -113,6 +113,7 @@ const EditDesignTemplate = () => {
   );
   const [highlightField, setHighlightField] = useState(false);
   const [formatting, setFormatting] = useState("");
+   const [enableFormatting, setEnableFormatting] = useState(false);
   const [currentSelectedCoordinate, setCurrentSelectedCoordinate] =
     useState(null);
   const [scale, setScale] = useState(1);
@@ -132,9 +133,21 @@ const EditDesignTemplate = () => {
   const isWideScreen = width >= 994;
   const blankRef = useRef(null);
   const gridRef = useRef(null);
-  useEffect(() => {
-    setFormatting(numberOfField === "" ? "" : "X".repeat(numberOfField));
-  }, [numberOfField]);
+   useEffect(() => {
+   if (!enableFormatting) {
+     setFormatting(""); // if formatting is disabled → clear it
+     return;
+   }
+ 
+   if (!noInCol || !noOfStepInCol) {
+     setFormatting(""); // if inputs are invalid → clear it
+     return;
+   }
+ 
+   const totalVisibleColumn = Math.ceil(noInCol / noOfStepInCol);
+ 
+   setFormatting(totalVisibleColumn > 0 ? "X".repeat(totalVisibleColumn) : "");
+ }, [noInCol, noOfStepInCol, enableFormatting]);
   useEffect(() => {
     if (modalShow) {
       if (startRowInput && endRowInput && modalShow) {
@@ -2990,7 +3003,7 @@ const EditDesignTemplate = () => {
                   </div>
                 </Row>
               )}
-              {selectedFieldType === "formField" && (
+                    {selectedFieldType === "formField" && (
                 <Row className="mb-2">
                   <label
                     htmlFor="field-formatting"
@@ -2999,18 +3012,37 @@ const EditDesignTemplate = () => {
                   >
                     Field Formatting
                   </label>
-                  <div className="col-10">
-                    <input
-                      id="field-formatting"
-                      type="text"
-                      className="form-control"
-                      value={formatting}
-                      // value={numberOfField === "" ? "" : "X".repeat(numberOfField)}
-                      onChange={(e) => {
-                        setFormatting(e.target.value);
-                      }}
-                      required
-                    />
+                  <div className="col-10 d-flex align-items-center gap-3">
+                    {/* Switch toggle */}
+                    <div className="form-check form-switch">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="enable-formatting"
+                        checked={enableFormatting}
+                        onChange={(e) => setEnableFormatting(e.target.checked)}
+                      />
+                      <label
+                        className="form-check-label ms-2"
+                        htmlFor="enable-formatting"
+                        style={{ whiteSpace: "nowrap" }}
+                      >
+                        Enable
+                      </label>
+                    </div>
+              
+                    {/* Show input ONLY if enabled */}
+                    {enableFormatting && (
+                      <input
+                        id="field-formatting"
+                        type="text"
+                        className="form-control"
+                       
+                        value={formatting}
+                        onChange={(e) => setFormatting(e.target.value)}
+                        
+                      />
+                    )}
                   </div>
                 </Row>
               )}

@@ -189,6 +189,7 @@ const EditDuplexDesignTemplate = () => {
   const [formatting, setFormatting] = useState("");
   const [showFront, setShowFront] = useState(true);
   const [currentSelectedField, setCurrentSelectedField] = useState([]);
+   const [enableFormatting, setEnableFormatting] = useState(false);
   const { width } = useWindowSize();
   const isWideScreen = width >= 994;
   const blankRef = useRef(null);
@@ -206,9 +207,24 @@ const EditDuplexDesignTemplate = () => {
     }
   }, [showFront, excelJsonFile, backExcelJsonFile]);
 
-  useEffect(() => {
-    setFormatting(numberOfField === "" ? "" : "X".repeat(numberOfField));
-  }, [numberOfField]);
+ 
+
+
+    useEffect(() => {
+    if (!enableFormatting) {
+      setFormatting(""); // if formatting is disabled → clear it
+      return;
+    }
+  
+    if (!noInCol || !noOfStepInCol) {
+      setFormatting(""); // if inputs are invalid → clear it
+      return;
+    }
+  
+    const totalVisibleColumn = Math.ceil(noInCol / noOfStepInCol);
+  
+    setFormatting(totalVisibleColumn > 0 ? "X".repeat(totalVisibleColumn) : "");
+  }, [noInCol, noOfStepInCol, enableFormatting]);
 
   useEffect(() => {
     if (modalShow) {
@@ -3653,30 +3669,49 @@ const EditDuplexDesignTemplate = () => {
                   </div>
                 </Row>
               )}
-              {selectedFieldType === "formField" && (
-                <Row className="mb-2">
-                  <label
-                    htmlFor="field-formatting"
-                    className="col-md-2 col-form-label"
-                    style={{ fontSize: "0.8rem" }}
-                  >
-                    Field Formatting
-                  </label>
-                  <div className="col-10">
-                    <input
-                      id="field-formatting"
-                      type="text"
-                      className="form-control"
-                      value={formatting}
-                      // value={numberOfField === "" ? "" : "X".repeat(numberOfField)}
-                      onChange={(e) => {
-                        setFormatting(e.target.value);
-                      }}
-                      required
-                    />
-                  </div>
-                </Row>
-              )}
+                   {selectedFieldType === "formField" && (
+               <Row className="mb-2">
+                 <label
+                   htmlFor="field-formatting"
+                   className="col-md-2 col-form-label"
+                   style={{ fontSize: "0.8rem" }}
+                 >
+                   Field Formatting
+                 </label>
+                 <div className="col-10 d-flex align-items-center gap-3">
+                   {/* Switch toggle */}
+                   <div className="form-check form-switch">
+                     <input
+                       className="form-check-input"
+                       type="checkbox"
+                       id="enable-formatting"
+                       checked={enableFormatting}
+                       onChange={(e) => setEnableFormatting(e.target.checked)}
+                     />
+                     <label
+                       className="form-check-label ms-2"
+                       htmlFor="enable-formatting"
+                       style={{ whiteSpace: "nowrap" }}
+                     >
+                       Enable
+                     </label>
+                   </div>
+             
+                   {/* Show input ONLY if enabled */}
+                   {enableFormatting && (
+                     <input
+                       id="field-formatting"
+                       type="text"
+                       className="form-control"
+                      
+                       value={formatting}
+                       onChange={(e) => setFormatting(e.target.value)}
+                       
+                     />
+                   )}
+                 </div>
+               </Row>
+             )}
 
               {(selectedFieldType === "questionField" ||
                 selectedFieldType === "formField") &&
