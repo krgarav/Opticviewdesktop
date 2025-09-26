@@ -578,7 +578,7 @@ const EditDesignTemplate = () => {
     setName("");
     setHighlightField(false);
   };
-  const validateFormField = () => {
+    const validateFormField = () => {
     const errors = {
       name: "Name Field can not be empty",
       multiple: "Please select multiple",
@@ -592,13 +592,13 @@ const EditDesignTemplate = () => {
       noOfStepInCol: "Total number of step in a col cannot be empty",
       readingDirectionOption: "Please select reading direction",
       type: "Please select type",
-      // option: "Please select option",
       numberOfField: "Total field cannot be empty",
       fieldType: "Please select field type",
     };
-
+  
     for (let [field, errorMsg] of Object.entries(errors)) {
-      if (!eval(field)) {
+      const value = eval(field); // ← still dangerous, but keeping your structure
+      if (value === null || value === undefined || value === "") {
         toast.error(errorMsg);
         return false;
       }
@@ -1344,9 +1344,9 @@ const EditDesignTemplate = () => {
       barcodeData,
       imageData,
       printingData,
-      questionsWindowParameters,
-      skewMarksWindowParameters,
-      formFieldWindowParameters,
+      questionsWindowParameters : questionsWindowParameters ? questionsWindowParameters : [],
+      skewMarksWindowParameters : skewMarksWindowParameters ? skewMarksWindowParameters : [],
+      formFieldWindowParameters : formFieldWindowParameters ? formFieldWindowParameters : [],
       imageCroppingDTO: imageCroppingDTO ? imageCroppingDTO : [],
       linkedCoordinates,
     };

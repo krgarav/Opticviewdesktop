@@ -644,32 +644,33 @@ const DesignTemplate = () => {
   };
 
   const validateFormField = () => {
-    const errors = {
-      name: "Name Field can not be empty",
-      multiple: "Please select multiple",
-      blank: "Please select blank",
-      windowNgOption: "Please select window Ng",
-      minimumMark: "Minimum mark cannot be empty",
-      maximumMark: "Maximum mark cannot be empty",
-      noInRow: "Total number in row cannot be empty",
-      noOfStepInRow: "Total number of step in a row cannot be empty",
-      noInCol: "Total number in col cannot be empty",
-      noOfStepInCol: "Total number of step in a col cannot be empty",
-      readingDirectionOption: "Please select reading direction",
-      type: "Please select type",
-      // option: "Please select option",
-      numberOfField: "Total field cannot be empty",
-      fieldType: "Please select field type",
-    };
-
-    for (let [field, errorMsg] of Object.entries(errors)) {
-      if (!eval(field)) {
-        toast.error(errorMsg);
-        return false;
-      }
-    }
-    return true;
+  const errors = {
+    name: "Name Field can not be empty",
+    multiple: "Please select multiple",
+    blank: "Please select blank",
+    windowNgOption: "Please select window Ng",
+    minimumMark: "Minimum mark cannot be empty",
+    maximumMark: "Maximum mark cannot be empty",
+    noInRow: "Total number in row cannot be empty",
+    noOfStepInRow: "Total number of step in a row cannot be empty",
+    noInCol: "Total number in col cannot be empty",
+    noOfStepInCol: "Total number of step in a col cannot be empty",
+    readingDirectionOption: "Please select reading direction",
+    type: "Please select type",
+    numberOfField: "Total field cannot be empty",
+    fieldType: "Please select field type",
   };
+
+  for (let [field, errorMsg] of Object.entries(errors)) {
+    const value = eval(field); // ← still dangerous, but keeping your structure
+    if (value === null || value === undefined || value === "") {
+      toast.error(errorMsg);
+      return false;
+    }
+  }
+  return true;
+};
+
 
   const validateSkewField = () => {
     const errors = {
@@ -1395,9 +1396,9 @@ const DesignTemplate = () => {
       barcodeData,
       imageData,
       printingData,
-      questionsWindowParameters,
-      skewMarksWindowParameters,
-      formFieldWindowParameters,
+      questionsWindowParameters : questionsWindowParameters? questionsWindowParameters : [],
+      skewMarksWindowParameters : skewMarksWindowParameters ? skewMarksWindowParameters : [],
+      formFieldWindowParameters : formFieldWindowParameters ? formFieldWindowParameters : [],
       imageCroppingDTO: imageCroppingDTO ? imageCroppingDTO : [],
       linkedCoordinates,
     };

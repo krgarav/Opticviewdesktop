@@ -46,7 +46,7 @@ function updateFormFieldCoordinates(data, num) {
       if (field.side === "back") {
         return {
           ...field,
-          rowStart: field.rowStart + num,
+          rowStart: field.rowStart + num+1,
           formFieldCoordinates: {
             ...field.formFieldCoordinates,
             start: field.formFieldCoordinates.start + num,
@@ -65,7 +65,7 @@ function updateFormFieldCoordinates(data, num) {
       if (field.side === "back") {
         return {
           ...field,
-          rowStart: field.rowStart + num,
+          rowStart: field.rowStart + num+1,
           questionWindowCoordinates: {
             ...field.questionWindowCoordinates,
             start: field.questionWindowCoordinates.start + num,
