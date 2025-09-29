@@ -574,13 +574,22 @@ const SimplexTemplateModal = (props) => {
       setExcelJsonFile(correctedJson);
       setImages(images);
     } catch (error) {
-      console.log(error);
-      // toast.error(error.message);
+      console.error("Error caught:", error);
+
+      const serverMessage = error?.response?.data?.message;
+      const genericMessage = error?.message;
+
+      if (serverMessage) {
+        toast.error(serverMessage);
+      } else if (genericMessage) {
+        toast.error(genericMessage);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
     } finally {
       setScannerLoading(false);
     }
   };
- 
 
   const systemHandler = () => {
     // document.getElementById("formFile").click();
@@ -1122,7 +1131,6 @@ const SimplexTemplateModal = (props) => {
                           />
                         </div>
                       </Row>
-                     
 
                       <Row className="mb-3">
                         <label
@@ -1164,13 +1172,12 @@ const SimplexTemplateModal = (props) => {
                             >
                               <Slider
                                 getAriaLabel={() => "Sensitivity range"}
-                                value={17-value}
-                                onChange={(event, newValue) =>{
-                                  const val = 17 - newValue
-                                  handleChange(val)
-                                }
-                                
-                                }
+                                value={17 - value}
+                                onChange={(event, newValue) => {
+                                  const val = 17 - newValue;
+                                  handleChange(val);
+                                  setDifference(17 - val);
+                                }}
                                 valueLabelDisplay="auto"
                                 min={1}
                                 max={16}
@@ -1242,7 +1249,7 @@ const SimplexTemplateModal = (props) => {
                                 overflow: "hidden",
                               }}
                             >
-                              <ShadesOfGrey type="normal" />
+                              <ShadesOfGrey type="reverse" />
                             </div>
                             <Box
                               sx={{
@@ -1251,31 +1258,12 @@ const SimplexTemplateModal = (props) => {
                                 alignSelf: "center",
                               }}
                             >
-                              {/* <Slider
-                                getAriaLabel={() => "Sensitivity range"}
-                                value={value}
-                                onChange={handleChange}
-                                valueLabelDisplay="auto"
-                                min={0} // Ensure minimum value is 0
-                                max={16}
-                                disableSwap
-                                size="large"
-                                color="PRIMARY"
-                                slots={{
-                                  ValueLabel: (props) => (
-                                    <CustomTooltip
-                                      {...props}
-                                      shade={getShadeFromValue(value)} // Pass the shade based on the value
-                                    />
-                                  ),
-                                }}
-                              /> */}
                               <Slider
                                 getAriaLabel={() => "Sensitivity range"}
                                 value={difference} // should be a single number
-                                onChange={(event, newValue) =>
-                                  setDifference(newValue)
-                                } // handle as a number
+                                onChange={(event, newValue) => {
+                                  setDifference(newValue);
+                                }} // handle as a number
                                 valueLabelDisplay="auto"
                                 min={1}
                                 max={16}
@@ -1313,7 +1301,6 @@ const SimplexTemplateModal = (props) => {
                             </span>
                           )}
                         </div>
-                        
                       </Row>
                       {idPresent?.id !== "not present" && (
                         <Row className="mb-2">
@@ -1571,9 +1558,7 @@ const SimplexTemplateModal = (props) => {
                             <input
                               type="text"
                               className="form-control text-end"
-                              value={
-                                startPosition 
-                              }
+                              value={startPosition}
                               disabled
                             />
                             <div className="input-group-append">
@@ -2175,29 +2160,32 @@ const SimplexTemplateModal = (props) => {
                                 Color
                               </label>
                             </div>
- <div className="form-check form-check-inline mr-3">
-    <input
-      className="form-check-input"
-      type="radio"
-      name="colorType"
-      id="blackwhite"
-      value="blackwhite"
-      checked={colorType === "blackwhite"}
-      onChange={(e) => setColorType(e.target.value)}
-    />
-    <label className="form-check-label" htmlFor="blackwhite">
-      Black & White
-    </label>
-  </div>
+                            <div className="form-check form-check-inline mr-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="colorType"
+                                id="blackwhite"
+                                value="blackwhite"
+                                checked={colorType === "blackwhite"}
+                                onChange={(e) => setColorType(e.target.value)}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="blackwhite"
+                              >
+                                Black & White
+                              </label>
+                            </div>
                             <div>
                               <img
-                               src={
-        colorType === "color"
-          ? "/colored.webp"
-          : colorType === "blackwhite"
-          ? "/grayscale.webp"
-          : "/grayscale.webp"
-      }
+                                src={
+                                  colorType === "color"
+                                    ? "/colored.webp"
+                                    : colorType === "blackwhite"
+                                    ? "/grayscale.webp"
+                                    : "/grayscale.webp"
+                                }
                                 width={100}
                                 height={100}
                                 alt={colorType}

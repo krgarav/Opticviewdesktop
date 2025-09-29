@@ -133,6 +133,13 @@ const EditDesignTemplate = () => {
   const isWideScreen = width >= 994;
   const blankRef = useRef(null);
   const gridRef = useRef(null);
+
+
+
+   useEffect(() => {
+    setMaximumMark(Math.max(noInCol, noInRow));
+  }, [noInCol, noInRow]);
+  
    useEffect(() => {
    if (!enableFormatting) {
      setFormatting(""); // if formatting is disabled → clear it
@@ -148,18 +155,20 @@ const EditDesignTemplate = () => {
  
    setFormatting(totalVisibleColumn > 0 ? "X".repeat(totalVisibleColumn) : "");
  }, [noInCol, noOfStepInCol, enableFormatting]);
-  useEffect(() => {
+ useEffect(() => {
+   
     if (modalShow) {
       if (startRowInput && endRowInput && modalShow) {
         const total = +endRowInput - +startRowInput + 1;
-        setNoInRow(total);
+        // console.log(Math.ceil(total/noOfStepInRow))
+        setNoInRow(Math.ceil(total/noOfStepInRow));
       }
       if (startColInput && endColInput && modalShow) {
         const total = +endColInput - +startColInput + 1;
-        setNoInCol(total);
+        setNoInCol(Math.ceil(total/noOfStepInCol));
       }
     }
-  }, [modalShow]);
+  }, [modalShow,noOfStepInCol,noOfStepInRow,endColInput,endRowInput,startColInput,startRowInput]);
   useEffect(() => {
     const template = dataCtx.allTemplates;
 
@@ -402,12 +411,12 @@ const EditDesignTemplate = () => {
             })
             .filter(Boolean); // Removes null entries
 
-          console.log(idField);
+         
           let coordinateOfIdField = idField?.layoutCoordinates
             ? idField?.layoutCoordinates
             : {};
 
-          console.log(coordinateOfIdField);
+          
           if (
             coordinateOfIdField["Start Row"] === 0 &&
             coordinateOfIdField["Start Col"] === 0
@@ -743,7 +752,7 @@ const EditDesignTemplate = () => {
         iDirection: +readingDirectionOption,
         iSensitivity: +layoutData.iSensitivity ?? 3,
         iDifference: +layoutData.iDifference ?? 5,
-        iOption: selectedFieldType === "formField" ? 1 : 0,
+        iOption: blank === "allow" ? 1 : 0,
         prefix: selectedFieldType === "formField" ? prefix : "",
         suffix: selectedFieldType === "formField" ? suffix : "",
         iMinimumMarks: +minimumMark,
@@ -2564,7 +2573,7 @@ const EditDesignTemplate = () => {
                       </option>
                       <option value="0x00000001">Use Rejector</option>
                       <option value="0x00000002">Do Not Use Rejector</option>
-                      <option value="0">No Action</option>
+                      <option value="0x00000004">No Action</option>
                     </select>
                   </div>
                 </Row>

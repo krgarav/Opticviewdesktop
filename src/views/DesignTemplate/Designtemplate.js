@@ -155,17 +155,19 @@ const DesignTemplate = () => {
  }, [noInCol, noOfStepInCol, enableFormatting]);
 
   useEffect(() => {
+   
     if (modalShow) {
       if (startRowInput && endRowInput && modalShow) {
         const total = +endRowInput - +startRowInput + 1;
-        setNoInRow(total);
+        // console.log(Math.ceil(total/noOfStepInRow))
+        setNoInRow(Math.ceil(total/noOfStepInRow));
       }
       if (startColInput && endColInput && modalShow) {
         const total = +endColInput - +startColInput + 1;
-        setNoInCol(total);
+        setNoInCol(Math.ceil(total/noOfStepInCol));
       }
     }
-  }, [modalShow]);
+  }, [modalShow,noOfStepInCol,noOfStepInRow,endColInput,endRowInput,startColInput,startRowInput]);
   useEffect(() => {
     const template = sessionStorage.getItem("Template");
     if (template) {
@@ -235,6 +237,11 @@ const DesignTemplate = () => {
       sessionStorage.setItem("Template", JSON.stringify(template));
     }
   }, [dataCtx.allTemplates]);
+
+  useEffect(() => {
+  setMaximumMark(Math.max(noInCol, noInRow));
+}, [noInCol, noInRow]);
+
 
   // useEffect(() => {
   //   const handleBeforeUnload = (event) => {
@@ -808,7 +815,7 @@ const DesignTemplate = () => {
         iDirection: +readingDirectionOption,
         iSensitivity: +iSensitivity,
         iDifference: +iDifference,
-        iOption: selectedFieldType === "formField" ? 1 : 0,
+        iOption: blank === "allow" ? 1 : 0,
         prefix: selectedFieldType === "formField" ? prefix : "",
         suffix: selectedFieldType === "formField" ? suffix : "",
         iMinimumMarks: +minimumMark,
@@ -1549,7 +1556,7 @@ const DesignTemplate = () => {
             iFace: +layoutData.iFace ?? 0,
             iSensitivity: +layoutData.iSensitivity ?? 3,
             iDifference: +layoutData.iDifference ?? 5,
-            iOption: selectedFieldType === "formField" ? 1 : 0,
+            iOption: blank === "allow" ? 1 : 0,
             iMinimumMarks: +minimumMark,
             iMaximumMarks: +maximumMark,
             iType: type,
@@ -1589,7 +1596,7 @@ const DesignTemplate = () => {
             iFace: +layoutData.iFace ?? 0,
             iSensitivity: +layoutData.iSensitivity ?? 3,
             iDifference: +layoutData.iDifference ?? 5,
-            iOption: selectedFieldType === "formField" ? 1 : 0,
+            iOption: blank === "allow" ? 1 : 0,
             iMinimumMarks: 1,
             iMaximumMarks: 1,
             iType: type,
@@ -2041,7 +2048,7 @@ const DesignTemplate = () => {
                               ),
                             ]
                           : [];
-                            console.log(numberedJson)
+                            
                         return (
                           <div key={rowIndex} className="row">
                             <div
@@ -2630,8 +2637,47 @@ const DesignTemplate = () => {
                       </option>
                       <option value="0x00000001">Use Rejector</option>
                       <option value="0x00000002">Do Not Use Rejector</option>
-                      <option value="0">No Action</option>
+                      <option value="0x00000004">No Action</option>
                     </select>
+                  </div>
+                </Row>
+              )}
+              {(selectedFieldType !== "idField" ||
+                selectedFieldType !== "skewMarkField") && (
+                <Row className="mb-2">
+                  <label
+                    htmlFor="example-text-input"
+                    className="col-md-2 col-form-label"
+                    style={{ fontSize: "0.8rem" }}
+                  >
+                    Minimum Marks
+                  </label>
+                  <div className="col-md-4">
+                    <input
+                    type="number"
+                    className="form-control"
+                    value={minimumMark}
+                    onChange={(e) => setMinimumMark(e.target.value)}
+                   
+                    
+                  />
+                  </div>
+                  <label
+                    htmlFor="example-text-input"
+                    className="col-md-2 col-form-label"
+                    style={{ fontSize: "0.8rem" }}
+                  >
+                    Maximum Marks
+                  </label>
+                  <div className="col-md-4">
+                    <input
+                    type="number"
+                    className="form-control"
+                    value={maximumMark}
+                    onChange={(e) => setMaximumMark(e.target.value)}
+                   
+                    
+                  />
                   </div>
                 </Row>
               )}
