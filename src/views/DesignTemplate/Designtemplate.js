@@ -102,7 +102,7 @@ const DesignTemplate = () => {
   const [skewFieldValue, setSkewFieldValue] = useState(null);
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkFields, setLinkFields] = useState([]);
-   const [enableFormatting, setEnableFormatting] = useState(false);
+  const [enableFormatting, setEnableFormatting] = useState(false);
   const [disabled, setDisabled] = React.useState(false);
   const location = useLocation();
   const {
@@ -137,37 +137,44 @@ const DesignTemplate = () => {
   const isWideScreen = width >= 994;
   const blankRef = useRef(null);
   const gridRef = useRef(null);
- 
-   useEffect(() => {
-   if (!enableFormatting) {
-     setFormatting(""); // if formatting is disabled → clear it
-     return;
-   }
- 
-   if (!noInCol || !noOfStepInCol) {
-     setFormatting(""); // if inputs are invalid → clear it
-     return;
-   }
- 
-   const totalVisibleColumn = Math.ceil(noInCol / noOfStepInCol);
- 
-   setFormatting(totalVisibleColumn > 0 ? "X".repeat(totalVisibleColumn) : "");
- }, [noInCol, noOfStepInCol, enableFormatting]);
 
   useEffect(() => {
-   
+    if (!enableFormatting) {
+      setFormatting(""); // if formatting is disabled → clear it
+      return;
+    }
+
+    if (!noInCol || !noOfStepInCol) {
+      setFormatting(""); // if inputs are invalid → clear it
+      return;
+    }
+
+    const totalVisibleColumn = Math.ceil(noInCol / noOfStepInCol);
+
+    setFormatting(totalVisibleColumn > 0 ? "X".repeat(totalVisibleColumn) : "");
+  }, [noInCol, noOfStepInCol, enableFormatting]);
+
+  useEffect(() => {
     if (modalShow) {
       if (startRowInput && endRowInput && modalShow) {
         const total = +endRowInput - +startRowInput + 1;
         // console.log(Math.ceil(total/noOfStepInRow))
-        setNoInRow(Math.ceil(total/noOfStepInRow));
+        setNoInRow(Math.ceil(total / noOfStepInRow));
       }
       if (startColInput && endColInput && modalShow) {
         const total = +endColInput - +startColInput + 1;
-        setNoInCol(Math.ceil(total/noOfStepInCol));
+        setNoInCol(Math.ceil(total / noOfStepInCol));
       }
     }
-  }, [modalShow,noOfStepInCol,noOfStepInRow,endColInput,endRowInput,startColInput,startRowInput]);
+  }, [
+    modalShow,
+    noOfStepInCol,
+    noOfStepInRow,
+    endColInput,
+    endRowInput,
+    startColInput,
+    startRowInput,
+  ]);
   useEffect(() => {
     const template = sessionStorage.getItem("Template");
     if (template) {
@@ -239,9 +246,8 @@ const DesignTemplate = () => {
   }, [dataCtx.allTemplates]);
 
   useEffect(() => {
-  setMaximumMark(Math.max(noInCol, noInRow));
-}, [noInCol, noInRow]);
-
+    setMaximumMark(Math.max(noInCol, noInRow));
+  }, [noInCol, noInRow]);
 
   // useEffect(() => {
   //   const handleBeforeUnload = (event) => {
@@ -651,33 +657,32 @@ const DesignTemplate = () => {
   };
 
   const validateFormField = () => {
-  const errors = {
-    name: "Name Field can not be empty",
-    multiple: "Please select multiple",
-    blank: "Please select blank",
-    windowNgOption: "Please select window Ng",
-    minimumMark: "Minimum mark cannot be empty",
-    maximumMark: "Maximum mark cannot be empty",
-    noInRow: "Total number in row cannot be empty",
-    noOfStepInRow: "Total number of step in a row cannot be empty",
-    noInCol: "Total number in col cannot be empty",
-    noOfStepInCol: "Total number of step in a col cannot be empty",
-    readingDirectionOption: "Please select reading direction",
-    type: "Please select type",
-    numberOfField: "Total field cannot be empty",
-    fieldType: "Please select field type",
-  };
+    const errors = {
+      name: "Name Field can not be empty",
+      multiple: "Please select multiple",
+      blank: "Please select blank",
+      windowNgOption: "Please select window Ng",
+      minimumMark: "Minimum mark cannot be empty",
+      maximumMark: "Maximum mark cannot be empty",
+      noInRow: "Total number in row cannot be empty",
+      noOfStepInRow: "Total number of step in a row cannot be empty",
+      noInCol: "Total number in col cannot be empty",
+      noOfStepInCol: "Total number of step in a col cannot be empty",
+      readingDirectionOption: "Please select reading direction",
+      type: "Please select type",
+      numberOfField: "Total field cannot be empty",
+      fieldType: "Please select field type",
+    };
 
-  for (let [field, errorMsg] of Object.entries(errors)) {
-    const value = eval(field); // ← still dangerous, but keeping your structure
-    if (value === null || value === undefined || value === "") {
-      toast.error(errorMsg);
-      return false;
+    for (let [field, errorMsg] of Object.entries(errors)) {
+      const value = eval(field); // ← still dangerous, but keeping your structure
+      if (value === null || value === undefined || value === "") {
+        toast.error(errorMsg);
+        return false;
+      }
     }
-  }
-  return true;
-};
-
+    return true;
+  };
 
   const validateSkewField = () => {
     const errors = {
@@ -1154,8 +1159,8 @@ const DesignTemplate = () => {
       setName(data?.windowName);
       setSelectedFieldType("questionField");
       setWindowNgOption(data?.ngAction);
-      setMinimumMark(data?.iMaximumMarks);
-      setMaximumMark(data?.iMinimumMarks);
+      setMinimumMark(data?.iMinimumMarks);
+      setMaximumMark(data?.iMaximumMarks);
       setNoInRow(data?.rowNumber);
       setNoInCol(data?.columnNumber);
       setStartRowInput(formattedSelectedFile["Start Row"]);
@@ -1188,10 +1193,11 @@ const DesignTemplate = () => {
       setSelectedFieldType("formField");
       setName(data?.windowName);
       setWindowNgOption(data?.ngAction);
-      setMinimumMark(data?.iMaximumMarks);
+      setMinimumMark(data?.iMinimumMarks);
+      setMaximumMark(data?.iMaximumMarks);
       setNoOfStepInRow(data?.rowStep);
       setNoOfStepInCol(data?.columnStep);
-      setMaximumMark(data?.iMinimumMarks);
+
       setNoInRow(data?.rowNumber);
       setNoInCol(data?.columnNumber);
       setStartRowInput(formattedSelectedFile["Start Row"] - 2);
@@ -1220,10 +1226,11 @@ const DesignTemplate = () => {
       }
       const data = parameters[index];
       setName(data?.windowName);
-      setMinimumMark(data?.iMaximumMarks);
+
       setNoOfStepInRow(data?.rowStep);
       setNoOfStepInCol(data?.columnStep);
-      setMaximumMark(data?.iMinimumMarks);
+      setMinimumMark(data?.iMinimumMarks);
+      setMaximumMark(data?.iMaximumMarks);
       setNoInRow(data?.rowNumber);
       setNoInCol(data?.columnNumber);
       setReadingDirectionOption((data?.iDirection).toString());
@@ -1403,14 +1410,23 @@ const DesignTemplate = () => {
       barcodeData,
       imageData,
       printingData,
-      questionsWindowParameters : questionsWindowParameters? questionsWindowParameters : [],
-      skewMarksWindowParameters : skewMarksWindowParameters ? skewMarksWindowParameters : [],
-      formFieldWindowParameters : formFieldWindowParameters ? formFieldWindowParameters : [],
+      questionsWindowParameters: questionsWindowParameters
+        ? questionsWindowParameters
+        : [],
+      skewMarksWindowParameters: skewMarksWindowParameters
+        ? skewMarksWindowParameters
+        : [],
+      formFieldWindowParameters: formFieldWindowParameters
+        ? formFieldWindowParameters
+        : [],
       imageCroppingDTO: imageCroppingDTO ? imageCroppingDTO : [],
       linkedCoordinates,
     };
     handleCancel();
-    sessionStorage.setItem("StructuredTemplate", JSON.stringify(fullRequestData));
+    sessionStorage.setItem(
+      "StructuredTemplate",
+      JSON.stringify(fullRequestData)
+    );
   };
   const handleImage = (images) => {
     setImagesSelectedCount(images.length);
@@ -2022,7 +2038,7 @@ const DesignTemplate = () => {
                     //   width: "max-content",
                     // }}
 
-                    onMouseLeave={()=>{
+                    onMouseLeave={() => {
                       setActiveArea({ row: null, col: null });
                     }}
                     className="grid-container"
@@ -2048,7 +2064,7 @@ const DesignTemplate = () => {
                               ),
                             ]
                           : [];
-                            
+
                         return (
                           <div key={rowIndex} className="row">
                             <div
@@ -2654,13 +2670,11 @@ const DesignTemplate = () => {
                   </label>
                   <div className="col-md-4">
                     <input
-                    type="number"
-                    className="form-control"
-                    value={minimumMark}
-                    onChange={(e) => setMinimumMark(e.target.value)}
-                   
-                    
-                  />
+                      type="number"
+                      className="form-control"
+                      value={minimumMark}
+                      onChange={(e) => setMinimumMark(e.target.value)}
+                    />
                   </div>
                   <label
                     htmlFor="example-text-input"
@@ -2671,13 +2685,11 @@ const DesignTemplate = () => {
                   </label>
                   <div className="col-md-4">
                     <input
-                    type="number"
-                    className="form-control"
-                    value={maximumMark}
-                    onChange={(e) => setMaximumMark(e.target.value)}
-                   
-                    
-                  />
+                      type="number"
+                      className="form-control"
+                      value={maximumMark}
+                      onChange={(e) => setMaximumMark(e.target.value)}
+                    />
                   </div>
                 </Row>
               )}
@@ -3116,7 +3128,7 @@ const DesignTemplate = () => {
                   </div>
                 </Row>
               )}
-                    {selectedFieldType === "formField" && (
+              {selectedFieldType === "formField" && (
                 <Row className="mb-2">
                   <label
                     htmlFor="field-formatting"
@@ -3143,17 +3155,15 @@ const DesignTemplate = () => {
                         Enable
                       </label>
                     </div>
-              
+
                     {/* Show input ONLY if enabled */}
                     {enableFormatting && (
                       <input
                         id="field-formatting"
                         type="text"
                         className="form-control"
-                       
                         value={formatting}
                         onChange={(e) => setFormatting(e.target.value)}
-                        
                       />
                     )}
                   </div>

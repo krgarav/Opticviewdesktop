@@ -113,7 +113,7 @@ const EditDesignTemplate = () => {
   );
   const [highlightField, setHighlightField] = useState(false);
   const [formatting, setFormatting] = useState("");
-   const [enableFormatting, setEnableFormatting] = useState(false);
+  const [enableFormatting, setEnableFormatting] = useState(false);
   const [currentSelectedCoordinate, setCurrentSelectedCoordinate] =
     useState(null);
   const [scale, setScale] = useState(1);
@@ -134,41 +134,46 @@ const EditDesignTemplate = () => {
   const blankRef = useRef(null);
   const gridRef = useRef(null);
 
-
-
-   useEffect(() => {
+  useEffect(() => {
     setMaximumMark(Math.max(noInCol, noInRow));
   }, [noInCol, noInRow]);
-  
-   useEffect(() => {
-   if (!enableFormatting) {
-     setFormatting(""); // if formatting is disabled → clear it
-     return;
-   }
- 
-   if (!noInCol || !noOfStepInCol) {
-     setFormatting(""); // if inputs are invalid → clear it
-     return;
-   }
- 
-   const totalVisibleColumn = Math.ceil(noInCol / noOfStepInCol);
- 
-   setFormatting(totalVisibleColumn > 0 ? "X".repeat(totalVisibleColumn) : "");
- }, [noInCol, noOfStepInCol, enableFormatting]);
- useEffect(() => {
-   
+
+  useEffect(() => {
+    if (!enableFormatting) {
+      setFormatting(""); // if formatting is disabled → clear it
+      return;
+    }
+
+    if (!noInCol || !noOfStepInCol) {
+      setFormatting(""); // if inputs are invalid → clear it
+      return;
+    }
+
+    const totalVisibleColumn = Math.ceil(noInCol / noOfStepInCol);
+
+    setFormatting(totalVisibleColumn > 0 ? "X".repeat(totalVisibleColumn) : "");
+  }, [noInCol, noOfStepInCol, enableFormatting]);
+  useEffect(() => {
     if (modalShow) {
       if (startRowInput && endRowInput && modalShow) {
         const total = +endRowInput - +startRowInput + 1;
         // console.log(Math.ceil(total/noOfStepInRow))
-        setNoInRow(Math.ceil(total/noOfStepInRow));
+        setNoInRow(Math.ceil(total / noOfStepInRow));
       }
       if (startColInput && endColInput && modalShow) {
         const total = +endColInput - +startColInput + 1;
-        setNoInCol(Math.ceil(total/noOfStepInCol));
+        setNoInCol(Math.ceil(total / noOfStepInCol));
       }
     }
-  }, [modalShow,noOfStepInCol,noOfStepInRow,endColInput,endRowInput,startColInput,startRowInput]);
+  }, [
+    modalShow,
+    noOfStepInCol,
+    noOfStepInRow,
+    endColInput,
+    endRowInput,
+    startColInput,
+    startRowInput,
+  ]);
   useEffect(() => {
     const template = dataCtx.allTemplates;
 
@@ -411,12 +416,10 @@ const EditDesignTemplate = () => {
             })
             .filter(Boolean); // Removes null entries
 
-         
           let coordinateOfIdField = idField?.layoutCoordinates
             ? idField?.layoutCoordinates
             : {};
 
-          
           if (
             coordinateOfIdField["Start Row"] === 0 &&
             coordinateOfIdField["Start Col"] === 0
@@ -587,7 +590,7 @@ const EditDesignTemplate = () => {
     setName("");
     setHighlightField(false);
   };
-    const validateFormField = () => {
+  const validateFormField = () => {
     const errors = {
       name: "Name Field can not be empty",
       multiple: "Please select multiple",
@@ -604,7 +607,7 @@ const EditDesignTemplate = () => {
       numberOfField: "Total field cannot be empty",
       fieldType: "Please select field type",
     };
-  
+
     for (let [field, errorMsg] of Object.entries(errors)) {
       const value = eval(field); // ← still dangerous, but keeping your structure
       if (value === null || value === undefined || value === "") {
@@ -1114,8 +1117,8 @@ const EditDesignTemplate = () => {
       setName(data?.windowName);
       setSelectedFieldType("questionField");
       setWindowNgOption(data?.ngAction);
-      setMinimumMark(data?.iMaximumMarks);
-      setMaximumMark(data?.iMinimumMarks);
+      setMinimumMark(data?.iMinimumMarks);
+      setMaximumMark(data?.iMaximumMarks);
       setNoInRow(data?.rowNumber);
       setNoInCol(data?.columnNumber);
       setStartRowInput(formattedSelectedFile["Start Row"]);
@@ -1148,10 +1151,11 @@ const EditDesignTemplate = () => {
       setSelectedFieldType("formField");
       setName(data?.windowName);
       setWindowNgOption(data?.ngAction);
-      setMinimumMark(data?.iMaximumMarks);
+      setMinimumMark(data?.iMinimumMarks);
+      setMaximumMark(data?.iMaximumMarks);
       setNoOfStepInRow(data?.rowStep);
       setNoOfStepInCol(data?.columnStep);
-      setMaximumMark(data?.iMinimumMarks);
+
       setNoInRow(data?.rowNumber);
       setNoInCol(data?.columnNumber);
       setStartRowInput(formattedSelectedFile["Start Row"] - 2);
@@ -1180,10 +1184,11 @@ const EditDesignTemplate = () => {
       }
       const data = parameters[index];
       setName(data?.windowName);
-      setMinimumMark(data?.iMaximumMarks);
+      setMinimumMark(data?.iMinimumMarks);
+      setMaximumMark(data?.iMaximumMarks);
       setNoOfStepInRow(data?.rowStep);
       setNoOfStepInCol(data?.columnStep);
-      setMaximumMark(data?.iMinimumMarks);
+
       setNoInRow(data?.rowNumber);
       setNoInCol(data?.columnNumber);
       setReadingDirectionOption((data?.iDirection).toString());
@@ -1353,9 +1358,15 @@ const EditDesignTemplate = () => {
       barcodeData,
       imageData,
       printingData,
-      questionsWindowParameters : questionsWindowParameters ? questionsWindowParameters : [],
-      skewMarksWindowParameters : skewMarksWindowParameters ? skewMarksWindowParameters : [],
-      formFieldWindowParameters : formFieldWindowParameters ? formFieldWindowParameters : [],
+      questionsWindowParameters: questionsWindowParameters
+        ? questionsWindowParameters
+        : [],
+      skewMarksWindowParameters: skewMarksWindowParameters
+        ? skewMarksWindowParameters
+        : [],
+      formFieldWindowParameters: formFieldWindowParameters
+        ? formFieldWindowParameters
+        : [],
       imageCroppingDTO: imageCroppingDTO ? imageCroppingDTO : [],
       linkedCoordinates,
     };
@@ -2578,7 +2589,41 @@ const EditDesignTemplate = () => {
                   </div>
                 </Row>
               )}
-
+              {(selectedFieldType !== "idField" ||
+                selectedFieldType !== "skewMarkField") && (
+                <Row className="mb-2">
+                  <label
+                    htmlFor="example-text-input"
+                    className="col-md-2 col-form-label"
+                    style={{ fontSize: "0.8rem" }}
+                  >
+                    Minimum Marks
+                  </label>
+                  <div className="col-md-4">
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={minimumMark}
+                      onChange={(e) => setMinimumMark(e.target.value)}
+                    />
+                  </div>
+                  <label
+                    htmlFor="example-text-input"
+                    className="col-md-2 col-form-label"
+                    style={{ fontSize: "0.8rem" }}
+                  >
+                    Maximum Marks
+                  </label>
+                  <div className="col-md-4">
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={maximumMark}
+                      onChange={(e) => setMaximumMark(e.target.value)}
+                    />
+                  </div>
+                </Row>
+              )}
               {selectedFieldType === "idField" && (
                 <Row className="mb-2">
                   <label
@@ -3012,7 +3057,7 @@ const EditDesignTemplate = () => {
                   </div>
                 </Row>
               )}
-                    {selectedFieldType === "formField" && (
+              {selectedFieldType === "formField" && (
                 <Row className="mb-2">
                   <label
                     htmlFor="field-formatting"
@@ -3039,17 +3084,15 @@ const EditDesignTemplate = () => {
                         Enable
                       </label>
                     </div>
-              
+
                     {/* Show input ONLY if enabled */}
                     {enableFormatting && (
                       <input
                         id="field-formatting"
                         type="text"
                         className="form-control"
-                       
                         value={formatting}
                         onChange={(e) => setFormatting(e.target.value)}
-                        
                       />
                     )}
                   </div>
