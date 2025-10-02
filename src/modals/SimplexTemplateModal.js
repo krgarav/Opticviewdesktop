@@ -1174,9 +1174,17 @@ const SimplexTemplateModal = (props) => {
                                 getAriaLabel={() => "Sensitivity range"}
                                 value={17 - value}
                                 onChange={(event, newValue) => {
-                                  const val = 17 - newValue;
+                                const val = 17 - newValue;
+                                  console.log(difference+sensitivity)
+                                  // if( difference+sensitivity > 17){
+                                    // toast.warning("Sensitivity and Density sum should not exceed 16")
+                                   
+                                    // setDifference(17 - val);
+                                    //  return
+                                  // }
+                                    
                                   handleChange(val);
-                                  setDifference(17 - val);
+                                  
                                 }}
                                 valueLabelDisplay="auto"
                                 min={1}
@@ -1185,7 +1193,7 @@ const SimplexTemplateModal = (props) => {
                                 scale={(x) => 17 - x} // This reverses the displayed value
                                 size="large"
                                 color="PRIMARY"
-                                // track="inverted" // Optional: shows the fill from right to left
+                               
                                 slots={{
                                   ValueLabel: (props) => (
                                     <CustomTooltip
