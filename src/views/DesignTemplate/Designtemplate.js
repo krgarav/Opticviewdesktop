@@ -9,7 +9,6 @@ import SmallHeader from "components/Headers/SmallHeader";
 import { toast } from "react-toastify";
 import isEqual from "lodash/isEqual";
 import LayoutDetailModal from "ui/LayoutDetailModal";
-import TextLoader from "loaders/TextLoader";
 import processDirection from "data/processDirection";
 import deepcopy from "deepcopy";
 import resetJson from "data/resetJson";
@@ -30,7 +29,6 @@ import AddLinkIcon from "@mui/icons-material/AddLink";
 import LinkModal from "modals/LinkModal/LinkModal";
 import RightSideBar from "components/RightSideBar/RightSideBar";
 import BootstrapNumberInput from "ui/BootstrapNumber";
-import Draggable from "react-draggable";
 import ExcelLikeTable from "components/ExcellLike";
 import groupQuestionNameGenerator from "helper/groupQuestionGenerator";
 import CustomDraggableModal from "views/test";
@@ -1311,9 +1309,7 @@ const DesignTemplate = () => {
     );
   };
 
-  const handleIconMouseUp = (event) => {
-    event.stopPropagation();
-  };
+
 
   const sendHandler = async () => {
     // Retrieve the selected template
@@ -2762,26 +2758,18 @@ const DesignTemplate = () => {
                       <Slider
                         getAriaLabel={() => "Sensitivity range"}
                         // value={17 - value}
-                        value = {fieldSensitivity}
+                        value={17 - fieldSensitivity}
                         onChange={(event, newValue) => {
-                          // const val = 17 - newValue;
+                          const val = 17 - newValue;
 
-                          // if( difference+sensitivity > 17){
-                          // toast.warning("Sensitivity and Density sum should not exceed 16")
-
-                          // setDifference(17 - val);
-                          //  return
-                          // }
-                          setFieldSensitivity(newValue)
-
-                          // handleChange(val);
+                          setFieldSensitivity(val);
                         }}
                         valueLabelDisplay="auto"
                         min={1}
                         max={16}
                         step={1}
                         scale={(x) => 17 - x} // This reverses the displayed value
-                        size="large"
+                        size="small"
                         color="PRIMARY"
                         slots={{
                           ValueLabel: (props) => (
@@ -2797,7 +2785,6 @@ const DesignTemplate = () => {
                 </div>
                 <input
                   value={`${fieldSensitivity}`}
-                 
                   style={{
                     width: "100%",
                     padding: "2px",
@@ -2847,7 +2834,7 @@ const DesignTemplate = () => {
                     >
                       <Slider
                         getAriaLabel={() => "Sensitivity range"}
-                        // value={17 - value}
+                        value={17 - fieldDifference}
                         onChange={(event, newValue) => {
                           const val = 17 - newValue;
 
@@ -2857,7 +2844,7 @@ const DesignTemplate = () => {
                           // setDifference(17 - val);
                           //  return
                           // }
-
+                          setFieldDifference(val);
                           // handleChange(val);
                         }}
                         valueLabelDisplay="auto"
@@ -2865,7 +2852,7 @@ const DesignTemplate = () => {
                         max={16}
                         step={1}
                         scale={(x) => 17 - x} // This reverses the displayed value
-                        size="large"
+                        size="small"
                         color="PRIMARY"
                         slots={{
                           ValueLabel: (props) => (
@@ -2878,19 +2865,15 @@ const DesignTemplate = () => {
                       />
                     </Box>
                   </div>
-
-                  
                 </div>
                 <input
-                  // value={`${sensitivity}`}
-                  // onChange={(e) => setSensitivity(e.target.value)}
+                  value={`${fieldDifference}`}
                   style={{
-                    width: "100%",
-                    padding: "2px",
                     textAlign: "center",
                   }}
                   className="form-control col-md-1"
                   type="text"
+                  disabled
                 />
               </Row>
 
