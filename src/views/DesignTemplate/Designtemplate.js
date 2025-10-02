@@ -22,7 +22,7 @@ import SideBar from "components/SideBar";
 import CopyModal from "modals/CopyModal/CopyModal";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import IconButton from "@mui/material/IconButton";
-import { Button as Muibtn, Tooltip } from "@mui/material";
+import { Box, Button as Muibtn, Slider, Tooltip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import questionNameGenerator from "helper/questionNameGenerator";
 import FieldDetails from "modals/FieldDetails";
@@ -36,6 +36,9 @@ import groupQuestionNameGenerator from "helper/groupQuestionGenerator";
 import CustomDraggableModal from "views/test";
 import skewQuestionNameGenerator from "helper/skewQuestionNameGenerator";
 import _ from "lodash";
+import CustomTooltip from "components/CustomTooltip";
+import ShadesOfGrey from "ui/shadesOfGrey";
+
 const DesignTemplate = () => {
   const [selected, setSelected] = useState({});
   const [selection, setSelection] = useState(null);
@@ -127,6 +130,8 @@ const DesignTemplate = () => {
   const [currentSelectedCoordinate, setCurrentSelectedCoordinate] =
     useState(null);
   const [activeArea, setActiveArea] = useState({ row: null, col: null });
+  const [fieldSensitivity, setFieldSensitivity] = useState(3);
+  const [fieldDifference, setFieldDifference] = useState(8);
   const numRows = timingMarks;
   const numCols = totalColumns;
   const inputRef = useRef(null);
@@ -154,7 +159,6 @@ const DesignTemplate = () => {
     setFormatting(totalVisibleColumn > 0 ? "X".repeat(totalVisibleColumn) : "");
   }, [noInCol, noOfStepInCol, enableFormatting]);
 
-
   // useEffect(() => {
   //     const directionMapping = {
   //             0: "topToBottom",
@@ -176,9 +180,7 @@ const DesignTemplate = () => {
   //           }
   // },[readingDirectionOption])
   useEffect(() => {
-   
     if (modalShow) {
-      
       if (startRowInput && endRowInput && modalShow) {
         const total = +endRowInput - +startRowInput + 1;
         // console.log(Math.ceil(total/noOfStepInRow))
@@ -199,7 +201,7 @@ const DesignTemplate = () => {
     endRowInput,
     startColInput,
     startRowInput,
-    readingDirectionOption
+    readingDirectionOption,
   ]);
   useEffect(() => {
     const template = sessionStorage.getItem("Template");
@@ -2718,6 +2720,179 @@ const DesignTemplate = () => {
                   </div>
                 </Row>
               )}
+
+              <Row className="mb-3">
+                <label
+                  htmlFor="example-text-input"
+                  className="col-md-2 col-form-label  "
+                  style={{ fontSize: ".9rem" }}
+                >
+                  Sensitivity
+                </label>
+                <div
+                  className="col-md-3"
+                  style={{
+                    display: "flex",
+                    gap: "5px",
+                    width: "100%",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "100%",
+                    }}
+                  >
+                    <div
+                      style={{
+                        borderRadius: "6px",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <ShadesOfGrey type="reverse" />
+                    </div>
+                    <Box
+                      sx={{
+                        width: "94%",
+                        justifyContent: "center",
+                        alignSelf: "center",
+                      }}
+                    >
+                      <Slider
+                        getAriaLabel={() => "Sensitivity range"}
+                        // value={17 - value}
+                        value = {fieldSensitivity}
+                        onChange={(event, newValue) => {
+                          // const val = 17 - newValue;
+
+                          // if( difference+sensitivity > 17){
+                          // toast.warning("Sensitivity and Density sum should not exceed 16")
+
+                          // setDifference(17 - val);
+                          //  return
+                          // }
+                          setFieldSensitivity(newValue)
+
+                          // handleChange(val);
+                        }}
+                        valueLabelDisplay="auto"
+                        min={1}
+                        max={16}
+                        step={1}
+                        scale={(x) => 17 - x} // This reverses the displayed value
+                        size="large"
+                        color="PRIMARY"
+                        slots={{
+                          ValueLabel: (props) => (
+                            <CustomTooltip
+                              {...props}
+                              // shade={getShadeFromValue(value)}
+                            />
+                          ),
+                        }}
+                      />
+                    </Box>
+                  </div>
+                </div>
+                <input
+                  value={`${fieldSensitivity}`}
+                 
+                  style={{
+                    width: "100%",
+                    padding: "2px",
+                    textAlign: "center",
+                  }}
+                  className="form-control col-md-1"
+                  type="text"
+                  disabled
+                />
+
+                <label
+                  htmlFor="example-text-input"
+                  className="col-md-2 col-form-label  "
+                  style={{ fontSize: ".9rem" }}
+                >
+                  Density
+                </label>
+                <div
+                  className="col-md-3"
+                  style={{
+                    display: "flex",
+                    gap: "5px",
+                    width: "100%",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "100%",
+                    }}
+                  >
+                    <div
+                      style={{
+                        borderRadius: "6px",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <ShadesOfGrey type="reverse" />
+                    </div>
+                    <Box
+                      sx={{
+                        width: "94%",
+                        justifyContent: "center",
+                        alignSelf: "center",
+                      }}
+                    >
+                      <Slider
+                        getAriaLabel={() => "Sensitivity range"}
+                        // value={17 - value}
+                        onChange={(event, newValue) => {
+                          const val = 17 - newValue;
+
+                          // if( difference+sensitivity > 17){
+                          // toast.warning("Sensitivity and Density sum should not exceed 16")
+
+                          // setDifference(17 - val);
+                          //  return
+                          // }
+
+                          // handleChange(val);
+                        }}
+                        valueLabelDisplay="auto"
+                        min={1}
+                        max={16}
+                        step={1}
+                        scale={(x) => 17 - x} // This reverses the displayed value
+                        size="large"
+                        color="PRIMARY"
+                        slots={{
+                          ValueLabel: (props) => (
+                            <CustomTooltip
+                              {...props}
+                              // shade={getShadeFromValue(value)}
+                            />
+                          ),
+                        }}
+                      />
+                    </Box>
+                  </div>
+
+                  
+                </div>
+                <input
+                  // value={`${sensitivity}`}
+                  // onChange={(e) => setSensitivity(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "2px",
+                    textAlign: "center",
+                  }}
+                  className="form-control col-md-1"
+                  type="text"
+                />
+              </Row>
 
               {selectedFieldType === "idField" && (
                 <Row className="mb-2">
