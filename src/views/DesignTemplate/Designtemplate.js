@@ -810,8 +810,8 @@ const DesignTemplate = () => {
         rowStart: +selection?.startRow + 1,
         rowNumber: +noInRow,
         rowStep: +noOfStepInRow,
-        iSensitivity: +iSensitivity,
-        iDifference: +iDifference,
+        iSensitivity: iSensitivity === fieldSensitivity? +iSensitivity : +fieldSensitivity,
+        iDifference: iDifference === fieldDifference? +iDifference : +fieldDifference,
         iOption: 1,
         iReject: +iReject,
         iDirection: +readingDirectionOption,
@@ -844,8 +844,8 @@ const DesignTemplate = () => {
         rowNumber: +noInRow,
         rowStep: +noOfStepInRow,
         iDirection: +readingDirectionOption,
-        iSensitivity: +iSensitivity,
-        iDifference: +iDifference,
+       iSensitivity: iSensitivity === fieldSensitivity? +iSensitivity : +fieldSensitivity,
+        iDifference: iDifference === fieldDifference? +iDifference : +fieldDifference,
         iOption: blank === "allow" ? 1 : 0,
         prefix: selectedFieldType === "formField" ? prefix : "",
         suffix: selectedFieldType === "formField" ? suffix : "",
@@ -1023,6 +1023,8 @@ const DesignTemplate = () => {
       setCoordinateIndex(index);
       setModalUpdate(true);
       setModalShow(true);
+      setFieldSensitivity(data?.iSensitivity)
+      setFieldDifference(data?.iDifference)
     } else if (selectedField?.fieldType === "questionField") {
       const parameters = template[0].questionsWindowParameters;
 
@@ -1062,6 +1064,8 @@ const DesignTemplate = () => {
       setNoOfStepInRow(data?.rowStep);
       setNoOfStepInCol(data?.columnStep);
       setCustomValue(data?.customFieldValue);
+      setFieldSensitivity(data?.iSensitivity)
+      setFieldDifference(data?.iDifference)
     } else if (selectedField?.fieldType === "formField") {
       const parameters = template[0].formFieldWindowParameters;
 
@@ -1106,6 +1110,8 @@ const DesignTemplate = () => {
       setNoOfStepInCol(data?.columnStep);
       setCustomValue(data?.customFieldValue);
       setFormatting(data?.formatting);
+      setFieldSensitivity(data?.iSensitivity)
+      setFieldDifference(data?.iDifference)
     } else if (selectedField?.fieldType === "skewMarkField") {
       const parameters = template[0].skewMarksWindowParameters;
       const index = parameters.findIndex((item) =>
@@ -1135,6 +1141,8 @@ const DesignTemplate = () => {
       setNoInCol(data?.columnNumber);
       setSkewOption(data?.dataRejection);
       setSkewFieldValue(data?.skewFieldValue);
+      setFieldSensitivity(data?.iSensitivity)
+      setFieldDifference(data?.iDifference)
     }
   };
   const handleFillData = (selectedField, index) => {
