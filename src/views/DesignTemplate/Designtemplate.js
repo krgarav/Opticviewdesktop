@@ -272,8 +272,11 @@ const DesignTemplate = () => {
   }, [dataCtx.allTemplates]);
 
   useEffect(() => {
-    setMaximumMark(Math.max(noInCol, noInRow));
-  }, [noInCol, noInRow]);
+    if(!modalUpdate){
+       setMaximumMark(Math.max(noInCol, noInRow));
+    }
+
+  }, [noInCol, noInRow,modalShow,modalUpdate]);
 
   // useEffect(() => {
   //   const handleBeforeUnload = (event) => {
@@ -640,7 +643,10 @@ const DesignTemplate = () => {
     if (dragStart && selection && !(e.ctrlKey || e.metaKey)) {
       // Handle selection via drag
       setDragStart(null);
+      
       setModalShow(true);
+      
+      
       setSelectedFieldType(null);
     } else if ((e.ctrlKey || e.metaKey) && filteredCoordinates.length > 0) {
       // Handle copy with Ctrl/Cmd key
@@ -1045,8 +1051,8 @@ const DesignTemplate = () => {
       setName(data?.windowName);
       setSelectedFieldType("questionField");
       setWindowNgOption(data?.ngAction);
-      setMinimumMark(data?.iMaximumMarks);
-      setMaximumMark(data?.iMinimumMarks);
+      setMinimumMark(data?.iMinimumMarks);
+      setMaximumMark(data?.iMaximumMarks);
       setNoInRow(data?.rowNumber);
       setNoInCol(data?.columnNumber);
       setStartRowInput(formattedSelectedFile["Start Row"]);
@@ -1079,7 +1085,7 @@ const DesignTemplate = () => {
 
       // Get the matched object
       const data = index !== -1 ? parameters[index] : null;
-
+console.log(data)
       setCoordinateIndex(index);
 
       setModalUpdate(true);
@@ -1317,8 +1323,6 @@ const DesignTemplate = () => {
     );
   };
 
-
-
   const sendHandler = async () => {
     // Retrieve the selected template
     const template = dataCtx.allTemplates.find((item) => {
@@ -1459,6 +1463,7 @@ const DesignTemplate = () => {
       JSON.stringify(fullRequestData)
     );
   };
+
   const handleImage = (images) => {
     setImagesSelectedCount(images.length);
     if (images.length > 0) {
@@ -2831,7 +2836,7 @@ const DesignTemplate = () => {
                         overflow: "hidden",
                       }}
                     >
-                      <ShadesOfGrey type="reverse" />
+                      <ShadesOfGrey type="normal" />
                     </div>
                     <Box
                       sx={{

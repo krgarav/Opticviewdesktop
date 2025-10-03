@@ -19,7 +19,7 @@ import EditTemplateModal from "ui/EditTemplateModal";
 import processDirection from "data/processDirection";
 import resetJson from "data/resetJson";
 import { useWindowSize } from "react-use";
-import { Button as Muibtn, Tooltip } from "@mui/material";
+import { Box, Button as Muibtn, Slider, Tooltip } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -41,6 +41,8 @@ import ExcelLikeTable from "components/ExcellLike";
 import CustomDraggableModal from "views/test";
 import skewQuestionNameGenerator from "helper/skewQuestionNameGenerator";
 import _ from "lodash";
+import ShadesOfGrey from "ui/shadesOfGrey";
+import CustomTooltip from "components/CustomTooltip";
 
 const EditDesignTemplate = () => {
   const [selected, setSelected] = useState({});
@@ -116,6 +118,8 @@ const EditDesignTemplate = () => {
   const [enableFormatting, setEnableFormatting] = useState(false);
   const [currentSelectedCoordinate, setCurrentSelectedCoordinate] =
     useState(null);
+     const [fieldSensitivity, setFieldSensitivity] = useState(3);
+      const [fieldDifference, setFieldDifference] = useState(8);
   const [scale, setScale] = useState(1);
 
   const handleZoomIn = () => {
@@ -134,9 +138,12 @@ const EditDesignTemplate = () => {
   const blankRef = useRef(null);
   const gridRef = useRef(null);
 
-  useEffect(() => {
-    setMaximumMark(Math.max(noInCol, noInRow));
-  }, [noInCol, noInRow]);
+ useEffect(() => {
+     if(!modalUpdate){
+        setMaximumMark(Math.max(noInCol, noInRow));
+     }
+ 
+   }, [noInCol, noInRow,modalShow,modalUpdate]);
 
   useEffect(() => {
     if (!enableFormatting) {
@@ -547,6 +554,7 @@ const EditDesignTemplate = () => {
 
     if (dragStart && selection && !(e.ctrlKey || e.metaKey)) {
       // Handle selection via drag
+      // handleCancel();
       setDragStart(null);
       setModalShow(true);
       setSelectedFieldType(null);
@@ -721,8 +729,9 @@ const EditDesignTemplate = () => {
         rowStart: +selection?.startRow + 1,
         rowNumber: +noInRow,
         rowStep: +noOfStepInRow,
-        iSensitivity: +layoutData.iSensitivity,
-        iDifference: +layoutData.iDifference,
+        iSensitivity: layoutData.iSensitivity === fieldSensitivity? +layoutData.iSensitivity : +fieldSensitivity,
+        iDifference: layoutData.iDifference === fieldDifference? +layoutData.iDifference : +fieldDifference,
+        
         iOption: 1,
         iReject: +layoutData.iReject,
         iDirection: +readingDirectionOption,
@@ -755,8 +764,10 @@ const EditDesignTemplate = () => {
         rowNumber: +noInRow,
         rowStep: +noOfStepInRow,
         iDirection: +readingDirectionOption,
-        iSensitivity: +layoutData.iSensitivity ?? 3,
-        iDifference: +layoutData.iDifference ?? 5,
+        
+         iSensitivity: layoutData.iSensitivity === fieldSensitivity? +layoutData.iSensitivity : +fieldSensitivity,
+        iDifference: layoutData.iDifference === fieldDifference? +layoutData.iDifference : +fieldDifference,
+        
         iOption: blank === "allow" ? 1 : 0,
         prefix: selectedFieldType === "formField" ? prefix : "",
         suffix: selectedFieldType === "formField" ? suffix : "",
@@ -1049,10 +1060,10 @@ const EditDesignTemplate = () => {
       }
       const data = parameters[index];
       setName(data?.windowName);
-      setMinimumMark(data?.iMaximumMarks);
+      setMinimumMark(data?.iMinimumMarks);
       setNoOfStepInRow(data?.rowStep);
       setNoOfStepInCol(data?.columnStep);
-      setMaximumMark(data?.iMinimumMarks);
+      setMaximumMark(data?.iMaximumMarks);
       setNoInRow(data?.rowNumber);
       setNoInCol(data?.columnNumber);
       setReadingDirectionOption((data?.iDirection).toString());
@@ -2626,6 +2637,165 @@ const EditDesignTemplate = () => {
                   </div>
                 </Row>
               )}
+              <Row className="mb-3">
+                              <label
+                                htmlFor="example-text-input"
+                                className="col-md-2 col-form-label  "
+                                style={{ fontSize: ".9rem" }}
+                              >
+                                Sensitivity
+                              </label>
+                              <div
+                                className="col-md-3"
+                                style={{
+                                  display: "flex",
+                                  gap: "5px",
+                                  width: "100%",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    width: "100%",
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      borderRadius: "6px",
+                                      overflow: "hidden",
+                                    }}
+                                  >
+                                    <ShadesOfGrey type="reverse" />
+                                  </div>
+                                  <Box
+                                    sx={{
+                                      width: "94%",
+                                      justifyContent: "center",
+                                      alignSelf: "center",
+                                    }}
+                                  >
+                                    <Slider
+                                      getAriaLabel={() => "Sensitivity range"}
+                                      // value={17 - value}
+                                      value={17 - fieldSensitivity}
+                                      onChange={(event, newValue) => {
+                                        const val = 17 - newValue;
+              
+                                        setFieldSensitivity(val);
+                                      }}
+                                      valueLabelDisplay="auto"
+                                      min={1}
+                                      max={16}
+                                      step={1}
+                                      scale={(x) => 17 - x} // This reverses the displayed value
+                                      size="small"
+                                      color="PRIMARY"
+                                      slots={{
+                                        ValueLabel: (props) => (
+                                          <CustomTooltip
+                                            {...props}
+                                            // shade={getShadeFromValue(value)}
+                                          />
+                                        ),
+                                      }}
+                                    />
+                                  </Box>
+                                </div>
+                              </div>
+                              <input
+                                value={`${fieldSensitivity}`}
+                                style={{
+                                  width: "100%",
+                                  padding: "2px",
+                                  textAlign: "center",
+                                }}
+                                className="form-control col-md-1"
+                                type="text"
+                                disabled
+                              />
+              
+                              <label
+                                htmlFor="example-text-input"
+                                className="col-md-2 col-form-label  "
+                                style={{ fontSize: ".9rem" }}
+                              >
+                                Density
+                              </label>
+                              <div
+                                className="col-md-3"
+                                style={{
+                                  display: "flex",
+                                  gap: "5px",
+                                  width: "100%",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    width: "100%",
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      borderRadius: "6px",
+                                      overflow: "hidden",
+                                    }}
+                                  >
+                                    <ShadesOfGrey type="normal" />
+                                  </div>
+                                  <Box
+                                    sx={{
+                                      width: "94%",
+                                      justifyContent: "center",
+                                      alignSelf: "center",
+                                    }}
+                                  >
+                                    <Slider
+                                      getAriaLabel={() => "Sensitivity range"}
+                                      value={17 - fieldDifference}
+                                      onChange={(event, newValue) => {
+                                        const val = 17 - newValue;
+              
+                                        // if( difference+sensitivity > 17){
+                                        // toast.warning("Sensitivity and Density sum should not exceed 16")
+              
+                                        // setDifference(17 - val);
+                                        //  return
+                                        // }
+                                        setFieldDifference(val);
+                                        // handleChange(val);
+                                      }}
+                                      valueLabelDisplay="auto"
+                                      min={1}
+                                      max={16}
+                                      step={1}
+                                      scale={(x) => 17 - x} // This reverses the displayed value
+                                      size="small"
+                                      color="PRIMARY"
+                                      slots={{
+                                        ValueLabel: (props) => (
+                                          <CustomTooltip
+                                            {...props}
+                                            // shade={getShadeFromValue(value)}
+                                          />
+                                        ),
+                                      }}
+                                    />
+                                  </Box>
+                                </div>
+                              </div>
+                              <input
+                                value={`${fieldDifference}`}
+                                style={{
+                                  textAlign: "center",
+                                }}
+                                className="form-control col-md-1"
+                                type="text"
+                                disabled
+                              />
+                            </Row>
               {selectedFieldType === "idField" && (
                 <Row className="mb-2">
                   <label

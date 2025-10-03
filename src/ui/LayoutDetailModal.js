@@ -619,7 +619,7 @@ const LayoutDetailModal = (props) => {
     }
     try {
       const response = await axios.post(
-        `http://localhost:5000/GetSampleData/${scanner?.id}` // Use the selected scanner's id
+        `http://localhost:5000/GetSampleData?id=${scanner?.id}&type=simplex`  // Use the selected scanner's id
       );
       const { data, images } = response.data;
       const jsonData = data;
@@ -1414,7 +1414,7 @@ const LayoutDetailModal = (props) => {
                                 overflow: "hidden",
                               }}
                             >
-                              <ShadesOfGrey type="normal" />
+                              <ShadesOfGrey type="reverse" />
                             </div>
                             <Box
                               sx={{

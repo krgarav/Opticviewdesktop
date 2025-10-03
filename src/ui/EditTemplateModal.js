@@ -56,6 +56,7 @@ import { Carousel } from "react-responsive-carousel";
 import { v4 as uuidv4 } from "uuid";
 import { digitType } from "data/helperData";
 import { scannerData } from "data/helperData";
+
 const EditTemplateModal = (props) => {
   const [modalShow, setModalShow] = useState(false);
   const [name, setName] = useState("");
@@ -638,7 +639,7 @@ const EditTemplateModal = (props) => {
     }
     try {
       const response = await axios.post(
-        `http://localhost:5000/GetSampleData/${scanner?.id}` // Use the selected scanner's id
+         `http://localhost:5000/GetSampleData?id=${scanner?.id}&type=simplex` // Use the selected scanner's id
       );
       const { data, images } = response.data;
       const jsonData = data;

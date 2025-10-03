@@ -4,6 +4,8 @@ n
 
 .eslintcache
 .env
+build/
+build.zip
 
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
