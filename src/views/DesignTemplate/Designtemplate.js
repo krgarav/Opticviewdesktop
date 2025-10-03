@@ -142,6 +142,7 @@ const DesignTemplate = () => {
   const gridRef = useRef(null);
 
   useEffect(() => {
+    if(!modalUpdate){
     if (!enableFormatting) {
       setFormatting(""); // if formatting is disabled → clear it
       return;
@@ -155,7 +156,8 @@ const DesignTemplate = () => {
     const totalVisibleColumn = Math.ceil(noInCol / noOfStepInCol);
 
     setFormatting(totalVisibleColumn > 0 ? "X".repeat(totalVisibleColumn) : "");
-  }, [noInCol, noOfStepInCol, enableFormatting]);
+  }
+  }, [noInCol, noOfStepInCol, enableFormatting,modalShow,modalUpdate]);
 
   // useEffect(() => {
   //     const directionMapping = {
@@ -755,7 +757,7 @@ const DesignTemplate = () => {
     }
     return true;
   };
-
+console.log(formatting)
   const handleSave = () => {
     if (
       selectedFieldType === "formField" ||
