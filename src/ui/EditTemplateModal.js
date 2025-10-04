@@ -302,7 +302,7 @@ const EditTemplateModal = (props) => {
   //     setSelectedUI("");
   //   }
   // }, [props.onHide]);
-  console.log(props.layoutData);
+
   const Option = (props) => {
     return (
       <components.Option {...props}>
@@ -639,7 +639,7 @@ const EditTemplateModal = (props) => {
     }
     try {
       const response = await axios.post(
-         `http://localhost:5000/GetSampleData?id=${scanner?.id}&type=simplex` // Use the selected scanner's id
+        `http://localhost:5000/GetSampleData?id=${scanner?.id}&type=simplex` // Use the selected scanner's id
       );
       const { data, images } = response.data;
       const jsonData = data;
@@ -1361,6 +1361,9 @@ const EditTemplateModal = (props) => {
                                 value={17 - value}
                                 onChange={(event, newValue) => {
                                   const val = 17 - newValue;
+                                  if (difference + val > 17) {
+                                    return;
+                                  }
                                   handleChange(val);
                                 }}
                                 valueLabelDisplay="auto"
@@ -1434,7 +1437,7 @@ const EditTemplateModal = (props) => {
                                 overflow: "hidden",
                               }}
                             >
-                              <ShadesOfGrey type="normal" />
+                              <ShadesOfGrey type="reverse" />
                             </div>
                             <Box
                               sx={{
@@ -1465,9 +1468,12 @@ const EditTemplateModal = (props) => {
                               <Slider
                                 getAriaLabel={() => "Sensitivity range"}
                                 value={difference} // should be a single number
-                                onChange={(event, newValue) =>
-                                  setDifference(newValue)
-                                } // handle as a number
+                                onChange={(event, newValue) => {
+                                  if (sensitivity + newValue > 17) {
+                                    return;
+                                  }
+                                  setDifference(newValue);
+                                }}
                                 valueLabelDisplay="auto"
                                 min={1}
                                 max={16}

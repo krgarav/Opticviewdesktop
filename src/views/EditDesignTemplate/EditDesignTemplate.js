@@ -118,8 +118,8 @@ const EditDesignTemplate = () => {
   const [enableFormatting, setEnableFormatting] = useState(false);
   const [currentSelectedCoordinate, setCurrentSelectedCoordinate] =
     useState(null);
-     const [fieldSensitivity, setFieldSensitivity] = useState(3);
-      const [fieldDifference, setFieldDifference] = useState(8);
+  const [fieldSensitivity, setFieldSensitivity] = useState(3);
+  const [fieldDifference, setFieldDifference] = useState(8);
   const [scale, setScale] = useState(1);
 
   const handleZoomIn = () => {
@@ -138,12 +138,11 @@ const EditDesignTemplate = () => {
   const blankRef = useRef(null);
   const gridRef = useRef(null);
 
- useEffect(() => {
-     if(!modalUpdate){
-        setMaximumMark(Math.max(noInCol, noInRow));
-     }
- 
-   }, [noInCol, noInRow,modalShow,modalUpdate]);
+  useEffect(() => {
+    if (!modalUpdate) {
+      setMaximumMark(Math.max(noInCol, noInRow));
+    }
+  }, [noInCol, noInRow, modalShow, modalUpdate]);
 
   useEffect(() => {
     if (!enableFormatting) {
@@ -729,9 +728,15 @@ const EditDesignTemplate = () => {
         rowStart: +selection?.startRow + 1,
         rowNumber: +noInRow,
         rowStep: +noOfStepInRow,
-        iSensitivity: layoutData.iSensitivity === fieldSensitivity? +layoutData.iSensitivity : +fieldSensitivity,
-        iDifference: layoutData.iDifference === fieldDifference? +layoutData.iDifference : +fieldDifference,
-        
+        iSensitivity:
+          layoutData.iSensitivity === fieldSensitivity
+            ? +layoutData.iSensitivity
+            : +fieldSensitivity,
+        iDifference:
+          layoutData.iDifference === fieldDifference
+            ? +layoutData.iDifference
+            : +fieldDifference,
+
         iOption: 1,
         iReject: +layoutData.iReject,
         iDirection: +readingDirectionOption,
@@ -764,10 +769,16 @@ const EditDesignTemplate = () => {
         rowNumber: +noInRow,
         rowStep: +noOfStepInRow,
         iDirection: +readingDirectionOption,
-        
-         iSensitivity: layoutData.iSensitivity === fieldSensitivity? +layoutData.iSensitivity : +fieldSensitivity,
-        iDifference: layoutData.iDifference === fieldDifference? +layoutData.iDifference : +fieldDifference,
-        
+
+        iSensitivity:
+          layoutData.iSensitivity === fieldSensitivity
+            ? +layoutData.iSensitivity
+            : +fieldSensitivity,
+        iDifference:
+          layoutData.iDifference === fieldDifference
+            ? +layoutData.iDifference
+            : +fieldDifference,
+
         iOption: blank === "allow" ? 1 : 0,
         prefix: selectedFieldType === "formField" ? prefix : "",
         suffix: selectedFieldType === "formField" ? suffix : "",
@@ -2638,164 +2649,163 @@ const EditDesignTemplate = () => {
                 </Row>
               )}
               <Row className="mb-3">
-                              <label
-                                htmlFor="example-text-input"
-                                className="col-md-2 col-form-label  "
-                                style={{ fontSize: ".9rem" }}
-                              >
-                                Sensitivity
-                              </label>
-                              <div
-                                className="col-md-3"
-                                style={{
-                                  display: "flex",
-                                  gap: "5px",
-                                  width: "100%",
-                                }}
-                              >
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    width: "100%",
-                                  }}
-                                >
-                                  <div
-                                    style={{
-                                      borderRadius: "6px",
-                                      overflow: "hidden",
-                                    }}
-                                  >
-                                    <ShadesOfGrey type="reverse" />
-                                  </div>
-                                  <Box
-                                    sx={{
-                                      width: "94%",
-                                      justifyContent: "center",
-                                      alignSelf: "center",
-                                    }}
-                                  >
-                                    <Slider
-                                      getAriaLabel={() => "Sensitivity range"}
-                                      // value={17 - value}
-                                      value={17 - fieldSensitivity}
-                                      onChange={(event, newValue) => {
-                                        const val = 17 - newValue;
-              
-                                        setFieldSensitivity(val);
-                                      }}
-                                      valueLabelDisplay="auto"
-                                      min={1}
-                                      max={16}
-                                      step={1}
-                                      scale={(x) => 17 - x} // This reverses the displayed value
-                                      size="small"
-                                      color="PRIMARY"
-                                      slots={{
-                                        ValueLabel: (props) => (
-                                          <CustomTooltip
-                                            {...props}
-                                            // shade={getShadeFromValue(value)}
-                                          />
-                                        ),
-                                      }}
-                                    />
-                                  </Box>
-                                </div>
-                              </div>
-                              <input
-                                value={`${fieldSensitivity}`}
-                                style={{
-                                  width: "100%",
-                                  padding: "2px",
-                                  textAlign: "center",
-                                }}
-                                className="form-control col-md-1"
-                                type="text"
-                                disabled
-                              />
-              
-                              <label
-                                htmlFor="example-text-input"
-                                className="col-md-2 col-form-label  "
-                                style={{ fontSize: ".9rem" }}
-                              >
-                                Density
-                              </label>
-                              <div
-                                className="col-md-3"
-                                style={{
-                                  display: "flex",
-                                  gap: "5px",
-                                  width: "100%",
-                                }}
-                              >
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    width: "100%",
-                                  }}
-                                >
-                                  <div
-                                    style={{
-                                      borderRadius: "6px",
-                                      overflow: "hidden",
-                                    }}
-                                  >
-                                    <ShadesOfGrey type="normal" />
-                                  </div>
-                                  <Box
-                                    sx={{
-                                      width: "94%",
-                                      justifyContent: "center",
-                                      alignSelf: "center",
-                                    }}
-                                  >
-                                    <Slider
-                                      getAriaLabel={() => "Sensitivity range"}
-                                      value={17 - fieldDifference}
-                                      onChange={(event, newValue) => {
-                                        const val = 17 - newValue;
-              
-                                        // if( difference+sensitivity > 17){
-                                        // toast.warning("Sensitivity and Density sum should not exceed 16")
-              
-                                        // setDifference(17 - val);
-                                        //  return
-                                        // }
-                                        setFieldDifference(val);
-                                        // handleChange(val);
-                                      }}
-                                      valueLabelDisplay="auto"
-                                      min={1}
-                                      max={16}
-                                      step={1}
-                                      scale={(x) => 17 - x} // This reverses the displayed value
-                                      size="small"
-                                      color="PRIMARY"
-                                      slots={{
-                                        ValueLabel: (props) => (
-                                          <CustomTooltip
-                                            {...props}
-                                            // shade={getShadeFromValue(value)}
-                                          />
-                                        ),
-                                      }}
-                                    />
-                                  </Box>
-                                </div>
-                              </div>
-                              <input
-                                value={`${fieldDifference}`}
-                                style={{
-                                  textAlign: "center",
-                                }}
-                                className="form-control col-md-1"
-                                type="text"
-                                disabled
-                              />
-                            </Row>
+                <label
+                  htmlFor="example-text-input"
+                  className="col-md-2 col-form-label  "
+                  style={{ fontSize: ".9rem" }}
+                >
+                  Sensitivity
+                </label>
+                <div
+                  className="col-md-3"
+                  style={{
+                    display: "flex",
+                    gap: "5px",
+                    width: "100%",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "100%",
+                    }}
+                  >
+                    <div
+                      style={{
+                        borderRadius: "6px",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <ShadesOfGrey type="reverse" />
+                    </div>
+                    <Box
+                      sx={{
+                        width: "94%",
+                        justifyContent: "center",
+                        alignSelf: "center",
+                      }}
+                    >
+                      <Slider
+                        getAriaLabel={() => "Sensitivity range"}
+                        // value={17 - value}
+                        value={17 - fieldSensitivity}
+                        onChange={(event, newValue) => {
+                          const val = 17 - newValue;
+                          if (fieldDifference + val > 17) {
+                            return;
+                          }
+                          setFieldSensitivity(val);
+                        }}
+                        valueLabelDisplay="auto"
+                        min={1}
+                        max={16}
+                        step={1}
+                        scale={(x) => 17 - x} // This reverses the displayed value
+                        size="small"
+                        color="PRIMARY"
+                        slots={{
+                          ValueLabel: (props) => (
+                            <CustomTooltip
+                              {...props}
+                              // shade={getShadeFromValue(value)}
+                            />
+                          ),
+                        }}
+                      />
+                    </Box>
+                  </div>
+                </div>
+                <input
+                  value={`${fieldSensitivity}`}
+                  style={{
+                    width: "100%",
+                    padding: "2px",
+                    textAlign: "center",
+                  }}
+                  className="form-control col-md-1"
+                  type="text"
+                  disabled
+                />
+
+                <label
+                  htmlFor="example-text-input"
+                  className="col-md-2 col-form-label  "
+                  style={{ fontSize: ".9rem" }}
+                >
+                  Density
+                </label>
+                <div
+                  className="col-md-3"
+                  style={{
+                    display: "flex",
+                    gap: "5px",
+                    width: "100%",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "100%",
+                    }}
+                  >
+                    <div
+                      style={{
+                        borderRadius: "6px",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <ShadesOfGrey type="normal" />
+                    </div>
+                    <Box
+                      sx={{
+                        width: "94%",
+                        justifyContent: "center",
+                        alignSelf: "center",
+                      }}
+                    >
+                      <Slider
+                        getAriaLabel={() => "Sensitivity range"}
+                        value={17 - fieldDifference}
+                        onChange={(event, newValue) => {
+                          const val = 17 - newValue;
+
+                          if (fieldSensitivity + val > 17) {
+                            return;
+                          }
+                          setFieldDifference(val);
+                          // handleChange(val);
+                        }}
+                        valueLabelDisplay="auto"
+                        min={1}
+                        max={16}
+                        step={1}
+                        scale={(x) => 17 - x} // This reverses the displayed value
+                        size="small"
+                        color="PRIMARY"
+                        slots={{
+                          ValueLabel: (props) => (
+                            <CustomTooltip
+                              {...props}
+                              // shade={getShadeFromValue(value)}
+                            />
+                          ),
+                        }}
+                      />
+                    </Box>
+                  </div>
+                </div>
+                <input
+                  value={`${fieldDifference}`}
+                  style={{
+                    textAlign: "center",
+                  }}
+                  className="form-control col-md-1"
+                  type="text"
+                  disabled
+                />
+              </Row>
               {selectedFieldType === "idField" && (
                 <Row className="mb-2">
                   <label

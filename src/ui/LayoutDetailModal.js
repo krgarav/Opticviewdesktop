@@ -608,10 +608,8 @@ const LayoutDetailModal = (props) => {
     }
   };
 
- const scannerHandler = async () => {
+  const scannerHandler = async () => {
     setScannerLoading(true);
- ;
-
     if (!scanner?.id) {
       alert("Please select a scanner");
       setScannerLoading(false); // ✅ Reset loading state if early return
@@ -619,7 +617,7 @@ const LayoutDetailModal = (props) => {
     }
     try {
       const response = await axios.post(
-        `http://localhost:5000/GetSampleData?id=${scanner?.id}&type=simplex`  // Use the selected scanner's id
+        `http://localhost:5000/GetSampleData?id=${scanner?.id}&type=simplex` // Use the selected scanner's id
       );
       const { data, images } = response.data;
       const jsonData = data;
@@ -1336,13 +1334,15 @@ const LayoutDetailModal = (props) => {
                             >
                               <Slider
                                 getAriaLabel={() => "Sensitivity range"}
-                                value={17-value}
-                                onChange={(event, newValue) =>{
-                                  const val = 17 - newValue
-                                  handleChange(val)
-                                }
-                                
-                                }
+                                value={17 - value}
+                                onChange={(event, newValue) => {
+                                  const val = 17 - newValue;
+                                  if (difference + val > 17) {
+                                    return;
+                                  }
+
+                                  handleChange(val);
+                                }}
                                 valueLabelDisplay="auto"
                                 min={1}
                                 max={16}
@@ -1445,9 +1445,12 @@ const LayoutDetailModal = (props) => {
                               <Slider
                                 getAriaLabel={() => "Sensitivity range"}
                                 value={difference} // should be a single number
-                                onChange={(event, newValue) =>
-                                  setDifference(newValue)
-                                } // handle as a number
+                                onChange={(event, newValue) => {
+                                  if (sensitivity + newValue > 17) {
+                                    return;
+                                  }
+                                  setDifference(newValue);
+                                }} // handle as a number
                                 valueLabelDisplay="auto"
                                 min={1}
                                 max={16}
@@ -1703,9 +1706,7 @@ const LayoutDetailModal = (props) => {
                             <input
                               type="text"
                               className="form-control text-end"
-                              value={
-                                startPosition 
-                              }
+                              value={startPosition}
                               disabled
                             />
                             <div className="input-group-append">
@@ -2263,82 +2264,85 @@ const LayoutDetailModal = (props) => {
                     </Tab.Pane>
                     <Tab.Pane eventKey="image">
                       <Form>
-                       <Row className="mb-3 align-items-center">
-                                                 <label
-                                                   htmlFor="example-text-input"
-                                                   className="col-md-3 col-form-label"
-                                                   style={{ fontSize: ".9rem" }}
-                                                 >
-                                                   Image Color :
-                                                 </label>
-                       
-                                                 <div className="col-md-9 d-flex align-items-center justify-content-between">
-                                                   <div className="form-check form-check-inline mr-3">
-                                                     <input
-                                                       className="form-check-input"
-                                                       type="radio"
-                                                       name="colorType"
-                                                       id="grayscale"
-                                                       value="grayscale"
-                                                       checked={colorType === "grayscale"}
-                                                       onChange={(e) => setColorType(e.target.value)}
-                                                     />
-                                                     <label
-                                                       className="form-check-label"
-                                                       htmlFor="grayscale"
-                                                     >
-                                                       Grayscale
-                                                     </label>
-                                                   </div>
-                       
-                                                   <div className="form-check form-check-inline mr-3">
-                                                     <input
-                                                       className="form-check-input"
-                                                       type="radio"
-                                                       name="colorType"
-                                                       id="color"
-                                                       value="color"
-                                                       checked={colorType === "color"}
-                                                       onChange={(e) => setColorType(e.target.value)}
-                                                     />
-                                                     <label
-                                                       className="form-check-label"
-                                                       htmlFor="color"
-                                                     >
-                                                       Color
-                                                     </label>
-                                                   </div>
-                        <div className="form-check form-check-inline mr-3">
-                           <input
-                             className="form-check-input"
-                             type="radio"
-                             name="colorType"
-                             id="blackwhite"
-                             value="blackwhite"
-                             checked={colorType === "blackwhite"}
-                             onChange={(e) => setColorType(e.target.value)}
-                           />
-                           <label className="form-check-label" htmlFor="blackwhite">
-                             Black & White
-                           </label>
-                         </div>
-                                                   <div>
-                                                     <img
-                                                      src={
-                               colorType === "color"
-                                 ? "/colored.webp"
-                                 : colorType === "blackwhite"
-                                 ? "/grayscale.webp"
-                                 : "/grayscale.webp"
-                             }
-                                                       width={100}
-                                                       height={100}
-                                                       alt={colorType}
-                                                       className="rounded shadow"
-                                                     />
-                                                   </div>
-                                                 </div>
-                                               </Row>
+                        <Row className="mb-3 align-items-center">
+                          <label
+                            htmlFor="example-text-input"
+                            className="col-md-3 col-form-label"
+                            style={{ fontSize: ".9rem" }}
+                          >
+                            Image Color :
+                          </label>
+
+                          <div className="col-md-9 d-flex align-items-center justify-content-between">
+                            <div className="form-check form-check-inline mr-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="colorType"
+                                id="grayscale"
+                                value="grayscale"
+                                checked={colorType === "grayscale"}
+                                onChange={(e) => setColorType(e.target.value)}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="grayscale"
+                              >
+                                Grayscale
+                              </label>
+                            </div>
+
+                            <div className="form-check form-check-inline mr-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="colorType"
+                                id="color"
+                                value="color"
+                                checked={colorType === "color"}
+                                onChange={(e) => setColorType(e.target.value)}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="color"
+                              >
+                                Color
+                              </label>
+                            </div>
+                            <div className="form-check form-check-inline mr-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="colorType"
+                                id="blackwhite"
+                                value="blackwhite"
+                                checked={colorType === "blackwhite"}
+                                onChange={(e) => setColorType(e.target.value)}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="blackwhite"
+                              >
+                                Black & White
+                              </label>
+                            </div>
+                            <div>
+                              <img
+                                src={
+                                  colorType === "color"
+                                    ? "/colored.webp"
+                                    : colorType === "blackwhite"
+                                    ? "/grayscale.webp"
+                                    : "/grayscale.webp"
+                                }
+                                width={100}
+                                height={100}
+                                alt={colorType}
+                                className="rounded shadow"
+                              />
+                            </div>
+                          </div>
+                        </Row>
 
                         <Row className="mb-3">
                           <label

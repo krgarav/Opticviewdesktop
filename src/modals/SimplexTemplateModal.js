@@ -1175,13 +1175,11 @@ const SimplexTemplateModal = (props) => {
                                 value={17 - value}
                                 onChange={(event, newValue) => {
                                 const val = 17 - newValue;
-                                  console.log(difference+sensitivity)
-                                  // if( difference+sensitivity > 17){
-                                    // toast.warning("Sensitivity and Density sum should not exceed 16")
-                                   
-                                    // setDifference(17 - val);
-                                    //  return
-                                  // }
+                                  
+                                  if( difference+val > 17){
+                                  
+                                     return
+                                  }
                                     
                                   handleChange(val);
                                   
@@ -1270,6 +1268,9 @@ const SimplexTemplateModal = (props) => {
                                 getAriaLabel={() => "Sensitivity range"}
                                 value={difference} // should be a single number
                                 onChange={(event, newValue) => {
+                                  if(sensitivity+newValue > 17){
+                                    return
+                                  }
                                   setDifference(newValue);
                                 }} // handle as a number
                                 valueLabelDisplay="auto"

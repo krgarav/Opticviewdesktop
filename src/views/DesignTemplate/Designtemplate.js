@@ -142,22 +142,24 @@ const DesignTemplate = () => {
   const gridRef = useRef(null);
 
   useEffect(() => {
-    if(!modalUpdate){
-    if (!enableFormatting) {
-      setFormatting(""); // if formatting is disabled → clear it
-      return;
+    if (!modalUpdate) {
+      if (!enableFormatting) {
+        setFormatting(""); // if formatting is disabled → clear it
+        return;
+      }
+
+      if (!noInCol || !noOfStepInCol) {
+        setFormatting(""); // if inputs are invalid → clear it
+        return;
+      }
+
+      const totalVisibleColumn = Math.ceil(noInCol / noOfStepInCol);
+
+      setFormatting(
+        totalVisibleColumn > 0 ? "X".repeat(totalVisibleColumn) : ""
+      );
     }
-
-    if (!noInCol || !noOfStepInCol) {
-      setFormatting(""); // if inputs are invalid → clear it
-      return;
-    }
-
-    const totalVisibleColumn = Math.ceil(noInCol / noOfStepInCol);
-
-    setFormatting(totalVisibleColumn > 0 ? "X".repeat(totalVisibleColumn) : "");
-  }
-  }, [noInCol, noOfStepInCol, enableFormatting,modalShow,modalUpdate]);
+  }, [noInCol, noOfStepInCol, enableFormatting, modalShow, modalUpdate]);
 
   // useEffect(() => {
   //     const directionMapping = {
@@ -274,11 +276,10 @@ const DesignTemplate = () => {
   }, [dataCtx.allTemplates]);
 
   useEffect(() => {
-    if(!modalUpdate){
-       setMaximumMark(Math.max(noInCol, noInRow));
+    if (!modalUpdate) {
+      setMaximumMark(Math.max(noInCol, noInRow));
     }
-
-  }, [noInCol, noInRow,modalShow,modalUpdate]);
+  }, [noInCol, noInRow, modalShow, modalUpdate]);
 
   // useEffect(() => {
   //   const handleBeforeUnload = (event) => {
@@ -645,10 +646,9 @@ const DesignTemplate = () => {
     if (dragStart && selection && !(e.ctrlKey || e.metaKey)) {
       // Handle selection via drag
       setDragStart(null);
-      
+
       setModalShow(true);
-      
-      
+
       setSelectedFieldType(null);
     } else if ((e.ctrlKey || e.metaKey) && filteredCoordinates.length > 0) {
       // Handle copy with Ctrl/Cmd key
@@ -757,7 +757,7 @@ const DesignTemplate = () => {
     }
     return true;
   };
-console.log(formatting)
+
   const handleSave = () => {
     if (
       selectedFieldType === "formField" ||
@@ -818,8 +818,10 @@ console.log(formatting)
         rowStart: +selection?.startRow + 1,
         rowNumber: +noInRow,
         rowStep: +noOfStepInRow,
-        iSensitivity: iSensitivity === fieldSensitivity? +iSensitivity : +fieldSensitivity,
-        iDifference: iDifference === fieldDifference? +iDifference : +fieldDifference,
+        iSensitivity:
+          iSensitivity === fieldSensitivity ? +iSensitivity : +fieldSensitivity,
+        iDifference:
+          iDifference === fieldDifference ? +iDifference : +fieldDifference,
         iOption: 1,
         iReject: +iReject,
         iDirection: +readingDirectionOption,
@@ -852,8 +854,10 @@ console.log(formatting)
         rowNumber: +noInRow,
         rowStep: +noOfStepInRow,
         iDirection: +readingDirectionOption,
-       iSensitivity: iSensitivity === fieldSensitivity? +iSensitivity : +fieldSensitivity,
-        iDifference: iDifference === fieldDifference? +iDifference : +fieldDifference,
+        iSensitivity:
+          iSensitivity === fieldSensitivity ? +iSensitivity : +fieldSensitivity,
+        iDifference:
+          iDifference === fieldDifference ? +iDifference : +fieldDifference,
         iOption: blank === "allow" ? 1 : 0,
         prefix: selectedFieldType === "formField" ? prefix : "",
         suffix: selectedFieldType === "formField" ? suffix : "",
@@ -1031,8 +1035,8 @@ console.log(formatting)
       setCoordinateIndex(index);
       setModalUpdate(true);
       setModalShow(true);
-      setFieldSensitivity(data?.iSensitivity)
-      setFieldDifference(data?.iDifference)
+      setFieldSensitivity(data?.iSensitivity);
+      setFieldDifference(data?.iDifference);
     } else if (selectedField?.fieldType === "questionField") {
       const parameters = template[0].questionsWindowParameters;
 
@@ -1072,8 +1076,8 @@ console.log(formatting)
       setNoOfStepInRow(data?.rowStep);
       setNoOfStepInCol(data?.columnStep);
       setCustomValue(data?.customFieldValue);
-      setFieldSensitivity(data?.iSensitivity)
-      setFieldDifference(data?.iDifference)
+      setFieldSensitivity(data?.iSensitivity);
+      setFieldDifference(data?.iDifference);
     } else if (selectedField?.fieldType === "formField") {
       const parameters = template[0].formFieldWindowParameters;
 
@@ -1087,7 +1091,7 @@ console.log(formatting)
 
       // Get the matched object
       const data = index !== -1 ? parameters[index] : null;
-console.log(data)
+      console.log(data);
       setCoordinateIndex(index);
 
       setModalUpdate(true);
@@ -1118,8 +1122,8 @@ console.log(data)
       setNoOfStepInCol(data?.columnStep);
       setCustomValue(data?.customFieldValue);
       setFormatting(data?.formatting);
-      setFieldSensitivity(data?.iSensitivity)
-      setFieldDifference(data?.iDifference)
+      setFieldSensitivity(data?.iSensitivity);
+      setFieldDifference(data?.iDifference);
     } else if (selectedField?.fieldType === "skewMarkField") {
       const parameters = template[0].skewMarksWindowParameters;
       const index = parameters.findIndex((item) =>
@@ -1149,8 +1153,8 @@ console.log(data)
       setNoInCol(data?.columnNumber);
       setSkewOption(data?.dataRejection);
       setSkewFieldValue(data?.skewFieldValue);
-      setFieldSensitivity(data?.iSensitivity)
-      setFieldDifference(data?.iDifference)
+      setFieldSensitivity(data?.iSensitivity);
+      setFieldDifference(data?.iDifference);
     }
   };
   const handleFillData = (selectedField, index) => {
@@ -2776,7 +2780,9 @@ console.log(data)
                         value={17 - fieldSensitivity}
                         onChange={(event, newValue) => {
                           const val = 17 - newValue;
-
+                          if (fieldDifference + val > 17) {
+                            return;
+                          }
                           setFieldSensitivity(val);
                         }}
                         valueLabelDisplay="auto"
@@ -2853,12 +2859,9 @@ console.log(data)
                         onChange={(event, newValue) => {
                           const val = 17 - newValue;
 
-                          // if( difference+sensitivity > 17){
-                          // toast.warning("Sensitivity and Density sum should not exceed 16")
-
-                          // setDifference(17 - val);
-                          //  return
-                          // }
+                          if (fieldSensitivity + val > 17) {
+                            return;
+                          }
                           setFieldDifference(val);
                           // handleChange(val);
                         }}
