@@ -1,16 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Modal, Button, Nav, Form, Tab, Row, Col } from "react-bootstrap";
-import TemplateModal from "../modals/SimplexTemplateModal";
+
 import Jobcard from "./Jobcard";
 import BookletTemplateModal from "../modals/BookletModal/BookletTemplateModal";
 import DuplexTemplateModal from "modals/DuplexModal/DuplexTemplateModal";
 import SimplexTemplateModal from "../modals/SimplexTemplateModal";
+import TemplateModal from "modals/TemplateModals";
 
 const BookletModal = (props) => {
   const [modalShow, setModalShow] = useState(false);
   const [bookletModalShow, setBookletModalShow] = useState(false);
   const [simplexModalShow, setSimplexModalShow] = useState(false);
   const [showDuplexModal, setShowDuplexModal] = useState(false);
+  const [templateType, setTemplateType] = useState(null);
 
   useEffect(() => {
     if (props.show) {
@@ -21,13 +23,7 @@ const BookletModal = (props) => {
   }, [props.show]);
 
   const handleJob = (text) => {
-    if (text === "Simplex") {
-      setSimplexModalShow(true);
-    } else if (text === "Booklet") {
-      setBookletModalShow(true);
-    } else {
-      setShowDuplexModal(true);
-    }
+    setTemplateType(text);
   };
 
   return (
@@ -86,7 +82,14 @@ const BookletModal = (props) => {
         <Modal.Footer></Modal.Footer>
       </Modal>
 
-      {simplexModalShow && (
+      {templateType && (
+        <TemplateModal
+          show={templateType !== null}
+          onHide={() => setTemplateType(null)}
+          title={templateType}
+        />
+      )}
+      {/* {simplexModalShow && (
         <SimplexTemplateModal
           show={simplexModalShow}
           onHide={() => setSimplexModalShow(false)}
@@ -109,7 +112,7 @@ const BookletModal = (props) => {
           onHide={() => setBookletModalShow(false)}
           title="BOOKLET"
         />
-      )}
+      )} */}
     </>
   );
 };

@@ -62,7 +62,7 @@ import { debounce } from "lodash";
 import { digitType } from "data/helperData";
 import { scannerData } from "data/helperData";
 
-const SimplexTemplateModal = (props) => {
+const TemplateModal = (props) => {
   const [modalShow, setModalShow] = useState(false);
   const [name, setName] = useState("");
   const [size, setSize] = useState({ id: 1, name: "A4" });
@@ -139,32 +139,18 @@ const SimplexTemplateModal = (props) => {
   const [prefix, setPrefix] = useState("0000");
   const [prefixzeroes, setPrefixZeroes] = useState("0000");
   const [scanner, setScanner] = useState(null);
+const [backExcelJsonFile, setBackExcelJsonFile] = useState([]);
+  const [numberOfBackSideColumn, setNumberOfBackSideColumn] = useState(null);
+  const [numberBackSideRow, setNumberBackSideRow] = useState(null);
+   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getUrls();
-        const GetDataURL = response.MAIN_URL;
-        setBaseUrl(GetDataURL);
-      } catch (error) {
-        console.log("Error", error);
-      }
-    };
-    fetchData();
-  }, []);
+
   const handleChange = (newValue) => {
     setValue(newValue);
     setSensitivity(newValue);
   };
-  const navigate = useNavigate();
 
-  const jobHandler = (e) => {
-    setSelectedUI(e);
-  };
-  const handleSelect = (selectedKey) => {
-    console.log(selectedKey);
-    setActiveTab(selectedKey);
-  };
+
   const imageModalHandler = () => {
     setImageModal(true);
   };
@@ -220,6 +206,7 @@ const SimplexTemplateModal = (props) => {
     // setIdPresent("");
     // createTemplateHandler();
   };
+
   useEffect(() => {
     if (props.show) {
       setModalShow(true);
@@ -463,6 +450,12 @@ const SimplexTemplateModal = (props) => {
           return acc;
         }, {});
       });
+      const emptyBackExcelJsonFile = backExcelJsonFile.map((row) => {
+        return Object.keys(row).reduce((acc, key) => {
+          acc[key] = ""; // Set each value to an empty string
+          return acc;
+        }, {});
+      });
       const templateData = [
         {
           layoutParameters: {
@@ -484,8 +477,10 @@ const SimplexTemplateModal = (props) => {
             iReject: 0,
             idMarksPattern: "000000000000000000000000",
             excelJsonFile: excelJsonFile,
+             backExcelJsonFile: backExcelJsonFile,
             images: images,
             numberedExcelJsonFile: emptyExcelJsonFile,
+              numberedBackExcelJsonFile: emptyBackExcelJsonFile,
             scannerType: scanner?.id,
           },
           barcodeData: {
@@ -532,7 +527,12 @@ const SimplexTemplateModal = (props) => {
       dataCtx.setNewTemplates([templateData]);
 
       setModalShow(false);
-      navigate("/design-template");
+      if(props.title==="Duplex"){
+        navigate("/duplex-design-template");
+      }else{
+
+          navigate("/design-template");
+      }
     } catch (error) {
       console.error("Error uploading file: ", error);
     }
@@ -627,7 +627,39 @@ const SimplexTemplateModal = (props) => {
       },
     ]);
   };
+ const handleBackExcelUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      Papa.parse(file, {
+        header: true,
+        complete: (results) => {
+          const json = results.data;
+          setExcelFile(file);
+          const correctedJson = json
+            .map((item) => {
+              const filteredItem = Object.fromEntries(
+                Object.entries(item).filter(([key, value]) => key !== "")
+              );
 
+              // Only include the item if it's not empty
+              return Object.keys(filteredItem).length > 0 ? filteredItem : null;
+            })
+            .filter((item) => item !== null); // Remove nulls from the resulting array
+
+          const Row = correctedJson.length;
+          const Column = Object.keys(json[1]).filter(
+            (item) => item !== ""
+          ).length;
+          setNumberBackSideRow(Row);
+          setNumberOfBackSideColumn(Column);
+          setBackExcelJsonFile(correctedJson);
+        },
+        error: (error) => {
+          console.error("Error parsing CSV:", error);
+        },
+      });
+    }
+  };
   return (
     <>
       <Modal
@@ -2680,7 +2712,7 @@ const SimplexTemplateModal = (props) => {
         keyboard={false}
       >
         <Modal.Body style={{ height: "80dvh", overflow: "auto" }}>
-          {props.title === "SIMPLEX" && (
+          {props.title === "Simplex" && (
             <>
               <Row className="d-flex justify-content-center mt-4">
                 <label>Choose Excel File</label>
@@ -2695,7 +2727,7 @@ const SimplexTemplateModal = (props) => {
             </>
           )}
 
-          {props.title === "BOOKLET" && (
+          {/* {props.title === "BOOKLET" && (
             <>
               <Row className="d-flex justify-content-center mt-4">
                 <label>Upload Images</label>
@@ -2733,7 +2765,35 @@ const SimplexTemplateModal = (props) => {
                 />
               </Row>
             </>
+          )} */}
+
+          {props.title === "Duplex" && (
+            <>
+            <Row className="d-flex justify-content-center mt-4">
+                        <label>Choose Front Excel File</label>
+                        <input
+                          className="form-control"
+                          type="file"
+                          id="formFile"
+                          onChange={handleExcelUpload}
+                          accept=".xls,.xlsx,.csv"
+                        />
+                      </Row>
+                      <Row className="d-flex justify-content-center mt-4">
+                        <label>Choose Back Excel File</label>
+                        <input
+                          className="form-control"
+                          type="file"
+                          id="formFile"
+                          onChange={handleBackExcelUpload}
+                          accept=".xls,.xlsx,.csv"
+                        />
+                      </Row>
+                      </>
           )}
+
+
+
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -2753,4 +2813,4 @@ const SimplexTemplateModal = (props) => {
   );
 };
 
-export default SimplexTemplateModal;
+export default TemplateModal;
