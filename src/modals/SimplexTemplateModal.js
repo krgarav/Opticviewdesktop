@@ -2629,7 +2629,7 @@ const SimplexTemplateModal = (props) => {
                             {images.map((item, index) => (
                               <div key={index}>
                                 <img
-                                  src={`http://localhost:5000/GetImage?imagePath${item.backImagePath}`}
+                                  src={`http://localhost:5000/GetImage?imagePath=${item.backImagePath}`}
                                   alt={`Back Slide ${index + 1}`}
                                   className="img-fluid rounded"
                                   style={{
