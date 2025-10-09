@@ -50,7 +50,7 @@ const DesignTemplate = () => {
   const [windowNgOption, setWindowNgOption] = useState("");
   const [readingDirectionOption, setReadingDirectionOption] = useState("");
   const [minimumMark, setMinimumMark] = useState(1);
-  const [maximumMark, setMaximumMark] = useState(1);
+  const [maximumMark, setMaximumMark] = useState(600);
   const [noInRow, setNoInRow] = useState();
   const [noOfStepInRow, setNoOfStepInRow] = useState(1);
   const [noInCol, setNoInCol] = useState();
@@ -275,11 +275,11 @@ const DesignTemplate = () => {
     }
   }, [dataCtx.allTemplates]);
 
-  useEffect(() => {
-    if (!modalUpdate) {
-      setMaximumMark(Math.max(noInCol, noInRow));
-    }
-  }, [noInCol, noInRow, modalShow, modalUpdate]);
+  // useEffect(() => {
+  //   if (!modalUpdate) {
+  //     setMaximumMark(Math.max(noInCol, noInRow));
+  //   }
+  // }, [noInCol, noInRow, modalShow, modalUpdate]);
 
   // useEffect(() => {
   //   const handleBeforeUnload = (event) => {
@@ -1091,7 +1091,6 @@ const DesignTemplate = () => {
 
       // Get the matched object
       const data = index !== -1 ? parameters[index] : null;
-      console.log(data);
       setCoordinateIndex(index);
 
       setModalUpdate(true);
@@ -1179,8 +1178,8 @@ const DesignTemplate = () => {
       const data = template[0].layoutParameters;
       setSelectedFieldType("idField");
       setWindowNgOption(data?.ngAction);
-      setMinimumMark(data?.minimumMark);
-      setMaximumMark(data?.maximumMark);
+      setMinimumMark(data?.iMinimumMark);
+      setMaximumMark(data?.iMaximumMark);
       setNoInRow(data?.rowNumber);
       setNoInCol(data?.columnNumber);
       setNoOfStepInRow(data?.rowStep);
@@ -3171,7 +3170,7 @@ const DesignTemplate = () => {
                       } else {
                         const numericValue = Number(value);
                         setEndColInput(numericValue);
-                        setMaximumMark(numericValue);
+                        // setMaximumMark(numericValue);
                       }
                     }}
                     className="form-control"

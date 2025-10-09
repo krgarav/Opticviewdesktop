@@ -36,6 +36,7 @@ const Redirect = () => {
 
     return () => clearTimeout(timer); // Cleanup timeout
   }, []);
+  
   return (
     <>
       {!showApp ? (

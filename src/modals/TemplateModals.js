@@ -482,6 +482,7 @@ const [backExcelJsonFile, setBackExcelJsonFile] = useState([]);
             numberedExcelJsonFile: emptyExcelJsonFile,
               numberedBackExcelJsonFile: emptyBackExcelJsonFile,
             scannerType: scanner?.id,
+            templateType: props.title.toUpperCase(),
           },
           barcodeData: {
             barcodeSide: 0,

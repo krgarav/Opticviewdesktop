@@ -56,7 +56,7 @@ const EditDesignTemplate = () => {
   const [windowNgOption, setWindowNgOption] = useState("");
   const [readingDirectionOption, setReadingDirectionOption] = useState("");
   const [minimumMark, setMinimumMark] = useState(1);
-  const [maximumMark, setMaximumMark] = useState(1);
+  const [maximumMark, setMaximumMark] = useState(600);
   const [noInRow, setNoInRow] = useState();
   const [noOfStepInRow, setNoOfStepInRow] = useState(1);
   const [noInCol, setNoInCol] = useState();
@@ -138,11 +138,11 @@ const EditDesignTemplate = () => {
   const blankRef = useRef(null);
   const gridRef = useRef(null);
 
-  useEffect(() => {
-    if (!modalUpdate) {
-      setMaximumMark(Math.max(noInCol, noInRow));
-    }
-  }, [noInCol, noInRow, modalShow, modalUpdate]);
+  // useEffect(() => {
+  //   if (!modalUpdate) {
+  //     setMaximumMark(Math.max(noInCol, noInRow));
+  //   }
+  // }, [noInCol, noInRow, modalShow, modalUpdate]);
 
   useEffect(() => {
     if (!enableFormatting) {
@@ -1021,6 +1021,8 @@ const EditDesignTemplate = () => {
       setNoOfStepInRow(data?.rowStep);
       setNoOfStepInCol(data?.columnStep);
       setCustomValue(data?.customFieldValue);
+         setFieldSensitivity(data?.iSensitivity);
+      setFieldDifference(data?.iDifference);
     } else if (selectedField?.fieldType === "formField") {
       const parameters = template[0].formFieldWindowParameters;
       const index = parameters.findIndex((item) =>
@@ -1060,6 +1062,8 @@ const EditDesignTemplate = () => {
       setSuffix(data?.suffix);
       setPrefix(data?.prefix);
       setFormatting(data?.formatting);
+         setFieldSensitivity(data?.iSensitivity);
+      setFieldDifference(data?.iDifference);
     } else if (selectedField?.fieldType === "skewMarkField") {
       const parameters = template[0].skewMarksWindowParameters;
       const index = parameters.findIndex((item) =>
@@ -1092,6 +1096,8 @@ const EditDesignTemplate = () => {
       setWindowNgOption(data?.ngAction);
       setSkewOption(data?.dataRejection);
       setSkewFieldValue(data?.skewFieldValue);
+         setFieldSensitivity(data?.iSensitivity);
+      setFieldDifference(data?.iDifference);
     }
   };
   const handleFillData = (selectedField) => {
@@ -1160,6 +1166,8 @@ const EditDesignTemplate = () => {
       setNoOfStepInRow(data?.rowStep);
       setNoOfStepInCol(data?.columnStep);
       setCustomValue(data?.customFieldValue);
+         setFieldSensitivity(data?.iSensitivity);
+      setFieldDifference(data?.iDifference);
     } else if (selectedField?.fieldType === "formField") {
       const parameters = template[0].formFieldWindowParameters;
       const index = parameters.findIndex((item) =>
@@ -1197,6 +1205,8 @@ const EditDesignTemplate = () => {
       setCustomValue(data?.customFieldValue);
       setSuffix(data?.suffix);
       setPrefix(data?.prefix);
+         setFieldSensitivity(data?.iSensitivity);
+      setFieldDifference(data?.iDifference);
     } else if (selectedField?.fieldType === "skewMarkField") {
       const parameters = template[0].skewMarksWindowParameters;
       const index = parameters.findIndex((item) =>
@@ -1230,6 +1240,8 @@ const EditDesignTemplate = () => {
       setWindowNgOption(data?.ngAction);
       setSkewOption(data?.dataRejection);
       setSkewFieldValue(data?.skewFieldValue);
+         setFieldSensitivity(data?.iSensitivity);
+      setFieldDifference(data?.iDifference);
     }
   };
   const handleCrossClick = (selectedField, index) => {
@@ -3082,7 +3094,7 @@ const EditDesignTemplate = () => {
                       } else {
                         const numericValue = Number(value);
                         setEndColInput(numericValue);
-                        setMaximumMark(numericValue);
+                        // setMaximumMark(numericValue);
                       }
                     }}
                     className="form-control"

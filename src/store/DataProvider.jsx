@@ -8,12 +8,11 @@ import resetJson from "data/resetJson";
 import { useLocation } from "react-router-dom";
 
 function updateCoordinates(data) {
-
   // ✅ Deep copy using JSON
   const copiedData = JSON.parse(JSON.stringify(data));
 
   if (!copiedData?.layoutParameters?.backExcelJsonFile) {
-    return copiedData
+    return copiedData;
   }
   const num = copiedData.layoutParameters.backExcelJsonFile.length;
 
@@ -24,7 +23,7 @@ function updateCoordinates(data) {
       if (field.side === "back") {
         return {
           ...field,
-          rowStart: field.rowStart - num-1,
+          rowStart: field.rowStart - num - 1,
           Coordinate: {
             ...field.Coordinate,
             "Start Row": field.Coordinate["Start Row"] - num,
@@ -88,6 +87,7 @@ const DataProvider = (props) => {
         if (!storedData) return;
 
         const parsedData = JSON.parse(storedData);
+        
 
         if (Array.isArray(parsedData)) {
           const extractedObj = parsedData[0];

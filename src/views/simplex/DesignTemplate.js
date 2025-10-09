@@ -72,7 +72,7 @@ const DesignTemplate = () => {
   const [windowNgOption, setWindowNgOption] = useState("");
   const [readingDirectionOption, setReadingDirectionOption] = useState("");
   const [minimumMark, setMinimumMark] = useState();
-  const [maximumMark, setMaximumMark] = useState();
+  const [maximumMark, setMaximumMark] = useState(600);
   const [noInRow, setNoInRow] = useState();
   const [noOfStepInRow, setNoOfStepInRow] = useState();
   const [noInCol, setNoInCol] = useState();

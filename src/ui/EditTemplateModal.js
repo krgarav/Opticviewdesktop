@@ -134,6 +134,7 @@ const EditTemplateModal = (props) => {
   const [prefix, setPrefix] = useState("0000");
   const [prefixzeroes, setPrefixZeroes] = useState("0000");
   const [scanner, setScanner] = useState(null);
+  const [globalSensiDensi , setGlobalSensiDensi] = useState(false);
   const handleChange = (newValue) => {
     setValue(newValue);
     setSensitivity(newValue);
@@ -595,27 +596,27 @@ const EditTemplateModal = (props) => {
             customType: printCustom?.id === undefined ? "" : printCustom?.id,
             customValue: printCustomValue ? printCustomValue : "",
           },
-          questionsWindowParameters: (
+          questionsWindowParameters: globalSensiDensi?(
             currentTemplate?.questionsWindowParameters ?? []
           ).map((field) => ({
             ...field,
             iSensitivity: +sensitivity,
             iDifference: +difference,
-          })),
-          formFieldWindowParameters: (
+          })): currentTemplate?.questionsWindowParameters ?? [],
+          formFieldWindowParameters: globalSensiDensi?(
             currentTemplate?.formFieldWindowParameters ?? []
           ).map((field) => ({
             ...field,
             iSensitivity: +sensitivity,
             iDifference: +difference,
-          })),
-          skewMarksWindowParameters: (
+          })): currentTemplate?.formFieldWindowParameters ?? [],
+          skewMarksWindowParameters: globalSensiDensi?(
             currentTemplate?.skewMarksWindowParameters ?? []
           ).map((field) => ({
             ...field,
             iSensitivity: +sensitivity,
             iDifference: +difference,
-          })),
+          })): currentTemplate?.skewMarksWindowParameters ?? [],
         },
       ];
 
@@ -625,6 +626,7 @@ const EditTemplateModal = (props) => {
       dataCtx.setNewTemplates([[temp]]);
       props.setData(temp.layoutParameters);
       props.onHide();
+      setGlobalSensiDensi(false)
     } catch (error) {
       console.error("Error uploading file: ", error);
     }
@@ -1560,6 +1562,30 @@ const EditTemplateModal = (props) => {
                           )}
                         </div> */}
                       </Row>
+                      <Row className="mb-3">
+  <label
+    htmlFor="example-text-input"
+    className="col-md-2 col-form-label"
+    style={{ fontSize: ".9rem" }}
+  >
+    Global Sensi/Densi
+  </label>
+
+  <div className="col-md-10 col-form-label">
+    <div className="form-check">
+      <input
+        className="form-check-input"
+        type="checkbox"
+        id="applySensitivity"
+        checked={globalSensiDensi}
+        onChange={(e) => setGlobalSensiDensi(e.target.checked)}
+      />
+      <label className="form-check-label" htmlFor="applySensitivity">
+        Apply sensitivity and density to all fields
+      </label>
+    </div>
+  </div>
+</Row>
 
                       <Row className="mb-3">
                         <label
