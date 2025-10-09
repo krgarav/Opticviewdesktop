@@ -491,9 +491,10 @@ const SimplexTemplateModal = (props) => {
           barcodeData: {
             barcodeSide: 0,
             barcodeColor: 0,
+            barcodeOption: barcodeRejectStatus?.id?barcodeRejectStatus?.id:0,
             barcodeType: barcodeType?.id ? barcodeType?.id : "",
             barcodeCheckDigit: checkDigit !== null ? +checkDigit?.id : 0,
-            barcodeOption: option !== null ? +option?.id : 0,
+           
             barcodeRightPos: barcodeRightPos ? +barcodeRightPos : 0,
             barcodeLeftPos: barcodeLeftPos ? +barcodeLeftPos : 0,
             barcodeTopPos: barcodeTopPos ? +barcodeTopPos : 0,
