@@ -244,20 +244,15 @@ const LayoutDetailModal = (props) => {
 
           if (layout.barcodeCount !== 0) {
             setBarcodeEnable(barcodeOptionData[0]);
+          }
             setBarCount(layout.barcodeCount);
-            console.log(
-              comparewithId(
-                barcodeCategoryData,
-                barcodeData.readFrom.toLowerCase()
-              )
-            );
             setBarcodeCategory(
               comparewithId(
                 barcodeCategoryData,
                 barcodeData.readFrom.toLowerCase()
               )
             );
-            //   // setBarcodeRejectStatus(comparewithId(barcodeRejectData,barcodeData.))
+              setBarcodeRejectStatus(comparewithId(barcodeRejectData,barcodeData?.barcodeOption))
             setBarcodeType(
               comparewithId(barcodeTypeData, barcodeData.barcodeType)
             );
@@ -265,25 +260,12 @@ const LayoutDetailModal = (props) => {
             setBarcodeTopPos(barcodeData.barcodeTopPos);
             setBarcodeLeftPos(barcodeData.barcodeLeftPos);
             setBarcodeRightPos(barcodeData.barcodeRightPos);
-            if (barcodeData.barcodeType === "0x1U") {
-              setCheckDigit(
-                comparewithId(
-                  code39OrItfCheckDigitData,
-                  barcodeData.barcodeCheckDigit
-                )
-              );
-            } else {
-              setCheckDigit(
-                comparewithId(nw7CheckDigitData, barcodeData.barcodeCheckDigit)
-              );
-            }
-          }
+           
+          // }
           setSelectedBubble(comparewithName(bubbleData, layout.bubbleType));
           setSensitivity(layout.iSensitivity);
           setDifference(layout.iDifference);
           setValue(layout.iSensitivity);
-          // const file = base64ToFile(layout.templateImagePath, "image.jpg");
-          // setImageFile(file);
           setImage(layout.templateImagePath);
           setDirection(comparewithId(directionData, layout.dataReadDirection));
           if (printData?.printEnable) {
@@ -553,7 +535,7 @@ const LayoutDetailModal = (props) => {
             barcodeColor: 0,
             barcodeType: barcodeType?.id ? barcodeType?.id : "",
             barcodeCheckDigit: checkDigit !== null ? +checkDigit?.id : 0,
-            barcodeOption: option !== null ? +option?.id : 0,
+            barcodeOption: +barcodeRejectStatus?.id ?? 0,
             barcodeRightPos: barcodeRightPos ? +barcodeRightPos : 0,
             barcodeLeftPos: barcodeLeftPos ? +barcodeLeftPos : 0,
             barcodeTopPos: barcodeTopPos ? +barcodeTopPos : 0,
@@ -1094,7 +1076,7 @@ const LayoutDetailModal = (props) => {
                                 // barcodeInput.style=
                                 setBarCount(0);
                               } else {
-                                setBarCount("");
+                                setBarCount(1);
                               }
                             }}
                             options={barcodeOptionData}
@@ -1968,7 +1950,7 @@ const LayoutDetailModal = (props) => {
                           )}
                         </div>
                       </Row>
-                      {barcodeCategory.id === "hardware" && (
+                      {barcodeCategory?.id === "hardware" && (
                         <Row className="mb-3">
                           <label
                             htmlFor="example-text-input"
@@ -2027,84 +2009,8 @@ const LayoutDetailModal = (props) => {
                           </div>
                         </Row>
 
-                        {(barcodeType.id === "0x1U" ||
-                          barcodeType.id === "0x2U") && (
-                          <Row className="mb-3">
-                            <label
-                              htmlFor="example-text-input"
-                              className="col-md-2 "
-                              style={{ fontSize: ".9rem" }}
-                            >
-                              Set check digit:
-                            </label>
-
-                            <div className="col-md-10">
-                              <Select
-                                value={checkDigit}
-                                onChange={(selectedValue) =>
-                                  setCheckDigit(selectedValue)
-                                }
-                                options={
-                                  barcodeType.id === "0x1U"
-                                    ? code39OrItfCheckDigitData
-                                    : nw7CheckDigitData
-                                }
-                                getOptionLabel={(option) => option?.name || ""}
-                                getOptionValue={(option) =>
-                                  option?.id?.toString() || ""
-                                }
-                                placeholder="Select check digit"
-                              />
-                              {/* {(!(barcodeType.id === "0x1U" || barcodeType.id === "0x2U") || Object.keys(barcodeType).length === 0) && (
-                                                    <input
-                                                        type="number"
-                                                        className="form-control"
-                                                        value={(barcodeType.id === "0x400U" || barcodeType.id === "0x800U") ? 0 : numberOfFrontSideColumn}
-                                                        onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
-                                                    />
-                                                )} */}
-                            </div>
-                          </Row>
-                        )}
-                        {(barcodeType.id === "0x400U" ||
-                          barcodeType.id === "0x800U") && (
-                          <Row className="mb-3">
-                            <label
-                              htmlFor="example-text-input"
-                              className="col-md-2 "
-                              style={{ fontSize: ".9rem" }}
-                            >
-                              Set option:
-                            </label>
-                            <div className="col-md-10">
-                              <Select
-                                value={option}
-                                onChange={(selectedValue) =>
-                                  setOption(selectedValue)
-                                }
-                                options={
-                                  barcodeType.id === "0x400U"
-                                    ? upcaOptionData
-                                    : upceOptionData
-                                }
-                                getOptionLabel={(option) => option?.name || ""}
-                                getOptionValue={(option) =>
-                                  option?.id?.toString() || ""
-                                }
-                              />
-                              {/* {(!(barcodeType.id === "0x400U" || barcodeType.id === "0x800U") || Object.keys(barcodeType).length === 0) && (
-                                                    <input
-                                                        type="number"
-                                                        className="form-control"
-
-                                                        // value={}
-                                                        onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
-                                                    />
-                                                )} */}
-                            </div>
-                          </Row>
-                        )}
-                        {barcodeCategory.id !== "software" && (
+                      
+                        {barcodeCategory?.id !== "software" && (
                           <Row className="mb-3">
                             <label
                               htmlFor="example-text-input"
@@ -2159,7 +2065,7 @@ const LayoutDetailModal = (props) => {
                                         </div>
 
                                     </Row> */}
-                        {barcodeCategory.id !== "software" && (
+                        {barcodeCategory?.id !== "software" && (
                           <Row className="mb-3 align-items-center">
                             <label
                               htmlFor="top-input"
@@ -2210,7 +2116,7 @@ const LayoutDetailModal = (props) => {
                           </Row>
                         )}
 
-                        {barcodeCategory.id !== "software" && (
+                        {barcodeCategory?.id !== "software" && (
                           <Row className="mb-3 align-items-center">
                             <label
                               htmlFor="top-input"

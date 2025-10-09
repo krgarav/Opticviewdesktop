@@ -489,7 +489,7 @@ const [backExcelJsonFile, setBackExcelJsonFile] = useState([]);
             barcodeColor: 0,
             barcodeType: barcodeType?.id ? barcodeType?.id : "",
             barcodeCheckDigit: checkDigit !== null ? +checkDigit?.id : 0,
-            barcodeOption: option !== null ? +option?.id : 0,
+            barcodeOption: +barcodeRejectStatus?.id ?? 0,
             barcodeRightPos: barcodeRightPos ? +barcodeRightPos : 0,
             barcodeLeftPos: barcodeLeftPos ? +barcodeLeftPos : 0,
             barcodeTopPos: barcodeTopPos ? +barcodeTopPos : 0,
@@ -523,6 +523,7 @@ const [backExcelJsonFile, setBackExcelJsonFile] = useState([]);
         },
       ];
 
+      
       sessionStorage.setItem("Template", JSON.stringify(templateData));
 
       dataCtx.setNewTemplates([templateData]);
@@ -1066,14 +1067,13 @@ const [backExcelJsonFile, setBackExcelJsonFile] = useState([]);
                           <Select
                             value={barcodeEnable}
                             onChange={(selectedValue) => {
-                              const barcodeInput =
-                                document.getElementById("barcodeCount");
+                             
                               setBarcodeEnable(selectedValue);
                               if (selectedValue.id === "disable") {
-                                // barcodeInput.style=
+                                
                                 setBarCount(0);
                               } else {
-                                setBarCount("");
+                                setBarCount(1);
                               }
                             }}
                             options={barcodeOptionData}

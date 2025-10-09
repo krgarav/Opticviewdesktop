@@ -528,6 +528,10 @@ const SimplexTemplateModal = (props) => {
         },
       ];
 
+
+      console.log("Template Data:", templateData);
+      return
+
       sessionStorage.setItem("Template", JSON.stringify(templateData));
 
       dataCtx.setNewTemplates([templateData]);
@@ -1041,7 +1045,7 @@ const SimplexTemplateModal = (props) => {
                                 // barcodeInput.style=
                                 setBarCount(0);
                               } else {
-                                setBarCount("");
+                                setBarCount(1);
                               }
                             }}
                             options={barcodeOptionData}
