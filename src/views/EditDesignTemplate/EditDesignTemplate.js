@@ -577,7 +577,7 @@ const EditDesignTemplate = () => {
     setWindowNgOption("");
     setReadingDirectionOption("");
     setMinimumMark(1);
-    setMaximumMark(1);
+    setMaximumMark(600);
     setNoInRow();
     setNoOfStepInRow(1);
     setNoInCol();
@@ -3433,6 +3433,7 @@ const EditDesignTemplate = () => {
       </Modal>
       {detailPage && (
         <EditTemplateModal
+        title = {dataCtx.allTemplates[0][0]?.layoutParameters?.templateType}
           show={detailPage}
           templateId={data.templateId}
           layoutData={dataCtx.allTemplates[0][0]}
